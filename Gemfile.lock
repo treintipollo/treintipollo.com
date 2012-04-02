@@ -1,0 +1,77 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    POpen4 (0.1.4)
+      Platform (>= 0.4.0)
+      open4
+    Platform (0.4.0)
+    addressable (2.2.7)
+    backports (2.5.1)
+    coffee-script (2.2.0)
+      coffee-script-source
+      execjs
+    coffee-script-source (1.2.0)
+    erubis (2.7.0)
+    eventmachine (0.12.10)
+    execjs (1.3.0)
+      multi_json (~> 1.0)
+    heroku (2.23.0)
+      launchy (>= 0.3.2)
+      netrc (~> 0.7.1)
+      rest-client (~> 1.6.1)
+      rubyzip
+    hike (1.2.1)
+    kgio (2.7.4)
+    launchy (2.1.0)
+      addressable (~> 2.2.6)
+    mime-types (1.18)
+    multi_json (1.2.0)
+    netrc (0.7.1)
+    open4 (1.3.0)
+    rack (1.4.1)
+    rack-protection (1.2.0)
+      rack
+    rack-rewrite (1.2.1)
+    rack-test (0.6.1)
+      rack (>= 1.0)
+    raindrops (0.8.0)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
+    rubyzip (0.9.6.1)
+    sinatra (1.3.2)
+      rack (~> 1.3, >= 1.3.6)
+      rack-protection (~> 1.2)
+      tilt (~> 1.3, >= 1.3.3)
+    sinatra-contrib (1.3.1)
+      backports (>= 2.0)
+      eventmachine
+      rack-protection
+      rack-test
+      sinatra (~> 1.3.0)
+      tilt (~> 1.3)
+    sprockets (2.4.0)
+      hike (~> 1.2)
+      multi_json (~> 1.0)
+      rack (~> 1.0)
+      tilt (~> 1.1, != 1.3.0)
+    tilt (1.3.3)
+    unicorn (4.2.1)
+      kgio (~> 2.6)
+      rack
+      raindrops (~> 0.7)
+    yui-compressor (0.9.6)
+      POpen4 (>= 0.1.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  coffee-script
+  erubis
+  heroku
+  rack-rewrite
+  sinatra
+  sinatra-contrib
+  sprockets
+  unicorn
+  yui-compressor
