@@ -8,7 +8,7 @@ gem 'sprockets'
 
 group :development do
   gem 'heroku'
-  gem 'sinatra-contrib', require: 'sinatra/reloader'
+  gem 'shotgun'
 end
 
 group :production do

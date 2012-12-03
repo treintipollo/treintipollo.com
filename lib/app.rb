@@ -13,11 +13,6 @@ class App < Sinatra::Base
     [root, 'vendor', 'assets', 'stylesheets']
   ].each { |p| sprockets.append_path(File.join *p) }
 
-  configure :development do
-    register Sinatra::Reloader
-    Dir["#{root}/lib/**/*.rb"].each { |f| also_reload f }
-  end
-
   configure :production do
     sprockets.css_compressor = YUI::CssCompressor.new
     sprockets.js_compressor  = YUI::JavaScriptCompressor.new munge: true
