@@ -13,6 +13,6 @@ $(function() {
     .delay(4500)
     .prependTo($('body'))
     .animate({
-      'margin-top': '1em'
-    }, 200);
+      'margin-top': '+60px'
+    }, 600, 'easeOutBounce');
 });
