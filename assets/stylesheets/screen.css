@@ -24,11 +24,12 @@ a {
   font-size: 72px;
   line-height: 1.5;
   text-align: center;
-  transform:rotate(-3deg);
-  -ms-transform:rotate(-3deg); /* IE 9 */
-  -moz-transform:rotate(-3deg); /* Firefox */
-  -webkit-transform:rotate(-3deg); /* Safari and Chrome */
-  -o-transform:rotate(-3deg); /* Opera */
+  text-shadow: 5px 5px 10px #333;
+  -webkit-transform: rotate(-3deg);
+     -moz-transform: rotate(-3deg);
+      -ms-transform: rotate(-3deg);
+       -o-transform: rotate(-3deg);
+          transform: rotate(-3deg);
 }
 
 .pollo {
