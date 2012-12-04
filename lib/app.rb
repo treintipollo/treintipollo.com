@@ -28,6 +28,11 @@ class App < Sinatra::Base
     erb :index
   end
 
+  get '/games/:game' do
+    @game = params['game']
+    erb :game
+  end
+
   not_found do
     redirect '/'
   end
