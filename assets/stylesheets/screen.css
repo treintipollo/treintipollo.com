@@ -1,17 +1,44 @@
-@import url(http://fonts.googleapis.com/css?family=Londrina+Sketch);
+@import url(http://fonts.googleapis.com/css?family=Press+Start+2P);
 
 body {
-  background: #eee;
+  background: #222;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 21;
+  line-height: 2;
 }
 
-hgroup {
-  position: absolute;
-  top: 25%;
-  width: 100%;
+a {
+  color: #ccc;
+}
+
+.container {
+  margin: 0 auto;
+  max-width: 630px;
+}
+
+.title {
+  margin-top: -1em;
+  margin-bottom: 30px;
+  background: #000;
+  color: #fff;
+  font-size: 72px;
+  line-height: 1.5;
   text-align: center;
+  transform:rotate(-3deg);
+  -ms-transform:rotate(-3deg); /* IE 9 */
+  -moz-transform:rotate(-3deg); /* Firefox */
+  -webkit-transform:rotate(-3deg); /* Safari and Chrome */
+  -o-transform:rotate(-3deg); /* Opera */
 }
 
-h1 {
-  display: inline;
-  font: bold 180px 'Londrina Sketch';
+.pollo {
+  padding-top: 10px;
+  padding-right: 5px;
+  height: 58px;
+  width: 120px;
+}
+
+.games {
+  list-style-type: none;
+  text-align: center;
 }
