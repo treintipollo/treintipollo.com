@@ -1,0 +1,43 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Space Shooting Game Prototype</title>
+  <link rel="stylesheet" href="tirador/styles/main.css" />
+</head>
+<body>
+  <header>
+    <h1>Space Shooting Game Prototype</h1>
+  </header>
+
+  <div>
+    <h2>Arrow Keys to Move, Space to Shoot</h2>
+    <canvas id="game" width="600" height="800">
+      Sorry, your web browser does not support Canvas content.
+    </canvas>
+  </div>
+
+  <script src="tirador/libs/jquery-1.8.3.min.js"></script>
+  <script src="tirador/libs/TweenMax.js"></script>
+  <script src="tirador/libs/BezierPlugin.js"></script>
+
+  <script src="tirador/scripts/Utils/Random.js"></script>
+  <script src="tirador/scripts/Utils/Inheritance.js"></script>
+  <script src="tirador/scripts/Utils/Bezier.js"></script>
+  <script src="tirador/scripts/Utils/Destroy.js"></script>
+
+  <script src="tirador/scripts/Core/GameObject.js"></script>
+  <script src="tirador/scripts/Core/ObjectsContainer.js"></script>
+
+  <script src="tirador/scripts/Input/ArrowKeyHandler.js"></script>
+
+  <script src="tirador/scripts/GameObjects/Star.js"></script>
+  <script src="tirador/scripts/GameObjects/Ship.js"></script>
+  <script src="tirador/scripts/GameObjects/Rocket.js"></script>
+  <script src="tirador/scripts/GameObjects/Explosion.js"></script>
+  <script src="tirador/scripts/GameObjects/Target.js"></script>
+
+  <script src="tirador/scripts/GameObjects/Helpers/Exhaust.js"></script>
+
+  <script src="tirador/scripts/main.js"></script>
+</body>
+</html>

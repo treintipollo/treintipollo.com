@@ -1,0 +1,43 @@
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Space Shooting Game Prototype</title>
+	<link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+	<header>
+		<h1>Space Shooting Game Prototype</h1>
+	</header>
+
+	<div>
+		<h2>Arrow Keys to Move, Space to Shoot</h2>
+		<canvas id="game" width="600" height="800">
+			Sorry, your web browser does not support Canvas content.
+		</canvas>		
+	</div>
+	
+	<script src="libs/jquery-1.8.3.min.js"></script>
+	<script src="libs/TweenMax.js"></script>
+	<script src="libs/BezierPlugin.js"></script>
+
+	<script src="scripts/Utils/Random.js"></script>
+	<script src="scripts/Utils/Inheritance.js"></script>
+	<script src="scripts/Utils/Bezier.js"></script>
+	<script src="scripts/Utils/Destroy.js"></script>
+
+	<script src="scripts/Core/GameObject.js"></script>
+	<script src="scripts/Core/ObjectsContainer.js"></script>
+	
+	<script src="scripts/Input/ArrowKeyHandler.js"></script>
+
+	<script src="scripts/GameObjects/Star.js"></script>
+	<script src="scripts/GameObjects/Ship.js"></script>
+	<script src="scripts/GameObjects/Rocket.js"></script>
+	<script src="scripts/GameObjects/Explosion.js"></script>
+	<script src="scripts/GameObjects/Target.js"></script>
+
+	<script src="scripts/GameObjects/Helpers/Exhaust.js"></script>
+
+	<script src="scripts/main.js"></script>
+</body>
+</html>
