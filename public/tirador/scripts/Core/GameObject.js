@@ -34,7 +34,7 @@ GameObject.prototype.removeAllCallbacks = function() {
 		return;
 	}
 
-	this.onDestroy.lenght = 0;
+	this.onDestroy.length = 0;
 }
 
 GameObject.prototype.executeDestroyCallbacks = function() {
