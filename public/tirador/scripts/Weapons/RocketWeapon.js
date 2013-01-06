@@ -119,6 +119,6 @@ RocketWeapon.prototype.createInstructions = function() {
 	
 	var instructions = document.createElement("h2");
 	instructions.id = "shotInstructions";
-	instructions.innerHTML = "Keep pressed to AIM. ALT to reset AIM." + " Weapon Level: " + level;
+	instructions.innerHTML = "Keep pressed to AIM. ALT to reset AIM." + " Weapon Level: " + this.level;
 	$("#main").append(instructions);
 }
