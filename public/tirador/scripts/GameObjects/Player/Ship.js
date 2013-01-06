@@ -206,10 +206,6 @@ Ship.prototype.onCollide = function(other){
 	else{
 		this.container.add(new PowerUpText(this.x, this.y, "POWER DOWN", "Russo One", 20, "#FFFFFF", "#777777", null, "center", "middle"));
 		this.weapon.powerDown();
-
-
-		TweenMax.to(this,0.2,{repeat:2, y:this.y+(1+Math.random()*2), x:this.x+(1+Math.random()*2), delay:0.1, ease:Expo.easeInOut});
- 	    TweenMax.to(this,0.2,{y:this.y+(Math.random()*0), x:this.x+(Math.random()*0), delay:0.3, ease:Expo.easeInOut});
 	}
 
 }
