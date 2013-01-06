@@ -1,8 +1,14 @@
 function ObjectsContainer(drawContext) {
-	this.mainObjects  = [];
-	this.buffer		  = [];
-	
+	this.mainObjects    = [];
+
+	this.collisionLists = {};
+	this.toCollideCache	= {};
+
 	this.drawContext  = drawContext;
+
+	this.collisionList;
+	this.collisionOpponent;
+	this.collisionId;
 }
 
 ObjectsContainer.prototype.draw = function() {
@@ -26,18 +32,8 @@ ObjectsContainer.prototype.draw = function() {
 }
 
 ObjectsContainer.prototype.update = function() {
-	var i, j;
-	var a;
-
-	for (i=0; i<this.buffer.length; i++){
-		a = this.buffer[i];
-
-		if(a != null && a.length > 0){
-			this.mainObjects[i] = this.mainObjects[i].concat(a);
-			a.length = 0;
-		}
-	}
-
+	var i, j, k, a;
+	
 	for (i=0; i<this.mainObjects.length; i++){
 		a = this.mainObjects[i];
 
@@ -47,10 +43,46 @@ ObjectsContainer.prototype.update = function() {
 
 				if(object.alive){
 					object.update();
+
+					if(object.checkingCollisions){
+						this.collisionId = object.getCollisionId();
+
+						if(this.collisionId != "NONE"){
+							this.collisionList = this.collisionLists[this.collisionId];
+
+							if(this.collisionList != null){
+								for(k=0; k<this.collisionList.length; k++){
+									this.collisionOpponent = this.collisionList[k];
+
+									if(this.collisionOpponent.alive){
+										if(this.areColliding(object, this.collisionOpponent)){
+											object.onCollide(this.collisionOpponent);	
+											this.collisionOpponent.onCollide(object);
+										}
+									}
+								}	
+							}
+						}
+					}
+
 				}else{
 					
 					if(object.destroyMode == GameObject.EXECUTE_CALLBACKS){
 						object.executeDestroyCallbacks();
+					}
+
+					if(object.checkingCollisions){
+						this.collisionId = object.getCollisionId();
+
+						if(this.collisionId != "NONE"){
+							var indexes = this.toCollideCache[this.collisionId];
+
+							if(indexes != null && indexes.length > 0){
+								for(var i=0; i<indexes.length; i++){
+									this.collisionLists[indexes[i]].splice(this.collisionLists[indexes[i]].indexOf(object), 1);
+								}
+							}
+						}
 					}
 
 					object.destroy();
@@ -63,15 +95,67 @@ ObjectsContainer.prototype.update = function() {
 	}
 }
 
-ObjectsContainer.prototype.add = function(object, layer) {
+ObjectsContainer.prototype.add = function(object, layer, checkCollision) {
 	layer = typeof layer !== 'undefined' ? layer : 0;
+	checkCollision = typeof layer !== 'undefined' ? checkCollision : false;
 
-	if(this.buffer[layer] == null){
-		this.buffer[layer] = [];
+	if(this.mainObjects[layer] == null){
 		this.mainObjects[layer] = [];			
 	}
 
-	this.buffer[layer].push(object);
+	this.mainObjects[layer].push(object);
+
+	object.checkingCollisions = checkCollision;
+
+	if(object.checkingCollisions){
+		this.collisionId = object.getCollisionId();
+
+		if(this.collisionId == "NONE")
+			return;
+
+		var indexes = this.toCollideCache[this.collisionId];
+
+		if(indexes != null && indexes.length > 0){
+			for(var i=0; i<indexes.length; i++){
+				this.collisionLists[indexes[i]].push(object);
+			}
+		}
+	}
+}
+
+ObjectsContainer.prototype.addCollisionPair = function (first, second) {	
+	if(this.collisionLists[first] == null){
+		this.collisionLists[first] = [];
+	}
+
+	if(this.toCollideCache[second] == null){
+		this.toCollideCache[second] = [];
+	}
+
+	this.toCollideCache[second].push(first);
+}
+
+ObjectsContainer.prototype.areColliding = function (first, second) {	
+	var firstColliderType  = first.getColliderType();
+	var secondColliderType = second.getColliderType();
+
+	if(firstColliderType == secondColliderType){
+		if(firstColliderType == GameObject.CIRCLE_COLLIDER){
+			return SAT.testCircleCircle(first.getCollider(), second.getCollider());
+		}
+		if(firstColliderType == GameObject.POLYGON_COLLIDER){
+			return SAT.testPolygonPolygon(first.getCollider(), second.getCollider());
+		}	
+	}else{
+		if(firstColliderType == GameObject.CIRCLE_COLLIDER){
+			return SAT.testPolygonCircle(second.getCollider(), first.getCollider());
+		}
+		if(firstColliderType == GameObject.POLYGON_COLLIDER){	
+			return SAT.testPolygonCircle(first.getCollider(), second.getCollider());
+		}
+	}
+
+	return false;	
 }
 
 ObjectsContainer.prototype.clearCanvas = function(context) {

@@ -1,18 +1,25 @@
-
 function GameObject() {
 	this.x 		  = 0;
 	this.y 		  = 0;
 	this.centerX  = 0;
 	this.centerY  = 0;
 	this.rotation = 0;
-	this.alive	  = true;
+
 	this.onDestroy;
+
+	this.alive = true;
+	this.checkingCollisions;
 
 	this.destroyMode = GameObject.EXECUTE_CALLBACKS;
 };
 
 GameObject.EXECUTE_CALLBACKS = 0;
 GameObject.NO_CALLBACKS      = 1;
+
+GameObject.prototype.setDestroyMode = function(mode) {
+	this.destroyMode = mode;
+	this.alive 		 = false;
+}
 
 GameObject.prototype.addOnDestroyCallback = function(scope, callback) {
 	if(this.onDestroy == null){
@@ -66,12 +73,15 @@ GameObject.prototype.setFills = function(context) {}
 
 GameObject.prototype.draw    = function(context) {}
 GameObject.prototype.update  = function() {}
-
-GameObject.prototype.setDestroyMode = function(mode) {
-	this.destroyMode = mode;
-	this.alive 		 = false;
-}
-
 GameObject.prototype.destroy = function() {}
 
+GameObject.CIRCLE_COLLIDER  = 1;
+GameObject.POLYGON_COLLIDER = 2;
+
+GameObject.prototype.onCollide = function(other){}
+GameObject.prototype.getColliderType = function(){}
+GameObject.prototype.getCollider = function(){}
+GameObject.prototype.getCollisionId = function(){
+	return "NONE";
+}
 
