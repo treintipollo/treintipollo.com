@@ -35,7 +35,11 @@ $(function(){
 
 	snakeGame.canvas  = document.getElementById("game");
 	snakeGame.context = snakeGame.canvas.getContext("2d");
-	
+
+  var $win = $(window);
+  snakeGame.canvas.height = $win.height();
+  snakeGame.canvas.width = $win.width();
+
 	snakeGame.container = new ObjectsContainer(snakeGame.context);
 
 	snakeGame.container.addCollisionPair("Ship", "EnemyRocket");
