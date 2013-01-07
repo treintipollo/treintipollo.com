@@ -19,9 +19,27 @@ var snakeGame = {
 //TODO: Pasarle un delta time a todas las cosas
 
 $(function(){
+  var stats = new Stats();
+
+  // Align top-left
+  stats.domElement.style.position = 'absolute';
+  stats.domElement.style.left = '0px';
+  stats.domElement.style.top = '0px';
+
+  document.body.appendChild(stats.domElement);
+
+  setInterval( function () {
+    stats.begin();
+    stats.end();
+  }, 1000 / 60 );
+
 	snakeGame.canvas  = document.getElementById("game");
 	snakeGame.context = snakeGame.canvas.getContext("2d");
-	
+
+  var $win = $(window);
+  snakeGame.canvas.height = $win.height();
+  snakeGame.canvas.width = $win.width();
+
 	snakeGame.container = new ObjectsContainer(snakeGame.context);
 
 	snakeGame.container.addCollisionPair("Ship", "EnemyRocket");
