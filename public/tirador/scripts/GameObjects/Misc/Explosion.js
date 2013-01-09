@@ -1,4 +1,10 @@
-function Explosion(x, y, angle, size, destroySpeed) {
+function Explosion() {
+	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 0);
+};
+
+Explosion.inheritsFrom( GameObject );
+
+Explosion.prototype.init = function(x, y, angle, size, destroySpeed) {
 	this.x 	    	 = x;
 	this.y 	    	 = y;
 	this.radius 	 = size;
@@ -9,13 +15,8 @@ function Explosion(x, y, angle, size, destroySpeed) {
 	this.innerRadiusDirY = Math.sin(angle * (Math.PI/180));
 
 	this.gradient = null;
-
-	this.collider = new SAT.Circle(new SAT.Vector(0, 0), this.radius);
-};
-
-Explosion.inheritsFrom( GameObject );
-
-Explosion.prototype.setStyles = function(context) {}
+	this.collider.r = this.radius;
+}
 
 Explosion.prototype.draw = function(context) {
 	if(this.gradient == null){
@@ -39,10 +40,8 @@ Explosion.prototype.draw = function(context) {
 	context.closePath();
 }
 
-Explosion.prototype.setFills  = function(context) {}
-
-Explosion.prototype.update  = function() {
-	this.innerRadius += this.step;
+Explosion.prototype.update  = function(delta) {
+	this.innerRadius += this.step * (delta*50);
 
 	if(this.innerRadius >= this.radius){
 		this.alive = false;

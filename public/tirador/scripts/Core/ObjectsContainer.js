@@ -9,10 +9,13 @@ function ObjectsContainer(drawContext) {
 	this.collisionList;
 	this.collisionOpponent;
 	this.collisionId;
+
+	this.objectPools = {};
 }
 
 ObjectsContainer.prototype.draw = function() {
-	this.clearCanvas(this.drawContext);
+	this.drawContext.setTransform(1, 0, 0, 1, 0, 0);
+	this.drawContext.clearRect(0,0,this.drawContext.canvas.width,this.drawContext.canvas.height);
 
 	for (var i=this.mainObjects.length-1; i>=0; i--){
 		var a = this.mainObjects[i];
@@ -22,16 +25,14 @@ ObjectsContainer.prototype.draw = function() {
 				var object = a[j];
 
 				if(object.alive){
-					object.setStyles(this.drawContext);
-					object.transformAndDraw(this.drawContext, object.draw);
-					object.setFills(this.drawContext);
+					object.transformAndDraw(this.drawContext);
 				}				
 			}
 		}
 	}
 }
 
-ObjectsContainer.prototype.update = function() {
+ObjectsContainer.prototype.update = function(delta) {
 	var i, j, k, a;
 	
 	for (i=0; i<this.mainObjects.length; i++){
@@ -42,7 +43,7 @@ ObjectsContainer.prototype.update = function() {
 				var object = a[j];
 
 				if(object.alive){
-					object.update();
+					object.update(delta);
 
 					if(object.checkingCollisions){
 						this.collisionId = object.getCollisionId();
@@ -85,42 +86,62 @@ ObjectsContainer.prototype.update = function() {
 						}
 					}
 
-					object.destroy();
-					DestroyUtils.destroyAllProperties(object);
-					object = null;
+					object.clearGameObject();
+					
+					this.objectPools[object.poolId].push(object);
+
 					a.splice(j, 1);
+					object = null;
 				}				
 			}
 		}
 	}
 }
 
-ObjectsContainer.prototype.add = function(object, layer, checkCollision) {
-	layer = typeof layer !== 'undefined' ? layer : 0;
-	checkCollision = typeof layer !== 'undefined' ? checkCollision : false;
+ObjectsContainer.prototype.add = function(name, arguments, layer, checkCollision) {
+	//Default parameters
+	if(!layer){ layer = 0; }
+	if(!checkCollision){ checkCollision = false;}
 
+	//Create drawing layer if it doesn't exist
 	if(this.mainObjects[layer] == null){
 		this.mainObjects[layer] = [];			
 	}
 
-	this.mainObjects[layer].push(object);
+	//Do nothing if there is no object available in the pool I am looking in
+	if(this.objectPools[name].length <= 0){
+		return null;
+	}
 
-	object.checkingCollisions = checkCollision;
+	//Get one object from the pool
+	var pooledObject = this.objectPools[name].pop();
+	
+	//Add it to its rendering layer
+	this.mainObjects[layer].push(pooledObject);
 
-	if(object.checkingCollisions){
-		this.collisionId = object.getCollisionId();
+	//Initialize it with given arguments
+	pooledObject.init.apply(pooledObject, arguments);
+
+	//This sets if the object will check for collisions or not
+	pooledObject.checkingCollisions = checkCollision;
+
+	//Nasty logic to add an object to the corresponding collision checking lists
+	if(pooledObject.checkingCollisions){
+		this.collisionId = pooledObject.getCollisionId();
 
 		if(this.collisionId == "NONE")
-			return;
+			return null;
 
 		var indexes = this.toCollideCache[this.collisionId];
 
 		if(indexes != null && indexes.length > 0){
 			for(var i=0; i<indexes.length; i++){
-				this.collisionLists[indexes[i]].push(object);
+				this.collisionLists[indexes[i]].push(pooledObject);
 			}
 		}
 	}
+
+	return pooledObject;
 }
 
 ObjectsContainer.prototype.addCollisionPair = function (first, second) {	
@@ -156,11 +177,16 @@ ObjectsContainer.prototype.areColliding = function (first, second) {
 	}
 
 	return false;	
-}
-
-ObjectsContainer.prototype.clearCanvas = function(context) {
-	context.save();
-	context.setTransform(1, 0, 0, 1, 0, 0);
-	context.clearRect(0,0,context.canvas.width,context.canvas.height);
-	context.restore();
 }	
+
+ObjectsContainer.prototype.createTypePool = function(alias, type, amount) {
+	if(this.objectPools[alias] == null){
+		this.objectPools[alias] = [];
+	}
+
+	for(var i=0; i<amount; i++){
+		var o = new type();
+		o.poolId  = alias;
+		this.objectPools[alias].push(o);
+	}
+}

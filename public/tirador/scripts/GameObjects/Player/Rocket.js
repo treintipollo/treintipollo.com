@@ -1,37 +1,38 @@
-function Rocket(x, y, deploy, target, container) {
-	this.x = x; 
-	this.y = y;
-	this.container = container;
-	this.deploy = deploy;
-	this.target = target;
+Rocket.easeFunctions1 	  = [Power1.easeIn, Power1.easeOut, Power1.easeInOut];
+Rocket.easeFunctions2 	  = [Power2.easeIn, Power2.easeOut, Power2.easeInOut];
+Rocket.exhaustPoints  	  = [{ x:0, y:0 }, { x:0, y:0 }, { x:0, y:0 }, { x:0, y:0 }];
+Rocket.ExplosionArguments = [null, null, null, null, null];
 
-	this.mainDimentionX = 7.5;
-	this.mainDimentionY = this.mainDimentionX*2;
-
-	this.centerX = this.mainDimentionX/2;
-	this.centerY = this.mainDimentionY/2;
-
-	this.easeFunctions1 = [Power1.easeIn, Power1.easeOut, Power1.easeInOut];
-	this.easeFunctions2 = [Power2.easeIn, Power2.easeOut, Power2.easeInOut];
-
-	this.exhaustPoints = [];
-
-	this.exhaustPoints.push({ x:0, y:0 });
-	this.exhaustPoints.push({ x:0, y:0 });
-	this.exhaustPoints.push({ x:0, y:0 });
-	this.exhaustPoints.push({ x:0, y:0 });
-
+function Rocket() {
 	if (typeof Exhaust === "undefined") {
 		return;
 	}
 
-	this.exhaust = new Exhaust(this.getExhaustPoints, this.container);
+	this.mainDimentionX = 7.5;
+	this.mainDimentionY = this.mainDimentionX*2;
+
+	this.centerX  = this.mainDimentionX/2;
+	this.centerY  = this.mainDimentionY/2;
+
+	this.exhaust = new Exhaust(this.getExhaustPoints, this);
+	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 10);
+}
+
+Rocket.inheritsFrom( GameObject );
+
+Rocket.prototype.init = function(x, y, deploy, target, container) {
+	this.x 		   = x; 
+	this.y 		   = y;
+	this.container = container;
+	this.deploy    = deploy;
+	this.target    = target;
+	this.rotation  = 0;
 
 	var inst = this;
 	var pointsToTarget = [];
 
-	TweenMax.to(inst, 0.4, {x:inst.deploy.x, ease:inst.easeFunctions1[Random.getRandomInt(0, inst.easeFunctions1.length)]});
-	TweenMax.to(inst, 0.4, {y:inst.deploy.y, ease:inst.easeFunctions2[Random.getRandomInt(0, inst.easeFunctions2.length)], onComplete:function(){
+	TweenMax.to(inst, 0.4, {x:inst.deploy.x, ease:Rocket.easeFunctions1[Random.getRandomInt(0, Rocket.easeFunctions1.length)]});
+	TweenMax.to(inst, 0.4, {y:inst.deploy.y, ease:Rocket.easeFunctions2[Random.getRandomInt(0, Rocket.easeFunctions2.length)], onComplete:function(){
 		var info = inst.getVectorInfo(inst.x, inst.y, inst.target.x, inst.target.y); 
 
 		var secondAnchorX = inst.x+info.dir.x*info.distance/3 + (info.perp.x*Random.getRandomArbitary(-info.distance/10, info.distance/10));
@@ -57,12 +58,9 @@ function Rocket(x, y, deploy, target, container) {
 		}}); 
 	}});
 
+	this.exhaust.init(this.container);
 	this.exhaust.slowDown();
-
-	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 10);
 }
-
-Rocket.inheritsFrom( GameObject );
 
 Rocket.prototype.getVectorInfo = function(x1, y1, x2, y2) {
 	var xd 		  	  = x2-x1;
@@ -100,26 +98,24 @@ Rocket.prototype.getExhaustPoints = function(side, type) {
 	var x = this.x + this.centerX;
 	var y = this.y + this.centerY;
 
-	this.exhaustPoints[0].x = x + cos * r;
-	this.exhaustPoints[0].y = y + sin * r;
+	Rocket.exhaustPoints[0].x = x + cos * r;
+	Rocket.exhaustPoints[0].y = y + sin * r;
 
-	this.exhaustPoints[1].x = x + cosPerp * r * 2/divide;
-	this.exhaustPoints[1].y = y + sinPerp * r * 2/divide;
+	Rocket.exhaustPoints[1].x = x + cosPerp * r * 2/divide;
+	Rocket.exhaustPoints[1].y = y + sinPerp * r * 2/divide;
 
-	this.exhaustPoints[2].x = x + cos  * r * 3/divide;
-	this.exhaustPoints[2].y = y + sin  * r * 3/divide;
+	Rocket.exhaustPoints[2].x = x + cos  * r * 3/divide;
+	Rocket.exhaustPoints[2].y = y + sin  * r * 3/divide;
 
-	this.exhaustPoints[3].x = x + cos  * r * 4/divide;
-	this.exhaustPoints[3].y = y + sin  * r * 4/divide;
+	Rocket.exhaustPoints[3].x = x + cos  * r * 4/divide;
+	Rocket.exhaustPoints[3].y = y + sin  * r * 4/divide;
 
-	return this.exhaustPoints;
-}
-
-Rocket.prototype.setStyles = function(context) {
-	context.strokeStyle = "#FFFFFF";
+	return Rocket.exhaustPoints;
 }
 
 Rocket.prototype.draw   = function(context) {
+	context.strokeStyle = "#FFFFFF";
+	
 	context.beginPath();
 	context.rect(0, 0, this.mainDimentionX, this.mainDimentionY);	
 	
@@ -130,18 +126,22 @@ Rocket.prototype.draw   = function(context) {
 	context.lineTo(this.mainDimentionX, 0);
 
 	context.closePath();
-}
 
-Rocket.prototype.setFills = function(context) {
 	context.stroke();
 }
 
 Rocket.prototype.update = function() {
-	this.exhaust.update(this);	
+	this.exhaust.update();	
 }
 
 Rocket.prototype.destroy = function() {
-	this.container.add(new Explosion(this.x + this.centerX, this.y + this.centerY, this.rotation+90, 30, 100), 0, true);
+	Rocket.ExplosionArguments[0] = this.x + this.centerX;
+	Rocket.ExplosionArguments[1] = this.y + this.centerY;
+	Rocket.ExplosionArguments[2] = this.rotation+90;
+	Rocket.ExplosionArguments[3] = 30;
+	Rocket.ExplosionArguments[4] = 100;
+
+	this.container.add("Explosion", Rocket.ExplosionArguments, 0, true);
 
 	this.exhaust.destroy();
 	TweenMax.killTweensOf(this);
@@ -167,7 +167,7 @@ Rocket.prototype.onCollide = function(other){
 }
 
 function LargeRocket() {
-	Rocket.apply(this, arguments);
+	Rocket.call(this);
 
 	this.mainDimentionX = 8.5;
 	this.mainDimentionY = this.mainDimentionX*2 + 3;
@@ -178,10 +178,16 @@ function LargeRocket() {
 
 LargeRocket.inheritsFrom( Rocket );
 
+LargeRocket.prototype.init = function(x, y, deploy, target, container) {
+	this.parent.init.call(this, x, y, deploy, target, container);
+}
+
 LargeRocket.prototype.draw = function(context) {
+	context.strokeStyle = "#FFFFFF";
+
 	context.beginPath();
 	context.rect(0, 0, this.mainDimentionX, this.mainDimentionY);	
-	
+
 	context.rect(this.mainDimentionX/2 - this.mainDimentionX/4, this.mainDimentionY, this.mainDimentionX/2, this.mainDimentionX/2);
 
 	context.moveTo(0, 0);
@@ -197,30 +203,43 @@ LargeRocket.prototype.draw = function(context) {
 	context.lineTo(this.mainDimentionX, this.mainDimentionY/2+5);
 
 	context.closePath();
+
+	context.stroke();
 }
 
 LargeRocket.prototype.destroy = function() {
-	this.container.add(new Explosion(this.x + this.centerX, this.y + this.centerY, this.rotation+90, 45, 220), 2, true);
+	Rocket.ExplosionArguments[0] = this.x + this.centerX;
+	Rocket.ExplosionArguments[1] = this.y + this.centerY;
+	Rocket.ExplosionArguments[2] = this.rotation+90;
+	Rocket.ExplosionArguments[3] = 45;
+	Rocket.ExplosionArguments[4] = 220;
+
+	this.container.add("Explosion", Rocket.ExplosionArguments, 0, true);
 
 	this.exhaust.destroy();
 	TweenMax.killTweensOf(this);
 }
 
-function ClusterRocket(x, y, deploy, target, container, debryCount) {
-	Rocket.apply(this, arguments);
+function ClusterRocket() {
+	Rocket.call(this);
 
 	this.mainDimentionX = 12;
 	this.mainDimentionY = 12;
 
 	this.centerX = this.mainDimentionX/2;
-	this.centerY = this.mainDimentionY/2;
-
-	this.debryCount = debryCount;
+	this.centerY = this.mainDimentionY/2;	
 }
 
 ClusterRocket.inheritsFrom( Rocket );
 
+ClusterRocket.prototype.init = function(x, y, deploy, target, container, debryCount) {
+	this.parent.init.call(this, x, y, deploy, target, container);
+	this.debryCount = debryCount;
+}
+
 ClusterRocket.prototype.draw = function(context) {
+	context.strokeStyle = "#FFFFFF";
+
 	context.beginPath();
 	context.rect(0, 0, this.mainDimentionX, this.mainDimentionY);	
 	
@@ -232,13 +251,25 @@ ClusterRocket.prototype.draw = function(context) {
 	context.lineTo(12, 0);
 
 	context.closePath();
+
+	context.stroke();
 }
 
 ClusterRocket.prototype.destroy = function() {
-	this.container.add(new Explosion(this.x + this.centerX, this.y + this.centerY, this.rotation+90, 35, 150), 2, true);
+	Rocket.ExplosionArguments[0] = this.x + this.centerX;
+	Rocket.ExplosionArguments[1] = this.y + this.centerY;
+	Rocket.ExplosionArguments[2] = this.rotation+90;
+	Rocket.ExplosionArguments[3] = 35;
+	Rocket.ExplosionArguments[4] = 150;
+
+	this.container.add("Explosion", Rocket.ExplosionArguments, 0, true);
 
 	for(var i=0; i<this.debryCount; i++){
-		this.container.add(new Debry(this.x, this.y, this.container), 2, true);	
+		Rocket.ExplosionArguments[0] = this.x;
+		Rocket.ExplosionArguments[1] = this.y;
+		Rocket.ExplosionArguments[2] = this.container;
+
+		this.container.add("Debry" , Rocket.ExplosionArguments, 2, true);	
 	}
 
 	this.exhaust.destroy();

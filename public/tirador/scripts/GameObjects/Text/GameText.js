@@ -1,4 +1,8 @@
-function GameText(x, y, text, font, size, fillColor, strokeColor, lineWidth, align, baseline) {
+function GameText() {};
+
+GameText.inheritsFrom( GameObject );
+
+GameText.prototype.init  = function(x, y, text, font, size, fillColor, strokeColor, lineWidth, align, baseline) {
 	this.fill   = fillColor ? true : false;
 	this.stroke = strokeColor ? true : false;
 
@@ -14,12 +18,9 @@ function GameText(x, y, text, font, size, fillColor, strokeColor, lineWidth, ali
 
 	this.text = text;
 	this.font = size + "px" + " " + font;
-};
-
-GameText.inheritsFrom( GameObject );
+}
 
 GameText.prototype.draw  = function(context) {	
-	
 	context.font 		 = this.font;
     context.textBaseline = this.baseline;
 	context.textAlign 	 = this.align;
@@ -36,8 +37,17 @@ GameText.prototype.draw  = function(context) {
 	}
 }
 
-function PowerUpText(x, y, text, font, size, fillColor, strokeColor, align, baseline) {
-	GameText.apply(this, arguments);
+function PowerUpText() {}
+
+PowerUpText.UpArguments      = [null ,null ,"POWER UP!", "Russo One", 20, "#FFFFFF", "#FFFF00", null, "center", "middle"];
+PowerUpText.DownArguments    = [null ,null ,"POWER DOWN", "Russo One", 20, "#FFFFFF", "#777777", null, "center", "middle"];
+PowerUpText.ShotArguments    = [null ,null ,"SHOT!", "Russo One", 20, "#FFFFFF", "#FF0000", null, "center", "middle"];
+PowerUpText.RocketsArguments = [null ,null ,"ROCKETS!", "Russo One", 20, "#FFFFFF", "#0000FF", null, "center", "middle"];
+
+PowerUpText.inheritsFrom( GameText );
+
+PowerUpText.prototype.init = function(x, y, text, font, size, fillColor, strokeColor, lineWidth, align, baseline) {
+	this.parent.init.call(this, x, y, text, font, size, fillColor, strokeColor, lineWidth, align, baseline);
 
 	this.y -= 40;
 
@@ -47,6 +57,4 @@ function PowerUpText(x, y, text, font, size, fillColor, strokeColor, align, base
 		inst.alive = false;
 	}});
 }
-
-PowerUpText.inheritsFrom( GameText );
 

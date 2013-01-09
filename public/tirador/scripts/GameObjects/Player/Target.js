@@ -1,14 +1,12 @@
-function Target(parentShip) {
-	this.p = parentShip;
-	this.locked = false;
-	this.lockX = 0;
-	this.lockY = -600;
-};
+function Target() {};
 
 Target.inheritsFrom( GameObject );
 
-Target.prototype.setStyles = function(context) {
-		
+Target.prototype.init = function(parentShip) {
+	this.p 		= parentShip;
+	this.locked = false;
+	this.lockX  = 0;
+	this.lockY  = 0;
 }
 
 Target.prototype.draw = function(context) {
@@ -38,9 +36,7 @@ Target.prototype.draw = function(context) {
 	context.stroke();
 }
 
-Target.prototype.setFills  = function(context) {}
-
-Target.prototype.update  = function() {
+Target.prototype.update  = function(delta) {
 	if(!this.locked){
 		this.x = this.p.x + this.lockX;
 		this.y = this.p.y + this.lockY;
@@ -62,5 +58,5 @@ Target.prototype.unlock  = function() {
 
 Target.prototype.reset  = function() {
 	this.lockX = 0;
-	this.lockY = -600;
+	this.lockY = -400;
 }

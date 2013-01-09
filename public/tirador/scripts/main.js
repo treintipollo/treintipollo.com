@@ -1,89 +1,118 @@
-var snakeGame = {
+var TopLevel = {
 	canvas: null,
 	context: null,
-	container:null
+	container:null,
+	lastUpdate: Date.now(),
+	focus: true,
+	blur: true,
+	tweensTimeLine: null
 };
+window.TopLevel = TopLevel;
 
-//TODO: Bajar el nivel del arma de player cuando colisiona.
-	//Mover la nave y algun texto.
+//TODO: Ship emoticon
 
-//TODO: Emoticones de la nave
+//TODO: Global ObjectContainer, it's stupid to pass that reference around every where.
 
-//TODO: Los GameObjects tienen que poder agregarse solos al manager para no andar pasando 
-//esa referencia por todas partes.
-//TODO: GameObject especial que tenga el comportamiento de destruir Tweens cuando se destruye o resetea.
-
-//TODO: Boss con brazos moviles como lo que dibuje.
-
-//TODO: Sacar los metodos setStyle y setFill de GameObject porque son al pedo.
-//TODO: Pasarle un delta time a todas las cosas
+//TODO: A Cool Boss.
 
 $(function(){
-  var stats = new Stats();
+	TopLevel.canvas    = document.getElementById("game");
+	TopLevel.context   = TopLevel.canvas.getContext("2d");
+	TopLevel.container = new ObjectsContainer(TopLevel.context);
 
-  // Align top-left
-  stats.domElement.style.position = 'absolute';
-  stats.domElement.style.left = '0px';
-  stats.domElement.style.top = '0px';
+	TopLevel.container.createTypePool("Star"              , Star, 30);
+	TopLevel.container.createTypePool("Ship"              , Ship, 1);
+	TopLevel.container.createTypePool("ExhaustParticle"   , ExhaustParticle, 100);
+	TopLevel.container.createTypePool("ShotChargeParticle", ShotChargeParticle, 40);
+	TopLevel.container.createTypePool("Shot"              , Shot, 40);
+	TopLevel.container.createTypePool("PowerShot"         , PowerShot, 1);
+	TopLevel.container.createTypePool("PowerShotSine"     , PowerShotSine, 2);
+	TopLevel.container.createTypePool("PowerShotCircle"   , PowerShotCircle, 3);
+	TopLevel.container.createTypePool("Target"            , Target, 1);
+	TopLevel.container.createTypePool("Explosion"         , Explosion, 50);
+	TopLevel.container.createTypePool("Debry"             , Debry, 40);
+	TopLevel.container.createTypePool("WeaponPowerUp"     , WeaponPowerUp, 1);
+	TopLevel.container.createTypePool("PowerUpText"       , PowerUpText, 5);
+	TopLevel.container.createTypePool("Rocket"            , Rocket, 10);
+	TopLevel.container.createTypePool("LargeRocket"       , LargeRocket, 10);
+	TopLevel.container.createTypePool("ClusterRocket"     , ClusterRocket, 10);
+	TopLevel.container.createTypePool("EnemyRocket"       , EnemyRocket, 10);
+	
+	TopLevel.container.addCollisionPair("Ship"     , "EnemyRocket");
+	TopLevel.container.addCollisionPair("Ship"     , "WeaponPowerUp");
+	TopLevel.container.addCollisionPair("Shot"     , "EnemyRocket");
+	TopLevel.container.addCollisionPair("PowerShot", "EnemyRocket");
+	TopLevel.container.addCollisionPair("Rocket"   , "EnemyRocket");
+	TopLevel.container.addCollisionPair("Explosion", "EnemyRocket");
+	TopLevel.container.addCollisionPair("Debry"    , "EnemyRocket");
 
-  document.body.appendChild(stats.domElement);
-
-  setInterval( function () {
-    stats.begin();
-    stats.end();
-  }, 1000 / 60 );
-
-	snakeGame.canvas  = document.getElementById("game");
-	snakeGame.context = snakeGame.canvas.getContext("2d");
-
-  var $win = $(window);
-  snakeGame.canvas.height = $win.height();
-  snakeGame.canvas.width = $win.width();
-
-	snakeGame.container = new ObjectsContainer(snakeGame.context);
-
-	snakeGame.container.addCollisionPair("Ship", "EnemyRocket");
-	snakeGame.container.addCollisionPair("Ship", "WeaponPowerUp");
-
-	snakeGame.container.addCollisionPair("Shot"     , "EnemyRocket");
-	snakeGame.container.addCollisionPair("PowerShot", "EnemyRocket");
-	snakeGame.container.addCollisionPair("Rocket"   , "EnemyRocket");
-	snakeGame.container.addCollisionPair("Explosion", "EnemyRocket");
-	snakeGame.container.addCollisionPair("Debry"    , "EnemyRocket");
-
-	var starFactory = new StartFactory(snakeGame.canvas.width, snakeGame.canvas.height, 5, 600, 1, snakeGame.container);
-	var rocketFactory = new EnemyRocketFactory(snakeGame.canvas.width, snakeGame.canvas.height, 4, 7, 800, snakeGame.container, 10);
-
-	var ship = new Ship(snakeGame.container);
-
-	ship.x = snakeGame.canvas.width/2;
-	ship.y = snakeGame.canvas.height - 100;
-
-	snakeGame.container.add(ship, 0, true);
+	var starFactory = new StartFactory(TopLevel.canvas.width, TopLevel.canvas.height, 50, 200, 600, 1, TopLevel.container);
 	starFactory.start();
+
+	var rocketFactory = new EnemyRocketFactory(TopLevel.canvas.width, TopLevel.canvas.height, 200, 500, 800, TopLevel.container, 10);
 	rocketFactory.start();
 
-	 window.requestAnimationFrame = (function(){
-      return  window.requestAnimationFrame       || 
-              window.webkitRequestAnimationFrame || 
-              window.mozRequestAnimationFrame    || 
-              window.oRequestAnimationFrame      || 
-              window.msRequestAnimationFrame     || 
-              function(callback,  element){
-                window.setTimeout(callback, 1000 / 60);
-              };
-    })();
+	TopLevel.container.add("Ship", [TopLevel.canvas.width/2, TopLevel.canvas.height - 100, TopLevel.container], 0, true);
 
-	window.requestAnimationFrame = requestAnimationFrame;
-	window.requestAnimationFrame(mainLoop);
+	var frameRequest;
+	
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame){
+        window.requestAnimationFrame = function(callback) {
+            return window.setTimeout(callback, 1000 / 60);;
+        };
+    }
+ 
+    if (!window.cancelAnimationFrame){
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+    }
+
+	frameRequest = window.requestAnimationFrame(mainLoop);
+
+	function mainLoop() {
+		var now = Date.now();
+		var dt = now - TopLevel.lastUpdate;
+		TopLevel.lastUpdate = now;
+
+		if(dt < 30){
+			TopLevel.container.draw();
+			TopLevel.container.update(dt/1000);
+		}
+		
+		frameRequest = window.requestAnimationFrame(mainLoop);
+	}
+
+	$(window).on("blur", function(event) {
+		
+		if(TopLevel.blur){
+			TopLevel.blur = false;
+			TopLevel.focus = true;
+
+			TimeOutFactory.pauseAllTimeOuts();
+			
+			TopLevel.tweensTimeLine = TimelineLite.exportRoot();
+			TopLevel.tweensTimeLine.pause();
+
+			window.cancelAnimationFrame(frameRequest);
+		}
+		
+	});
+
+	$(window).on("focus", function(event) {
+		if(TopLevel.focus){
+			TopLevel.blur = true;
+			TopLevel.focus = false;
+
+			TimeOutFactory.resumeAllTimeOuts();
+			TopLevel.tweensTimeLine.resume();
+			frameRequest = window.requestAnimationFrame(mainLoop);
+		}
+	});
 });
-
-
-function mainLoop() {
-	window.requestAnimationFrame(mainLoop);
-
-	snakeGame.container.update();
-	snakeGame.container.draw();
-}
-
-

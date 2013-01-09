@@ -1,19 +1,19 @@
 function Shot(x, y, big) {
-	this.x     = x;
-	this.y     = y; 
-	this.big   = big;
-	this.speed = 7;
-
+	this.speed = 350;
 	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 10);
 }
 
 Shot.inheritsFrom( GameObject );
 
-Shot.prototype.setStyles = function(context) { 	
-	context.strokeStyle = "#FFFFFF";
-}
+Shot.prototype.init = function(x, y, big) {
+	this.x     = x;
+	this.y     = y; 
+	this.big   = big;
+}	
 
 Shot.prototype.draw = function(context) { 	
+	context.strokeStyle = "#FFFFFF";
+
 	context.beginPath();
 	
 	if(this.big){
@@ -29,14 +29,12 @@ Shot.prototype.draw = function(context) {
 	}
 	
 	context.closePath();	
-}
-
-Shot.prototype.setFills = function(context) { 	
+	
 	context.stroke();
 }
 
-Shot.prototype.update = function() {
-	this.y -= this.speed;
+Shot.prototype.update = function(delta) {
+	this.y -= this.speed * delta;
 
 	if(this.y < -20){
 		this.alive = false;

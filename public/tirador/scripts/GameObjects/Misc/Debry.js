@@ -1,4 +1,10 @@
-function Debry(x, y, container) {
+function Debry() {
+	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 0);
+}
+
+Debry.inheritsFrom( GameObject );
+
+Debry.prototype.init = function(x, y, container) { 
 	this.x 		   = x;
 	this.y 		   = y;
 	this.container = container;
@@ -28,16 +34,12 @@ function Debry(x, y, container) {
 		inst.alive = false;
 	}});
 
-	this.collider = new SAT.Circle(new SAT.Vector(0, 0), this.radius);
-}
-
-Debry.inheritsFrom( GameObject );
-
-Debry.prototype.setStyles = function(context) { 	
-	context.strokeStyle = "#FFFFFF";
+	this.collider.r = this.radius;
 }
 
 Debry.prototype.draw = function(context) { 	
+	context.strokeStyle = "#FFFFFF";
+
 	context.beginPath();
 	
 	context.moveTo(this.points[0].x, this.points[0].y);
@@ -47,15 +49,20 @@ Debry.prototype.draw = function(context) {
 	}
 
 	context.closePath();
-}
 
-Debry.prototype.destroy = function() {
-	this.container.add(new Explosion(this.x, this.y, Random.getRandomInt(0, 360), this.radius, 5), 2);
-	TweenMax.killTweensOf(this);
-}
-
-Debry.prototype.setFills = function(context) { 	
 	context.stroke();
+}
+
+Debry.prototype.destroy = function() {	
+	Rocket.ExplosionArguments[0] = this.x;
+	Rocket.ExplosionArguments[1] = this.y;
+	Rocket.ExplosionArguments[2] = Random.getRandomInt(0, 360);
+	Rocket.ExplosionArguments[3] = this.radius;
+	Rocket.ExplosionArguments[4] = 5;
+
+	this.container.add("Explosion", Rocket.ExplosionArguments, 2, true);
+
+	TweenMax.killTweensOf(this);
 }
 
 Debry.prototype.getColliderType = function(){

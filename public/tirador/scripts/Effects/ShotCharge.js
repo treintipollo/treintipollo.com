@@ -1,8 +1,9 @@
 ShotCharge.ON  = 0;
 ShotCharge.OFF = 1;
 
-function ShotCharge(parent, xOffset, yOffset, startAngle, endAngle, radius, container) {
-	this.container  = container;
+ShotCharge.ParticleArguments = [null, null, null, null, null, null];
+
+function ShotCharge(parent, xOffset, yOffset, startAngle, endAngle, radius) {
 	this.startAngle = startAngle;
 	this.endAngle   = endAngle;
 	this.radius     = radius;
@@ -14,6 +15,10 @@ function ShotCharge(parent, xOffset, yOffset, startAngle, endAngle, radius, cont
 	this.state 	   = -1;
 	this.lastState = -1;
 	this.particles = [];
+}
+
+ShotCharge.prototype.init = function(container) {
+	this.container = container;
 }
 
 ShotCharge.prototype.on  = function()  { this.state = ShotCharge.ON;  }
@@ -55,12 +60,17 @@ ShotCharge.prototype.destroy = function() {
 }
 
 ShotCharge.prototype.createParticles = function(parent, xOffset, yOffset, radius, startAngle, endAngle) {
-	var particle = new ShotChargeParticle(parent, xOffset, yOffset, radius, startAngle, endAngle);
+	ShotCharge.ParticleArguments[0] = parent;
+	ShotCharge.ParticleArguments[1] = xOffset;
+	ShotCharge.ParticleArguments[2] = yOffset;
+	ShotCharge.ParticleArguments[3] = radius;
+	ShotCharge.ParticleArguments[4] = startAngle;
+	ShotCharge.ParticleArguments[5] = endAngle;
+
+	var particle = this.container.add("ShotChargeParticle", ShotCharge.ParticleArguments, 1);
+	this.particles.push(particle);
 
 	particle.addOnDestroyCallback(this, function(obj){
 		this.particles.splice(this.particles.indexOf(obj), 1);
 	});
-
-	this.container.add(particle, 1);
-	this.particles.push(particle);
 }

@@ -1,16 +1,22 @@
 WeaponPowerUp.SHOT   = 0;
 WeaponPowerUp.ROCKET = 1;
 
-function WeaponPowerUp(x, y) {
+function WeaponPowerUp() {
+	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 0);
+}
+
+WeaponPowerUp.inheritsFrom( GameObject );
+
+WeaponPowerUp.prototype.init = function(x, y) {
 	this.x      = x;
 	this.y      = y; 
-	this.speed  = 1;
+	this.speed  = 40;
 	this.radius = 15;
 	
 	this.color; 
 	this.state;
 
-	this.collider = new SAT.Circle(new SAT.Vector(0, 0), this.radius);
+	this.collider.r = this.radius;
 
 	var inst = this;
 
@@ -49,10 +55,6 @@ function WeaponPowerUp(x, y) {
 		return;
 	}
 }
-
-WeaponPowerUp.inheritsFrom( GameObject );
-
-WeaponPowerUp.prototype.setStyles = function(context) { }
 
 WeaponPowerUp.prototype.draw = function(context) { 	
 	
@@ -100,12 +102,10 @@ WeaponPowerUp.prototype.draw = function(context) {
 	}
 }
 
-WeaponPowerUp.prototype.setFills = function(context) { }
+WeaponPowerUp.prototype.update = function(delta) {
+	this.y += this.speed*delta;
 
-WeaponPowerUp.prototype.update = function() {
-	this.y += this.speed;
-
-	if(this.y < -20){
+	if(this.y > 720){
 		this.alive = false;
 	}
 }

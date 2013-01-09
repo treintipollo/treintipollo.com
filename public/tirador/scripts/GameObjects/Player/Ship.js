@@ -1,8 +1,7 @@
-function Ship(objectContainer) {
-	this.speedX    = 3;
-	this.speedY    = 3;
-	this.container = objectContainer;
-
+function Ship() {
+	this.speedX = 100;
+	this.speedY = 100;
+	
 	var exhaustPoints = [];
 	exhaustPoints.push({ x:0, y:0 });
 	exhaustPoints.push({ x:0, y:0 });
@@ -50,30 +49,35 @@ function Ship(objectContainer) {
 		return result;
 	};
 
-	this.exhaust30  = new Exhaust(getExhaustPoints30 , objectContainer);
-	this.exhaust60  = new Exhaust(getExhaustPoints60 , objectContainer);
-	this.exhaust90  = new Exhaust(getExhaustPoints90 , objectContainer);
-	this.exhaust120 = new Exhaust(getExhaustPoints120, objectContainer);
-	this.exhaust150 = new Exhaust(getExhaustPoints150, objectContainer);
+	this.exhaust30  = new Exhaust(getExhaustPoints30, this);
+	this.exhaust60  = new Exhaust(getExhaustPoints60, this);
+	this.exhaust90  = new Exhaust(getExhaustPoints90, this);
+	this.exhaust120 = new Exhaust(getExhaustPoints120, this);
+	this.exhaust150 = new Exhaust(getExhaustPoints150, this);
 
-	this.weapon = new ShotWeapon(0, this, this.container);
-	
-	this.exhaust30.neutral();
-	this.exhaust60.neutral();
-	this.exhaust90.neutral();
-	this.exhaust120.neutral(); 
-	this.exhaust150.neutral();
-
+	this.weapon = new ShotWeapon(0, this);
 	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 15);
 }
 
 Ship.inheritsFrom( GameObject );
 
-Ship.prototype.setStyles = function(context) { 	
-	context.strokeStyle = "#FFFFFF";
+Ship.prototype.init = function(x, y, container){
+	this.x = x;
+	this.y = y;
+	this.container = container;
+
+	this.exhaust30.init(this.container);
+	this.exhaust60.init(this.container);
+	this.exhaust90.init(this.container);
+	this.exhaust120.init(this.container);
+	this.exhaust150.init(this.container);
+
+	this.weapon.init(this.container);
 }
 
 Ship.prototype.draw = function(context) { 
+	context.strokeStyle = "#FFFFFF";
+
 	//30 grados	
 	context.beginPath();
 	context.moveTo(0, 0);
@@ -124,9 +128,7 @@ Ship.prototype.draw = function(context) {
 	context.stroke();
 }
 
-Ship.prototype.setFills = function(context) {}
-
-Ship.prototype.update = function() { 	
+Ship.prototype.update = function(delta) { 	
 	this.exhaust30.neutral();
 	this.exhaust60.neutral();
 	this.exhaust90.neutral();
@@ -134,24 +136,24 @@ Ship.prototype.update = function() {
 	this.exhaust150.neutral();
 
 	if(ArrowKeyHandler.isDown(ArrowKeyHandler.LEFT))  { 
-		this.x -= this.speedX; 
+		this.x -= this.speedX * delta; 
 		
 		this.exhaust30.speedUp();
-		this.exhaust60.speedUp();		
+		this.exhaust60.speedUp();	
 	}
 	if(ArrowKeyHandler.isDown(ArrowKeyHandler.RIGHT)) { 
-		this.x += this.speedX; 
+		this.x += this.speedX * delta; 
 		
 		this.exhaust120.speedUp();
 		this.exhaust150.speedUp();
 	}
 	if(ArrowKeyHandler.isDown(ArrowKeyHandler.UP))    { 
-		this.y -= this.speedY; 
+		this.y -= this.speedY * delta; 
 		
 		this.exhaust90.speedUp(); 
 	}
 	if(ArrowKeyHandler.isDown(ArrowKeyHandler.DOWN))  { 
-		this.y += this.speedY; 
+		this.y += this.speedY * delta; 
 		
 		this.exhaust30.slowDown();
 		this.exhaust60.slowDown();
@@ -160,11 +162,11 @@ Ship.prototype.update = function() {
 		this.exhaust150.slowDown();
 	}
 
-	this.exhaust30.update(this);
-	this.exhaust60.update(this);
-	this.exhaust90.update(this);
-	this.exhaust120.update(this); 
-	this.exhaust150.update(this);
+	this.exhaust30.update();
+	this.exhaust60.update();
+	this.exhaust90.update();
+	this.exhaust120.update(); 
+	this.exhaust150.update();
 
 	this.weapon.update();
 }
@@ -187,25 +189,38 @@ Ship.prototype.getCollisionId = function(){
 Ship.prototype.onCollide = function(other){
 	if(other.getCollisionId() == "WeaponPowerUp"){
 		if(this.weapon.getId() == other.state){
-			this.container.add(new PowerUpText(this.x, this.y, "POWER UP!", "Russo One", 20, "#FFFFFF", "#FFFF00", null, "center", "middle"));
+			PowerUpText.UpArguments[0] = this.x;
+			PowerUpText.UpArguments[1] = this.y;
+			this.container.add("PowerUpText", PowerUpText.UpArguments);
+
 			this.weapon.powerUp();	
 		}else{
 			var l = this.weapon.getLevel();
 			this.weapon.destroy();
 
-			if(other.state == WeaponPowerUp.SHOT){
-				this.container.add(new PowerUpText(this.x, this.y, "SHOT!", "Russo One", 20, "#FFFFFF", "#FF0000", null, "center", "middle"));
-				this.weapon = new ShotWeapon(l, this, this.container); 				
+			if(other.state == WeaponPowerUp.SHOT){			
+				PowerUpText.ShotArguments[0] = this.x;
+				PowerUpText.ShotArguments[1] = this.y;
+				this.container.add("PowerUpText", PowerUpText.ShotArguments);
+
+				this.weapon = new ShotWeapon(l, this);
 			}
 			else if(other.state == WeaponPowerUp.ROCKET){
-				this.container.add(new PowerUpText(this.x, this.y, "ROCKETS!", "Russo One", 20, "#FFFFFF", "#0000FF", null, "center", "middle"));
-				this.weapon = new RocketWeapon(l, this, this.container);
+				PowerUpText.RocketsArguments[0] = this.x;
+				PowerUpText.RocketsArguments[1] = this.y;
+				this.container.add("PowerUpText", PowerUpText.RocketsArguments);
+
+				this.weapon = new RocketWeapon(l, this);
 			}
+
+			this.weapon.init(this.container);
 		} 
 	}
 	else{
-		this.container.add(new PowerUpText(this.x, this.y, "POWER DOWN", "Russo One", 20, "#FFFFFF", "#777777", null, "center", "middle"));
+		PowerUpText.DownArguments[0] = this.x;
+		PowerUpText.DownArguments[1] = this.y;
+		this.container.add("PowerUpText", PowerUpText.DownArguments);
+		
 		this.weapon.powerDown();
 	}
-
 }

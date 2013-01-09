@@ -1,7 +1,6 @@
-function Weapon(level, user, container){
+function Weapon(level, user){
 	this.user      = user;
-	this.container = container;
-
+	
 	this.level	   		   = level;
 	this.callbacks 		   = [];
 	this.currentVoleyCount = 0;
@@ -9,6 +8,10 @@ function Weapon(level, user, container){
 	this.id;
 
 	this.createInstructions();
+}
+
+Weapon.prototype.init = function(container) {
+	this.container = container;
 }
 
 Weapon.prototype.destroy = function() {

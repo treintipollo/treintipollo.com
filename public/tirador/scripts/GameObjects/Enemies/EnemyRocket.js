@@ -1,6 +1,7 @@
-function EnemyRocket(speed, container) { 
-	this.speed = speed;
+EnemyRocket.exhaustPoints = [{ x:0, y:0 }, { x:0, y:0 }, { x:0, y:0 }, { x:0, y:0 }];
+EnemyRocket.EnemryRocketArguments = [null, null, null, null];
 
+function EnemyRocket() { 
 	this.mainDimentionX = 8.5;
 	this.mainDimentionY = this.mainDimentionX*2;
 
@@ -8,31 +9,34 @@ function EnemyRocket(speed, container) {
 	this.centerY = this.mainDimentionY/2;
 
 	this.rotation = 180;
-	this.container = container;
-
-	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 15);
-
-	this.exhaustPoints = [];
-
-	this.exhaustPoints.push({ x:0, y:0 });
-	this.exhaustPoints.push({ x:0, y:0 });
-	this.exhaustPoints.push({ x:0, y:0 });
-	this.exhaustPoints.push({ x:0, y:0 });
-
+	
 	if (typeof Exhaust === "undefined") {
 		return;
 	}
 
-	this.exhaust = new Exhaust(this.getExhaustPoints, this.container);
+	this.exhaust  = new Exhaust(this.getExhaustPoints, this);	
+	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 15);
+}
 
+EnemyRocket.inheritsFrom( GameObject );
+
+EnemyRocket.prototype.init = function(x, y, speed, container) {
+	this.x = x;
+	this.y = y;
+	this.speed = speed;
+	this.container = container;
+	this.createExplosion = true;
+	
+	this.exhaust.init(this.container);
+	
 	var rand = Math.floor(Math.random() * 3);
 
 	if(rand == 0){ this.exhaust.slowDown();}
 	if(rand == 1){ this.exhaust.neutral(); }
 	if(rand == 2){ this.exhaust.speedUp(); }
-}
 
-EnemyRocket.inheritsFrom( GameObject );
+	this.collider.r = 15;
+}
 
 EnemyRocket.prototype.getExhaustPoints = function(side, type) {
 	var a = this.rotation + 90;
@@ -60,26 +64,24 @@ EnemyRocket.prototype.getExhaustPoints = function(side, type) {
 	var x = this.x + this.centerX;
 	var y = this.y + this.centerY;
 
-	this.exhaustPoints[0].x = x + cos * r;
-	this.exhaustPoints[0].y = y + sin * r;
+	EnemyRocket.exhaustPoints[0].x = x + cos * r;
+	EnemyRocket.exhaustPoints[0].y = y + sin * r;
 
-	this.exhaustPoints[1].x = x + cosPerp * r * 2/divide;
-	this.exhaustPoints[1].y = y + sinPerp * r * 2/divide;
+	EnemyRocket.exhaustPoints[1].x = x + cosPerp * r * 2/divide;
+	EnemyRocket.exhaustPoints[1].y = y + sinPerp * r * 2/divide;
 
-	this.exhaustPoints[2].x = x + cos  * r * 3/divide;
-	this.exhaustPoints[2].y = y + sin  * r * 3/divide;
+	EnemyRocket.exhaustPoints[2].x = x + cos  * r * 3/divide;
+	EnemyRocket.exhaustPoints[2].y = y + sin  * r * 3/divide;
 
-	this.exhaustPoints[3].x = x + cos  * r * 4/divide;
-	this.exhaustPoints[3].y = y + sin  * r * 4/divide;
+	EnemyRocket.exhaustPoints[3].x = x + cos  * r * 4/divide;
+	EnemyRocket.exhaustPoints[3].y = y + sin  * r * 4/divide;
 
-	return this.exhaustPoints;
-}
-
-EnemyRocket.prototype.setStyles = function(context) { 	
-	context.strokeStyle = "#FFFFFF";
+	return EnemyRocket.exhaustPoints;
 }
 
 EnemyRocket.prototype.draw = function(context) { 	
+	context.strokeStyle = "#FFFFFF";
+
 	context.beginPath();
 	context.rect(0, 0, this.mainDimentionX, this.mainDimentionY);	
 	
@@ -98,25 +100,34 @@ EnemyRocket.prototype.draw = function(context) {
 	context.lineTo(this.mainDimentionX, this.mainDimentionY/2+5);
 
 	context.closePath();
+
+	context.stroke();
 }
 
 EnemyRocket.prototype.destroy = function() {
-	this.container.add(new Explosion(this.x + this.centerX, this.y + this.centerY, this.rotation+90, 15, 50), 0);
 	this.exhaust.destroy();
+
+	if(!this.createExplosion)
+		return;
+
+	Rocket.ExplosionArguments[0] = this.x + this.centerX;
+	Rocket.ExplosionArguments[1] = this.y + this.centerY;
+	Rocket.ExplosionArguments[2] = this.rotation+90;
+	Rocket.ExplosionArguments[3] = 15;
+	Rocket.ExplosionArguments[4] = 50;
+
+	this.container.add("Explosion", Rocket.ExplosionArguments, 0);
 }
 
-EnemyRocket.prototype.update = function() {
-	this.exhaust.update(this);
+EnemyRocket.prototype.update = function(delta) {
+	this.exhaust.update();
 
-	this.y += this.speed;
+	this.y += this.speed*delta;
 
 	if(this.y > 850){
+		this.createExplosion = false;
 		this.setDestroyMode(GameObject.NO_CALLBACKS);
 	}
-}
-
-EnemyRocket.prototype.setFills = function(context) { 	
-	context.stroke();
 }
 
 EnemyRocket.prototype.getColliderType = function(){
@@ -153,26 +164,32 @@ function EnemyRocketFactory(maxWidth, maxHeight, minSpeed, maxSpeed, creationTim
 
 	this.rocketTimerSpeedUp = 100;
 	this.rocketTimerLimit   = 100;
+
+	this.rocketTimer; 
 }
 
 EnemyRocketFactory.prototype.start = function() {
-	var factory = this;
+	this.rocketTimer = TimeOutFactory.getTimeOut(this.creationTime, -1, this, function(){
+		this.createEnemyRocket();
+	});
 
-	this.timerId = setInterval(function() {
-		factory.createEnemyRocket()	
-	} , this.creationTime);
+	this.rocketTimer.start();
 }
 
 EnemyRocketFactory.prototype.createEnemyRocket = function() {
-	var rocket = new EnemyRocket(Random.getRandomArbitary(this.minSpeed ,this.maxSpeed), this.container);
 
-	rocket.x = Math.random() * this.maxWidth;
-	rocket.y = -30; 
+	EnemyRocket.EnemryRocketArguments[0] = Math.random() * this.maxWidth;
+	EnemyRocket.EnemryRocketArguments[1] = -30;
+	EnemyRocket.EnemryRocketArguments[2] = Random.getRandomArbitary(this.minSpeed ,this.maxSpeed);
+	EnemyRocket.EnemryRocketArguments[3] = this.container;
+
+	var rocket = this.container.add("EnemyRocket", EnemyRocket.EnemryRocketArguments, 3, true);
 
 	rocket.addOnDestroyCallback(this, function(obj){
 		this.rocketsDestroyedCount++;
+	
 		if(this.rocketsDestroyedCount >= this.rocketsToPowerUp){
-			this.container.add(new WeaponPowerUp(obj.x, obj.y), 0, true);
+			this.container.add("WeaponPowerUp", [obj.x, obj.y], 0, true);
 
 			this.creationTime -= this.rocketTimerSpeedUp;
 			if(this.creationTime <= this.rocketTimerLimit){
@@ -182,10 +199,9 @@ EnemyRocketFactory.prototype.createEnemyRocket = function() {
 			this.rocketsToPowerUp += this.initRocketsToPowerUp;
 			this.rocketsDestroyedCount = 0;
 
-			clearInterval(this.timerId);
+			this.rocketTimer.stop();
+
 			this.start();
 		}
 	});
-
-	this.container.add(rocket, 3, true);
 }

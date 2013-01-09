@@ -8,6 +8,7 @@ function GameObject() {
 	this.onDestroy;
 
 	this.alive = true;
+	this.poolId;
 	this.checkingCollisions;
 
 	this.destroyMode = GameObject.EXECUTE_CALLBACKS;
@@ -34,7 +35,7 @@ GameObject.prototype.removeAllCallbacks = function() {
 		return;
 	}
 
-	this.onDestroy.length = 0;
+	this.onDestroy.lenght = 0;
 }
 
 GameObject.prototype.executeDestroyCallbacks = function() {
@@ -58,22 +59,31 @@ GameObject.prototype.transformAndDraw = function(context, drawFunction) {
 	if(this.rotation != 0){
 		context.translate( this.centerX, this.centerY );
 		context.rotate(this.rotation*Math.PI/180);
-		context.translate( -this.centerX, -this.centerY );
+		context.translate(-this.centerX, -this.centerY );
 	}	
 
-	//Hago las operaciones de dibujado correspondientes
-	drawFunction.call(this, context);
+	this.draw(context)
 
 	//Restauro la matriz de transformacion del canvas para que se vea todo bien
 	context.restore();
 }
 
-GameObject.prototype.setStyles = function(context) {}
-GameObject.prototype.setFills = function(context) {}
+GameObject.prototype.clearGameObject = function(){
+	if(this.onDestroy != null){
+		this.onDestroy.lenght = 0;
+	}
+	
+	this.onDestroy 	 = null;
+	this.alive 		 = true;
+	this.destroyMode = GameObject.EXECUTE_CALLBACKS;
 
-GameObject.prototype.draw    = function(context) {}
-GameObject.prototype.update  = function() {}
-GameObject.prototype.destroy = function() {}
+	this.destroy();
+}
+
+GameObject.prototype.init    = function(){}
+GameObject.prototype.update  = function(delta){}
+GameObject.prototype.destroy = function(){}
+GameObject.prototype.draw    = function(context){}
 
 GameObject.CIRCLE_COLLIDER  = 1;
 GameObject.POLYGON_COLLIDER = 2;

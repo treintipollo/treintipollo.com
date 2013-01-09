@@ -2,81 +2,61 @@ Exhaust.NEUTRAL = 0;
 Exhaust.UP 		= 1;
 Exhaust.DOWN 	= 2;
 
-function Exhaust(particleBezierPoints, container) {
-	this.container     		  = container;
+function Exhaust(particleBezierPoints, parentContext) {
 	this.particleBezierPoints = particleBezierPoints;
+	this.colors = ["#F2A007", "#FF0000", "#A30808"];
 
-	this.neutralSpeedId = -1;
-	this.upSpeedId 		= -1;
-	this.downSpeedId 	= -1;
+	this.neutralTimer   = TimeOutFactory.getTimeOut(50, -1, this, function(){ this.createParticles(parentContext, this.state, 15.0); });
+	this.speedUpTimer   = TimeOutFactory.getTimeOut(40, -1, this, function(){ this.createParticles(parentContext, this.state, 15.0); });
+	this.speedDownTimer = TimeOutFactory.getTimeOut(70, -1, this, function(){ this.createParticles(parentContext, this.state, 20.0); });
+}
+
+Exhaust.ParticleArguments = [null, null, null, null, null, null];
+
+Exhaust.prototype.init = function(container) {
+	this.container = container;
 
 	this.state 			= -1;
 	this.lastState		= -1;
-	this.particleSide   = true;
-	this.particles      = [];
-
-	this.colors = ["#F2A007", "#FF0000", "#A30808"];
+	this.particleSide   = true;	
 }
 
 Exhaust.prototype.neutral = function()  { this.state = Exhaust.NEUTRAL; }
 Exhaust.prototype.speedUp = function()  { this.state = Exhaust.UP;      }
 Exhaust.prototype.slowDown = function() { this.state = Exhaust.DOWN;    }
 
-Exhaust.prototype.update = function(p) {
-	if(!this.hasOwnProperty("state")){
-		return;
-	}
-
-	if(this.state == this.lastState){
-		return;
-	}
+Exhaust.prototype.update = function() {
+	if(!this.hasOwnProperty("state")){ return; }
+	if(this.state == this.lastState){ return; }
 
 	this.clearAllIntervals();
-	var exhaust = this;
 
-	if(this.state == Exhaust.NEUTRAL){
-		this.neutralSpeedId = setInterval(function() {
-			exhaust.createParticles(p, exhaust.state, 15.0);	
-		} , 50);
-	}
-	if(this.state == Exhaust.UP){
-		this.upSpeedId = setInterval(function() {
-			exhaust.createParticles(p, exhaust.state, 15.0);	
-		} , 40);	
-	}
-	if(this.state == Exhaust.DOWN){
-		this.downSpeedId = setInterval(function() {
-			exhaust.createParticles(p, exhaust.state, 20.0);	
-		} , 70);
-	}
+	if(this.state == Exhaust.NEUTRAL){ this.neutralTimer.start();   }
+	if(this.state == Exhaust.UP)	 { this.speedUpTimer.start();   }
+	if(this.state == Exhaust.DOWN)	 { this.speedDownTimer.start(); }
 
 	this.lastState = this.state;
 }
 
 Exhaust.prototype.clearAllIntervals = function() {
-	if(this.neutralSpeedId != -1) { clearInterval(this.neutralSpeedId); }
-	if(this.upSpeedId != -1) 	  { clearInterval(this.upSpeedId); 	    }
-	if(this.downSpeedId != -1) 	  { clearInterval(this.downSpeedId);    }
+	this.neutralTimer.stop();
+	this.speedUpTimer.stop();
+	this.speedDownTimer.stop();
 }
 
 Exhaust.prototype.destroy = function() {
 	this.clearAllIntervals();
-
-	for(var i=0; i<this.particles.length; i++){
-		this.particles[i].setDestroyMode(GameObject.NO_CALLBACKS);
-	}
-
-	DestroyUtils.destroyAllProperties(this);
 }
 
 Exhaust.prototype.createParticles = function(parentContext, state, life) {
 	this.particleSide = !this.particleSide;
-	var particle = new ExhaustParticle(state, parentContext, this.particleBezierPoints, this.colors[state], life, this.particleSide);
 	
-	particle.addOnDestroyCallback(this, function(obj){
-		this.particles.splice(this.particles.indexOf(obj), 1);
-	});
+	Exhaust.ParticleArguments[0] = state;
+	Exhaust.ParticleArguments[1] = parentContext;
+	Exhaust.ParticleArguments[2] = this.particleBezierPoints;
+	Exhaust.ParticleArguments[3] = this.colors[state];
+	Exhaust.ParticleArguments[4] = life;
+	Exhaust.ParticleArguments[5] = this.particleSide;
 
-	this.container.add(particle, 1);
-	this.particles.push(particle);
+	this.container.add("ExhaustParticle", Exhaust.ParticleArguments, 1);	
 }

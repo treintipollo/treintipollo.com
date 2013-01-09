@@ -1,5 +1,5 @@
-function PowerShot(user,vertexCount, speed, radius, innerRadius, offsetX, offsetY, color, container) {
-	this.init(user,vertexCount, speed, radius, innerRadius, offsetX, offsetY, color, container);
+function PowerShot() {
+	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 0);
 }
 
 PowerShot.inheritsFrom( GameObject );
@@ -29,26 +29,12 @@ PowerShot.prototype.init = function(user,vertexCount, speed, radius, innerRadius
 		this.outerPoints.push({x:Math.cos(a)*this.radius, y:Math.sin(a)*this.radius});
 	}
 
-	var inst = this;
-
-	this.particlesGeneratorId = setInterval(function() {
-		if (typeof inst.container === "undefined") {
-			return;
-		}
-
-		var particle = new RadialParticle(inst, inst.color, inst.innerRadius, 5, 0, 360);
-
-		inst.container.add(particle);
-	} , 7);
-
-	this.collider = new SAT.Circle(new SAT.Vector(0, 0), this.radius);
-}
-
-PowerShot.prototype.setStyles = function(context) { 	
-	context.strokeStyle = this.color;
+	this.collider.r = this.radius;
 }
 
 PowerShot.prototype.draw = function(context) { 		
+	context.strokeStyle = this.color;
+	
 	context.beginPath();
 
 	for(var i=0; i<this.vertexCount; i++){
@@ -73,14 +59,12 @@ PowerShot.prototype.draw = function(context) {
 	context.stroke();
 }
 
-PowerShot.prototype.setFills = function(context) { 	}
-
-PowerShot.prototype.update = function() {
+PowerShot.prototype.update = function(delta) {
 	if(this.onHold){
 		this.x = this.user.x + this.offsetX;
 		this.y = this.user.y + this.offsetY;
 	}else{
-		this.y -= this.speed;
+		this.y -= this.speed*delta;
 
 		if(this.y < -this.radius){
 			this.alive = false;
@@ -88,10 +72,6 @@ PowerShot.prototype.update = function() {
 	}
 
 	this.rotation += 10;
-}
-
-PowerShot.prototype.destroy = function() {
-	clearInterval(this.particlesGeneratorId);
 }
 
 PowerShot.prototype.release = function() { 	
@@ -115,17 +95,19 @@ PowerShot.prototype.getCollisionId = function(){
 
 PowerShot.prototype.onCollide = function(other){}
 
-function PowerShotSine(user,vertexCount, speed, radius, innerRadius, offsetX, offsetY, color, container, side) {
-	this.init(user,vertexCount, speed, radius, innerRadius, offsetX, offsetY, color, container);
+function PowerShotSine() {}
+
+PowerShotSine.inheritsFrom( PowerShot );
+
+PowerShotSine.prototype.init = function(user,vertexCount, speed, radius, innerRadius, offsetX, offsetY, color, container, side) {
+	this.parent.init.call(this, user,vertexCount, speed, radius, innerRadius, offsetX, offsetY, color, container);
 
 	this.frameCount = 0;
 	this.side = side;
 	this.lastX;
 }
 
-PowerShotSine.inheritsFrom( PowerShot );
-
-PowerShotSine.prototype.update = function() {
+PowerShotSine.prototype.update = function(delta) {
 	if(this.onHold){
 		this.x = this.user.x + this.offsetX;
 		this.y = this.user.y + this.offsetY;
@@ -133,7 +115,7 @@ PowerShotSine.prototype.update = function() {
 		this.lastX = this.user.x;
 	}else{
 		this.x  = this.lastX + this.offsetX + Math.sin(this.frameCount * (Math.PI/180)) * 30;
-		this.y -= this.speed;
+		this.y -= this.speed * delta;
 
 		this.frameCount += 6*this.side;	
 
@@ -145,8 +127,12 @@ PowerShotSine.prototype.update = function() {
 	this.rotation += 10;
 }
 
-function PowerShotCircle(user,vertexCount, speed, radius, innerRadius, angle, distance, color, container, rotationCenterX, rotationCenterY) {
-	this.init(user,vertexCount, speed, radius, innerRadius, 0, 0, color, container);
+function PowerShotCircle() {}
+
+PowerShotCircle.inheritsFrom( PowerShot );
+
+PowerShotCircle.prototype.init = function(user,vertexCount, speed, radius, innerRadius, angle, distance, color, container, rotationCenterX, rotationCenterY) {
+	this.parent.init.call(this, user,vertexCount, speed, radius, innerRadius, 0, 0, color, container);
 
 	this.frameCount = 0;
 	this.lastX;
@@ -160,15 +146,13 @@ function PowerShotCircle(user,vertexCount, speed, radius, innerRadius, angle, di
 	this.distance  = distance;
 }
 
-PowerShotCircle.inheritsFrom( PowerShot );
-
-PowerShotCircle.prototype.update = function() {
+PowerShotCircle.prototype.update = function(delta) {
 	if(this.onHold){
 		this.rCenterX = this.user.x + this.rotationCenterX;
 		this.rCenterY = this.user.y + this.rotationCenterY;
 	}else{
 		this.rCenterX -= 0; 
-		this.rCenterY -= this.speed;
+		this.rCenterY -= this.speed*delta;
 
 		if(this.y < -this.radius){
 			this.alive = false;
