@@ -185,6 +185,10 @@ EnemyRocketFactory.prototype.createEnemyRocket = function() {
 
 	var rocket = this.container.add("EnemyRocket", EnemyRocket.EnemryRocketArguments, 3, true);
 
+	if(rocket == null){
+		return;
+	}
+
 	rocket.addOnDestroyCallback(this, function(obj){
 		this.rocketsDestroyedCount++;
 	
