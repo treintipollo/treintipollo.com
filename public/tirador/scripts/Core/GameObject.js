@@ -12,6 +12,9 @@ function GameObject() {
 	this.checkingCollisions;
 
 	this.destroyMode = GameObject.EXECUTE_CALLBACKS;
+
+	this.doTranslation = true;
+	this.doRotation = true;
 };
 
 GameObject.EXECUTE_CALLBACKS = 0;
@@ -53,10 +56,12 @@ GameObject.prototype.transformAndDraw = function(context, drawFunction) {
 	//Esto es para guardar la transformacion actual
 	context.save();
 	//Traslado lo que voy a dibujar
-	context.translate(this.x, this.y);
+	if(this.doTranslation){
+		context.translate(this.x, this.y);
+	}
 	
 	//Esto es para que roten desde el centro
-	if(this.rotation != 0){
+	if(this.rotation != 0 && this.doRotation){
 		context.translate( this.centerX, this.centerY );
 		context.rotate(this.rotation*Math.PI/180);
 		context.translate(-this.centerX, -this.centerY );

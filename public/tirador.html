@@ -4,7 +4,7 @@
 	<title>Space Shooting Game Prototype</title>
 
 	<link href='http://fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="tirador/styles/main.css" />
+	<link rel="stylesheet" href="styles/main.css" />
 </head>
 <body>
 	<header>
@@ -12,26 +12,20 @@
 	</header>
 
 	<div id="main">
-    <canvas id="game" width="450" height="800">
+		<canvas id="game" width="450" height="800">
 			Sorry, your web browser does not support Canvas content.
 		</canvas>	
 		<h2 id="moveInstructions">Arrow Keys to Move. CTRL to SHOOT</h2>	
 	</div>
 
-	
-	
+	<script src="tirador/scripts/Utils.js"></script>
+
 	<script src="tirador/libs/jquery-1.8.3.min.js"></script>
-	<script src="tirador/libs/Stats.js"></script>
 	<script src="tirador/libs/TweenMax.min.js"></script>
 	<script src="tirador/libs/TimelineLite.min.js"></script>
 	<script src="tirador/libs/BezierPlugin.min.js"></script>
 	<script src="tirador/libs/ColorPropsPlugin.min.js"></script>
 	<script src="tirador/libs/SAT.js"></script>
-
-	<script src="tirador/scripts/Utils/Random.js"></script>
-	<script src="tirador/scripts/Utils/Inheritance.js"></script>
-	<script src="tirador/scripts/Utils/Bezier.js"></script>
-	<script src="tirador/scripts/Utils/Destroy.js"></script>
 
 	<script src="tirador/scripts/Core/GameObject.js"></script>
 	<script src="tirador/scripts/Core/ObjectsContainer.js"></script>
@@ -55,6 +49,7 @@
 	<script src="tirador/scripts/GameObjects/Misc/Explosion.js"></script>
 
 	<script src="tirador/scripts/GameObjects/Enemies/EnemyRocket.js"></script>
+	<script src="tirador/scripts/GameObjects/Bosses/Boss_1.js"></script>
 
 	<script src="tirador/scripts/Effects/Exhaust.js"></script>
 	<script src="tirador/scripts/Effects/ShotCharge.js"></script>

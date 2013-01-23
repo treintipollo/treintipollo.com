@@ -40,6 +40,7 @@ ObjectsContainer.prototype.update = function(delta) {
 
 		if(a != null){
 			for (j=a.length-1; j>=0; j--){
+			//for (j=0; j<a.length; j++){
 				var object = a[j];
 
 				if(object.alive){
@@ -98,10 +99,14 @@ ObjectsContainer.prototype.update = function(delta) {
 	}
 }
 
-ObjectsContainer.prototype.add = function(name, arguments, layer, checkCollision) {
+ObjectsContainer.PUSH = "push";
+ObjectsContainer.UNSHIFT = "unshift";
+
+ObjectsContainer.prototype.add = function(name, arguments, layer, checkCollision, addMode) {
 	//Default parameters
 	if(!layer){ layer = 0; }
 	if(!checkCollision){ checkCollision = false;}
+	if(!addMode){ addMode = ObjectsContainer.PUSH;}
 
 	//Create drawing layer if it doesn't exist
 	if(this.mainObjects[layer] == null){
@@ -117,7 +122,11 @@ ObjectsContainer.prototype.add = function(name, arguments, layer, checkCollision
 	var pooledObject = this.objectPools[name].pop();
 	
 	//Add it to its rendering layer
-	this.mainObjects[layer].push(pooledObject);
+	if(addMode == ObjectsContainer.PUSH){
+		this.mainObjects[layer].push(pooledObject);
+	}else{
+		this.mainObjects[layer].unshift(pooledObject);
+	}
 
 	//Initialize it with given arguments
 	pooledObject.init.apply(pooledObject, arguments);
@@ -160,19 +169,26 @@ ObjectsContainer.prototype.areColliding = function (first, second) {
 	var firstColliderType  = first.getColliderType();
 	var secondColliderType = second.getColliderType();
 
+	var first = first.getCollider();
+	var second = second.getCollider();
+
+	if(first == null || second == null){
+		return false;
+	}
+
 	if(firstColliderType == secondColliderType){
 		if(firstColliderType == GameObject.CIRCLE_COLLIDER){
-			return SAT.testCircleCircle(first.getCollider(), second.getCollider());
+			return SAT.testCircleCircle(first, second);
 		}
 		if(firstColliderType == GameObject.POLYGON_COLLIDER){
-			return SAT.testPolygonPolygon(first.getCollider(), second.getCollider());
+			return SAT.testPolygonPolygon(first, second);
 		}	
 	}else{
 		if(firstColliderType == GameObject.CIRCLE_COLLIDER){
-			return SAT.testPolygonCircle(second.getCollider(), first.getCollider());
+			return SAT.testPolygonCircle(second, first);
 		}
 		if(firstColliderType == GameObject.POLYGON_COLLIDER){	
-			return SAT.testPolygonCircle(first.getCollider(), second.getCollider());
+			return SAT.testPolygonCircle(first, second);
 		}
 	}
 

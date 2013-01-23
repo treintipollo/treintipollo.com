@@ -9,11 +9,14 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 
+//TODO: A Cool Boss.
+
 //TODO: Ship emoticon
 
-//TODO: Global ObjectContainer, it's stupid to pass that reference around every where.
+//TODO: Make a proper Utils Object
 
-//TODO: A Cool Boss.
+//TODO: Global ObjectContainer, it's stupid to pass that reference around every where.
+//TODO: Change to un minified version of TweenMax.js
 
 $(function(){
 	TopLevel.canvas    = document.getElementById("game");
@@ -23,7 +26,7 @@ $(function(){
 	TopLevel.container.createTypePool("Star"              , Star, 30);
 	TopLevel.container.createTypePool("Ship"              , Ship, 1);
 	TopLevel.container.createTypePool("ExhaustParticle"   , ExhaustParticle, 100);
-	TopLevel.container.createTypePool("ShotChargeParticle", ShotChargeParticle, 40);
+	TopLevel.container.createTypePool("ShotChargeParticle", ShotChargeParticle, 10);
 	TopLevel.container.createTypePool("Shot"              , Shot, 40);
 	TopLevel.container.createTypePool("PowerShot"         , PowerShot, 1);
 	TopLevel.container.createTypePool("PowerShotSine"     , PowerShotSine, 2);
@@ -36,8 +39,15 @@ $(function(){
 	TopLevel.container.createTypePool("Rocket"            , Rocket, 10);
 	TopLevel.container.createTypePool("LargeRocket"       , LargeRocket, 10);
 	TopLevel.container.createTypePool("ClusterRocket"     , ClusterRocket, 10);
-	TopLevel.container.createTypePool("EnemyRocket"       , EnemyRocket, 10);
+	//TopLevel.container.createTypePool("EnemyRocket"       , EnemyRocket, 30);
 	
+	TopLevel.container.createTypePool("Boss_1"    , Boss_1, 1);
+	/*TopLevel.container.createTypePool("Arm"   	  , Arm, 2);
+	TopLevel.container.createTypePool("ArmSegment", ArmSegment, 20);*/
+
+	TopLevel.container.createTypePool("Tentacle"   	   , Tentacle, 8);
+	TopLevel.container.createTypePool("TentacleSegment", TentacleSegment, 160);
+
 	TopLevel.container.addCollisionPair("Ship"     , "EnemyRocket");
 	TopLevel.container.addCollisionPair("Ship"     , "WeaponPowerUp");
 	TopLevel.container.addCollisionPair("Shot"     , "EnemyRocket");
@@ -46,33 +56,37 @@ $(function(){
 	TopLevel.container.addCollisionPair("Explosion", "EnemyRocket");
 	TopLevel.container.addCollisionPair("Debry"    , "EnemyRocket");
 
+	TopLevel.container.addCollisionPair("Shot"    , "TentacleSegment");
+
 	var starFactory = new StartFactory(TopLevel.canvas.width, TopLevel.canvas.height, 50, 200, 600, 1, TopLevel.container);
 	starFactory.start();
 
-	var rocketFactory = new EnemyRocketFactory(TopLevel.canvas.width, TopLevel.canvas.height, 200, 500, 800, TopLevel.container, 10);
-	rocketFactory.start();
+	//var rocketFactory = new EnemyRocketFactory(TopLevel.canvas.width, TopLevel.canvas.height, 200, 500, 800, TopLevel.container, 10);
+	//rocketFactory.start();
 
 	TopLevel.container.add("Ship", [TopLevel.canvas.width/2, TopLevel.canvas.height - 100, TopLevel.container], 0, true);
 
+	TopLevel.container.add("Boss_1", [200, 200], 0);	
+
 	var frameRequest;
 	
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
-    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
-    }
- 
-    if (!window.requestAnimationFrame){
-        window.requestAnimationFrame = function(callback) {
-            return window.setTimeout(callback, 1000 / 60);;
-        };
-    }
- 
-    if (!window.cancelAnimationFrame){
-        window.cancelAnimationFrame = function(id) {
-            clearTimeout(id);
-        };
-    }
+	var vendors = ['ms', 'moz', 'webkit', 'o'];
+	for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+		window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+		window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+	}
+
+	if (!window.requestAnimationFrame){
+		window.requestAnimationFrame = function(callback) {
+			return window.setTimeout(callback, 1000 / 60);;
+		};
+	}
+
+	if (!window.cancelAnimationFrame){
+		window.cancelAnimationFrame = function(id) {
+			clearTimeout(id);
+		};
+	}
 
 	frameRequest = window.requestAnimationFrame(mainLoop);
 
@@ -82,8 +96,8 @@ $(function(){
 		TopLevel.lastUpdate = now;
 
 		if(dt < 30){
-			TopLevel.container.draw();
 			TopLevel.container.update(dt/1000);
+			TopLevel.container.draw();
 		}
 		
 		frameRequest = window.requestAnimationFrame(mainLoop);

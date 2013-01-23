@@ -33,7 +33,8 @@ Rocket.prototype.init = function(x, y, deploy, target, container) {
 
 	TweenMax.to(inst, 0.4, {x:inst.deploy.x, ease:Rocket.easeFunctions1[Random.getRandomInt(0, Rocket.easeFunctions1.length)]});
 	TweenMax.to(inst, 0.4, {y:inst.deploy.y, ease:Rocket.easeFunctions2[Random.getRandomInt(0, Rocket.easeFunctions2.length)], onComplete:function(){
-		var info = inst.getVectorInfo(inst.x, inst.y, inst.target.x, inst.target.y); 
+		
+		var info = VectorUtils.getFullVectorInfo.getVectorInfo(inst.x, inst.y, inst.target.x, inst.target.y); 
 
 		var secondAnchorX = inst.x+info.dir.x*info.distance/3 + (info.perp.x*Random.getRandomArbitary(-info.distance/10, info.distance/10));
 		var secondAnchorY = inst.y+info.dir.y*info.distance/3 + (info.perp.y*Random.getRandomArbitary(-info.distance/10, info.distance/10));
@@ -60,16 +61,6 @@ Rocket.prototype.init = function(x, y, deploy, target, container) {
 
 	this.exhaust.init(this.container);
 	this.exhaust.slowDown();
-}
-
-Rocket.prototype.getVectorInfo = function(x1, y1, x2, y2) {
-	var xd 		  	  = x2-x1;
-	var yd 		  	  = y2-y1;
-	var dist  	  	  = Math.sqrt(xd*xd + yd*yd);
-	var direction 	  = {x:xd/dist, y:yd/dist};
-	var perpendicular = {x:-direction.y, y:direction.x};
-
-	return { distance:dist, dir:direction, perp:perpendicular};
 }
 
 Rocket.prototype.getExhaustPoints = function(side, type) {
