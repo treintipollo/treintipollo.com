@@ -34,7 +34,7 @@ Rocket.prototype.init = function(x, y, deploy, target, container) {
 	TweenMax.to(inst, 0.4, {x:inst.deploy.x, ease:Rocket.easeFunctions1[Random.getRandomInt(0, Rocket.easeFunctions1.length)]});
 	TweenMax.to(inst, 0.4, {y:inst.deploy.y, ease:Rocket.easeFunctions2[Random.getRandomInt(0, Rocket.easeFunctions2.length)], onComplete:function(){
 		
-		var info = VectorUtils.getFullVectorInfo.getVectorInfo(inst.x, inst.y, inst.target.x, inst.target.y); 
+		var info = VectorUtils.getFullVectorInfo(inst.x, inst.y, inst.target.x, inst.target.y); 
 
 		var secondAnchorX = inst.x+info.dir.x*info.distance/3 + (info.perp.x*Random.getRandomArbitary(-info.distance/10, info.distance/10));
 		var secondAnchorY = inst.y+info.dir.y*info.distance/3 + (info.perp.y*Random.getRandomArbitary(-info.distance/10, info.distance/10));

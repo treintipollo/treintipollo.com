@@ -67,7 +67,7 @@ GameObject.prototype.transformAndDraw = function(context, drawFunction) {
 		context.translate(-this.centerX, -this.centerY );
 	}	
 
-	this.draw(context)
+	this.draw(context);
 
 	//Restauro la matriz de transformacion del canvas para que se vea todo bien
 	context.restore();

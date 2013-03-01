@@ -133,3 +133,11 @@ VectorUtils.getFullVectorInfo = function(x1, y1, x2, y2) {
 
 	return { distance:dist, dir:direction, perp:perpendicular};
 }
+
+function FuntionUtils(){}
+
+FuntionUtils.bindScope = function(scope, f) {
+	return function(){
+		f.call(scope);	
+	}
+}

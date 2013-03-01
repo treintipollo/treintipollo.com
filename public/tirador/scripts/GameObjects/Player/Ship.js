@@ -56,6 +56,8 @@ function Ship() {
 	this.exhaust150 = new Exhaust(getExhaustPoints150, this);
 
 	this.weapon = new ShotWeapon(0, this);
+	//this.weapon = new RocketWeapon(3, this);
+
 	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 15);
 }
 

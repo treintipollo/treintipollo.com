@@ -26,7 +26,10 @@ $(function(){
 	TopLevel.container.createTypePool("Star"              , Star, 30);
 	TopLevel.container.createTypePool("Ship"              , Ship, 1);
 	TopLevel.container.createTypePool("ExhaustParticle"   , ExhaustParticle, 100);
-	TopLevel.container.createTypePool("ShotChargeParticle", ShotChargeParticle, 10);
+	TopLevel.container.createTypePool("ShotChargeParticle", ShotChargeParticle, 40);
+	TopLevel.container.createTypePool("BurstParticle"     , BurstParticle, 800);
+	TopLevel.container.createTypePool("StraightParticle"  , StraightParticle, 3000);
+
 	TopLevel.container.createTypePool("Shot"              , Shot, 40);
 	TopLevel.container.createTypePool("PowerShot"         , PowerShot, 1);
 	TopLevel.container.createTypePool("PowerShotSine"     , PowerShotSine, 2);
@@ -41,22 +44,23 @@ $(function(){
 	TopLevel.container.createTypePool("ClusterRocket"     , ClusterRocket, 10);
 	//TopLevel.container.createTypePool("EnemyRocket"       , EnemyRocket, 30);
 	
-	TopLevel.container.createTypePool("Boss_1"    , Boss_1, 1);
-	/*TopLevel.container.createTypePool("Arm"   	  , Arm, 2);
-	TopLevel.container.createTypePool("ArmSegment", ArmSegment, 20);*/
+	TopLevel.container.createTypePool("BeamCollider"       , BeamCollider, 200);
 
-	TopLevel.container.createTypePool("Tentacle"   	   , Tentacle, 8);
-	TopLevel.container.createTypePool("TentacleSegment", TentacleSegment, 160);
+	TopLevel.container.createTypePool("Boss_1"    	   , Boss_1, 4);
+	TopLevel.container.createTypePool("Tentacle"   	   , Tentacle, 20);
+	TopLevel.container.createTypePool("TentacleSegment", TentacleSegment, 400);
 
 	TopLevel.container.addCollisionPair("Ship"     , "EnemyRocket");
 	TopLevel.container.addCollisionPair("Ship"     , "WeaponPowerUp");
+	TopLevel.container.addCollisionPair("Ship"     , "BeamCollider");
+
 	TopLevel.container.addCollisionPair("Shot"     , "EnemyRocket");
 	TopLevel.container.addCollisionPair("PowerShot", "EnemyRocket");
 	TopLevel.container.addCollisionPair("Rocket"   , "EnemyRocket");
 	TopLevel.container.addCollisionPair("Explosion", "EnemyRocket");
 	TopLevel.container.addCollisionPair("Debry"    , "EnemyRocket");
-
-	TopLevel.container.addCollisionPair("Shot"    , "TentacleSegment");
+	TopLevel.container.addCollisionPair("Shot"     , "TentacleSegment");
+	TopLevel.container.addCollisionPair("Rocket"   , "TentacleSegment");
 
 	var starFactory = new StartFactory(TopLevel.canvas.width, TopLevel.canvas.height, 50, 200, 600, 1, TopLevel.container);
 	starFactory.start();
@@ -64,9 +68,11 @@ $(function(){
 	//var rocketFactory = new EnemyRocketFactory(TopLevel.canvas.width, TopLevel.canvas.height, 200, 500, 800, TopLevel.container, 10);
 	//rocketFactory.start();
 
-	TopLevel.container.add("Ship", [TopLevel.canvas.width/2, TopLevel.canvas.height - 100, TopLevel.container], 0, true);
+	var ship = TopLevel.container.add("Ship", [TopLevel.canvas.width/2, TopLevel.canvas.height - 100, TopLevel.container], 0, true);
 
-	TopLevel.container.add("Boss_1", [200, 200], 0);	
+	//ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.A, function(){
+		TopLevel.container.add("Boss_1", [TopLevel.canvas.width/2, TopLevel.canvas.height/2- 100, ship, Boss_1.Main_Body_Properties, Boss_1.Main_Ability_Properties, Boss_1.Main_Beam_Properties], 0);		
+	//});
 
 	var frameRequest;
 	
