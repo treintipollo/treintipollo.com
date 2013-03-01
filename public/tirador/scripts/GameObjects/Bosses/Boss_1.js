@@ -12,8 +12,8 @@ Boss_1.Main_Ability_Properties = [Boss_1.ROUND_EYE, Boss_1.SNAKE_EYE, Boss_1.INS
 Boss_1.Helper_Ability_Properties = [Boss_1.ROUND_EYE];
 
 //chargeRadius, burstColor1, burstColor2, burst1ParticlesInCycle, burst2ParticlesInCycle, beam1ParticlesInCycle, beam2ParticlesInCycle, beam1ParticlesLife, beam2ParticlesLife
-Boss_1.Main_Beam_Properties    = [120, "#FF0000", "#FFFF00", 1, 2, 8, 8, 30, 15];
-Boss_1.Helper_Beam_Properties  = [40, "#11D3ED", "#E045F5", 1, 2, 6, 6, 20, 10];
+Boss_1.Main_Beam_Properties    = [100, "#FF0000", "#FFFF00", 1, 1, 6, 6, 30, 15];
+Boss_1.Helper_Beam_Properties  = [40, "#11D3ED", "#E045F5", 1, 1, 5, 5, 20, 10];
 
 //TODO: Distintos tipos de cambio de ojo, dependiendo del daño. 
 //TODO: Tercer Ojo. // Mini Bosses.
