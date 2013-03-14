@@ -10,7 +10,8 @@ function ObjectsContainer(drawContext) {
 	this.collisionOpponent;
 	this.collisionId;
 
-	this.objectPools = {};
+	this.objectPools    = {};
+	this.configurations = {};
 }
 
 ObjectsContainer.prototype.draw = function() {
@@ -40,7 +41,6 @@ ObjectsContainer.prototype.update = function(delta) {
 
 		if(a != null){
 			for (j=a.length-1; j>=0; j--){
-			//for (j=0; j<a.length; j++){
 				var object = a[j];
 
 				if(object.alive){
@@ -49,21 +49,19 @@ ObjectsContainer.prototype.update = function(delta) {
 					if(object.checkingCollisions){
 						this.collisionId = object.getCollisionId();
 
-						if(this.collisionId != "NONE"){
-							this.collisionList = this.collisionLists[this.collisionId];
+						this.collisionList = this.collisionLists[this.collisionId];
 
-							if(this.collisionList != null){
-								for(k=0; k<this.collisionList.length; k++){
-									this.collisionOpponent = this.collisionList[k];
+						if(this.collisionList != null){
+							for(k=0; k<this.collisionList.length; k++){
+								this.collisionOpponent = this.collisionList[k];
 
-									if(this.collisionOpponent.alive){
-										if(this.areColliding(object, this.collisionOpponent)){
-											object.onCollide(this.collisionOpponent);	
-											this.collisionOpponent.onCollide(object);
-										}
+								if(this.collisionOpponent.alive){
+									if(this.areColliding(object, this.collisionOpponent)){
+										object.onCollide(this.collisionOpponent);	
+										this.collisionOpponent.onCollide(object);
 									}
-								}	
-							}
+								}
+							}	
 						}
 					}
 
@@ -76,13 +74,11 @@ ObjectsContainer.prototype.update = function(delta) {
 					if(object.checkingCollisions){
 						this.collisionId = object.getCollisionId();
 
-						if(this.collisionId != "NONE"){
-							var indexes = this.toCollideCache[this.collisionId];
+						var indexes = this.toCollideCache[this.collisionId];
 
-							if(indexes != null && indexes.length > 0){
-								for(var i=0; i<indexes.length; i++){
-									this.collisionLists[indexes[i]].splice(this.collisionLists[indexes[i]].indexOf(object), 1);
-								}
+						if(indexes != null && indexes.length > 0){
+							for(var i=0; i<indexes.length; i++){
+								this.collisionLists[indexes[i]].splice(this.collisionLists[indexes[i]].indexOf(object), 1);
 							}
 						}
 					}
@@ -99,14 +95,14 @@ ObjectsContainer.prototype.update = function(delta) {
 	}
 }
 
-ObjectsContainer.PUSH = "push";
-ObjectsContainer.UNSHIFT = "unshift";
+ObjectsContainer.prototype.add = function(name, arguments) {
+	var configuration = this.configurations[name];
 
-ObjectsContainer.prototype.add = function(name, arguments, layer, checkCollision, addMode) {
-	//Default parameters
-	if(!layer){ layer = 0; }
-	if(!checkCollision){ checkCollision = false;}
-	if(!addMode){ addMode = ObjectsContainer.PUSH;}
+	var type 		   = configuration.type;
+	var collisionType  = configuration.collisionType;
+	var layer 		   = configuration.layer;
+	var checkCollision = configuration.collide;
+	var addMode 	   = configuration.addMode;
 
 	//Create drawing layer if it doesn't exist
 	if(this.mainObjects[layer] == null){
@@ -114,13 +110,17 @@ ObjectsContainer.prototype.add = function(name, arguments, layer, checkCollision
 	}
 
 	//Do nothing if there is no object available in the pool I am looking in
-	if(this.objectPools[name].length <= 0){
+	if(this.objectPools[type].length <= 0){
 		return null;
 	}
 
 	//Get one object from the pool
-	var pooledObject = this.objectPools[name].pop();
+	var pooledObject = this.objectPools[type].pop();
 	
+	//This id will be used for collision detection groups
+	pooledObject.typeId      = name;
+	pooledObject.collisionId = collisionType;
+
 	//Add it to its rendering layer
 	if(addMode == ObjectsContainer.PUSH){
 		this.mainObjects[layer].push(pooledObject);
@@ -128,18 +128,15 @@ ObjectsContainer.prototype.add = function(name, arguments, layer, checkCollision
 		this.mainObjects[layer].unshift(pooledObject);
 	}
 
-	//Initialize it with given arguments
-	pooledObject.init.apply(pooledObject, arguments);
-
 	//This sets if the object will check for collisions or not
 	pooledObject.checkingCollisions = checkCollision;
+
+	//Initialize it with given arguments
+	pooledObject.init.apply(pooledObject, arguments);
 
 	//Nasty logic to add an object to the corresponding collision checking lists
 	if(pooledObject.checkingCollisions){
 		this.collisionId = pooledObject.getCollisionId();
-
-		if(this.collisionId == "NONE")
-			return null;
 
 		var indexes = this.toCollideCache[this.collisionId];
 
@@ -202,7 +199,27 @@ ObjectsContainer.prototype.createTypePool = function(alias, type, amount) {
 
 	for(var i=0; i<amount; i++){
 		var o = new type();
-		o.poolId  = alias;
+
+		o.afterCreate();
+
+		o.poolId = alias;
 		this.objectPools[alias].push(o);
 	}
+}
+
+ObjectsContainer.PUSH = "push";
+ObjectsContainer.UNSHIFT = "unshift";
+
+ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type, collisionType, layer, collide, addMode) {
+	if(!layer){ 
+		layer = 0; 
+	}
+	if(!collide){ 
+		collide = false;
+	}
+	if(!addMode){ 
+		addMode = ObjectsContainer.PUSH;
+	}
+
+	this.configurations[typeAlias] = { type:type, collisionType:collisionType, layer:layer, collide:collide, addMode:addMode};
 }

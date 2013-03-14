@@ -10,63 +10,41 @@ function RocketWeapon() {
 
 	this.rocketLevel  = [
 						//Rocket *4
-						function(){return [inst.user.x, inst.user.y, 
-								{x:inst.user.x + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1), 
-								y:inst.user.y + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1)},
-								{x:inst.target.x, y:inst.target.y},
-								inst.container];},
+						function(x, y, tx, ty, xOffset, yOffset, c){
+							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c]; 
+						},
 						//Rocket *5
-						function(){return [inst.user.x, inst.user.y, 
-								{x:inst.user.x + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1), 
-								y:inst.user.y + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1)},
-								{x:inst.target.x, y:inst.target.y},
-								inst.container];},
+						function(x, y, tx, ty, xOffset, yOffset, c){
+							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c]; 
+						},
 						//Rocket *6
-						function(){return [inst.user.x, inst.user.y, 
-								{x:inst.user.x + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1), 
-								y:inst.user.y + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1)},
-								{x:inst.target.x, y:inst.target.y},
-								inst.container];},
+						function(x, y, tx, ty, xOffset, yOffset, c){
+							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c]; 
+						},
 						//Large Rocket *4
-						function(){return [inst.user.x, inst.user.y, 
-								{x:inst.user.x + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1), 
-								y:inst.user.y + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1)},
-								{x:inst.target.x, y:inst.target.y},
-								inst.container];},
+						function(x, y, tx, ty, xOffset, yOffset, c){
+							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c]; 
+						},
 						//Large Rocket *6
-						function(){return [inst.user.x, inst.user.y, 
-								{x:inst.user.x + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1), 
-								y:inst.user.y + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1)},
-								{x:inst.target.x, y:inst.target.y},
-								inst.container];},
+						function(x, y, tx, ty, xOffset, yOffset, c){
+							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c]; 
+						},
 						//Large Rocket *7
-						function(){return [inst.user.x, inst.user.y, 
-								{x:inst.user.x + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1), 
-								y:inst.user.y + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1)},
-								{x:inst.target.x, y:inst.target.y},
-								inst.container];},
+						function(x, y, tx, ty, xOffset, yOffset, c){
+							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c]; 
+						},
 						//Cluster Rocket *5
-						function(){return [inst.user.x, inst.user.y, 
-								{x:inst.user.x + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1), 
-								y:inst.user.y + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1)},
-								{x:inst.target.x, y:inst.target.y},
-								inst.container,
-								3];},
+						function(x, y, tx, ty, xOffset, yOffset, c){
+							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c, 3]; 
+						},
 						//Cluster Rocket *7
-						function(){return [inst.user.x, inst.user.y, 
-								{x:inst.user.x + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1), 
-								y:inst.user.y + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1)},
-								{x:inst.target.x, y:inst.target.y},
-								inst.container,
-								4];},
+						function(x, y, tx, ty, xOffset, yOffset, c){
+							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c, 4]; 
+						},
 						//Cluster Rocket *8
-						function(){return [inst.user.x, inst.user.y, 
-								{x:inst.user.x + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1), 
-								y:inst.user.y + Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1)},
-								{x:inst.target.x, y:inst.target.y},
-								inst.container,
-								5];}
-						];
+						function(x, y, tx, ty, xOffset, yOffset, c){
+							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c, 5]; 
+						}];
 
 
 	var c = ArrowKeyHandler.addKeyDownTimeOutCallback(ArrowKeyHandler.CTRL, function(){
@@ -78,7 +56,11 @@ function RocketWeapon() {
 	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.CTRL, function(){
 		if(inst.currentVoleyCount < inst.voleyAmounts[inst.level]){
 
-			var rocket = inst.container.add(inst.rocketTypes[inst.level], inst.rocketLevel[inst.level](), 1, true);
+			var xOffset = Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1);
+			var yOffset = Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1);
+
+			var rocket = inst.container.add(inst.rocketTypes[inst.level], 
+											inst.rocketLevel[inst.level](inst.user.x, inst.user.y, inst.target.x, inst.target.y, xOffset, yOffset, inst.container));
 
 			inst.currentVoleyCount++;
 
@@ -101,7 +83,7 @@ function RocketWeapon() {
 
 RocketWeapon.prototype.init = function(container) {
 	this.parent.init(container);
-	this.target = this.container.add("Target", [this.user], 1);
+	this.target = this.container.add("Target", [this.user]);
 	this.target.reset();
 }
 

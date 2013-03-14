@@ -10,8 +10,9 @@ $(function(){
 				callback:callback, 
 				scope:scope, 
 				delay:delay,
-				repeatCount:repeatCount,
+				repeateCount:repeatCount,
 				initRepeatCount:repeatCount,
+				onComplete:null,
 
 				id:-1,
 				startTime:-1,
@@ -37,26 +38,31 @@ $(function(){
 						actualDelay = this.delay;
 					}
 
-					var timeOutObject = this;
+					var to = this;
 
 					this.id = setTimeout(function(){
-						timeOutObject.callback.call(timeOutObject.scope);
+						if(to.isRunning && !to.isPaused)
+							to.callback.call(to.scope);
 
-						if(!timeOutObject.isRunning){
+						if(!to.isRunning){
 							return;
 						}
 
-						if(timeOutObject.repeatCount < 0){
-							timeOutObject.isRunning = false;
-							timeOutObject.start();
+						if(to.repeateCount < 0){
+							to.isRunning = false;
+							to.start();
 						}else{
-							timeOutObject.repeatCount--;
+							to.repeateCount--;
 
-							if(timeOutObject.repeatCount > 0){
-								timeOutObject.isRunning = false;
-								timeOutObject.start();
+							if(to.repeateCount > 0){
+								to.isRunning = false;
+								to.start();
 							}else{
-								timeOutObject.stop();
+								to.stop();
+
+								if(to.onComplete != null){
+									to.onComplete.call(to.scope);
+								}
 							}
 						}
 
@@ -70,6 +76,12 @@ $(function(){
 					this.resumeDelay  = -1;
 					
 					clearTimeout(this.id);
+				},
+
+				resetAndExecuteCallback: function(){
+					this.callback.call(this.scope);
+					this.stop();
+					this.start();
 				},
 
 				pause: function(){

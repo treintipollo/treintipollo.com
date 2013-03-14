@@ -40,9 +40,18 @@ ParticleBeam.prototype.on  = function(start, end)  {
 	this.angle += Math.PI/2;
 
 	this.state = ParticleBeam.ON;  
+
+	if(!this.hasOwnProperty("state")){ return; }
+	if(this.state == this.lastState){ return; }
+
+	this.particleTimer.start();
+	this.lastState = this.state;
 }
 ParticleBeam.prototype.off = function()  { 
 	this.state = ParticleBeam.OFF; 
+
+	this.clearAllIntervals();
+	this.lastState = this.state;
 }
 
 ParticleBeam.prototype.update = function() {

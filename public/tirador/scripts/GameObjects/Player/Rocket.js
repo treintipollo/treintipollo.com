@@ -4,9 +4,7 @@ Rocket.exhaustPoints  	  = [{ x:0, y:0 }, { x:0, y:0 }, { x:0, y:0 }, { x:0, y:0
 Rocket.ExplosionArguments = [null, null, null, null, null];
 
 function Rocket() {
-	if (typeof Exhaust === "undefined") {
-		return;
-	}
+	if (typeof Exhaust === "undefined") { return; }
 
 	this.mainDimentionX = 7.5;
 	this.mainDimentionY = this.mainDimentionX*2;
@@ -15,12 +13,19 @@ function Rocket() {
 	this.centerY  = this.mainDimentionY/2;
 
 	this.exhaust = new Exhaust(this.getExhaustPoints, this);
-	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 10);
 }
 
-Rocket.inheritsFrom( GameObject );
+Rocket.inheritsFrom( Attributes );
+
+Rocket.prototype.afterCreate = function(){
+	CircleCollider.prototype.create.call(this);
+}
 
 Rocket.prototype.init = function(x, y, deploy, target, container) {
+	CircleCollider.prototype.init.call(this, 10);
+
+	Attributes.prototype.init.call(this);
+
 	this.x 		   = x; 
 	this.y 		   = y;
 	this.container = container;
@@ -132,28 +137,16 @@ Rocket.prototype.destroy = function() {
 	Rocket.ExplosionArguments[3] = 30;
 	Rocket.ExplosionArguments[4] = 100;
 
-	this.container.add("Explosion", Rocket.ExplosionArguments, 0, true);
+	this.container.add("Explosion_Damage", Rocket.ExplosionArguments);
 
 	this.exhaust.destroy();
 	TweenMax.killTweensOf(this);
 }
 
-Rocket.prototype.getColliderType = function(){
-	return GameObject.CIRCLE_COLLIDER;
-}
-
-Rocket.prototype.getCollider = function(){
-	this.collider.pos.x = this.x + this.centerX;
-	this.collider.pos.y = this.y + this.centerY;
-
-	return this.collider;
-}
-
-Rocket.prototype.getCollisionId = function(){
-	return "Rocket";
-}
-
-Rocket.prototype.onCollide = function(other){
+Rocket.prototype.onHPDiminished = function(other) {}
+Rocket.prototype.onDamageBlocked = function(other) {}
+Rocket.prototype.onDamageReceived = function(other) {}
+Rocket.prototype.onAllDamageReceived = function(other) {
 	this.alive = false;
 }
 
@@ -170,7 +163,7 @@ function LargeRocket() {
 LargeRocket.inheritsFrom( Rocket );
 
 LargeRocket.prototype.init = function(x, y, deploy, target, container) {
-	this.parent.init.call(this, x, y, deploy, target, container);
+	Rocket.prototype.init.call(this, x, y, deploy, target, container);
 }
 
 LargeRocket.prototype.draw = function(context) {
@@ -205,11 +198,13 @@ LargeRocket.prototype.destroy = function() {
 	Rocket.ExplosionArguments[3] = 45;
 	Rocket.ExplosionArguments[4] = 220;
 
-	this.container.add("Explosion", Rocket.ExplosionArguments, 0, true);
+	this.container.add("Explosion_Damage", Rocket.ExplosionArguments);
 
 	this.exhaust.destroy();
 	TweenMax.killTweensOf(this);
 }
+
+ClusterRocket.inheritsFrom( Rocket );
 
 function ClusterRocket() {
 	Rocket.call(this);
@@ -221,10 +216,8 @@ function ClusterRocket() {
 	this.centerY = this.mainDimentionY/2;	
 }
 
-ClusterRocket.inheritsFrom( Rocket );
-
 ClusterRocket.prototype.init = function(x, y, deploy, target, container, debryCount) {
-	this.parent.init.call(this, x, y, deploy, target, container);
+	Rocket.prototype.init.call(this, x, y, deploy, target, container);
 	this.debryCount = debryCount;
 }
 
@@ -253,14 +246,14 @@ ClusterRocket.prototype.destroy = function() {
 	Rocket.ExplosionArguments[3] = 35;
 	Rocket.ExplosionArguments[4] = 150;
 
-	this.container.add("Explosion", Rocket.ExplosionArguments, 0, true);
+	this.container.add("Explosion_Damage", Rocket.ExplosionArguments);
 
 	for(var i=0; i<this.debryCount; i++){
 		Rocket.ExplosionArguments[0] = this.x;
 		Rocket.ExplosionArguments[1] = this.y;
 		Rocket.ExplosionArguments[2] = this.container;
 
-		this.container.add("Debry" , Rocket.ExplosionArguments, 2, true);	
+		this.container.add("Debry" , Rocket.ExplosionArguments);	
 	}
 
 	this.exhaust.destroy();

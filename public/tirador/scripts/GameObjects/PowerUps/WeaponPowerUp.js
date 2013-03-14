@@ -125,10 +125,6 @@ WeaponPowerUp.prototype.getCollider = function(){
 	return this.collider;
 }
 
-WeaponPowerUp.prototype.getCollisionId = function(){
-	return "WeaponPowerUp";
-}
-
 WeaponPowerUp.prototype.onCollide = function(other){
 	this.alive = false;
 }

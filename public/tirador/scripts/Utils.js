@@ -78,7 +78,7 @@ Function.prototype.inheritsFrom = function( parentClassOrObject ){
 		//Normal Inheritance 
 		this.prototype = new parentClassOrObject;
 		this.prototype.constructor = this;
-		this.prototype.parent = parentClassOrObject.prototype;
+		this.prototype.parent = parentClassOrObject.prototype;	
 	} 
 	else 
 	{ 
@@ -119,7 +119,7 @@ NumberUtils.interpolate = function(normValue, minimum, maximum) {
 }
 
 NumberUtils.map = function(value, min1, max1, min2, max2) {
-    return interpolate( normalize(value, min1, max1), min2, max2);
+    return NumberUtils.interpolate( NumberUtils.normalize(value, min1, max1), min2, max2);
 }
 
 function VectorUtils(){}
@@ -130,14 +130,29 @@ VectorUtils.getFullVectorInfo = function(x1, y1, x2, y2) {
 	var dist  	  	  = Math.sqrt(xd*xd + yd*yd);
 	var direction 	  = {x:xd/dist, y:yd/dist};
 	var perpendicular = {x:-direction.y, y:direction.x};
+	var angle         = Math.atan2(y1 - y2, x1 - x2);
 
-	return { distance:dist, dir:direction, perp:perpendicular};
+	return { distance:dist, dir:direction, perp:perpendicular, angle:angle };
 }
 
 function FuntionUtils(){}
 
-FuntionUtils.bindScope = function(scope, f) {
+FuntionUtils.bindScope = function(scope, f, args) {
 	return function(){
-		f.call(scope);	
+		if(args){
+			var a = [].splice.call(arguments,0);
+			a = a.concat(args);
+			return f.apply(scope, a);
+		}
+		
+		return f.apply(scope, arguments);
+	}
+}
+
+FuntionUtils.setProperties = function(obj, props) {
+	for(var name in props) {
+		if(obj.hasOwnProperty(name)){
+			obj[name] = props[name];
+		}
 	}
 }

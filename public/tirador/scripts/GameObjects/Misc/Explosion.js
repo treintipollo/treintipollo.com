@@ -1,10 +1,16 @@
-function Explosion() {
-	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 0);
-};
+function Explosion() {};
 
-Explosion.inheritsFrom( GameObject );
+Explosion.inheritsFrom( Attributes );
+
+Explosion.prototype.afterCreate = function(){
+	CircleCollider.prototype.create.call(this);
+}
 
 Explosion.prototype.init = function(x, y, angle, size, destroySpeed) {
+	CircleCollider.prototype.init.call(this, size);
+
+	this.parent.init.call(this);
+
 	this.x 	    	 = x;
 	this.y 	    	 = y;
 	this.radius 	 = size;
@@ -15,7 +21,6 @@ Explosion.prototype.init = function(x, y, angle, size, destroySpeed) {
 	this.innerRadiusDirY = Math.sin(angle * (Math.PI/180));
 
 	this.gradient = null;
-	this.collider.r = this.radius;
 }
 
 Explosion.prototype.draw = function(context) {
@@ -48,19 +53,9 @@ Explosion.prototype.update  = function(delta) {
 	}
 }
 
-Explosion.prototype.getColliderType = function(){
-	return GameObject.CIRCLE_COLLIDER;
+Explosion.prototype.onHPDiminished = function(other) {}
+Explosion.prototype.onDamageBlocked = function(other) {}
+Explosion.prototype.onDamageReceived = function(other) {}
+Explosion.prototype.onAllDamageReceived = function(other) {
+	this.checkingCollisions = false;
 }
-
-Explosion.prototype.getCollider = function(){
-	this.collider.pos.x = this.x;
-	this.collider.pos.y = this.y;
-
-	return this.collider;
-}
-
-Explosion.prototype.getCollisionId = function(){
-	return "Explosion";
-}
-
-Explosion.prototype.onCollide = function(other){}

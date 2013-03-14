@@ -116,7 +116,7 @@ EnemyRocket.prototype.destroy = function() {
 	Rocket.ExplosionArguments[3] = 15;
 	Rocket.ExplosionArguments[4] = 50;
 
-	this.container.add("Explosion", Rocket.ExplosionArguments, 0);
+	this.container.add("Explosion_Effect", Rocket.ExplosionArguments);
 }
 
 EnemyRocket.prototype.update = function(delta) {
@@ -139,10 +139,6 @@ EnemyRocket.prototype.getCollider = function(){
 	this.collider.pos.y = this.y;
 
 	return this.collider;
-}
-
-EnemyRocket.prototype.getCollisionId = function(){
-	return "EnemyRocket";
 }
 
 EnemyRocket.prototype.onCollide = function(other){
@@ -183,7 +179,7 @@ EnemyRocketFactory.prototype.createEnemyRocket = function() {
 	EnemyRocket.EnemryRocketArguments[2] = Random.getRandomArbitary(this.minSpeed ,this.maxSpeed);
 	EnemyRocket.EnemryRocketArguments[3] = this.container;
 
-	var rocket = this.container.add("EnemyRocket", EnemyRocket.EnemryRocketArguments, 3, true);
+	var rocket = this.container.add("EnemyRocket", EnemyRocket.EnemryRocketArguments);
 
 	if(rocket == null){
 		return;
@@ -193,7 +189,7 @@ EnemyRocketFactory.prototype.createEnemyRocket = function() {
 		this.rocketsDestroyedCount++;
 	
 		if(this.rocketsDestroyedCount >= this.rocketsToPowerUp){
-			this.container.add("WeaponPowerUp", [obj.x, obj.y], 0, true);
+			this.container.add("WeaponPowerUp", [obj.x, obj.y]);
 
 			this.creationTime -= this.rocketTimerSpeedUp;
 			if(this.creationTime <= this.rocketTimerLimit){

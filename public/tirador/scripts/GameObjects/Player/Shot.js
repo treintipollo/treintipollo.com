@@ -1,14 +1,25 @@
-function Shot(x, y, big) {
-	this.speed = 350;
-	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 10);
+Shot.inheritsFrom( Attributes );
+
+function Shot() {
+	this.speed     = 600;
+	this.hitEffect = new ShotCharge(this, 0, 0, 120, 60, 80, 1);
 }
 
-Shot.inheritsFrom( GameObject );
+Shot.prototype.afterCreate = function(){
+	CircleCollider.prototype.create.call(this);
+}
 
-Shot.prototype.init = function(x, y, big) {
-	this.x     = x;
-	this.y     = y; 
-	this.big   = big;
+Shot.prototype.init = function(pos, container, offSetX, offSetY, speed) {
+	CircleCollider.prototype.init.call(this, 7);
+
+	this.parent.init.call(this);
+
+	this.x     = pos.x + offSetX;
+	this.y     = pos.y + offSetY; 
+	this.speed = speed;
+	
+	this.hitEffect.init(container, 1, "#FFFFFF", 3, "BurstParticle", 10);
+	this.hitEffect.off();
 }	
 
 Shot.prototype.draw = function(context) { 	
@@ -41,21 +52,10 @@ Shot.prototype.update = function(delta) {
 	}
 }
 
-Shot.prototype.getColliderType = function(){
-	return GameObject.CIRCLE_COLLIDER;
-}
-
-Shot.prototype.getCollider = function(){
-	this.collider.pos.x = this.x;
-	this.collider.pos.y = this.y;
-
-	return this.collider;
-}
-
-Shot.prototype.getCollisionId = function(){
-	return "Shot";
-}
-
-Shot.prototype.onCollide = function(other){
+Shot.prototype.onHPDiminished = function(other) {}
+Shot.prototype.onDamageBlocked = function(other) {}
+Shot.prototype.onDamageReceived = function(other) {}
+Shot.prototype.onAllDamageReceived = function(other) {
 	this.alive = false;
+	this.hitEffect.on();
 }

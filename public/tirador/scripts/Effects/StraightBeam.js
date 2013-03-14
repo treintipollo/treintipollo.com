@@ -1,84 +1,76 @@
 function StraightBeam(beamProperties) {
-	debugger;
-
 	this.chargeRadius		    = beamProperties[0];
-	this.burstColor1 			= beamProperties[1];
-	this.burstColor2 			= beamProperties[2];
-	this.burst1ParticlesInCycle = beamProperties[3];
-	this.burst2ParticlesInCycle = beamProperties[4];
-	this.beam1ParticlesInCycle  = beamProperties[5];
-	this.beam2ParticlesInCycle  = beamProperties[6];
-	this.beam1ParticlesLife     = beamProperties[7];
-	this.beam2ParticlesLife     = beamProperties[8];
+	this.chargeColor 			= beamProperties[1];
+	this.chargeParticleSize	    = beamProperties[2]
+	this.burstColor1 			= beamProperties[3];
+	this.burstColor2 			= beamProperties[4];
+	this.burstParticleSize 		= beamProperties[5];
+	this.burst1ParticlesInCycle = beamProperties[6];
+	this.beam1ParticlesInCycle  = beamProperties[7];
+	this.beam2ParticlesInCycle  = beamProperties[8];
+	this.beam1ParticlesLife     = beamProperties[9];
+	this.beam2ParticlesLife     = beamProperties[10];
+	this.beamParticleSize 		= beamProperties[11];
 
 	this.beamCharge     = new ShotCharge(null, 0, 0, 0, 360, this.chargeRadius);
-	this.beamBurstLong  = new ShotCharge(null, 0, 0, 0, 0, this.chargeRadius);
 	this.beamBurstShort = new ShotCharge(null, 0, 0, 0, 0, this.chargeRadius);
 
-	this.beam = new ParticleBeam();
+	this.beam 		= new ParticleBeam();
 	this.centerBeam = new ParticleBeam();
 	
 	this.onStart    = null;
 	this.onComplete = null;
 
+	this.collider = [];
+
 	this.burstTimer = TimeOutFactory.getTimeOut(0, 1, this, function(){ 
-		this.burstTimer.stop();
-		this.beamBurstLong.off();
-		this.beamBurstShort.off();
-		this.beam.off();
-		this.centerBeam.off();	
-
-		this.isFiring = false;
-		this.isAiming = false;
-
-		if(this.onComplete != null)
-			this.onComplete();
+		this.forceDisable();
 	});
 
-	this.shootTimer = TimeOutFactory.getTimeOut(400, 1, this, null);
+	this.shootTimer = TimeOutFactory.getTimeOut(0, 1, this, null);
 }
 
 StraightBeam.ColliderArguments = [null, null, null, null, null];
 
-StraightBeam.prototype.init = function(container, origin, target, size, pieces, time, angleOffset) {
+StraightBeam.prototype.init = function(container, origin, target, beamProperties) {
 	this.container  = container;
 	this.origin     = origin;
 	this.target     = target;
-	this.size       = size;
-	this.pieces     = pieces;
-	this.time       = time;
 
-	this.angleOffset = angleOffset != null ? angleOffset : 0;
+	this.size        = beamProperties[0];
+	this.pieces      = beamProperties[1];
+	this.time        = beamProperties[2];
+	this.shotDelay   = beamProperties[3];
+	this.angleOffset = beamProperties[4] != null ? beamProperties[4] : 0;
 
 	this.beamCharge.parent     = this.origin;
-	this.beamBurstLong.parent  = this.origin;
 	this.beamBurstShort.parent = this.origin;
 
-	this.beamCharge.init(TopLevel.container, 30, this.burstColor1, 7);
-	this.beamBurstLong.init(TopLevel.container, 1, this.burstColor2, 4, "BurstParticle", this.burst1ParticlesInCycle);
-	this.beamBurstShort.init(TopLevel.container, 1, this.burstColor1, 4, "BurstParticle", this.burst2ParticlesInCycle);
+	this.beamCharge.init(TopLevel.container, 30, this.chargeColor, this.chargeParticleSize);
+	this.beamBurstShort.init(TopLevel.container, 1, this.burstColor1, this.burstParticleSize, "BurstParticle", this.burst1ParticlesInCycle);
 
-	this.beam.init(TopLevel.container, 1, this.burstColor1, 3, "StraightParticle", this.beam1ParticlesInCycle, 90, this.beam1ParticlesLife);
-	this.centerBeam.init(TopLevel.container, 1, this.burstColor2, 5, "StraightParticle", this.beam2ParticlesInCycle, 50, this.beam2ParticlesLife);
+	this.beam.init(TopLevel.container, 1, this.burstColor1, this.beamParticleSize/2, "StraightParticle", this.beam1ParticlesInCycle, 90, this.beam1ParticlesLife);
+	this.centerBeam.init(TopLevel.container, 1, this.burstColor2, this.beamParticleSize, "StraightParticle", this.beam2ParticlesInCycle, 50, this.beam2ParticlesLife);
 
 	this.burstTimer.delay = this.time;
-	this.isFiring  		  = false;
-	this.isAiming         = false;  
+	this.shootTimer.delay = this.shotDelay;  
 }
 
-StraightBeam.prototype.update = function() {
-	this.beamCharge.update();
-	this.beamBurstLong.update();
-	this.beamBurstShort.update();	
-	this.beam.update();
-	this.centerBeam.update();
-}
+StraightBeam.prototype.update = function() { }
 
-StraightBeam.prototype.fire = function() {
-	debugger;
+StraightBeam.prototype.fire = function(fireAngle) {
+	var target = {x:0, y:0};
 
-	var info = VectorUtils.getFullVectorInfo(this.origin.x, this.origin.y, this.target.x, this.target.y);
-	var angle = Math.atan2(this.target.y - this.origin.y, this.target.x - this.origin.x) * (180/Math.PI);
+	if(fireAngle != null){
+		target.x = this.origin.x + Math.cos(fireAngle * (Math.PI/180)) * 1000;
+		target.y = this.origin.y + Math.sin(fireAngle * (Math.PI/180)) * 1000;	
+	}else{
+		target.x = this.target.x;
+		target.y = this.target.y;	
+	}
+
+	var info = VectorUtils.getFullVectorInfo(this.origin.x, this.origin.y, target.x, target.y);
+	var angle = Math.atan2(target.y - this.origin.y, target.x - this.origin.x) * (180/Math.PI);
 
 	angle  += this.angleOffset;
 	
@@ -89,15 +81,16 @@ StraightBeam.prototype.fire = function() {
 	var angle = Math.atan2(tY - this.origin.y, tX - this.origin.x) * (180/Math.PI);
 	
 	this.shootTimer.start();
-	this.isAiming = true;
-
+	
 	this.shootTimer.callback = function(){
-		var start;
-		var end;
+		var start = null;
+		var end = null;
+
+		var d = this.size*2;
 
 		for(var i=0; i<this.pieces; i++){
-			var x = this.origin.x + (info.dir.x * (this.size*2) * i);
-			var y = this.origin.y + (info.dir.y * (this.size*2) * i);
+			var x = this.origin.x + (info.dir.x * d * i);
+			var y = this.origin.y + (info.dir.y * d * i);
 
 			StraightBeam.ColliderArguments[0] = x;
 			StraightBeam.ColliderArguments[1] = y;
@@ -105,13 +98,21 @@ StraightBeam.prototype.fire = function() {
 			StraightBeam.ColliderArguments[3] = this.time;
 			StraightBeam.ColliderArguments[4] = this.origin;
 
-			var collider = this.container.add("BeamCollider", StraightBeam.ColliderArguments, 0, true);	
+			if( (x+d > 0 && x-d < TopLevel.canvas.width) && (y+d > 0 && y-d < TopLevel.canvas.height) ){
+				var collider = this.container.add("BeamCollider", StraightBeam.ColliderArguments);	
 
-			if(i==0) { start = collider; }
-			if(i==this.pieces-1){ end = collider;   }
+				if(collider){
+					if(start == null){
+						start = collider;
+					} 
+				
+					end = collider;
+
+					this.collider.push(collider);
+				}
+			}
 		}
 
-		this.beamBurstLong.on(angle-10, angle+10);
 		this.beamBurstShort.on(angle-45, angle+45);
 		
 		this.beam.on(start, end);
@@ -119,8 +120,6 @@ StraightBeam.prototype.fire = function() {
 
 		this.burstTimer.start();
 		this.shootTimer.stop();
-
-		this.isFiring = true;
 
 		if(this.onStart != null)
 			this.onStart();
@@ -133,21 +132,48 @@ StraightBeam.prototype.charge = function() {
 
 StraightBeam.prototype.disable = function() {
 	this.beamCharge.off();		
+	this.beamBurstShort.off();
+	this.beam.off();
+	this.centerBeam.off();
+
+	this.shootTimer.stop();
+	this.burstTimer.stop();
+
+	for(var i=0; i<this.collider.length; i++){
+		this.collider[i].alive = false;
+	}
+
+	this.collider.length = 0;
 }
 
-function BeamCollider() {
-	CircleCollider.call(this);
+StraightBeam.prototype.forceDisable = function() {
+	this.disable();
 
+	if(this.onComplete != null)
+		this.onComplete();
+}
+
+BeamCollider.inheritsFrom( Attributes );
+
+function BeamCollider() {
 	this.timer = TimeOutFactory.getTimeOut(0, 1, this, function(){ 
 		this.timer.stop();
 		this.alive = false;
 	});
 }
 
-BeamCollider.inheritsFrom( CircleCollider );
+BeamCollider.prototype.afterCreate = function(){
+	CircleCollider.prototype.create.call(this);
+}
 
 BeamCollider.prototype.init = function(x, y, radius, time, user) {
-	this.parent.init.call(this, x, y, radius);
+	CircleCollider.prototype.init.call(this, radius);
+
+	this.parent.init.call(this);
+
+	this.x = x;
+	this.y = y;
+
 	this.timer.delay = time;
 	this.timer.start();	
 
@@ -167,23 +193,16 @@ BeamCollider.prototype.update = function(delta) {
 	this.lastUserY = this.user.y;	
 }
 
+BeamCollider.prototype.destroy = function() {
+	this.timer.stop();
+}
+
 BeamCollider.prototype.draw = function(context) {
-	/*context.strokeStyle = "#FF0000";
+	context.strokeStyle = "#FF0000";
 
 	context.beginPath();
 	context.arc(0, 0, this.collider.r, 0, Math.PI*2);
 	context.closePath();
 
-	context.stroke();*/
+	context.stroke();
 }
-
-BeamCollider.prototype.getCollisionId = function(){
-	return "BeamCollider";
-}
-
-BeamCollider.prototype.onCollide = function(other){
-	
-}
-
-
-

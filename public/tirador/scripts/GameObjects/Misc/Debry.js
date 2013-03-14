@@ -1,20 +1,25 @@
-function Debry() {
-	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 0);
-}
+function Debry() {}
 
-Debry.inheritsFrom( GameObject );
+Debry.inheritsFrom( Attributes );
+
+Debry.prototype.afterCreate = function(){
+	CircleCollider.prototype.create.call(this);
+}
 
 Debry.prototype.init = function(x, y, container) { 
 	this.x 		   = x;
 	this.y 		   = y;
 	this.container = container;
-	
-	this.vertexCount = Random.getRandomInt(5, 10);
+
 	this.radius 	 = Random.getRandomInt(4, 6);
+	this.vertexCount = Random.getRandomInt(5, 10);
 	this.blastRadius = Random.getRandomInt(70, 80);
 	this.blastAngle  = Random.getRandomInt(0, 360) * (Math.PI/180);
 
-	this.points 	 = [];
+	CircleCollider.prototype.init.call(this, this.radius);
+	this.parent.init.call(this);
+	
+	this.points = [];
 
 	var angle = (360 / this.vertexCount) * (Math.PI/180);
 
@@ -33,8 +38,6 @@ Debry.prototype.init = function(x, y, container) {
 	TweenMax.to(inst, 0.4, {x:endPos.x , y:endPos.y, ease:Power2.easeOut, onComplete:function(){
 		inst.alive = false;
 	}});
-
-	this.collider.r = this.radius;
 }
 
 Debry.prototype.draw = function(context) { 	
@@ -60,26 +63,16 @@ Debry.prototype.destroy = function() {
 	Rocket.ExplosionArguments[3] = this.radius;
 	Rocket.ExplosionArguments[4] = 5;
 
-	this.container.add("Explosion", Rocket.ExplosionArguments, 2, true);
+	debugger;
+
+	this.container.add("Explosion_Effect", Rocket.ExplosionArguments);
 
 	TweenMax.killTweensOf(this);
 }
 
-Debry.prototype.getColliderType = function(){
-	return GameObject.CIRCLE_COLLIDER;
-}
-
-Debry.prototype.getCollider = function(){
-	this.collider.pos.x = this.x + this.centerX;
-	this.collider.pos.y = this.y + this.centerY;
-
-	return this.collider;
-}
-
-Debry.prototype.getCollisionId = function(){
-	return "Debry";
-}
-
-Debry.prototype.onCollide = function(other){
+Debry.prototype.onHPDiminished = function(other) {}
+Debry.prototype.onDamageBlocked = function(other) {}
+Debry.prototype.onDamageReceived = function(other) {}
+Debry.prototype.onAllDamageReceived = function(other) {
 	this.alive = false;
 }

@@ -1,10 +1,22 @@
+PowerShot.inheritsFrom( Attributes );
+
 function PowerShot() {
-	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 0);
+	if (typeof ShotChargeRadius === "undefined") { return; }
+	if (typeof ShotCharge 		=== "undefined") { return; }
+
+	this.trailEffect = new ShotChargeRadius(this, 0, 0, 90, 30, -1);
+	this.hitEffect   = new ShotCharge(this, 0, 0, 0, 360, 50, 30);
 }
 
-PowerShot.inheritsFrom( GameObject );
+PowerShot.prototype.afterCreate = function(){
+	CircleCollider.prototype.create.call(this);
+}
 
-PowerShot.prototype.init = function(user,vertexCount, speed, radius, innerRadius, offsetX, offsetY, color, container) { 	
+PowerShot.prototype.init = function(user, container, vertexCount, speed, radius, innerRadius, offsetX, offsetY, color) { 	
+	CircleCollider.prototype.init.call(this, radius);
+
+	Attributes.prototype.init.call(this);	
+
 	this.user      = user;
 	this.speed     = speed;
 	this.onHold    = true;
@@ -28,8 +40,12 @@ PowerShot.prototype.init = function(user,vertexCount, speed, radius, innerRadius
 		this.innerPoints.push({x:Math.cos(ai)*this.innerRadius, y:Math.sin(ai)*this.innerRadius});
 		this.outerPoints.push({x:Math.cos(a)*this.radius, y:Math.sin(a)*this.radius});
 	}
+	
+	this.trailEffect.init(container, 30, this.color, 3, "BurstParticleRadius", 5, 100, 300, this.innerRadius);
+	this.hitEffect.init(container, 1, this.color, 3, "BurstParticle", 5);
 
-	this.collider.r = this.radius;
+	this.trailEffect.off();
+	this.hitEffect.off();
 }
 
 PowerShot.prototype.draw = function(context) { 		
@@ -65,7 +81,7 @@ PowerShot.prototype.update = function(delta) {
 		this.y = this.user.y + this.offsetY;
 	}else{
 		this.y -= this.speed*delta;
-
+	
 		if(this.y < -this.radius){
 			this.alive = false;
 		}	
@@ -74,33 +90,31 @@ PowerShot.prototype.update = function(delta) {
 	this.rotation += 10;
 }
 
+PowerShot.prototype.destroy = function() { 	
+	this.trailEffect.off();
+	this.hitEffect.on();
+}
+
 PowerShot.prototype.release = function() { 	
 	this.onHold = false;
+	this.trailEffect.on();
 }
 
-PowerShot.prototype.getColliderType = function(){
-	return GameObject.CIRCLE_COLLIDER;
+PowerShot.prototype.onHPDiminished = function(other) {}
+PowerShot.prototype.onDamageBlocked = function(other) {}
+PowerShot.prototype.onDamageReceived = function(other) {}
+PowerShot.prototype.onAllDamageReceived = function(other) {
+	this.alive = false;
 }
-
-PowerShot.prototype.getCollider = function(){
-	this.collider.pos.x = this.x + this.centerX;
-	this.collider.pos.y = this.y + this.centerY;
-
-	return this.collider;
-}
-
-PowerShot.prototype.getCollisionId = function(){
-	return "PowerShot";
-}
-
-PowerShot.prototype.onCollide = function(other){}
-
-function PowerShotSine() {}
 
 PowerShotSine.inheritsFrom( PowerShot );
 
-PowerShotSine.prototype.init = function(user,vertexCount, speed, radius, innerRadius, offsetX, offsetY, color, container, side) {
-	this.parent.init.call(this, user,vertexCount, speed, radius, innerRadius, offsetX, offsetY, color, container);
+function PowerShotSine() {
+	PowerShot.call(this);	
+}
+
+PowerShotSine.prototype.init = function(user, container, vertexCount, speed, radius, innerRadius, offsetX, offsetY, color, side) {
+	PowerShot.prototype.init.call(this, user, container, vertexCount, speed, radius, innerRadius, offsetX, offsetY, color);
 
 	this.frameCount = 0;
 	this.side = side;
@@ -111,12 +125,11 @@ PowerShotSine.prototype.update = function(delta) {
 	if(this.onHold){
 		this.x = this.user.x + this.offsetX;
 		this.y = this.user.y + this.offsetY;
-
 		this.lastX = this.user.x;
 	}else{
-		this.x  = this.lastX + this.offsetX + Math.sin(this.frameCount * (Math.PI/180)) * 30;
+	    this.x  = this.lastX + this.offsetX + Math.sin(this.frameCount * (Math.PI/180)) * 30;
 		this.y -= this.speed * delta;
-
+		
 		this.frameCount += 6*this.side;	
 
 		if(this.y < -this.radius){
@@ -127,12 +140,14 @@ PowerShotSine.prototype.update = function(delta) {
 	this.rotation += 10;
 }
 
-function PowerShotCircle() {}
-
 PowerShotCircle.inheritsFrom( PowerShot );
 
-PowerShotCircle.prototype.init = function(user,vertexCount, speed, radius, innerRadius, angle, distance, color, container, rotationCenterX, rotationCenterY) {
-	this.parent.init.call(this, user,vertexCount, speed, radius, innerRadius, 0, 0, color, container);
+function PowerShotCircle() {
+	PowerShot.call(this);
+}
+
+PowerShotCircle.prototype.init = function(user, container, vertexCount, speed, radius, innerRadius, angle, distance, color, rotationCenterX, rotationCenterY) {
+	PowerShot.prototype.init.call(this, user, container, vertexCount, speed, radius, innerRadius, 0, 0, color);
 
 	this.frameCount = 0;
 	this.lastX;
@@ -151,9 +166,8 @@ PowerShotCircle.prototype.update = function(delta) {
 		this.rCenterX = this.user.x + this.rotationCenterX;
 		this.rCenterY = this.user.y + this.rotationCenterY;
 	}else{
-		this.rCenterX -= 0; 
 		this.rCenterY -= this.speed*delta;
-
+		
 		if(this.y < -this.radius){
 			this.alive = false;
 		}
@@ -163,6 +177,5 @@ PowerShotCircle.prototype.update = function(delta) {
 	this.y = this.rCenterY + Math.sin((this.frameCount * (Math.PI/180)) + this.initAngle ) * this.distance;
 
 	this.frameCount += 6;
-
-	this.rotation += 10;
+	this.rotation   += 10;
 }

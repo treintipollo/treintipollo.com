@@ -43,14 +43,17 @@ function ShotChargeParticle() {}
 
 ShotChargeParticle.inheritsFrom( GameObject );
 
-ShotChargeParticle.prototype.init = function(parent, xOffset, yOffset, radius, startAngle, endAngle, color, size) { 
+ShotChargeParticle.prototype.init = function(parent, xOffset, yOffset, radius, startAngle, endAngle, color, size, minSpeed, maxSpeed) { 
     this.parent  = parent;
 	this.radius  = Random.getRandomArbitary(radius/2, radius);
 	this.xOffset = xOffset;
 	this.yOffset = yOffset;
-	this.speed   = Random.getRandomArbitary(150, 300);
 	this.color   = color;
 	this.pSize   = size;
+
+	minSpeed = minSpeed ? minSpeed : 150;
+	maxSpeed = maxSpeed ? maxSpeed : 300;
+	this.speed = Random.getRandomArbitary(minSpeed, maxSpeed);
 
 	var a = Random.getRandomArbitary(startAngle, endAngle) * (Math.PI/180);
 	
@@ -86,22 +89,24 @@ function BurstParticle() {}
 
 BurstParticle.inheritsFrom( GameObject );
 
-BurstParticle.prototype.init = function(parent, xOffset, yOffset, radius, startAngle, endAngle, color, size) { 
-    this.parent  = parent;
+BurstParticle.prototype.init = function(parent, xOffset, yOffset, radius, startAngle, endAngle, color, size, minSpeed, maxSpeed) { 
 	this.radius  = Random.getRandomArbitary(radius/2, radius);
 	this.xOffset = xOffset;
 	this.yOffset = yOffset;
-	this.speed   = Random.getRandomArbitary(100, 500);
 	this.color   = color;
 	this.pSize   = size;
+
+	minSpeed = minSpeed ? minSpeed : 100;
+	maxSpeed = maxSpeed ? maxSpeed : 500;
+	this.speed = Random.getRandomArbitary(minSpeed, maxSpeed);
 
 	var a = Random.getRandomArbitary(startAngle, endAngle) * (Math.PI/180);
 	
 	this.dirX = Math.cos(a);
 	this.dirY = Math.sin(a);
 
-	this.x = this.xOffset + this.parent.x;
-	this.y = this.yOffset + this.parent.y;
+	this.x = this.xOffset + parent.x;
+	this.y = this.yOffset + parent.y;
 }
 
 BurstParticle.prototype.draw = function(context) { 
@@ -123,6 +128,26 @@ BurstParticle.prototype.update = function(delta) {
 		this.x += this.dirX * this.speed * delta;
 		this.y += this.dirY * this.speed * delta;
 	}
+}
+
+function BurstParticleRadius() {}
+
+BurstParticleRadius.inheritsFrom( BurstParticle );
+
+BurstParticleRadius.prototype.init = function(parent, xOffset, yOffset, radius, angle, color, size, minSpeed, maxSpeed, spawnRadius) { 
+	BurstParticle.prototype.init.call(this, parent, xOffset, yOffset, radius, 0, 0, color, size, minSpeed, maxSpeed);    
+
+	var a = Random.getRandomArbitary(0, 360) * (Math.PI/180);
+	angle *= (Math.PI/180);
+
+	this.x = this.xOffset + parent.x + Math.cos(a)*spawnRadius;	
+	this.y = this.yOffset + parent.y + Math.sin(a)*spawnRadius;
+
+	a = Math.atan2(this.yOffset + parent.y + Math.sin(angle)*radius - this.y, 
+				   this.xOffset + parent.x + Math.cos(angle)*radius - this.x);
+
+	this.dirX = Math.cos(a);
+	this.dirY = Math.sin(a);
 }
 
 function RadialParticle() {}

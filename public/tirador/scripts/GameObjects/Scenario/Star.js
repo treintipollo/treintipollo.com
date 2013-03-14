@@ -88,6 +88,6 @@ StartFactory.prototype.createStart = function() {
 		this.starArguments[1] = 0;
 		this.starArguments[2] = Random.getRandomInt(this.starMinSpeed, this.starMaxSpeed);
 
-		this.container.add("Star", this.starArguments, 4);
+		this.container.add("Star", this.starArguments);
 	};
 }
