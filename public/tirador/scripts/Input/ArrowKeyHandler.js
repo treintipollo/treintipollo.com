@@ -80,6 +80,8 @@ $(function(){
          this.removeKeyUpCallback(c.key, c.callback); 
         }
       }
+
+      callbacks.length = 0;
     },
 
     isDown: function(keyCode) {

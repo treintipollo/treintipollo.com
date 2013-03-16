@@ -100,6 +100,10 @@ ShotCharge.prototype.update = function() {
 }
 
 ShotCharge.prototype.clearAllIntervals = function() {
+	if(!this.particleTimer){
+		debugger;
+	}
+	
 	this.particleTimer.stop();
 }
 
@@ -109,6 +113,8 @@ ShotCharge.prototype.destroy = function() {
 	for(var i=0; i<this.particles.length; i++){
 		this.particles[i].setDestroyMode(GameObject.NO_CALLBACKS);
 	}
+
+	this.particleTimer.remove();
 
 	DestroyUtils.destroyAllProperties(this);
 }

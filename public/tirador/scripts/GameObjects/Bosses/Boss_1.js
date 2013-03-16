@@ -29,6 +29,9 @@ function Boss_1() {
 
 	this.blinkTimer   = TimeOutFactory.getTimeOut(0, 2, this, null); 
 	this.trembleTimer = TimeOutFactory.getTimeOut(1, 70, this, null);
+	this.deathTimer   = TimeOutFactory.getTimeOut(3000, 1, this, function(){
+		this.currentMotion.set(this.currentStats.get().deathMotion);
+	});
 }
 
 Boss_1.prototype.afterCreate = function(){
@@ -49,7 +52,7 @@ Boss_1.Main_Ability_Properties     = [{eyeTypes:[Boss_1.SNAKE_EYE_SNIPER],
 									   deathMotion:Boss_1.DEATH_1_MOTION, 
 									   cycleMode:Boss_1.RANDOM_EYE_CYCLE, 
 									   blinkTime:2000,
-									   generateTentacles:false}, 
+									   generateTentacles:false},
 									  
 									  {eyeTypes:[Boss_1.ROUND_EYE,Boss_1.SNAKE_EYE],  
 									   deathMotion:Boss_1.DEATH_1_MOTION, 
@@ -80,9 +83,9 @@ Boss_1.Main_Beam_Properties   = [120, "#FFFFFF", 7, "#FF0000", "#FFFF00", 4, 1, 
 Boss_1.Helper_Beam_Properties = [60, "#FFFFFF", 4, "#11D3ED", "#E045F5", 2, 1, 5, 5, 20, 10, 5];
 
 //size, pieces, shotTime, shotDelay, angleOffset
-Boss_1.Straigh_Beam_Properties = [ [ 15, 22, 1500, 400     ], [ 11, 35, 1000, 400 ] ];
-Boss_1.Twin_Beam_1_Properties  = [ [ 15, 22, 2500, 400, 15 ], [ 11, 35, 1000, 400 ] ];
-Boss_1.Twin_Beam_2_Properties  = [ [ 15, 22, 2500, 400, -15], [ 11, 35, 1000, 400 ] ];
+Boss_1.Straigh_Beam_Properties = [ [ 10, 22, 1500, 400     ], [ 10, 35, 1000, 400 ] ];
+Boss_1.Twin_Beam_1_Properties  = [ [ 10, 22, 2500, 400, 15 ], [ 10, 35, 1000, 400 ] ];
+Boss_1.Twin_Beam_2_Properties  = [ [ 10, 22, 2500, 400, -15], [ 10, 35, 1000, 400 ] ];
 
 //helperAmount, helperRadius
 Boss_1.Backup_Properties  	  = [ [ 3, 200 ], [ 3, 200 ] ];
@@ -179,8 +182,8 @@ Boss_1.prototype.init = function(x, y, target, bodyProperties, abilityProperties
 
 	var death_init = FuntionUtils.bindScope(this, function(){  
 		this.stopAttack();
-
-		weapons[Boss_1.INSECT_EYE].destroyAll();
+		
+		this.weapons[Boss_1.INSECT_EYE].destroyAll();
 
 		this.blockDamage = true;
 
@@ -188,9 +191,9 @@ Boss_1.prototype.init = function(x, y, target, bodyProperties, abilityProperties
 			t.blockDamage = true;
 		});
 
-		TweenMax.to(this, 3, {eyeHeight:this.eyeheightMax+(this.eyeheightMax/2), ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){
-			this.currentMotion.set(this.currentStats.get().deathMotion);
-		}});
+		TweenMax.to(this, 3, {eyeHeight:this.eyeheightMax+(this.eyeheightMax/2), ease:Power4.easeOut});
+
+		this.deathTimer.start();
 	});
 
 	var death_explosions_blood = FuntionUtils.bindScope(this, function(){  
@@ -386,12 +389,12 @@ Boss_1.prototype.init = function(x, y, target, bodyProperties, abilityProperties
 			
 			do{
 				this.currentStats.eyeType = eyeCycleModes[this.currentStats.get().cycleMode]();
-				this.weapon = weapons[this.currentStats.eyeType];
+				this.weapon = this.weapons[this.currentStats.eyeType];
 			}while(!this.weapon.available());
 
 		}else{
 			this.currentStats.eyeType = eyeCycleModes[this.currentStats.get().cycleMode]();
-			this.weapon = weapons[this.currentStats.eyeType];
+			this.weapon = this.weapons[this.currentStats.eyeType];
 		}
 	});
 
@@ -424,17 +427,17 @@ Boss_1.prototype.init = function(x, y, target, bodyProperties, abilityProperties
 	var gotoIdle      = FuntionUtils.bindScope(this, function(){ this.currentMotion.set(Boss_1.IDLE_MOTION); });
 	var restartAttack = FuntionUtils.bindScope(this, function(){ this.startAttack(); });
 
-	var weapons = [];
+	this.weapons = [];
 	//Main weapons
-	weapons[Boss_1.ROUND_EYE]  = new Boss_1_Weapon_Beam(this, target, gotoShake, gotoIdle, beamProperties);
-	weapons[Boss_1.SNAKE_EYE]  = new Boss_1_Weapon_Twin_Beam(this, target, gotoShake, gotoIdle, beamProperties);
-	weapons[Boss_1.INSECT_EYE] = new Boss_1_Backup(this, target, restartAttack, Boss_1.Backup_Properties[this.index], beamProperties);
+	this.weapons[Boss_1.ROUND_EYE]  = new Boss_1_Weapon_Beam(this, target, gotoShake, gotoIdle, beamProperties);
+	this.weapons[Boss_1.SNAKE_EYE]  = new Boss_1_Weapon_Twin_Beam(this, target, gotoShake, gotoIdle, beamProperties);
+	this.weapons[Boss_1.INSECT_EYE] = new Boss_1_Backup(this, target, restartAttack, Boss_1.Backup_Properties[this.index], beamProperties);
 	//Helper weapons
-	weapons[Boss_1.ROUND_EYE_STRAIGHT] = new Boss_1_Weapon_Straight_Beam(this, gotoShake, gotoIdle, beamProperties);
-	weapons[Boss_1.INSECT_EYE_ANGLED]  = new Boss_1_Weapon_Angled_Beam(this, gotoShake, gotoIdle, Boss_1.Angled_Beam_Properties[this.index], beamProperties);
-	weapons[Boss_1.SNAKE_EYE_SNIPER]   = new Boss_1_Weapon_Sniper_Shot(this, target, restartAttack, Boss_1.Sniper_Properties[this.index], beamProperties);
+	this.weapons[Boss_1.ROUND_EYE_STRAIGHT] = new Boss_1_Weapon_Straight_Beam(this, gotoShake, gotoIdle, beamProperties);
+	this.weapons[Boss_1.INSECT_EYE_ANGLED]  = new Boss_1_Weapon_Angled_Beam(this, gotoShake, gotoIdle, Boss_1.Angled_Beam_Properties[this.index], beamProperties);
+	this.weapons[Boss_1.SNAKE_EYE_SNIPER]   = new Boss_1_Weapon_Sniper_Shot(this, target, restartAttack, Boss_1.Sniper_Properties[this.index], beamProperties);
 
-	this.weapon = weapons[0];
+	this.weapon = this.weapons[0];
 
 	//Eye drawing logic
 	var roundEye = FuntionUtils.bindScope(this, function(context){
@@ -693,6 +696,10 @@ Boss_1.prototype.destroy = function(){
 	this.explosionArea.stop();
 	this.trembleTimer.stop();
 
+	for(var i=0; i<this.weapons.length; i++){
+		this.weapons[i].destroyAll();
+	}
+
 	TweenMax.killTweensOf(this);
 	TweenMax.killTweensOf(this.distanceToAnchor);
 	TweenMax.killTweensOf(this.currentPos);
@@ -723,6 +730,7 @@ Boss_1_Weapon.prototype.disable = function() {}
 Boss_1_Weapon.prototype.forceDisable = function() {}
 Boss_1_Weapon.prototype.needsAiming = function() {}
 Boss_1_Weapon.prototype.available = function() {}
+Boss_1_Weapon.prototype.destroyAll = function() {}
 
 function Boss_1_Weapon_Beam(user, target, onStart, onComplete, beamProperties) {
 	this.beam = new StraightBeam(beamProperties);
@@ -741,6 +749,9 @@ Boss_1_Weapon_Beam.prototype.disable = function() { this.beam.disable(); }
 Boss_1_Weapon_Beam.prototype.forceDisable = function() { this.beam.forceDisable(); }
 Boss_1_Weapon_Beam.prototype.needsAiming = function() { return true; }
 Boss_1_Weapon_Beam.prototype.available = function() { return true; };
+Boss_1_Weapon_Beam.prototype.destroyAll = function() {
+	this.beam.destroy();
+}
 
 function Boss_1_Weapon_Twin_Beam(user, target, onStart, onComplete, beamProperties) {
 	this.beam1 = new StraightBeam(beamProperties);
@@ -761,7 +772,13 @@ Boss_1_Weapon_Twin_Beam.prototype.charge = function() { this.beam1.charge(); }
 Boss_1_Weapon_Twin_Beam.prototype.disable = function() { this.beam1.disable(); this.beam2.disable();}
 Boss_1_Weapon_Twin_Beam.prototype.forceDisable = function() { this.beam1.forceDisable(); this.beam2.forceDisable(); }
 Boss_1_Weapon_Twin_Beam.prototype.needsAiming = function() { return true; }
-Boss_1_Weapon_Twin_Beam.prototype.available = function() { return true; };
+Boss_1_Weapon_Twin_Beam.prototype.available = function() { return true; }
+Boss_1_Weapon_Twin_Beam.prototype.destroyAll = function() {
+	this.beam1.destroy();
+	this.beam2.destroy();
+	this.beam1 = null;
+	this.beam2 = null;
+}
 
 function Boss_1_Backup(user, target, onComplete, properties, beamProperties) {
 	this.target  		= target;
@@ -827,18 +844,34 @@ Boss_1_Backup.prototype.fire = function() {
 }
 
 Boss_1_Backup.prototype.destroyAll = function() {
+	if(!this.beam) return;
+
 	for(var j=0; j<this.helpers.length; j++){
 		TweenMax.killTweensOf(this.helpers[j].helper);
 		TweenMax.killTweensOf(this.helpers[j].helper.distanceToAnchor);
 		TweenMax.killTweensOf(this.helpers[j].helper.currentPos);
 
+		this.helpers[j].helper.destroyMode = GameObject.NO_CALLBACKS;
 		this.helpers[j].helper.currentMotion.set(Boss_1.INIT_DEATH_MOTION);
 	}
+
+	this.beam.destroy();
+	
+	this.helpers.lenght = 0;
+	
+	this.helpers = null;
+	this.beam    = null;
 }
 
 Boss_1_Backup.prototype.charge = function() { this.beam.charge(); }
-Boss_1_Backup.prototype.disable = function() { this.beam.disable(); }
-Boss_1_Backup.prototype.forceDisable = function() { this.beam.forceDisable(); }
+Boss_1_Backup.prototype.disable = function() { 
+	if(this.beam) 
+		this.beam.disable(); 
+}
+Boss_1_Backup.prototype.forceDisable = function() { 
+	if(this.beam)
+		this.beam.forceDisable(); 
+}
 Boss_1_Backup.prototype.needsAiming = function() { return false; }
 Boss_1_Backup.prototype.available = function() { return this.helpers.length < this.amount; };
 
@@ -888,7 +921,15 @@ Boss_1_Weapon_Straight_Beam.prototype.forceDisable = function() {
 	}
 }
 Boss_1_Weapon_Straight_Beam.prototype.needsAiming = function() { return true; }
-Boss_1_Weapon_Straight_Beam.prototype.available = function() { return true; };
+Boss_1_Weapon_Straight_Beam.prototype.available = function() { return true; }
+Boss_1_Weapon_Straight_Beam.prototype.destroyAll = function() { 
+	this.beam.destroy(); 
+	if(this.sightGameObject){
+		this.sightGameObject.alive = false; 
+		this.sightGameObject       = null;
+	}
+	this.beam = null;
+}
 
 function Boss_1_Weapon_Angled_Beam(user, onStart, onComplete, properties, beamProperties) {
 	this.user = user;
@@ -959,6 +1000,14 @@ Boss_1_Weapon_Angled_Beam.prototype.forceDisable = function() {
 }
 Boss_1_Weapon_Angled_Beam.prototype.needsAiming = function() { return true; }
 Boss_1_Weapon_Angled_Beam.prototype.available = function() { return true; }
+Boss_1_Weapon_Straight_Beam.prototype.destroyAll = function() { 
+	this.beam.destroy(); 
+	if(this.sightGameObject){
+		this.sightGameObject.alive = false; 
+		this.sightGameObject       = null;
+	}
+	this.beam = null;
+}
 
 function Boss_1_Weapon_Sniper_Shot(user, target, onComplete, properties, beamProperties) {
 	this.beam = new StraightBeam(beamProperties);
@@ -1012,6 +1061,16 @@ Boss_1_Weapon_Sniper_Shot.prototype.disable = function() { this.beam.disable(); 
 Boss_1_Weapon_Sniper_Shot.prototype.forceDisable = function() { this.beam.forceDisable(); this.shotTimer.stop(); this.voleyTimer.stop(); }
 Boss_1_Weapon_Sniper_Shot.prototype.needsAiming = function() { return false; }
 Boss_1_Weapon_Sniper_Shot.prototype.available = function() { return true; }
+
+Boss_1_Weapon_Sniper_Shot.prototype.destroyAll = function() { 
+	this.beam.destroy(); 
+	this.shotTimer.remove();
+	this.voleyTimer.remove();
+
+	this.beam       = null;
+	this.shotTimer  = null;
+	this.voleyTimer = null;
+}
 
 function Tentacle() {       
     this.girth = 15;
@@ -1142,6 +1201,8 @@ Tentacle.prototype.destroy = function(){
 	}
 
 	this.segments.length = 0;
+
+	TweenMax.killTweensOf(this);
 }
 
 Tentacle.prototype.onHPDiminished = function(other) {

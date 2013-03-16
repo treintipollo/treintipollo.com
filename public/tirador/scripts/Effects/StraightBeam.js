@@ -86,7 +86,7 @@ StraightBeam.prototype.fire = function(fireAngle) {
 		var start = null;
 		var end = null;
 
-		var d = this.size*2;
+		var d = (this.size*2) + (this.size/2);
 
 		for(var i=0; i<this.pieces; i++){
 			var x = this.origin.x + (info.dir.x * d * i);
@@ -151,6 +151,15 @@ StraightBeam.prototype.forceDisable = function() {
 
 	if(this.onComplete != null)
 		this.onComplete();
+}
+
+StraightBeam.prototype.destroy = function() {
+	this.beamCharge.destroy();    
+	this.beamBurstShort.destroy();
+	this.beam.destroy(); 		
+	this.centerBeam.destroy(); 
+	this.burstTimer.remove();
+	this.shootTimer.remove();
 }
 
 BeamCollider.inheritsFrom( Attributes );

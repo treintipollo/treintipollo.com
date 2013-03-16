@@ -8,7 +8,9 @@ Ship.inheritsFrom( Attributes );
 function Ship() {
 	this.speedX = 100;
 	this.speedY = 100;
-	
+
+	this.lastWeaponType = WeaponPowerUp.SHOT;
+
 	var exhaustPoints = [];
 	exhaustPoints.push({ x:0, y:0 });
 	exhaustPoints.push({ x:0, y:0 });
@@ -81,8 +83,12 @@ Ship.prototype.init = function(x, y, container){
 
 	this.parent.init.call(this);
 
-	this.weapon = new ShotWeapon(5, this);
-	//this.weapon = new RocketWeapon(2, this);
+	if(this.lastWeaponType == WeaponPowerUp.SHOT){
+		this.weapon = new ShotWeapon(0, this);
+	}
+	if(this.lastWeaponType == WeaponPowerUp.ROCKET){
+		this.weapon = new RocketWeapon(0, this);
+	}
 
 	this.x = x;
 	this.y = y;
@@ -291,7 +297,9 @@ Ship.prototype.update = function(delta) {
 	this.exhaust120.update(); 
 	this.exhaust150.update();
 
-	this.weapon.update();
+	if(this.weapon){
+		this.weapon.update();
+	}
 }
 
 Ship.prototype.destroy = function(){
@@ -301,7 +309,6 @@ Ship.prototype.destroy = function(){
 	this.exhaust120.off(); 
 	this.exhaust150.off();	
 
-	this.weapon.destroy();
 	this.explosionArea.stop();
 	TweenMax.killTweensOf(this);
 }
@@ -387,7 +394,14 @@ Ship.prototype.onAllDamageReceived = function(other) {
 	
 	this.explosionArea.init(this, 35, 20, -1, 50);
 
-	this.blockControls = true;
+	this.blockControls 		= true;
+	this.checkingCollisions = false;
+	
+	TopLevel.powerUpFactory.create(this.x, this.y, "WeaponPowerUp", this.weapon.getLevel()-1);
+
+	this.lastWeaponType = this.weapon.getId();
+	this.weapon.destroy();
+	this.weapon = null;
 
 	TweenMax.to(this, speed, {y:this.y + d, rotation:720, ease:Linear.ease, onCompleteScope:this, onComplete:function(){
 		this.alive = false;

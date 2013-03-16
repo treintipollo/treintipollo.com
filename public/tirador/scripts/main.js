@@ -3,6 +3,7 @@ var TopLevel = {
 	context: null,
 	container:null,
 	attributesGetter:null,
+	powerUpFactory:null,
 	lastUpdate: Date.now(),
 	focus: true,
 	blur: true,
@@ -10,29 +11,38 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 
-//TODO: Destruir y volver a crear la nave, cuando perdes todo el HP.
-		//Animacion de muerte
-		//Guardar el arma actual, sin el nivel.
-		//Tirar algunos powerups
+//TODO: Some kind of level, that ends with the boss.
+		//Baddies --> Boss --> Baddies --> Boss --> etc.
+		//Special baddies that drop powerups
+		//More Powerups
+			//Level up only
+			//Health
+			//Lives
+			//Speed
+		//Minimalistic Hud, showing lives, health, speed and weapon level.
 
-//TODO: Boss should enter from the top.
-	//Eye Closed, blockdamage=true
+		//Boss configuration container
+		//Boss should enter from the top.
+			//Eye Closed, blockdamage=true
+			//Achicar los circulos de colision de los rayos, agregar una distancia de separacion para no tener que crear tantos.
+		//Boss should drop power ups.
+			//When Damaged, 1 or 2
+		//Boss Should have more health. Body and Tentacles
+		//Congratulations screen.
+		//TODO: Check the Boss again and make configurable some of the hard coded numbers that where laying around.
+			//TODO: Boss should recover faster after being knocked back.
 
-//TODO: Boss should drop power ups.
-		//When Damaged, 3 or 4
-//TODO: Boss Should have more health. Body and Tentacles
+//TODO: Weapon Manger for player Ship
 
-//TODO: Check the Boss again and make configurable some of the hard coded numbers that where laying around.
-	//TODO: Boss should recover faster after being knocked back.
+//TODO: Usar TimeOutFactory dentro de ArrowKeyHandler.
+
+//TODO: Poner un splash para que siel juego arranca sin saber si tiene el foco o no, no pase nada.
+		//Usar hasFOcus del document.
 
 //TODO: Ship emoticons.
 
-//TODO: Utility methods to draw lines, sqaures and circles. Should recieve a context along with other parameters.
-
-//TODO: Some kind of level, that ends with the boss.
-		//Congratulations screen.
-
 //TODO: Tweek base damages and damage multipliers
+//TODO: Utility methods to draw lines, sqaures and circles. Should recieve a context along with other parameters.
 
 $(function(){
 	TopLevel.canvas    = document.getElementById("game");
@@ -40,6 +50,7 @@ $(function(){
 	
 	TopLevel.container 		  = new ObjectsContainer(TopLevel.context);
 	TopLevel.attributesGetter = new AttributesGetter();
+	TopLevel.powerUpFactory   = new PowerUpFactory(TopLevel.container);
 
 	var createObjectPools = function(){
 		TopLevel.container.createTypePool("Ship", Ship, 1);
@@ -64,10 +75,10 @@ $(function(){
 		TopLevel.container.createTypePool("Explosion"    , Explosion, 50);
 		TopLevel.container.createTypePool("Debry"        , Debry, 40);
 
-		TopLevel.container.createTypePool("WeaponPowerUp", WeaponPowerUp, 1);
+		TopLevel.container.createTypePool("WeaponPowerUp", WeaponPowerUp, 10);
 		TopLevel.container.createTypePool("PowerUpText"  , PowerUpText, 5);
 		
-		//TopLevel.container.createTypePool("EnemyRocket"       , EnemyRocket, 30);
+		TopLevel.container.createTypePool("EnemyRocket", EnemyRocket, 30);
 		
 		TopLevel.container.createTypePool("Boss_1"    	   , Boss_1, 4);
 		TopLevel.container.createTypePool("Tentacle"   	   , Tentacle, 20);
@@ -106,7 +117,7 @@ $(function(){
 		
 		TopLevel.container.createTypeConfiguration("WeaponPowerUp", "WeaponPowerUp", "WeaponPowerUp", 0, true , ObjectsContainer.PUSH);
 		
-		//TopLevel.container.createTypeConfiguration("EnemyRocket", "EnemyRocket", 3, true , ObjectsContainer.PUSH);
+		TopLevel.container.createTypeConfiguration("EnemyRocket", "EnemyRocket", "EnemyRocket", 3, true , ObjectsContainer.PUSH);
 
 		TopLevel.container.createTypeConfiguration("Boss_1"			, "Boss_1", "Boss_1", 0, true , ObjectsContainer.UNSHIFT);
 		TopLevel.container.createTypeConfiguration("Boss_1_Helper_1", "Boss_1", "Boss_1", 0, true , ObjectsContainer.PUSH);
@@ -134,18 +145,18 @@ $(function(){
 	
 	var createCollisionPairs = function(){
 		//Collision pairs
-		//TopLevel.container.addCollisionPair("Ship"     , "EnemyRocket");
-		TopLevel.container.addCollisionPair("Ship"     , "WeaponPowerUp");
-		TopLevel.container.addCollisionPair("Ship"     , "BeamCollider");
-		TopLevel.container.addCollisionPair("Ship"     , "Boss_1");
-		TopLevel.container.addCollisionPair("Ship"     , "Fireball");
-		TopLevel.container.addCollisionPair("Ship"     , "TentacleSegment");
+		TopLevel.container.addCollisionPair("Ship", "EnemyRocket");
+		TopLevel.container.addCollisionPair("Ship", "WeaponPowerUp");
+		TopLevel.container.addCollisionPair("Ship", "BeamCollider");
+		TopLevel.container.addCollisionPair("Ship", "Boss_1");
+		TopLevel.container.addCollisionPair("Ship", "Fireball");
+		TopLevel.container.addCollisionPair("Ship", "TentacleSegment");
 
-		/*TopLevel.container.addCollisionPair("Shot"     , "EnemyRocket");
-		TopLevel.container.addCollisionPair("PowerShot", "EnemyRocket");
-		TopLevel.container.addCollisionPair("Rocket"   , "EnemyRocket");
+		TopLevel.container.addCollisionPair("Shot"            , "EnemyRocket");
+		TopLevel.container.addCollisionPair("PowerShot"       , "EnemyRocket");
+		TopLevel.container.addCollisionPair("Rocket"          , "EnemyRocket");
 		TopLevel.container.addCollisionPair("Explosion_Damage", "EnemyRocket");
-		TopLevel.container.addCollisionPair("Debry"    , "EnemyRocket");*/
+		TopLevel.container.addCollisionPair("Debry"           , "EnemyRocket");
 		
 		TopLevel.container.addCollisionPair("Shot"     , "Boss_1");		
 		TopLevel.container.addCollisionPair("PowerShot", "Boss_1");
@@ -198,7 +209,7 @@ $(function(){
 		TopLevel.attributesGetter.setAttributes("BeamCollider", 1 , 1 , 1); 
 		TopLevel.attributesGetter.setAttributes("Fireball"	  , 0 , 0 , 1); 
 
-		//TopLevel.attributesGetter.setAttributes("EnemyRocket", 70, 10, 0.4 );	
+		TopLevel.attributesGetter.setAttributes("EnemyRocket", 0, 0, 3 );	
 	}
 
 	createObjectPools();
@@ -206,18 +217,15 @@ $(function(){
 	createCollisionPairs();
 	createAttributesTable();
 
-	var starFactory = new StartFactory(TopLevel.canvas.width, TopLevel.canvas.height, 50, 200, 600, 1, TopLevel.container);
-	starFactory.start();
+	TopLevel.powerUpFactory.addPowerUpTypes("WeaponPowerUp");
 
-	//var rocketFactory = new EnemyRocketFactory(TopLevel.canvas.width, TopLevel.canvas.height, 200, 500, 800, TopLevel.container, 10);
-	//rocketFactory.start();
+	var starFactory = new StartFactory(TopLevel.canvas.width, TopLevel.canvas.height, 50, 200, 600, 1, TopLevel.container);
 
 	var playerShipFactory = new PlayerShipFactory(TopLevel.container);
-
 	var ship = playerShipFactory.createPlayerShip();
-
-	//ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.A, function(){
-		var boss = TopLevel.container.add("Boss_1", [TopLevel.canvas.width/2, TopLevel.canvas.height/2- 100, 
+	
+	var rocketFactory = new EnemyRocketFactory(TopLevel.canvas.width, TopLevel.canvas.height, 200, 500, 800, TopLevel.container, 10, 4, FuntionUtils.bindScope(this, function(){
+		var boss = TopLevel.container.add("Boss_1", [TopLevel.canvas.width/2, -200, 
 												     ship, 
 													 Boss_1.Main_Body_Properties, 
 													 Boss_1.Main_Ability_Properties, 
@@ -227,18 +235,17 @@ $(function(){
 													 true, 
 													 ObjectsContainer.UNSHIFT);		
 	
-		boss.startAttack();
+		boss.gotoPosition(TopLevel.canvas.width/2, TopLevel.canvas.height/2-100, 3, function(){
+			this.startAttack();
+		}, null, true);
 
-	//});
-
-	/*ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.S, function(){
-	});
-
-	ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.Z, function(){
-	});
-
-	ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.X, function(){
-	});*/
+		boss.addOnDestroyCallback(this, function(){
+			rocketFactory.start();
+		});	
+	}));
+	
+	starFactory.start();
+	rocketFactory.start();
 
 	var frameRequest;
 	

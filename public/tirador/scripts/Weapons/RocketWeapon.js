@@ -88,8 +88,9 @@ RocketWeapon.prototype.init = function(container) {
 }
 
 RocketWeapon.prototype.destroy = function() {
-	ArrowKeyHandler.removeCallbacks(this.callbacks);
 	this.target.alive = false;
+	ArrowKeyHandler.removeCallbacks(this.callbacks);
+	DestroyUtils.destroyAllProperties(this);
 }
 
 RocketWeapon.prototype.getId = function() {

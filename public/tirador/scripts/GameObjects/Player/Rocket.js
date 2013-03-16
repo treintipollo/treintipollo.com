@@ -139,7 +139,7 @@ Rocket.prototype.destroy = function() {
 
 	this.container.add("Explosion_Damage", Rocket.ExplosionArguments);
 
-	this.exhaust.destroy();
+	this.exhaust.off();
 	TweenMax.killTweensOf(this);
 }
 
@@ -200,7 +200,7 @@ LargeRocket.prototype.destroy = function() {
 
 	this.container.add("Explosion_Damage", Rocket.ExplosionArguments);
 
-	this.exhaust.destroy();
+	this.exhaust.off();
 	TweenMax.killTweensOf(this);
 }
 
@@ -256,6 +256,6 @@ ClusterRocket.prototype.destroy = function() {
 		this.container.add("Debry" , Rocket.ExplosionArguments);	
 	}
 
-	this.exhaust.destroy();
+	this.exhaust.off();
 	TweenMax.killTweensOf(this);
 }

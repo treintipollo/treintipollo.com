@@ -24,6 +24,7 @@ ExplosionsArea.prototype.stop = function() {
 }
 
 ExplosionsArea.prototype.destroy = function() {
+	this.explosionTimer.remove();
 	DestroyUtils.destroyAllProperties(this);
 }
 

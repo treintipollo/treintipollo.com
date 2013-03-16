@@ -46,25 +46,31 @@ ObjectsContainer.prototype.update = function(delta) {
 				if(object.alive){
 					object.update(delta);
 
-					if(object.checkingCollisions){
-						this.collisionId = object.getCollisionId();
+					if(!object.checkingCollisions) continue;
 
-						this.collisionList = this.collisionLists[this.collisionId];
+					this.collisionId = object.getCollisionId();
 
-						if(this.collisionList != null){
-							for(k=0; k<this.collisionList.length; k++){
-								this.collisionOpponent = this.collisionList[k];
+					this.collisionList = this.collisionLists[this.collisionId];
 
-								if(this.collisionOpponent.alive){
-									if(this.areColliding(object, this.collisionOpponent)){
-										object.onCollide(this.collisionOpponent);	
-										this.collisionOpponent.onCollide(object);
-									}
+					if(this.collisionList != null){
+						for(k=0; k<this.collisionList.length; k++){
+							this.collisionOpponent = this.collisionList[k];
+
+							if(this.collisionOpponent.alive){
+								if(this.areColliding(object, this.collisionOpponent)){
+									
+									if(!object.checkingCollisions) break;
+
+									object.onCollide(this.collisionOpponent);	
+									
+									if(!object.checkingCollisions) break;
+
+									this.collisionOpponent.onCollide(object);
 								}
-							}	
-						}
+							}
+						}	
 					}
-
+					
 				}else{
 					
 					if(object.destroyMode == GameObject.EXECUTE_CALLBACKS){

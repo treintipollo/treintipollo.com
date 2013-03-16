@@ -25,7 +25,11 @@ Exhaust.prototype.init = function(container) {
 Exhaust.prototype.neutral  = function() { this.state = Exhaust.NEUTRAL; }
 Exhaust.prototype.speedUp  = function() { this.state = Exhaust.UP;      }
 Exhaust.prototype.slowDown = function() { this.state = Exhaust.DOWN;    }
-Exhaust.prototype.off      = function() { this.state = Exhaust.OFF;     }
+
+Exhaust.prototype.off      = function() { 
+	this.clearAllIntervals();
+	this.state = Exhaust.OFF;     
+}
 
 Exhaust.prototype.update = function() {
 	if(!this.hasOwnProperty("state")){ return; }
@@ -36,7 +40,7 @@ Exhaust.prototype.update = function() {
 	if(this.state == Exhaust.NEUTRAL){ this.neutralTimer.start();   }
 	if(this.state == Exhaust.UP)	 { this.speedUpTimer.start();   }
 	if(this.state == Exhaust.DOWN)	 { this.speedDownTimer.start(); }
-	
+
 	this.lastState = this.state;
 }
 
@@ -47,7 +51,9 @@ Exhaust.prototype.clearAllIntervals = function() {
 }
 
 Exhaust.prototype.destroy = function() {
-	this.clearAllIntervals();
+	this.neutralTimer.remove();
+	this.speedUpTimer.remove();
+	this.speedDownTimer.remove();
 }
 
 Exhaust.prototype.createParticles = function(parentContext, state, life) {

@@ -1,6 +1,4 @@
-function WhiteFlash() {
-	
-}
+function WhiteFlash() {}
 
 WhiteFlash.inheritsFrom( GameObject );
 

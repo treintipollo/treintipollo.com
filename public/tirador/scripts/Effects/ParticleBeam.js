@@ -78,6 +78,8 @@ ParticleBeam.prototype.destroy = function() {
 		this.particles[i].setDestroyMode(GameObject.NO_CALLBACKS);
 	}
 
+	this.particleTimer.remove();
+
 	DestroyUtils.destroyAllProperties(this);
 }
 

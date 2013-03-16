@@ -15,8 +15,6 @@ function BloodStream(origin) {
 	this.long_1.init(TopLevel.container, 5, "#F21616", 3, "BurstParticle", 2, 300, 500);
 }
 
-BloodStream.prototype.update = function() { }
-
 BloodStream.prototype.on = function(startAngle, endAngle) {
 	this.short_2.on(startAngle+45, endAngle+45);
 	this.short_3.on(startAngle-45, endAngle-45);
@@ -31,4 +29,12 @@ BloodStream.prototype.off = function() {
 	this.mid_1.off();
 	this.mid_2.off();
 	this.long_1.off();
+}
+
+BloodStream.prototype.destroy = function() {
+	this.short_2.destroy();
+	this.short_3.destroy();
+	this.mid_1.destroy();
+	this.mid_2.destroy();
+	this.long_1.destroy();
 }

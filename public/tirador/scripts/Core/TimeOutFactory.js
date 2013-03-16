@@ -106,6 +106,7 @@ $(function(){
 				},
 
 				remove : function(){
+					this.stop();
 					self.timeOuts.splice(self.timeOuts.indexOf(this), 1);
 				}
 			};

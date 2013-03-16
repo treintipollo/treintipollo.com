@@ -10,17 +10,22 @@ function EnemyRocket() {
 
 	this.rotation = 180;
 	
-	if (typeof Exhaust === "undefined") {
-		return;
-	}
+	if (typeof Exhaust === "undefined") { return; }
 
-	this.exhaust  = new Exhaust(this.getExhaustPoints, this);	
-	this.collider = new SAT.Circle(new SAT.Vector(0, 0), 15);
+	this.exhaust = new Exhaust(this.getExhaustPoints, this);	
 }
 
-EnemyRocket.inheritsFrom( GameObject );
+EnemyRocket.inheritsFrom( Attributes );
+
+EnemyRocket.prototype.afterCreate = function(){
+	CircleCollider.prototype.create.call(this);
+}
 
 EnemyRocket.prototype.init = function(x, y, speed, container) {
+	CircleCollider.prototype.init.call(this, 15);
+
+	Attributes.prototype.init.call(this);
+
 	this.x = x;
 	this.y = y;
 	this.speed = speed;
@@ -34,8 +39,6 @@ EnemyRocket.prototype.init = function(x, y, speed, container) {
 	if(rand == 0){ this.exhaust.slowDown();}
 	if(rand == 1){ this.exhaust.neutral(); }
 	if(rand == 2){ this.exhaust.speedUp(); }
-
-	this.collider.r = 15;
 }
 
 EnemyRocket.prototype.getExhaustPoints = function(side, type) {
@@ -105,10 +108,9 @@ EnemyRocket.prototype.draw = function(context) {
 }
 
 EnemyRocket.prototype.destroy = function() {
-	this.exhaust.destroy();
+	this.exhaust.off();
 
-	if(!this.createExplosion)
-		return;
+	if(!this.createExplosion) return;
 
 	Rocket.ExplosionArguments[0] = this.x + this.centerX;
 	Rocket.ExplosionArguments[1] = this.y + this.centerY;
@@ -130,22 +132,16 @@ EnemyRocket.prototype.update = function(delta) {
 	}
 }
 
-EnemyRocket.prototype.getColliderType = function(){
-	return GameObject.CIRCLE_COLLIDER;
-}
+EnemyRocket.prototype.onHPDiminished 		   = function(other) {}
+EnemyRocket.prototype.onDamageBlocked 		   = function(other) {}
+EnemyRocket.prototype.onDamageReceived 		   = function(other) {}
+EnemyRocket.prototype.onLastDamageLevelReached = function(other) {}
 
-EnemyRocket.prototype.getCollider = function(){
-	this.collider.pos.x = this.x;
-	this.collider.pos.y = this.y;
-
-	return this.collider;
-}
-
-EnemyRocket.prototype.onCollide = function(other){
+EnemyRocket.prototype.onAllDamageReceived = function(other) {
 	this.alive = false;
 }
 
-function EnemyRocketFactory(maxWidth, maxHeight, minSpeed, maxSpeed, creationTime, container, rocketsToPowerUp) {
+function EnemyRocketFactory(maxWidth, maxHeight, minSpeed, maxSpeed, creationTime, container, rocketsToPowerUp, waveCount, onAllWavesComplete) {
 	this.maxWidth      	  = maxWidth;
 	this.maxHeight     	  = maxHeight;
 	this.container     	  = container;
@@ -155,21 +151,29 @@ function EnemyRocketFactory(maxWidth, maxHeight, minSpeed, maxSpeed, creationTim
 
 	this.rocketsToPowerUp	   = rocketsToPowerUp;
 	this.initRocketsToPowerUp  = rocketsToPowerUp;
+	
+	this.waveCount = waveCount;
+	this.onAllWavesComplete = onAllWavesComplete;
+
+	this.currentWave		   = 0;
 	this.rocketsDestroyedCount = 0;
-	this.timerId 			   = 0;
+	this.rocketTimerSpeedUp    = 100;
+	this.rocketTimerLimit      = 100;
 
-	this.rocketTimerSpeedUp = 100;
-	this.rocketTimerLimit   = 100;
-
-	this.rocketTimer; 
+	this.rocketTimer = TimeOutFactory.getTimeOut(this.creationTime, -1, this, function(){
+		this.createEnemyRocket();
+	}); 
 }
 
 EnemyRocketFactory.prototype.start = function() {
-	this.rocketTimer = TimeOutFactory.getTimeOut(this.creationTime, -1, this, function(){
-		this.createEnemyRocket();
-	});
-
+	this.rocketTimer.stop();
+	this.rocketTimer.delay = this.creationTime;
 	this.rocketTimer.start();
+}
+
+EnemyRocketFactory.prototype.stop = function() {
+	this.rocketTimer.stop();
+	this.currentWave = 0;
 }
 
 EnemyRocketFactory.prototype.createEnemyRocket = function() {
@@ -181,9 +185,7 @@ EnemyRocketFactory.prototype.createEnemyRocket = function() {
 
 	var rocket = this.container.add("EnemyRocket", EnemyRocket.EnemryRocketArguments);
 
-	if(rocket == null){
-		return;
-	}
+	if(rocket == null){ return; }
 
 	rocket.addOnDestroyCallback(this, function(obj){
 		this.rocketsDestroyedCount++;
@@ -196,12 +198,15 @@ EnemyRocketFactory.prototype.createEnemyRocket = function() {
 				this.creationTime = this.rocketTimerLimit;
 			}
 
-			this.rocketsToPowerUp += this.initRocketsToPowerUp;
 			this.rocketsDestroyedCount = 0;
 
-			this.rocketTimer.stop();
-
-			this.start();
+			if(this.currentWave < this.waveCount){
+				this.currentWave++;
+				this.start();
+			}else{
+				this.onAllWavesComplete();
+				this.stop();
+			}
 		}
 	});
 }
