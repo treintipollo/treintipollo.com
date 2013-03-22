@@ -156,3 +156,51 @@ FuntionUtils.setProperties = function(obj, props) {
 		}
 	}
 }
+
+function TweenUtils(){}
+
+TweenUtils.startValueOscilation = function (valueName, time, minValue, maxValue, ease) {
+	var firstArgs  = {};
+	var secondArgs = {};
+	
+	firstArgs[valueName] 		 = "+=" + minValue;
+	firstArgs["ease"] 			 = ease;
+	firstArgs["yoyo"] 			 = true;
+	firstArgs["repeat"] 		 = true;
+	firstArgs["overwrite"] 		 = "none";
+	firstArgs["onCompleteScope"] = this;
+	firstArgs["onComplete"] 	 = function() { goLeft.call(this); };
+
+	secondArgs[valueName] 		  = "+=" + maxValue;
+	secondArgs["ease"] 			  = ease;
+	secondArgs["yoyo"] 			  = true;
+	secondArgs["repeat"] 		  = true;
+	secondArgs["overwrite"] 	  = "none";
+	secondArgs["onCompleteScope"] = this;
+	secondArgs["onComplete"] 	  = function() { goRight.call(this); };
+
+	var rightTween;
+	var leftTween;
+
+	var goRight = function(){ rightTween = TweenMax.to(this, time, firstArgs); }
+	var goLeft  = function(){ leftTween = TweenMax.to(this, time, secondArgs); }
+
+	goRight.call(this);
+
+	return {
+		kill:function() {
+			rightTween.kill();
+			leftTween.kill();
+		}
+	}
+}
+
+function ScreenUtils(){}
+
+ScreenUtils.isInScreenBounds = function(pos){
+	return (pos.x > 0 && pos.x < TopLevel.canvas.width) && (pos.y > 0 && pos.y < TopLevel.canvas.height);
+}
+
+ScreenUtils.isInScreenBoundsXY = function(x, y){
+	return (x > 0 && x < TopLevel.canvas.width) && (y > 0 && y < TopLevel.canvas.height);
+}

@@ -40,20 +40,8 @@ WeaponPowerUp.prototype.init = function(x, y) {
 		}});
 	}
 
-	var goRight = function(){
-		TweenMax.to(this, 0.5, {x:"+=20", ease:Sine.easeOut, yoyo:true, repeat:1, overwrite:"none", onCompleteScope:this, onComplete:function(){
-			goLeft.call(this);
-		}});
-	}
+	TweenUtils.startValueOscilation.call(this, "x", 0.5, 20, -20, Sine.easeOut);
 
-	var goLeft = function(){
-		TweenMax.to(this, 0.5, {x:"-=20", ease:Sine.easeOut, yoyo:true, repeat:1, overwrite:"none", onCompleteScope:this, onComplete:function(){
-			goRight.call(this);
-		}});
-	}
-
-	goRight.call(this);
-	
 	var startState = Random.getRandomInt(WeaponPowerUp.SHOT, WeaponPowerUp.ROCKET);
 
 	if(startState == WeaponPowerUp.SHOT){

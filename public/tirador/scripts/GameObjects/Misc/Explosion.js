@@ -6,7 +6,7 @@ Explosion.prototype.afterCreate = function(){
 	CircleCollider.prototype.create.call(this);
 }
 
-Explosion.prototype.init = function(x, y, angle, size, destroySpeed) {
+Explosion.prototype.init = function(x, y, angle, size, destroySpeed, color1, color2) {
 	CircleCollider.prototype.init.call(this, size);
 
 	this.parent.init.call(this);
@@ -14,8 +14,12 @@ Explosion.prototype.init = function(x, y, angle, size, destroySpeed) {
 	this.x 	    	 = x;
 	this.y 	    	 = y;
 	this.radius 	 = size;
+	
 	this.innerRadius = 0;
 	this.step  		 = 1/size * destroySpeed;
+
+	this.color1 = color1 ? color1 : "#FF0000";
+	this.color2 = color2 ? color2 : "#FFFF00";
 
 	this.innerRadiusDirX = Math.cos(angle * (Math.PI/180));
 	this.innerRadiusDirY = Math.sin(angle * (Math.PI/180));
@@ -26,8 +30,8 @@ Explosion.prototype.init = function(x, y, angle, size, destroySpeed) {
 Explosion.prototype.draw = function(context) {
 	if(this.gradient == null){
 		this.gradient = context.createRadialGradient((this.radius*2/3)*this.innerRadiusDirX, (this.radius*2/3)*this.innerRadiusDirY, this.radius/5, 0, 0, this.radius);
-		this.gradient.addColorStop(0.01, "#FF0000");
-		this.gradient.addColorStop(0.99, "#FFFF00");
+		this.gradient.addColorStop(0.01, this.color1);
+		this.gradient.addColorStop(0.99, this.color2);
 	} 
 
 	context.beginPath();

@@ -45,7 +45,7 @@ Fireball.prototype.update = function(delta) {
 
 	this.rotation += 7;
 
-	if(this.y >= TopLevel.canvas.height + (this.size*2)){
+	if(!ScreenUtils.isInScreenBoundsXY(this.x, this.y)){
 		this.alive = false;
 	}
 }

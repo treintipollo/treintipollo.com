@@ -14,16 +14,26 @@ Shot.prototype.init = function(pos, container, offSetX, offSetY, speed) {
 
 	this.parent.init.call(this);
 
-	this.x     = pos.x + offSetX;
-	this.y     = pos.y + offSetY; 
-	this.speed = speed;
+	this.user = pos;
+
+	var sin = Math.sin((pos.rotation)*(Math.PI/180));
+	var cos = Math.cos((pos.rotation)*(Math.PI/180));
+
+	this.x = cos * (offSetX) - sin * (offSetY) + pos.x;
+	this.y = sin * (offSetX) + cos * (offSetY) + pos.y;
+
+	this.moveSin = Math.sin((pos.rotation-90)*(Math.PI/180));
+	this.moveCos = Math.cos((pos.rotation-90)*(Math.PI/180));
 	
-	this.hitEffect.init(container, 1, "#FFFFFF", 3, "BurstParticle", 10);
+	this.speed = speed;
+	this.rotation = pos.rotation;
+
+	this.hitEffect.init(container, 1, this.user.color, 3, "BurstParticle", 10);
 	this.hitEffect.off();
 }	
 
 Shot.prototype.draw = function(context) { 	
-	context.strokeStyle = "#FFFFFF";
+	context.strokeStyle = this.user.color;
 
 	context.beginPath();
 	
@@ -45,9 +55,10 @@ Shot.prototype.draw = function(context) {
 }
 
 Shot.prototype.update = function(delta) {
-	this.y -= this.speed * delta;
+	this.x += this.moveCos * (this.speed * delta);
+	this.y += this.moveSin * (this.speed * delta);
 
-	if(this.y < -20){
+	if(!ScreenUtils.isInScreenBoundsXY(this.x, this.y)){
 		this.alive = false;
 	}
 }
@@ -57,5 +68,5 @@ Shot.prototype.onDamageBlocked = function(other) {}
 Shot.prototype.onDamageReceived = function(other) {}
 Shot.prototype.onAllDamageReceived = function(other) {
 	this.alive = false;
-	this.hitEffect.on();
+	this.hitEffect.on(this.rotation+120, this.rotation+60);
 }

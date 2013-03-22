@@ -14,6 +14,10 @@ function Exhaust(particleBezierPoints, parentContext) {
 
 Exhaust.ParticleArguments = [null, null, null, null, null, null];
 
+Exhaust.prototype.setColors = function(colors) {
+	this.colors = colors;
+}
+
 Exhaust.prototype.init = function(container) {
 	this.container = container;
 

@@ -1,11 +1,13 @@
-Ship.SHAKE_MOTION 			= 0;
-Ship.IDLE_MOTION  			= 1;
-Ship.NONE_STOP_SHAKE_MOTION = 2;
-Ship.START_MOTION 			= 3;
-
 Ship.inheritsFrom( Attributes );
 
 function Ship() {
+	if (typeof Exhaust === "undefined") { return; }
+
+	this.SHAKE_MOTION;
+	this.IDLE_MOTION;
+	this.NONE_STOP_SHAKE_MOTION;
+	this.START_MOTION;
+
 	this.speedX = 100;
 	this.speedY = 100;
 
@@ -67,11 +69,10 @@ function Ship() {
 	this.exhaust150 = new Exhaust(getExhaustPoints150, this);
 
 	this.trembleTimer = TimeOutFactory.getTimeOut(500, 1, this, function(){
-		this.currentMotion.set(Ship.IDLE_MOTION);
+		this.currentMotion.set(this.IDLE_MOTION);
 	});
 
 	this.explosionArea = new ExplosionsArea();
-//	this.whiteFlash    = new WhiteFlashContainer();
 }
 
 Ship.prototype.afterCreate = function(){
@@ -81,13 +82,13 @@ Ship.prototype.afterCreate = function(){
 Ship.prototype.init = function(x, y, container){
 	CircleCollider.prototype.init.call(this, 15);
 
-	this.parent.init.call(this);
+	Attributes.prototype.init.call(this);
 
 	if(this.lastWeaponType == WeaponPowerUp.SHOT){
-		this.weapon = new ShotWeapon(0, this);
+		this.weapon = new ShotWeapon(0, this, true, true, "Small_Shot", "Big_Shot");
 	}
 	if(this.lastWeaponType == WeaponPowerUp.ROCKET){
-		this.weapon = new RocketWeapon(0, this);
+		this.weapon = new RocketWeapon(0, this, true);
 	}
 
 	this.x = x;
@@ -106,7 +107,18 @@ Ship.prototype.init = function(x, y, container){
 
 	this.weapon.init(this.container);
 
-	var shake = FuntionUtils.bindScope(this, function(){
+	this.shakeCounter   = 0;
+	this.totalVariation = {x:0, y:0};
+	this.lastVar        = {x:0, y:0};
+
+	this.createStateMachine();
+	this.gotoInitialState();
+}
+
+Ship.prototype.createStateMachine = function() {
+	this.currentMotion = new StateMachine(true, this);
+
+	var shake = function(){
 		if(this.shakeCounter % 2 == 0){
 			var sX = Random.getRandomArbitary(-5.0, 5.0);
 			var sY = Random.getRandomArbitary(-5.0, 5.0);
@@ -121,21 +133,20 @@ Ship.prototype.init = function(x, y, container){
 			this.totalVariation.y = -this.lastVar.y;
 		}
 		this.shakeCounter++;
-	});
+	}
 
-
-	var startTrembleTimer = FuntionUtils.bindScope(this, function(repeateCount){
+	var startTrembleTimer = function(repeateCount){
 		this.trembleTimer.start();	
-	});	
+	}	
 
-	var idle = FuntionUtils.bindScope(this, function(){
+	var idle = function(){
 		this.totalVariation.x = 0;
 		this.totalVariation.y = 0;
 		this.lastVar.x = 0;
 		this.lastVar.y = 0;
-	});
+	}
 
-	var gotoInitPosition = FuntionUtils.bindScope(this, function(){
+	var gotoInitPosition = function(){
 		this.blockControls = true;
 		this.blockDamage   = true;
 
@@ -149,52 +160,24 @@ Ship.prototype.init = function(x, y, container){
 			this.blockControls = false;
 			this.blockDamage   = false;
 		}});
-	});
+	}
 
-	var slowAllDown = FuntionUtils.bindScope(this, function(){
+	var slowAllDown = function(){
 		this.exhaust30.slowDown();
 		this.exhaust60.slowDown();
 		this.exhaust90.slowDown();
 		this.exhaust120.slowDown(); 
 		this.exhaust150.slowDown();
-	});
-
-	//Motion state machine
-	this.currentMotion = {currentMotionId:Ship.START_MOTION, lastMotionId:Ship.START_MOTION, motions:[]};
-
-	this.shakeCounter   = 0;
-	this.totalVariation = {x:0, y:0};
-	this.lastVar        = {x:0, y:0};
-
-	this.currentMotion.init = function(){
-		this.motions[Ship.SHAKE_MOTION] 		  = {update:shake, init:startTrembleTimer };
-		this.motions[Ship.IDLE_MOTION] 			  = {update:idle , init:null			  };
-		this.motions[Ship.NONE_STOP_SHAKE_MOTION] = {update:shake, init:slowAllDown		  };
-		this.motions[Ship.START_MOTION] 		  = {update:idle , init:gotoInitPosition  };
 	}
 
-	this.currentMotion.set = function(motionId, args){
-		if(this.motions[this.currentMotionId].update){
-			this.lastMotionId = this.currentMotionId;
-		}
+	this.SHAKE_MOTION 			= this.currentMotion.add(startTrembleTimer, shake, null); 
+	this.IDLE_MOTION 			= this.currentMotion.add(null, idle, null);
+	this.NONE_STOP_SHAKE_MOTION = this.currentMotion.add(slowAllDown, shake, null);
+	this.START_MOTION 			= this.currentMotion.add(gotoInitPosition, idle, null);
+}
 
-		this.currentMotionId = motionId;
-
-		if(this.motions[this.currentMotionId].init != null){
-			this.motions[this.currentMotionId].init.apply(this, args);
-		}
-	}
-
-	this.currentMotion.update = function(){
-		if(this.motions[this.currentMotionId].update){
-			this.motions[this.currentMotionId].update();
-		}else{
-			this.motions[this.lastMotionId].update();
-		}
-	}
-
-	this.currentMotion.init();
-	this.currentMotion.set(Ship.START_MOTION);
+Ship.prototype.gotoInitialState = function() {
+	this.currentMotion.set(this.START_MOTION);
 }
 
 Ship.prototype.draw = function(context) { 
@@ -311,10 +294,14 @@ Ship.prototype.destroy = function(){
 
 	this.explosionArea.stop();
 	TweenMax.killTweensOf(this);
+
+	if(this.weapon){
+		this.weapon.destroy();
+	}
 }
 
 Ship.prototype.onCollide = function(other){
-	this.parent.onCollide.call(this, other);
+	Attributes.prototype.onCollide.call(this, other);
 
 	if(other.getCollisionId() == "WeaponPowerUp"){
 		if(this.weapon.getId() == other.state){
@@ -332,14 +319,14 @@ Ship.prototype.onCollide = function(other){
 				PowerUpText.ShotArguments[1] = this.y;
 				this.container.add("PowerUpText", PowerUpText.ShotArguments);
 
-				this.weapon = new ShotWeapon(l, this);
+				this.weapon = new ShotWeapon(l, this, true, true, "Small_Shot", "Big_Shot");
 			}
 			else if(other.state == WeaponPowerUp.ROCKET){
 				PowerUpText.RocketsArguments[0] = this.x;
 				PowerUpText.RocketsArguments[1] = this.y;
 				this.container.add("PowerUpText", PowerUpText.RocketsArguments);
 
-				this.weapon = new RocketWeapon(l, this);
+				this.weapon = new RocketWeapon(l, this, true);
 			}
 
 			this.weapon.init(this.container);
@@ -348,13 +335,13 @@ Ship.prototype.onCollide = function(other){
 }
 
 Ship.prototype.onHPDiminished = function(other) {
-	this.currentMotion.set(Ship.SHAKE_MOTION);
+	this.currentMotion.set(this.SHAKE_MOTION);
 }
 
 Ship.prototype.onDamageBlocked = function(other) {}
 
 Ship.prototype.onDamageReceived = function(other) {
-	this.currentMotion.set(Ship.IDLE_MOTION);
+	this.currentMotion.set(this.IDLE_MOTION);
 
 	PowerUpText.DownArguments[0] = this.x;
 	PowerUpText.DownArguments[1] = this.y;
@@ -386,7 +373,7 @@ Ship.prototype.onLastDamageLevelReached = function(other) {
 
 Ship.prototype.onAllDamageReceived = function(other) {
 	this.explosionArea.stop();
-	this.currentMotion.set(Ship.NONE_STOP_SHAKE_MOTION);
+	this.currentMotion.set(this.NONE_STOP_SHAKE_MOTION);
 
 	var d = (TopLevel.canvas.height + 100 - this.y );
 	var speed = d / 170.0;

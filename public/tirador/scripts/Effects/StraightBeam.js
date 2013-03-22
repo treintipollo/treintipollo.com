@@ -1,7 +1,7 @@
 function StraightBeam(beamProperties) {
 	this.chargeRadius		    = beamProperties[0];
 	this.chargeColor 			= beamProperties[1];
-	this.chargeParticleSize	    = beamProperties[2]
+	this.chargeParticleSize	    = beamProperties[2];
 	this.burstColor1 			= beamProperties[3];
 	this.burstColor2 			= beamProperties[4];
 	this.burstParticleSize 		= beamProperties[5];
@@ -81,7 +81,7 @@ StraightBeam.prototype.fire = function(fireAngle) {
 	var angle = Math.atan2(tY - this.origin.y, tX - this.origin.x) * (180/Math.PI);
 	
 	this.shootTimer.start();
-	
+		
 	this.shootTimer.callback = function(){
 		var start = null;
 		var end = null;
@@ -207,11 +207,11 @@ BeamCollider.prototype.destroy = function() {
 }
 
 BeamCollider.prototype.draw = function(context) {
-	context.strokeStyle = "#FF0000";
+	/*context.strokeStyle = "#FF0000";
 
 	context.beginPath();
 	context.arc(0, 0, this.collider.r, 0, Math.PI*2);
 	context.closePath();
 
-	context.stroke();
+	context.stroke();*/
 }

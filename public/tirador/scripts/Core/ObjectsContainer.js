@@ -109,6 +109,7 @@ ObjectsContainer.prototype.add = function(name, arguments) {
 	var layer 		   = configuration.layer;
 	var checkCollision = configuration.collide;
 	var addMode 	   = configuration.addMode;
+	var initCall       = configuration.initCall;
 
 	//Create drawing layer if it doesn't exist
 	if(this.mainObjects[layer] == null){
@@ -138,7 +139,11 @@ ObjectsContainer.prototype.add = function(name, arguments) {
 	pooledObject.checkingCollisions = checkCollision;
 
 	//Initialize it with given arguments
-	pooledObject.init.apply(pooledObject, arguments);
+	if(initCall == ObjectsContainer.APPLY){
+		pooledObject.init.apply(pooledObject, arguments);
+	}else{
+		pooledObject.init.call(pooledObject, arguments);		
+	}
 
 	//Nasty logic to add an object to the corresponding collision checking lists
 	if(pooledObject.checkingCollisions){
@@ -205,7 +210,7 @@ ObjectsContainer.prototype.createTypePool = function(alias, type, amount) {
 
 	for(var i=0; i<amount; i++){
 		var o = new type();
-
+		
 		o.afterCreate();
 
 		o.poolId = alias;
@@ -213,19 +218,16 @@ ObjectsContainer.prototype.createTypePool = function(alias, type, amount) {
 	}
 }
 
-ObjectsContainer.PUSH = "push";
+ObjectsContainer.PUSH    = "push";
 ObjectsContainer.UNSHIFT = "unshift";
+ObjectsContainer.CALL    = "call";
+ObjectsContainer.APPLY   = "apply";
 
-ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type, collisionType, layer, collide, addMode) {
-	if(!layer){ 
-		layer = 0; 
-	}
-	if(!collide){ 
-		collide = false;
-	}
-	if(!addMode){ 
-		addMode = ObjectsContainer.PUSH;
-	}
+ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type, collisionType, layer, collide, addMode, initCall) {
+	if(!layer)   { layer = 0; }
+	if(!collide) { collide = false; }
+	if(!addMode) { addMode = ObjectsContainer.PUSH; }
+	if(!initCall) { initCall = ObjectsContainer.APPLY; }
 
-	this.configurations[typeAlias] = { type:type, collisionType:collisionType, layer:layer, collide:collide, addMode:addMode};
+	this.configurations[typeAlias] = { type:type, collisionType:collisionType, layer:layer, collide:collide, addMode:addMode, initCall:initCall};
 }

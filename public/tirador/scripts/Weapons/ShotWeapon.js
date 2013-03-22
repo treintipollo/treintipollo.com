@@ -33,20 +33,20 @@ ShotWeapon.Triple_Power_Shot_3_C = [null, null, 7, 550, 25, 10, 270, 60, "#89F28
 
 ShotWeapon.inheritsFrom( Weapon );
 
-function ShotWeapon() {
+function ShotWeapon(level, user, hasInstructions, usePowerShot, shotType, bigShotType) {
 	Weapon.apply(this, arguments);
 
 	this.voleyAmounts   = [3,3,3,4,4,4,4,4,5];
 
-	this.shotTypes 		= ["Small_Shot",
-						   "Big_Shot",
-						   "Small_Shot",
-						   "Small_Shot",
-						   "Big_Shot",
-						   "Small_Shot",
-						   "Small_Shot",
-						   "Big_Shot",
-						   "Big_Shot"];
+	this.shotTypes 		= [shotType,
+						   bigShotType,
+						   shotType,
+						   shotType,
+						   bigShotType,
+						   shotType,
+						   shotType,
+						   bigShotType,
+						   bigShotType];
 
 	this.powerShotTypes = ["Single_Power_Shot_1",
 						   "Single_Power_Shot_2",
@@ -106,22 +106,24 @@ function ShotWeapon() {
 							ShotWeapon.Triple_Power_Shot_3_C]; }
 	];
 
-	var c = ArrowKeyHandler.addKeyDownTimeOutCallback(ArrowKeyHandler.CTRL, function(){
-		inst.shotCharge.on();
-	}, 200);
+	if(usePowerShot){
+		var c = ArrowKeyHandler.addKeyDownTimeOutCallback(ArrowKeyHandler.CTRL, function(){
+			inst.shotCharge.on();
+		}, 200);
 
-	this.callbacks.push(c);
+		this.callbacks.push(c);
 
-	this.powerShotVoley = null;
+		this.powerShotVoley = null;
 
-	c = ArrowKeyHandler.addKeyDownTimeOutCallback(ArrowKeyHandler.CTRL, function(){
-		inst.shotCharge.off();
+		c = ArrowKeyHandler.addKeyDownTimeOutCallback(ArrowKeyHandler.CTRL, function(){
+			inst.shotCharge.off();
 
-		inst.powerShotVoley = new ShotVoley(inst.powerShotTypes[inst.level], inst.powerShotLevels[inst.level](), inst.user, inst.container, null, true);
+			inst.powerShotVoley = new ShotVoley(inst.powerShotTypes[inst.level], inst.powerShotLevels[inst.level](), inst.user, inst.container, null, true);
 
-	}, 3000);
+		}, 3000);
 
-	this.callbacks.push(c);
+		this.callbacks.push(c);
+	}
 
 	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.CTRL, function(){
 		if(inst.powerShotVoley != null){
@@ -192,7 +194,8 @@ function ShotVoley(type, shots, user, container, onComplete, powerShot) {
 			this.shots.push(shot);
 
 			shot.addOnDestroyCallback(this, function(obj){
-				obj = null;
+				if(this.shots)
+					this.shots.splice(this.shots.indexOf(obj), 1);
 			});
 		}else{
 			shot.addOnDestroyCallback(this, function(obj){

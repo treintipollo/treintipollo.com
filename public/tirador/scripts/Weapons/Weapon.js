@@ -1,13 +1,16 @@
-function Weapon(level, user){
-	this.user      = user;
-	
-	this.level	   		   = level;
+function Weapon(level, user, hasInstructions){
+	this.user      		 = user;
+	this.level	   		 = level;
+	this.hasInstructions = hasInstructions;
+
 	this.callbacks 		   = [];
 	this.currentVoleyCount = 0;
+	
 	this.voleyAmounts;
 	this.id;
 
-	this.createInstructions();
+	if(this.hasInstructions)
+		this.createInstructions();
 }
 
 Weapon.prototype.init = function(container) {
@@ -24,14 +27,18 @@ Weapon.prototype.update = function() {}
 Weapon.prototype.powerUp = function() {
 	if(this.level < this.voleyAmounts.length-1){
 		this.level++;
-		this.createInstructions();
+
+		if(this.hasInstructions)
+			this.createInstructions();
 	}	
 }
 
 Weapon.prototype.powerDown = function() {
 	if(this.level > 0){
 		this.level--;
-		this.createInstructions();
+		
+		if(this.hasInstructions)
+			this.createInstructions();
 	}
 }
 
