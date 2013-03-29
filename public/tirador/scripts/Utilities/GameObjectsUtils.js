@@ -31,10 +31,6 @@ BoxCollider.prototype.create = function(){
 		this.collider.pos.x = this.x;
 		this.collider.pos.y = this.y;
 
-		/*if(this.collider.w == 0 || this.collider.h == 0){
-			return null;
-		}*/
-
 		return this.collider.toPolygon();
 	}
 }

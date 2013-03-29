@@ -8,11 +8,6 @@ function Ship() {
 	this.NONE_STOP_SHAKE_MOTION;
 	this.START_MOTION;
 
-	this.speedX = 100;
-	this.speedY = 100;
-
-	this.lastWeaponType = WeaponPowerUp.SHOT;
-
 	var exhaustPoints = [];
 	exhaustPoints.push({ x:0, y:0 });
 	exhaustPoints.push({ x:0, y:0 });
@@ -84,32 +79,22 @@ Ship.prototype.init = function(x, y, container){
 
 	Attributes.prototype.init.call(this);
 
-	if(this.lastWeaponType == WeaponPowerUp.SHOT){
-		this.weapon = new ShotWeapon(0, this, true, true, "Small_Shot", "Big_Shot");
-	}
-	if(this.lastWeaponType == WeaponPowerUp.ROCKET){
-		this.weapon = new RocketWeapon(0, this, true);
-	}
-
-	this.x = x;
-	this.y = y;
+	this.x 		   = x;
+	this.y 		   = y;
 	this.container = container;
-	this.color = "#FFFFFF";
 
-	this.rotation = 0;
-	this.blockControls = false;
+	this.color          = "#FFFFFF";
+	this.rotation       = 0;
+	this.blockControls  = false;
+	this.shakeCounter   = 0;
+	this.totalVariation = {x:0, y:0};
+	this.lastVar        = {x:0, y:0};
 
 	this.exhaust30.init(this.container);
 	this.exhaust60.init(this.container);
 	this.exhaust90.init(this.container);
 	this.exhaust120.init(this.container);
 	this.exhaust150.init(this.container);
-
-	this.weapon.init(this.container);
-
-	this.shakeCounter   = 0;
-	this.totalVariation = {x:0, y:0};
-	this.lastVar        = {x:0, y:0};
 
 	this.createStateMachine();
 	this.gotoInitialState();
@@ -244,24 +229,24 @@ Ship.prototype.update = function(delta) {
 		this.exhaust150.neutral();
 
 		if(ArrowKeyHandler.isDown(ArrowKeyHandler.LEFT))  { 
-			this.x -= this.speedX * delta; 
+			this.x -= TopLevel.playerData.speed * delta; 
 			
 			this.exhaust30.speedUp();
 			this.exhaust60.speedUp();	
 		}
 		if(ArrowKeyHandler.isDown(ArrowKeyHandler.RIGHT)) { 
-			this.x += this.speedX * delta; 
+			this.x += TopLevel.playerData.speed * delta; 
 			
 			this.exhaust120.speedUp();
 			this.exhaust150.speedUp();
 		}
 		if(ArrowKeyHandler.isDown(ArrowKeyHandler.UP))    { 
-			this.y -= this.speedY * delta; 
+			this.y -= TopLevel.playerData.speed * delta; 
 			
 			this.exhaust90.speedUp(); 
 		}
 		if(ArrowKeyHandler.isDown(ArrowKeyHandler.DOWN))  { 
-			this.y += this.speedY * delta; 
+			this.y += TopLevel.playerData.speed * delta; 
 			
 			this.exhaust30.slowDown();
 			this.exhaust60.slowDown();
@@ -280,9 +265,7 @@ Ship.prototype.update = function(delta) {
 	this.exhaust120.update(); 
 	this.exhaust150.update();
 
-	if(this.weapon){
-		this.weapon.update();
-	}
+	if(this.weapon) this.weapon.update();
 }
 
 Ship.prototype.destroy = function(){
@@ -295,43 +278,7 @@ Ship.prototype.destroy = function(){
 	this.explosionArea.stop();
 	TweenMax.killTweensOf(this);
 
-	if(this.weapon){
-		this.weapon.destroy();
-	}
-}
-
-Ship.prototype.onCollide = function(other){
-	Attributes.prototype.onCollide.call(this, other);
-
-	if(other.getCollisionId() == "WeaponPowerUp"){
-		if(this.weapon.getId() == other.state){
-			PowerUpText.UpArguments[0] = this.x;
-			PowerUpText.UpArguments[1] = this.y;
-			this.container.add("PowerUpText", PowerUpText.UpArguments);
-
-			this.weapon.powerUp();	
-		}else{
-			var l = this.weapon.getLevel();
-			this.weapon.destroy();
-
-			if(other.state == WeaponPowerUp.SHOT){			
-				PowerUpText.ShotArguments[0] = this.x;
-				PowerUpText.ShotArguments[1] = this.y;
-				this.container.add("PowerUpText", PowerUpText.ShotArguments);
-
-				this.weapon = new ShotWeapon(l, this, true, true, "Small_Shot", "Big_Shot");
-			}
-			else if(other.state == WeaponPowerUp.ROCKET){
-				PowerUpText.RocketsArguments[0] = this.x;
-				PowerUpText.RocketsArguments[1] = this.y;
-				this.container.add("PowerUpText", PowerUpText.RocketsArguments);
-
-				this.weapon = new RocketWeapon(l, this, true);
-			}
-
-			this.weapon.init(this.container);
-		} 
-	}
+	this.weapon.destroy();
 }
 
 Ship.prototype.onHPDiminished = function(other) {
@@ -342,12 +289,6 @@ Ship.prototype.onDamageBlocked = function(other) {}
 
 Ship.prototype.onDamageReceived = function(other) {
 	this.currentMotion.set(this.IDLE_MOTION);
-
-	PowerUpText.DownArguments[0] = this.x;
-	PowerUpText.DownArguments[1] = this.y;
-	this.container.add("PowerUpText", PowerUpText.DownArguments);
-	
-	this.weapon.powerDown();
 
 	this.blockDamage = true;
 
@@ -367,7 +308,7 @@ Ship.prototype.onDamageReceived = function(other) {
 }
 
 Ship.prototype.onLastDamageLevelReached = function(other) {
-	TweenMax.to(this, 0.3, {colorProps:{color:"#FF0000"}, yoyo:true, repeat:-1, ease:Linear.ease});
+	this.colorTween = TweenMax.to(this, 0.3, {colorProps:{color:"#FF0000"}, yoyo:true, repeat:-1, ease:Linear.ease});
 	this.explosionArea.init(this, 30, 15, -1, 200);
 }
 
@@ -375,8 +316,8 @@ Ship.prototype.onAllDamageReceived = function(other) {
 	this.explosionArea.stop();
 	this.currentMotion.set(this.NONE_STOP_SHAKE_MOTION);
 
-	var d = (TopLevel.canvas.height + 100 - this.y );
-	var speed = d / 170.0;
+	var d 		  = (TopLevel.canvas.height + 50 - this.y );
+	var speed 	  = d / 100.0;
 	this.rotation = 5;
 	
 	this.explosionArea.init(this, 35, 20, -1, 50);
@@ -384,32 +325,14 @@ Ship.prototype.onAllDamageReceived = function(other) {
 	this.blockControls 		= true;
 	this.checkingCollisions = false;
 	
-	TopLevel.powerUpFactory.create(this.x, this.y, "WeaponPowerUp", this.weapon.getLevel()-1);
-
-	this.lastWeaponType = this.weapon.getId();
-	this.weapon.destroy();
-	this.weapon = null;
-
-	TweenMax.to(this, speed, {y:this.y + d, rotation:720, ease:Linear.ease, onCompleteScope:this, onComplete:function(){
+	TweenMax.to(this, speed, {y:this.y + d, rotation:720, ease:Linear.easeNone, onCompleteScope:this, onComplete:function(){
 		this.alive = false;
 	}});	
 }
 
-function PlayerShipFactory(container) {
-	this.container = container;
-
-	this.recreateTimer = TimeOutFactory.getTimeOut(1000, 1, this, function(){
-		this.createPlayerShip();		
-	});
-}
-
-PlayerShipFactory.prototype.createPlayerShip = function() {
-	var ship = this.container.add("Ship", [TopLevel.canvas.width/2, TopLevel.canvas.height + 50, this.container]);
-	var arg = arguments;
-
-	ship.addOnDestroyCallback(this, function(obj){
-		this.recreateTimer.start();	
-	});
-
-	return ship;
+Ship.prototype.onDamageRecoveredOutOfLastLevel = function(other) {
+	this.explosionArea.stop();
+	TweenMax.to(this, 1, {colorProps:{color:"#FFFFFF"}, ease:Linear.ease});
+	if(this.colorTween)
+		this.colorTween.kill();
 }

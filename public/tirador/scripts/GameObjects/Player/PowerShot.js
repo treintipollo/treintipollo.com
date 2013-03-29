@@ -82,7 +82,7 @@ PowerShot.prototype.update = function(delta) {
 	}else{
 		this.y -= this.speed*delta;
 	
-		if(this.y < -this.radius){
+		if(!ScreenUtils.isInScreenBoundsXY(this.x, this.y, this.radius, this.radius)){
 			this.alive = false;
 		}	
 	}
@@ -132,7 +132,7 @@ PowerShotSine.prototype.update = function(delta) {
 		
 		this.frameCount += 6*this.side;	
 
-		if(this.y < -this.radius){
+		if(!ScreenUtils.isInScreenBoundsXY(this.x, this.y, this.radius, this.radius)){
 			this.alive = false;
 		}
 	}
@@ -168,7 +168,7 @@ PowerShotCircle.prototype.update = function(delta) {
 	}else{
 		this.rCenterY -= this.speed*delta;
 		
-		if(this.y < -this.radius){
+		if(!ScreenUtils.isInScreenBoundsXY(this.x, this.y, this.radius, this.radius)){
 			this.alive = false;
 		}
 	}

@@ -1,100 +1,231 @@
 RocketWeapon.inheritsFrom( Weapon );
 
-function RocketWeapon() {
+RocketWeapon.populateTargetGrid = function(sizeX, sizeY, spaceX, spaceY, offSetX, offSetY) {
+	if(RocketWeapon.tGrid) return;
+
+	RocketWeapon.tGrid = [];
+
+	for(var i=0; i<sizeY; i++){
+		for(var j=0; j<sizeX; j++){
+			RocketWeapon.tGrid.push([null, (spaceX*j)+offSetX, (spaceY*i)+offSetY]);			
+		}		
+	}
+}
+
+function RocketWeapon(id, level, user, hasInstructions) {
 	Weapon.apply(this, arguments);
 
-	var inst = this;
-
-	this.voleyAmounts = [4,5,6,4,6,7,5,7,8];
-	this.rocketTypes  = ["Rocket","Rocket","Rocket","LargeRocket","LargeRocket","LargeRocket","ClusterRocket","ClusterRocket","ClusterRocket"];
-
-	this.rocketLevel  = [
-						//Rocket *4
-						function(x, y, tx, ty, xOffset, yOffset, c){
-							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c]; 
-						},
-						//Rocket *5
-						function(x, y, tx, ty, xOffset, yOffset, c){
-							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c]; 
-						},
-						//Rocket *6
-						function(x, y, tx, ty, xOffset, yOffset, c){
-							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c]; 
-						},
-						//Large Rocket *4
-						function(x, y, tx, ty, xOffset, yOffset, c){
-							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c]; 
-						},
-						//Large Rocket *6
-						function(x, y, tx, ty, xOffset, yOffset, c){
-							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c]; 
-						},
-						//Large Rocket *7
-						function(x, y, tx, ty, xOffset, yOffset, c){
-							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c]; 
-						},
-						//Cluster Rocket *5
-						function(x, y, tx, ty, xOffset, yOffset, c){
-							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c, 3]; 
-						},
-						//Cluster Rocket *7
-						function(x, y, tx, ty, xOffset, yOffset, c){
-							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c, 4]; 
-						},
-						//Cluster Rocket *8
-						function(x, y, tx, ty, xOffset, yOffset, c){
-							return [x, y, {x:x + xOffset, y:y + yOffset}, {x:tx, y:ty},c, 5]; 
-						}];
+	this.targetType = "Target";
 
 
-	var c = ArrowKeyHandler.addKeyDownTimeOutCallback(ArrowKeyHandler.CTRL, function(){
-		inst.target.lock();
-	}, 100);
+	RocketWeapon.populateTargetGrid(5, 5, 50, 50, -100, -500);
 
-	this.callbacks.push(c);
+	this.crossHairAmount = [
+		[ [2], [22] ],
+		[ [2], [22] ],
+		
+		[ [6, 8], [5, 9] ],
+		[ [6, 8], [5, 9] ],
 
-	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.CTRL, function(){
-		if(inst.currentVoleyCount < inst.voleyAmounts[inst.level]){
+		[ [7, 11, 13], [2, 10, 14] ],
+		[ [7, 11, 13], [2, 10, 14] ],
 
-			var xOffset = Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1);
-			var yOffset = Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1);
+		[ [6, 8], [5, 9] ],		
+		[ [6, 8], [5, 9] ],
+		[ [7, 11, 13], [2, 10, 14] ]
+	];
 
-			var rocket = inst.container.add(inst.rocketTypes[inst.level], 
-											inst.rocketLevel[inst.level](inst.user.x, inst.user.y, inst.target.x, inst.target.y, xOffset, yOffset, inst.container));
+	this.voleyAmounts    = [16, 16, 
+							20, 20, 
+							8, 8, 
+							8, 8, 8];
 
-			inst.currentVoleyCount++;
+	this.rocketTypes  = ["SmallSwarmRocket",
+						 "LargeSwarmRocket",
 
-			rocket.addOnDestroyCallback(this, function(obj){
-				inst.currentVoleyCount--;
-			});
-		}
+						 "SmallSwarmRocket",
+						 "LargeSwarmRocket",
+						 
+						 "SmallSwarmRocket",
+						 "LargeSwarmRocket",
+						 
+						 "ClusterSwarmRocket",
+						 "ClusterSwarmRocket",
+						 "ClusterSwarmRocket"];
 
-		inst.target.unlock();
+	this.rocketLevel  = 
+	[
+		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0]; },
+		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0]; },
+		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0]; },
+		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0]; },
+		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0]; },
+		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0]; },
+		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0, 2]; },
+		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0, 3]; },
+		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0, 4]; }
+	];
+
+	this.targets 	   = [];
+	this.crossHairMode = 0;
+
+	if (typeof TimeOutFactory === "undefined") { return; }
+
+	this.idleTimer = TimeOutFactory.getTimeOut(2000, 1, this, function(){
+		this.createTargets();		
 	});
-
-	this.callbacks.push(c);
-
-	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.ALT, function(){
-		inst.target.reset();
-	});
-
-	this.callbacks.push(c);	
 }
 
 RocketWeapon.prototype.init = function(container) {
-	this.parent.init(container);
-	this.target = this.container.add("Target", [this.user]);
-	this.target.reset();
+	Weapon.prototype.init.call(this, container);
+
+	this.createTargets();
+
+	var inst = this;
+
+	var currentTarget = 0;
+	
+	var nextTargetAvailable = function() {
+		if(inst.targets.length == 0){ 
+			return false;
+		}
+		if(inst.targets.length == 1){
+			currentTarget = 0;
+			return true;
+		}
+
+		currentTarget++;
+		
+		if(currentTarget > inst.targets.length-1){
+			currentTarget = 0;	
+		}
+
+		var target = inst.targets[currentTarget];
+
+		if(!target) {
+			return nextTargetAvailable();			
+		}
+	}
+
+	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_1, function(){
+
+		if(!ScreenUtils.isInScreenBoundsXY(inst.user.x, inst.user.y, 10, 10)){
+			return;
+		}
+
+		if(nextTargetAvailable() == false){
+			return;
+		}
+
+		var t = inst.targets[currentTarget];
+
+		var xOffset = Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1);
+		var yOffset = Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1);
+
+		var r = inst.container.add(inst.rocketTypes[inst.level], inst.rocketLevel[inst.level](inst.user.x, inst.user.y, t.t, xOffset, yOffset, inst.container));
+
+		if(r){
+			t.rocketLimit--;
+
+			if(t.rocketLimit < 0){
+				t.t.disable();
+			}
+
+		}
+
+		inst.idleTimer.reset();
+	});
+
+	this.callbacks.push(c);
+
+	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_2, function(){
+		inst.crossHairMode++;
+
+		if(inst.crossHairMode > inst.crossHairAmount[inst.level].length-1){
+			inst.crossHairMode = 0;
+		}
+
+		for(var i=0; i<inst.targets.length; i++){	
+			var targetOffset = RocketWeapon.tGrid[inst.crossHairAmount[inst.level][inst.crossHairMode][i]];
+			
+			inst.targets[i].t.setOffSet.apply(inst.targets[i].t, targetOffset);
+		}
+
+	});
+
+	this.callbacks.push(c);
+}
+
+RocketWeapon.prototype.destroyTargets = function() {
+	if(this.targets) {
+		for(var i=0; i<this.targets.length; i++){	
+			this.targets[i].t.alive = false;
+		}
+		this.targets.length = 0;
+	}
+}
+
+RocketWeapon.prototype.createTargets = function() {
+
+	if(this.targets){
+		if(this.targets.length == this.crossHairAmount[this.level][this.crossHairMode].length){
+			return;
+		}
+	}
+
+	for(var i=0; i<this.crossHairAmount[this.level][this.crossHairMode].length; i++){
+		
+		if(this.isTargetPositionTaken(i)) 
+			continue;
+
+		var targetOffset = RocketWeapon.tGrid[this.crossHairAmount[this.level][this.crossHairMode][i]];
+		
+		targetOffset[0] = this.user;
+
+		var t = this.container.add(this.targetType, targetOffset);
+
+		t.addOnDestroyCallback(this, function(obj){
+			if(!this.targets) return;
+
+			for(var j=0; j<this.targets.length; j++){
+				if(this.targets[j].t === obj){
+					break;
+				}
+			}
+
+			this.targets.splice(j, 1);
+		});
+
+		this.targets.push({posId:i, t:t, rocketLimit:this.voleyAmounts[this.level]-1});
+	}
+}
+
+RocketWeapon.prototype.isTargetPositionTaken = function(posId) {
+	if(!this.targets) 
+		false; 
+
+	for(var i=0; i<this.targets.length; i++){
+		if(this.targets[i].posId == posId){			
+			return true;
+		}
+	}
+
+	return false;
+}
+
+RocketWeapon.prototype.powerUp = function() {
+	Weapon.prototype.powerUp.call(this);
+	this.destroyTargets();
+	this.createTargets();
 }
 
 RocketWeapon.prototype.destroy = function() {
-	this.target.alive = false;
-	ArrowKeyHandler.removeCallbacks(this.callbacks);
+	this.destroyTargets();
+	
+	if(this.callbacks)
+		ArrowKeyHandler.removeCallbacks(this.callbacks);
+	
 	DestroyUtils.destroyAllProperties(this);
-}
-
-RocketWeapon.prototype.getId = function() {
-	return WeaponPowerUp.ROCKET;
 }
 
 RocketWeapon.prototype.createInstructions = function() {
@@ -102,6 +233,6 @@ RocketWeapon.prototype.createInstructions = function() {
 	
 	var instructions = document.createElement("h2");
 	instructions.id = "shotInstructions";
-	instructions.innerHTML = "Keep pressed to AIM. ALT to reset AIM." + " Weapon Level: " + this.level;
+	instructions.innerHTML = "S to change AIM -" + "- Weapon Level: " + this.level;
 	$("#main").append(instructions);
 }

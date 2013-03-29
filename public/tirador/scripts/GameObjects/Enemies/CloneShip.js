@@ -22,9 +22,6 @@ CloneShip.prototype.init = function(x, y, userX, userY, cloneProps){
 	this.scaleX = 0.4;
 	this.scaleY = 0.4;
 
-	this.weapon.destroy();
-	this.weapon = null;
-
 	this.exhaust30.setColors(cloneProps.exhaustColor);
 	this.exhaust60.setColors(cloneProps.exhaustColor);
 	this.exhaust90.setColors(cloneProps.exhaustColor);
@@ -42,8 +39,7 @@ CloneShip.prototype.createStateMachine = function() {
 		this.exhaust120.neutral(); 
 		this.exhaust150.neutral();
 
-		this.weapon = new ShotWeapon(0, this, false, false, "Clone_Small_Shot", "Clone_Big_Shot");
-		this.weapon.init(this.container);
+		this.weapon = TopLevel.weaponFactory.getInitializedWeapon(TopLevel.weaponFactory.CLONE_SHOT_WEAPON, 0, this, this.weapon); 
 
 		TweenMax.to(this, this.advanceTime, {y:TopLevel.canvas.height + 100, ease:Linear.easeNone, onCompleteScope:this, onComplete:function(){
 			this.alive = false;
@@ -123,12 +119,7 @@ CloneShip.prototype.update = function(delta) {
 	this.exhaust120.update(); 
 	this.exhaust150.update();
 
-	if(this.weapon)
-		this.weapon.update();
-}
-
-CloneShip.prototype.onCollide = function(other){
-	Attributes.prototype.onCollide.call(this, other);
+	if(this.weapon) this.weapon.update();
 }
 
 CloneShip.prototype.onAllDamageReceived = function(other) {

@@ -62,21 +62,22 @@ ObjectsContainer.prototype.update = function(delta) {
 									if(!object.checkingCollisions) break;
 
 									object.onCollide(this.collisionOpponent);	
-									
+									if(object.onCollideDelegate != null){
+										object.executeOnCollideCallbacks(this.collisionOpponent);
+									}
+
 									if(!object.checkingCollisions) break;
 
 									this.collisionOpponent.onCollide(object);
+									if(this.collisionOpponent.onCollideDelegate != null){
+										this.collisionOpponent.executeOnCollideCallbacks(object);
+									}
 								}
 							}
 						}	
 					}
 					
 				}else{
-					
-					if(object.destroyMode == GameObject.EXECUTE_CALLBACKS){
-						object.executeDestroyCallbacks();
-					}
-
 					if(object.checkingCollisions){
 						this.collisionId = object.getCollisionId();
 
@@ -101,7 +102,7 @@ ObjectsContainer.prototype.update = function(delta) {
 	}
 }
 
-ObjectsContainer.prototype.add = function(name, arguments) {
+ObjectsContainer.prototype.add = function(name, args) {
 	var configuration = this.configurations[name];
 
 	var type 		   = configuration.type;
@@ -140,9 +141,9 @@ ObjectsContainer.prototype.add = function(name, arguments) {
 
 	//Initialize it with given arguments
 	if(initCall == ObjectsContainer.APPLY){
-		pooledObject.init.apply(pooledObject, arguments);
+		pooledObject.init.apply(pooledObject, args);
 	}else{
-		pooledObject.init.call(pooledObject, arguments);		
+		pooledObject.init.call(pooledObject, args);		
 	}
 
 	//Nasty logic to add an object to the corresponding collision checking lists

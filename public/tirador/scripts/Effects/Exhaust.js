@@ -60,7 +60,7 @@ Exhaust.prototype.destroy = function() {
 	this.speedDownTimer.remove();
 }
 
-Exhaust.prototype.createParticles = function(parentContext, state, life) {
+Exhaust.prototype.createParticles = function(parentContext, state, life) {	
 	this.particleSide = !this.particleSide;
 	
 	Exhaust.ParticleArguments[0] = state;
@@ -70,5 +70,5 @@ Exhaust.prototype.createParticles = function(parentContext, state, life) {
 	Exhaust.ParticleArguments[4] = life;
 	Exhaust.ParticleArguments[5] = this.particleSide;
 
-	this.container.add("ExhaustParticle", Exhaust.ParticleArguments, 1);	
+	this.container.add("ExhaustParticle", Exhaust.ParticleArguments);		
 }

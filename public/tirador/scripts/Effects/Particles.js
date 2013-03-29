@@ -12,7 +12,8 @@ ExhaustParticle.prototype.init = function(type, parentContext, bezierPoints, col
 	this.step = 1.0/life;
 	this.side = side;
 
-	var pos = BezierCurve.getPoint(0.001, this.bezierPoints.call(this.parentContext, this.side, this.type));
+	var pos = BezierCurve.getPoint(0, this.bezierPoints.call(this.parentContext, this.side, this.type));
+
 	this.x = pos.x;
 	this.y = pos.y;
 }
@@ -30,6 +31,8 @@ ExhaustParticle.prototype.draw = function(context) {
 ExhaustParticle.prototype.update = function(delta) { 	
 	this.life += this.step * (delta * 50);
 
+	this.alive = this.parentContext.alive;
+	
 	if(this.life >= 1.0){
 		this.alive = false;
 	}else{
@@ -143,8 +146,8 @@ BurstParticleRadius.prototype.init = function(parent, xOffset, yOffset, radius, 
 	this.x = this.xOffset + parent.x + Math.cos(a)*spawnRadius;	
 	this.y = this.yOffset + parent.y + Math.sin(a)*spawnRadius;
 
-	a = Math.atan2(this.yOffset + parent.y + Math.sin(angle)*radius - this.y, 
-				   this.xOffset + parent.x + Math.cos(angle)*radius - this.x);
+	a = Math.atan2((this.yOffset + parent.y + Math.sin(angle)*radius) - this.y, 
+				   (this.xOffset + parent.x + Math.cos(angle)*radius) - this.x);
 
 	this.dirX = Math.cos(a);
 	this.dirY = Math.sin(a);

@@ -15,7 +15,6 @@ function ShotCharge(parent, xOffset, yOffset, startAngle, endAngle, radius, time
 
 	this.state 	   = -1;
 	this.lastState = -1;
-	this.particles = [];
 
 	this.createTimer = function(){
 		if (typeof TimeOutFactory === "undefined") { return; }
@@ -100,20 +99,11 @@ ShotCharge.prototype.update = function() {
 }
 
 ShotCharge.prototype.clearAllIntervals = function() {
-	if(!this.particleTimer){
-		debugger;
-	}
-	
 	this.particleTimer.stop();
 }
 
 ShotCharge.prototype.destroy = function() {
 	this.clearAllIntervals();
-
-	for(var i=0; i<this.particles.length; i++){
-		this.particles[i].setDestroyMode(GameObject.NO_CALLBACKS);
-	}
-
 	this.particleTimer.remove();
 
 	DestroyUtils.destroyAllProperties(this);
@@ -134,16 +124,7 @@ ShotCharge.prototype.createArguments = function() {
 
 ShotCharge.prototype.createParticles = function() {
 	this.createArguments();
-
-	var particle = this.container.add(this.particleType, ShotCharge.ParticleArguments);
-	
-	if(particle != null){
-		this.particles.push(particle);
-
-		particle.addOnDestroyCallback(this, function(obj){
-			this.particles.splice(this.particles.indexOf(obj), 1);
-		});
-	}
+	this.container.add(this.particleType, ShotCharge.ParticleArguments);
 }
 
 function ShotChargeRadius(parent, xOffset, yOffset, angle, radius, times){

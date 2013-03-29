@@ -18,6 +18,7 @@ function MultiGun(spots, origin, target, onComplete, properties) {
 		MultiGun.ShotArguments[4] = properties.shotRadius;
 		MultiGun.ShotArguments[5] = properties.formationTime;
 		MultiGun.ShotArguments[6] = properties.shotSpeed;
+		MultiGun.ShotArguments[7] = properties.rotationSpeed;
 
 		TopLevel.container.add("MultiShot", MultiGun.ShotArguments);
 	});
@@ -68,7 +69,10 @@ MultiShot.inheritsFrom( Attributes );
 MultiShot.LineArguments = [];
 
 function MultiShot() {
-	this.particles = new ShotCharge(null, 0, 0, 0, 360, 10);
+
+	this.particles = new ShotCharge(this, 0, 0, 0, 360, 10);
+	this.trailEffect = new ShotChargeRadius(this, 0, 0, 0, 50, -1);
+
 	this.lines = [];
 }
 
@@ -76,7 +80,7 @@ MultiShot.prototype.afterCreate = function(){
 	CircleCollider.prototype.create.call(this);
 }
 
-MultiShot.prototype.init = function(user, target, spots, color, radius, formationTime, speed) {
+MultiShot.prototype.init = function(user, target, spots, color, radius, formationTime, speed, rotationSpeed) {
 	CircleCollider.prototype.init.call(this, radius);
 
 	Attributes.prototype.init.call(this);
@@ -86,8 +90,10 @@ MultiShot.prototype.init = function(user, target, spots, color, radius, formatio
 	this.radius 	   = radius;
 	this.formationTime = formationTime;
 	this.speed 		   = speed;
+	this.rotationSpeed = rotationSpeed;
 
-	this.particles.init(TopLevel.container, 1, this.color, 2, "BurstParticle", 3, 10, 70);
+	this.particles.init(TopLevel.container, 1, this.color, 2, "BurstParticle", 3, 10, 70, 0);
+	
 	this.particles.on();
 
 	this.createLine(0, 1); 
@@ -115,9 +121,11 @@ MultiShot.prototype.createLine = function(current, next) {
 				this.lines[i].alive = false;		
 			}
 
-			this.dir = VectorUtils.getFullVectorInfo(this.user.x, this.user.y, this.target.x, this.target.y).dir;
-			this.particles.parent = this;
-			this.particles.on();
+			this.dir = VectorUtils.getFullVectorInfo(this.user.x, this.user.y, this.target.x, this.target.y);
+	
+			this.trailEffect.angle = this.dir.angle * (180/Math.PI);
+			this.trailEffect.init(TopLevel.container, 30, this.color, 3, "BurstParticleRadius", 5, 100, 300, this.radius);
+			this.trailEffect.on();
 		});
 	}else{
 		MultiShot.LineArguments[1] = this.spots[next];
@@ -133,10 +141,10 @@ MultiShot.prototype.createLine = function(current, next) {
 
 MultiShot.prototype.update = function(delta) {
 	if(this.dir){
-		this.x += this.dir.x * this.speed * delta;
-		this.y += this.dir.y * this.speed * delta;
+		this.x += this.dir.dir.x * this.speed * delta;
+		this.y += this.dir.dir.y * this.speed * delta;
 
-		this.rotation += 20;
+		this.rotation += this.rotationSpeed;
 
 		if(this.x < -(this.radius*2) || this.x > TopLevel.canvas.width+(this.radius*2) || this.y < -(this.radius*2)  || this.y > TopLevel.canvas.height + (this.radius*2)){
 			this.alive = false;
@@ -150,6 +158,7 @@ MultiShot.prototype.update = function(delta) {
 
 MultiShot.prototype.destroy = function() {
 	this.particles.off();
+	this.trailEffect.off();
 	this.lines.length = 0;
 }
 

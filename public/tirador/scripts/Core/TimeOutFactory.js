@@ -21,6 +21,19 @@ $(function(){
 				isRunning:false,
 				isPaused:false,
 
+				startNewDelayAndRepeateCount: function(delay, repeateCount){
+					this.delay = delay;
+					this.repeateCount = repeateCount;
+					this.initRepeatCount = repeateCount;
+
+					this.start();					
+				},
+
+				resetNewDelayAndRepeateCount: function(delay, repeateCount){
+					this.stop();
+					this.startNewDelayAndRepeateCount(delay, repeateCount);
+				},
+
 				start: function(resumed){
 					if(this.isRunning || this.isPaused){
 						return;
@@ -76,6 +89,11 @@ $(function(){
 					this.resumeDelay  = -1;
 					
 					clearTimeout(this.id);
+				},
+
+				reset: function(){
+					this.stop();
+					this.start();
 				},
 
 				resetAndExecuteCallback: function(){

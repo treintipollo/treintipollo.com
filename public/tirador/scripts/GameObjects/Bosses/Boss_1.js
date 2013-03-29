@@ -41,7 +41,7 @@ Boss_1.prototype.init = function(x, y, target) {
 	this.parent.init.call(this);
 
 	//This gets all the necessary data for this boss to work.	
-	this.config = Boss_1_ConfigurationGetter.getConfiguration(this, this.typeId);
+	this.config = Boss_1_ConfigurationGetter.getConfiguration(this.typeId);
 
 	CircleCollider.prototype.init.call(this, this.config.bodyProps[0]);
 
@@ -49,7 +49,6 @@ Boss_1.prototype.init = function(x, y, target) {
 	this.y          	  = y;
 	this.currentPos       = {x:x, y:y};
 	this.anchorPos        = {x:x, y:y};
-	this.distanceToAnchor = {distance:0, angle:0};
 	this.totalVariation   = {x:0, y:0};
 	
 	this.size         	  = this.config.bodyProps[0];
@@ -116,13 +115,23 @@ Boss_1.prototype.init = function(x, y, target) {
 		var sideChanges = 10;
 	
 		var explode = function(){
+			this.explosionArea.stop();
+
 			this.explosionArea.init(this, 60, 25, 10, 60, FuntionUtils.bindScope(this, function(){
-				var length, newX, newY, info;
+				var length, newX, newY, info, tries;
+
+				tries = 0;
 
 				do{
 					newX = this.anchorPos.x + Random.getRandomInt(-70, 70);
 					newY = this.anchorPos.y + Random.getRandomInt(-70, 70);
 					info = VectorUtils.getFullVectorInfo(this.x, this.y, newX, newY);
+
+					if(tries > 10){
+						break;	
+					}
+					tries++;
+
 				}while(info.distance < 100);
 				
 				sideChanges--;
@@ -150,6 +159,8 @@ Boss_1.prototype.init = function(x, y, target) {
 
 	var death_explosions_retreate = function(){
 		TweenMax.to(this, 3, {eyeHeight:this.eyeheightMax/2, ease:Power4.easeOut});
+
+		this.explosionArea.stop();
 
 		this.explosionArea.init(this, 30, 15, -1, 50);
 		this.gotoPosition(this.x, -200, 5, FuntionUtils.bindScope(this, function(){
@@ -253,6 +264,10 @@ Boss_1.prototype.init = function(x, y, target) {
 	}
 
 	this.trembleTimer.callback = function(){
+		if(this.currentMotion.isCurrentState(this.config.HELPER_INITIAL_MOTION)){
+			return;
+		}
+
 		this.scaleX = Random.getRandomArbitary(1, 1.05);
 		this.scaleY = Random.getRandomArbitary(1, 1.05);
 	}
@@ -448,29 +463,31 @@ Boss_1.prototype.init = function(x, y, target) {
 
 	this.weapon = this.weapons[0];
 
+	this.color = "#FFFFFF";
+
 	//Eye drawing logic
 	var roundEye = function(context){
-		this.drawEyeShape(context, 0, 0, 1);
-		this.drawRoundEye(context, 0, 0, 1);
+		this.drawEyeShape(context, 0, 0, 1, this.color);
+		this.drawRoundEye(context, 0, 0, 1, this.color);
 	}
 	var snakeEye = function(context){
-		this.drawEyeShape(context, 0, 0, 1);
-		this.drawSnakeEye(context, 0, 0, 1);
+		this.drawEyeShape(context, 0, 0, 1, this.color);
+		this.drawSnakeEye(context, 0, 0, 1, this.color);
 	}
 	var insectEye = function(context){
 		this.drawEyeShape(context, 0, 0, 1);
 
-		this.drawBugEyeCluster( 21  ,  0, 7, "#FFFFFF", context, true, true , true , true, false, false);
-		this.drawBugEyeCluster(-21  ,  0, 7, "#FFFFFF", context, true, false, false, true, true , true );
-		this.drawBugEyeCluster(  0  ,  0, 7, "#FFFFFF", context, true, true , true , true, true , true );
-		this.drawBugEyeCluster( 21/2,-30, 7, "#FFFFFF", context, true, true , true , true, true , true );
-		this.drawBugEyeCluster(-21/2,-30, 7, "#FFFFFF", context, true, false, false, true, true , true );
-		this.drawBugEyeCluster( 21/2, 30, 7, "#FFFFFF", context, true, true , true , true, true , true );
-		this.drawBugEyeCluster(-21/2, 30, 7, "#FFFFFF", context, true, false, false, true, true , true );
-		this.drawBugEyeCluster(21*2 ,-24, 7, "#FFFFFF", context, true, true , true , true, true , true );
-		this.drawBugEyeCluster(21*2 , 24, 7, "#FFFFFF", context, true, true , true , true, true , true );
-		this.drawBugEyeCluster(-21*2,-24, 7, "#FFFFFF", context, true, true , true , true, true , true );
-		this.drawBugEyeCluster(-21*2, 24, 7, "#FFFFFF", context, true, true , true , true, true , true );
+		this.drawBugEyeCluster( 21  ,  0, 7, this.color, context, true, true , true , true, false, false);
+		this.drawBugEyeCluster(-21  ,  0, 7, this.color, context, true, false, false, true, true , true );
+		this.drawBugEyeCluster(  0  ,  0, 7, this.color, context, true, true , true , true, true , true );
+		this.drawBugEyeCluster( 21/2,-30, 7, this.color, context, true, true , true , true, true , true );
+		this.drawBugEyeCluster(-21/2,-30, 7, this.color, context, true, false, false, true, true , true );
+		this.drawBugEyeCluster( 21/2, 30, 7, this.color, context, true, true , true , true, true , true );
+		this.drawBugEyeCluster(-21/2, 30, 7, this.color, context, true, false, false, true, true , true );
+		this.drawBugEyeCluster(21*2 ,-24, 7, this.color, context, true, true , true , true, true , true );
+		this.drawBugEyeCluster(21*2 , 24, 7, this.color, context, true, true , true , true, true , true );
+		this.drawBugEyeCluster(-21*2,-24, 7, this.color, context, true, true , true , true, true , true );
+		this.drawBugEyeCluster(-21*2, 24, 7, this.color, context, true, true , true , true, true , true );
 	}
 
 	var multiEye = function(context){
@@ -516,24 +533,15 @@ Boss_1.prototype.gotoPosition = function(x, y, time, onFinish, ease, setAsAnchor
 		this.anchorPos = {x:x, y:y};
 	}
 
-	TweenMax.killTweensOf(this.distanceToAnchor);
-	
-	this.currentPos.x += Math.cos(this.distanceToAnchor.angle) * this.distanceToAnchor.distance;
-	this.currentPos.y += Math.sin(this.distanceToAnchor.angle) * this.distanceToAnchor.distance;
-	this.distanceToAnchor.distance = 0;
+	if(this.goToAnchorTween)
+		this.goToAnchorTween.kill();
 
 	TweenMax.to(this.currentPos, time, {x:x, y:y, ease:(ease != null ? ease : Linear.ease), onComplete:onFinish, onCompleteScope:this, overwrite:"none"});
 }
 
 Boss_1.prototype.gotoAnchor = function(time){
-	var info = VectorUtils.getFullVectorInfo(this.anchorPos.x, this.anchorPos.y, this.currentPos.x, this.currentPos.y);
-	this.distanceToAnchor.angle = info.angle;
-	
-	TweenMax.to(this.distanceToAnchor, time, {distance:info.distance, onComplete:function(){	
-		this.currentPos.x += Math.cos(this.distanceToAnchor.angle) * this.distanceToAnchor.distance;
-		this.currentPos.y += Math.sin(this.distanceToAnchor.angle) * this.distanceToAnchor.distance;	
-		this.distanceToAnchor.distance = 0;
-	}, onCompleteScope:this});
+	this.goToAnchorTween = TweenMax.to(this.currentPos, time, {x:this.anchorPos.x, y:this.anchorPos.y, overwrite:"none"});
+	//this.goToAnchorTween = TweenMax.to(this, time, {x:this.anchorPos.x, y:this.anchorPos.y, overwrite:"none"});
 }
 
 Boss_1.prototype.startAttack = function(){
@@ -608,7 +616,7 @@ Boss_1.prototype.executeOnAllTentacles = function(f) {
 
 Boss_1.prototype.draw = function(context) {
 	context.fillStyle   = "#000000";
-	context.strokeStyle = "#FFFFFF";
+	context.strokeStyle = this.color;
 	context.lineWidth   = 2;
 
 	context.beginPath();
@@ -620,7 +628,7 @@ Boss_1.prototype.draw = function(context) {
 	this.eyeDrawLogic[this.currentStats.eyeType].call(this, context);
 }
 
-Boss_1.prototype.drawEyeShape = function(context, offSetX, offSetY, eyeSizeMultiplier) {
+Boss_1.prototype.drawEyeShape = function(context, offSetX, offSetY, eyeSizeMultiplier, color) {
 	var eyeSize   = this.size 	   * eyeSizeMultiplier;
 	var eyeHeight = this.eyeHeight * eyeSizeMultiplier
 
@@ -640,7 +648,7 @@ Boss_1.prototype.drawEyeShape = function(context, offSetX, offSetY, eyeSizeMulti
 	context.clip();
 }
 
-Boss_1.prototype.drawRoundEye = function(context, offSetX, offSetY, eyeSizeMultiplier) {
+Boss_1.prototype.drawRoundEye = function(context, offSetX, offSetY, eyeSizeMultiplier, color) {
 	var eyeheightMax = this.eyeheightMax * eyeSizeMultiplier;
 
 	offSetX *= this.size;
@@ -720,8 +728,8 @@ Boss_1.prototype.drawBugEyePiece = function(x, y, radius, color, context) {
 Boss_1.prototype.update = function(delta) {
 	this.currentMotion.update();
 
-	this.x = this.currentPos.x + this.totalVariation.x + Math.cos(this.distanceToAnchor.angle) * this.distanceToAnchor.distance;
-	this.y = this.currentPos.y + this.totalVariation.y + Math.sin(this.distanceToAnchor.angle) * this.distanceToAnchor.distance;
+	this.x = this.currentPos.x + this.totalVariation.x;
+	this.y = this.currentPos.y + this.totalVariation.y;
 
 	this.currentTentacleMotion.update();
 	this.weapon.update();
@@ -743,7 +751,6 @@ Boss_1.prototype.destroy = function(){
 	this.currentTentacleMotion.destroy();
 
 	TweenMax.killTweensOf(this);
-	TweenMax.killTweensOf(this.distanceToAnchor);
 	TweenMax.killTweensOf(this.currentPos);
 
 	this.executeOnAllTentacles(function(t){
@@ -755,13 +762,21 @@ Boss_1.prototype.onHPDiminished = function(other) { this.currentMotion.set(this.
 Boss_1.prototype.onDamageBlocked = function(other) { this.currentMotion.set(this.config.LIGHT_DAMAGED); }
 
 Boss_1.prototype.onDamageReceived = function(other) {
+	this.explosionArea.init(this, this.size, this.size/2, 15, 100);
+
 	this.blockDamage = true;
 	this.currentMotion.set(this.config.BIG_DAMAGED, [other, FuntionUtils.bindScope(this, function(){ this.blockDamage = false; })]);
+}
+
+Boss_1.prototype.onLastDamageLevelReached = function(other) {
+	this.explosionArea.init(this, this.size, this.size/3, -1, 200);
+	TweenMax.to(this, 0.7, {colorProps:{color:"#FF0000"}, yoyo:true, repeat:-1, ease:Linear.ease});
 }
 
 Boss_1.prototype.onAllDamageReceived = function(other) { 
 	this.currentMotion.set(this.config.INIT_DEATH_MOTION); 
 }
+
 
 //-------------------------------------------------
 //-------------------------------------------------
@@ -920,7 +935,6 @@ Boss_1_Backup.prototype.destroyAll = function() {
 
 	for(var j=0; j<this.helpers.length; j++){
 		TweenMax.killTweensOf(this.helpers[j].helper);
-		TweenMax.killTweensOf(this.helpers[j].helper.distanceToAnchor);
 		TweenMax.killTweensOf(this.helpers[j].helper.currentPos);
 
 		this.helpers[j].helper.currentPos.active = false;
@@ -1011,21 +1025,22 @@ Boss_1_Weapon_Angled_Beam.prototype.available = function() { return true; }
 //-------------------------------------------------
 
 function Boss_1_Weapon_Sniper_Shot(user, target, onComplete) {
+	this.user = user;
+
 	this.beam = new StraightBeam(user.config.beamProps);
 	this.beam.init(TopLevel.container, user, null, user.config.straightBeamProps);
 
 	var shotArguments = [];
 
-	this.currentSpread = 0;
+	this.spreadIndex = 0;
+	this.shotIndex   = 0;
+	
+	this.shotTimer = TimeOutFactory.getTimeOut(-1, -1, this, null); 
 
-	this.shotTimer = TimeOutFactory.getTimeOut(user.config.sniperProps.spreadDelay, user.config.sniperProps.spreads.length, this, function(){ 
-		
-		if(this.currentSpread >= user.config.sniperProps.spreads.length){
-			this.currentSpread = 0;
-		}
+	this.shotTimer.callback = function(){ 
+		for(var i=0; i<this.currentSpread.spreadInfo[this.shotIndex].length; i++){
 
-		for(var i=0; i<user.config.sniperProps.spreads[this.currentSpread].length; i++){
-			var shotProps = user.config.sniperProps.spreads[this.currentSpread][i];
+			var shotProps = user.config.getShotType( this.currentSpread.spreadInfo[this.shotIndex][i] );
 
 			shotArguments[0] = user;
 			shotArguments[1] = target;
@@ -1036,9 +1051,8 @@ function Boss_1_Weapon_Sniper_Shot(user, target, onComplete) {
 			TopLevel.container.add(shotProps.type, shotArguments);
 		}
 
-		this.currentSpread++;
-
-	}); 
+		this.shotIndex++;
+	}
 
 	this.shotTimer.onComplete = onComplete;
 }
@@ -1046,7 +1060,17 @@ function Boss_1_Weapon_Sniper_Shot(user, target, onComplete) {
 Boss_1_Weapon_Sniper_Shot.inheritsFrom( Boss_1_Weapon );
 
 Boss_1_Weapon_Sniper_Shot.prototype.update = function() { }
-Boss_1_Weapon_Sniper_Shot.prototype.fire = function() { this.currentSpread=0; this.shotTimer.start(); }
+Boss_1_Weapon_Sniper_Shot.prototype.fire = function() { 
+	this.shotIndex = 0;
+
+	this.currentSpread = this.user.config.sniperProps.spreads[this.spreadIndex];
+	this.shotTimer.startNewDelayAndRepeateCount(this.currentSpread.spreadDelay, this.currentSpread.spreadInfo.length); 
+
+	this.spreadIndex++;
+	if(this.spreadIndex >= this.user.config.sniperProps.spreads.length){
+		this.spreadIndex = 0;
+	}
+}
 Boss_1_Weapon_Sniper_Shot.prototype.charge = function() { this.beam.charge(); }
 Boss_1_Weapon_Sniper_Shot.prototype.disable = function() { this.beam.disable(); this.shotTimer.stop(); }
 Boss_1_Weapon_Sniper_Shot.prototype.forceDisable = function() { this.beam.forceDisable(); this.shotTimer.stop(); }
@@ -1120,8 +1144,7 @@ function Boss_1_Weapon_Clones(user, target, onComplete) {
 		}
 
 		for(var i=0; i<user.config.cloneProps.cloneWaves[this.currentWave].length; i++){
-			
-			var cloneProps = user.config.cloneProps.cloneWaves[this.currentWave][i];
+			var cloneProps = user.config.getCloneType( user.config.cloneProps.cloneWaves[this.currentWave][i] );
 
 			var eyeIndex = Random.getRandomInt(0, user.config.cloneEyeProps.length-1);
 			var x = user.x + (user.size * user.config.cloneEyeProps[eyeIndex].xOffset);
@@ -1134,6 +1157,8 @@ function Boss_1_Weapon_Clones(user, target, onComplete) {
 			cloneArguments[4] = cloneProps;
 
 			TopLevel.container.add(cloneProps.name, cloneArguments);		
+
+
 		}
 		
 		this.currentWave++;
@@ -1152,7 +1177,7 @@ Boss_1_Weapon_Clones.prototype.update = function() {
 		spot.y = this.user.y + spot.offsetY; 	
 	}
 }
-Boss_1_Weapon_Clones.prototype.fire = function() { this.currentWave=0; this.cloneWaveTimer.start()}
+Boss_1_Weapon_Clones.prototype.fire = function() { this.cloneWaveTimer.start()}
 Boss_1_Weapon_Clones.prototype.charge = function() { this.gun.charge(); }
 Boss_1_Weapon_Clones.prototype.disable = function() { this.cloneWaveTimer.stop(); this.gun.disable(); }
 Boss_1_Weapon_Clones.prototype.forceDisable = function() { this.cloneWaveTimer.stop(); this.gun.disable(); }
@@ -1176,16 +1201,14 @@ Boss_1_Weapon_Follow.inheritsFrom( Boss_1_Weapon );
 
 Boss_1_Weapon_Follow.prototype.update = function() { }
 Boss_1_Weapon_Follow.prototype.fire = function() { 
-	this.user.gotoPosition(this.target.x, this.target.y, 6, this.onComplete, true); 
+	this.user.gotoPosition(this.target.x, this.target.y, this.user.config.followProps.speed, this.onComplete, true); 
 }
 Boss_1_Weapon_Follow.prototype.charge = function() {  }
 Boss_1_Weapon_Follow.prototype.disable = function() {  }
 Boss_1_Weapon_Follow.prototype.forceDisable = function() {  }
 Boss_1_Weapon_Follow.prototype.needsAiming = function() { return false; }
 Boss_1_Weapon_Follow.prototype.available = function() { return true; }
-Boss_1_Weapon_Follow.prototype.destroyAll = function() { 
-
-}
+Boss_1_Weapon_Follow.prototype.destroyAll = function() { }
 
 function Tentacle() {       
     this.girth = 15;

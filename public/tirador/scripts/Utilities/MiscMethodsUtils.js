@@ -135,6 +135,20 @@ VectorUtils.getFullVectorInfo = function(x1, y1, x2, y2) {
 	return { distance:dist, dir:direction, perp:perpendicular, angle:angle };
 }
 
+VectorUtils.inRange = function(p1x, p1y, p2x, p2y, radius) {
+	var deltaX = p1x-p2x;
+	var deltaY = p1y-p2y;
+	
+	p1 = null;
+	p2 = null;
+	
+	if((deltaX*deltaX) + (deltaY*deltaY) <= radius*radius){
+	 	return true;
+	}
+	
+	return false;
+}
+
 function FuntionUtils(){}
 
 FuntionUtils.bindScope = function(scope, f, args) {
@@ -189,18 +203,109 @@ TweenUtils.startValueOscilation = function (valueName, time, minValue, maxValue,
 
 	return {
 		kill:function() {
-			rightTween.kill();
-			leftTween.kill();
+			if(rightTween)
+				rightTween.kill();
+			if(leftTween)
+				leftTween.kill();
 		}
 	}
 }
 
 function ScreenUtils(){}
 
-ScreenUtils.isInScreenBounds = function(pos){
-	return (pos.x > 0 && pos.x < TopLevel.canvas.width) && (pos.y > 0 && pos.y < TopLevel.canvas.height);
+ScreenUtils.isInScreenBounds = function(pos, offsetX, offsetY){
+	if(!offsetX) offsetX = 0;
+	if(!offsetY) offsetY = 0;
+
+	return (pos.x > -offsetX && pos.x < TopLevel.canvas.width+offsetX) && (pos.y > -offsetY && pos.y < TopLevel.canvas.height+offsetY);
 }
 
-ScreenUtils.isInScreenBoundsXY = function(x, y){
-	return (x > 0 && x < TopLevel.canvas.width) && (y > 0 && y < TopLevel.canvas.height);
+ScreenUtils.isInScreenBoundsXY = function(x, y, offsetX, offsetY){
+	if(!offsetX) offsetX = 0;
+	if(!offsetY) offsetY = 0;
+
+	return (x > -offsetX && x < TopLevel.canvas.width+offsetX) && (y > -offsetY && y < TopLevel.canvas.height+offsetY);
+}
+
+ScreenUtils.isPastBottom = function(y, offset){
+	return (y > TopLevel.canvas.height + offset);
+}
+
+ScreenUtils.isPastTop = function(y, offset){
+	return (y < -offset);
+}
+
+ScreenUtils.isPastRight = function(x, offset){
+	return (x > TopLevel.canvas.width + offset);
+}
+
+ScreenUtils.isPastLeft = function(x, offset){
+	return (x < -offset);
+}
+
+function DrawUtils(){}
+
+DrawUtils.circle = function(context, x, y, radius, fillColor, strokeColor, lineWidth){
+	if(fillColor) context.fillStyle = fillColor;
+	if(strokeColor)	context.strokeStyle = strokeColor;
+	if(lineWidth) context.lineWidth = lineWidth;
+
+	context.beginPath();
+	context.arc(x, y, radius, 0, Math.PI*2, false);
+	context.closePath();
+
+	if(fillColor) context.fill();
+	if(strokeColor) context.stroke();
+}
+
+DrawUtils.rectangle = function(context, x, y, width, height, fillColor, strokeColor, lineWidth){
+	if(strokeColor)	context.strokeStyle = strokeColor;	
+	if(lineWidth) context.lineWidth = lineWidth;
+	if(fillColor) context.fillStyle = fillColor;	
+	
+	context.beginPath();
+	context.rect(x, y, width, height);
+	context.closePath();
+
+	if(fillColor) context.fill();
+	if(strokeColor) context.stroke();
+}
+
+DrawUtils.triangle = function(context, centerX, centerY, x1, y1, x2, y2, x3, y3, fillColor, strokeColor, lineWidth, scale){
+	if(strokeColor)	context.strokeStyle = strokeColor;	
+	if(lineWidth) context.lineWidth = lineWidth;
+	if(fillColor) context.fillStyle = fillColor;	
+	
+	if(!scale) scale = 1;
+
+	context.beginPath();
+
+	context.moveTo((x1*scale)+centerX, (y1*scale)+centerY);
+	context.lineTo((x2*scale)+centerX, (y2*scale)+centerY);
+	context.lineTo((x3*scale)+centerX, (y3*scale)+centerY);
+
+	context.closePath();
+
+	if(fillColor) context.fill();
+	if(strokeColor) context.stroke();
+}
+
+DrawUtils.polygon = function(context, x, y, points, fillColor, strokeColor, lineWidth, scale){
+	if(strokeColor)	context.strokeStyle = strokeColor;	
+	if(lineWidth) context.lineWidth = lineWidth;
+	if(fillColor) context.fillStyle = fillColor;	
+	
+	if(!scale) scale = 1;
+
+	context.beginPath();
+
+	context.moveTo((points[0].x*scale)+x, (points[0].y*scale)+y);
+	for(var i=1; i<points.length; i++){
+		context.lineTo((points[i].x*scale)+x, (points[i].y*scale)+y);
+	}
+
+	context.closePath();
+
+	if(fillColor) context.fill();
+	if(strokeColor) context.stroke();
 }

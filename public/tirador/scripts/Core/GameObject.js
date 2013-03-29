@@ -7,8 +7,6 @@ function GameObject() {
 	this.scaleX   = 1;
 	this.scaleY   = 1;
 
-	this.onDestroy;
-
 	this.alive = true;
 	this.typeId;
 	this.collisionId;
@@ -30,31 +28,41 @@ GameObject.prototype.setDestroyMode = function(mode) {
 	this.alive 		 = false;
 }
 
-GameObject.prototype.addOnDestroyCallback = function(scope, callback) {
-	if(this.onDestroy == null){
-		this.onDestroy = [];
-	}
-
-	this.onDestroy.push({scope:scope, callback:callback});
+GameObject.prototype.addCallback = function(delegateName, scope, callback) {
+	if(!this[delegateName]){ this[delegateName] = []; }
+	this[delegateName].push({scope:scope, callback:callback});
 }
+
+GameObject.prototype.executeCallbacks = function(delegateName, args) {
+	if(!this[delegateName]){ return; }
+
+	for(var i=0; i<this[delegateName].length; i++){
+		var callbackObject = this[delegateName][i];
+		callbackObject.callback.call(callbackObject.scope, args);		
+	}
+}
+
+GameObject.prototype.destroyCallbacks = function(delegateName) {
+	if(this[delegateName]) { this[delegateName].lenght = 0; this[delegateName] = null; }
+}
+
+GameObject.prototype.addOnRecicleCallback = function(scope, callback) { this.addCallback("onRecicleDelegate", scope, callback); }
+GameObject.prototype.addOnDestroyCallback = function(scope, callback) { this.addCallback("onDestroyDelegate", scope, callback); }
+GameObject.prototype.addOnCollideCallback = function(scope, callback) { this.addCallback("onCollideDelegate", scope, callback); }
+GameObject.prototype.addInitCallback 	  = function(scope, callback) { 
+	this.addCallback("onInitDelegate", scope, callback); 
+	callback.call(scope, this);
+}
+
+GameObject.prototype.executeDestroyCallbacks   = function()      { this.executeCallbacks("onDestroyDelegate", this);  }
+GameObject.prototype.executeOnCollideCallbacks = function(other) { this.executeCallbacks("onCollideDelegate", other); }
+GameObject.prototype.executeOnRecicleCallbacks = function(other) { this.executeCallbacks("onRecicleDelegate", this); }
 
 GameObject.prototype.removeAllCallbacks = function() {
-	if(this.onDestroy == null){
-		return;
-	}
-
-	this.onDestroy.lenght = 0;
-}
-
-GameObject.prototype.executeDestroyCallbacks = function() {
-	if(this.onDestroy == null){
-		return;
-	}
-
-	for(var i=0; i<this.onDestroy.length; i++){
-		var callbackObject = this.onDestroy[i];
-		callbackObject.callback.call(callbackObject.scope, this)		
-	}
+	this.destroyCallbacks("onDestroyDelegate");
+	this.destroyCallbacks("onCollideDelegate");
+	this.destroyCallbacks("onInitDelegate"   );
+	this.destroyCallbacks("onRecicleDelegate");
 }
 
 GameObject.prototype.transformAndDraw = function(context) {
@@ -87,11 +95,14 @@ GameObject.prototype.transformAndDraw = function(context) {
 }
 
 GameObject.prototype.clearGameObject = function(){
-	if(this.onDestroy != null){
-		this.onDestroy.lenght = 0;
+	if(this.destroyMode == GameObject.EXECUTE_CALLBACKS){
+		this.executeCallbacks("onDestroyDelegate", this);
 	}
-	
-	this.onDestroy 	 = null;
+
+	this.executeCallbacks("onRecicleDelegate", this);
+
+	this.removeAllCallbacks();
+
 	this.alive 		 = true;
 	this.destroyMode = GameObject.EXECUTE_CALLBACKS;
 	this.scaleX      = 1;
@@ -117,5 +128,8 @@ GameObject.POLYGON_COLLIDER = 2;
 GameObject.prototype.onCollide = function(other){}
 GameObject.prototype.getColliderType = function(){}
 GameObject.prototype.getCollider = function(){}
+
 GameObject.prototype.getCollisionId = function(){ return this.collisionId; }
+GameObject.prototype.getPoolId      = function(){ return this.poolId; }
+GameObject.prototype.getTypeId      = function(){ return this.typeId; }
 

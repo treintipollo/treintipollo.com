@@ -1,4 +1,4 @@
-function Weapon(level, user, hasInstructions){
+function Weapon(id, level, user, hasInstructions){
 	this.user      		 = user;
 	this.level	   		 = level;
 	this.hasInstructions = hasInstructions;
@@ -7,7 +7,7 @@ function Weapon(level, user, hasInstructions){
 	this.currentVoleyCount = 0;
 	
 	this.voleyAmounts;
-	this.id;
+	this.id = id;
 
 	if(this.hasInstructions)
 		this.createInstructions();
@@ -17,10 +17,7 @@ Weapon.prototype.init = function(container) {
 	this.container = container;
 }
 
-Weapon.prototype.destroy = function() {
-	ArrowKeyHandler.removeCallbacks(this.callbacks);
-	DestroyUtils.destroyAllProperties(this);
-}
+Weapon.prototype.destroy = function() {}
 
 Weapon.prototype.update = function() {}
 

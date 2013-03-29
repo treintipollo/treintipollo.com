@@ -16,16 +16,10 @@ Shot.prototype.init = function(pos, container, offSetX, offSetY, speed) {
 
 	this.user = pos;
 
-	var sin = Math.sin((pos.rotation)*(Math.PI/180));
-	var cos = Math.cos((pos.rotation)*(Math.PI/180));
-
-	this.x = cos * (offSetX) - sin * (offSetY) + pos.x;
-	this.y = sin * (offSetX) + cos * (offSetY) + pos.y;
-
 	this.moveSin = Math.sin((pos.rotation-90)*(Math.PI/180));
 	this.moveCos = Math.cos((pos.rotation-90)*(Math.PI/180));
 	
-	this.speed = speed;
+	this.speed    = speed;
 	this.rotation = pos.rotation;
 
 	this.hitEffect.init(container, 1, this.user.color, 3, "BurstParticle", 10);

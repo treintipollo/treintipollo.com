@@ -1,7 +1,7 @@
-//offSetX, offSetY, speed, size, damageMultiplier
-ShotWeapon.Top_Shot       = [null, null,   0, -30, 450];
-ShotWeapon.Right_Shot     = [null, null,  40, 0  , 450];
-ShotWeapon.Left_Shot      = [null, null, -40, 0  , 450];
+//offSetX, offSetY, speed
+ShotWeapon.Top_Shot       = [null, null,   0, -30, 700];
+ShotWeapon.Right_Shot     = [null, null,  40, 0  , 700];
+ShotWeapon.Left_Shot      = [null, null, -40, 0  , 700];
 
 //vertexCount, speed, radius, innerRadius, offsetX, offsetY, color, damageMultiplier
 ShotWeapon.Single_Power_Shot_1 = [null, null, 4, 550, 25, 10, 0, -70, "#FFFFFF"]; 
@@ -33,8 +33,10 @@ ShotWeapon.Triple_Power_Shot_3_C = [null, null, 7, 550, 25, 10, 270, 60, "#89F28
 
 ShotWeapon.inheritsFrom( Weapon );
 
-function ShotWeapon(level, user, hasInstructions, usePowerShot, shotType, bigShotType) {
+function ShotWeapon(id, level, user, hasInstructions, usePowerShot, shotType, bigShotType) {
 	Weapon.apply(this, arguments);
+
+	this.usePowerShot = usePowerShot;
 
 	this.voleyAmounts   = [3,3,3,4,4,4,4,4,5];
 
@@ -61,112 +63,90 @@ function ShotWeapon(level, user, hasInstructions, usePowerShot, shotType, bigSho
 	this.shotCharge = new ShotCharge(this.user, 0, -40, 210, 330, 60);
 	this.shotCharge.off();
 	
-	var inst = this;
-	
 	this.shotLevels = [
-		function(){ return [ShotWeapon.Top_Shot]; },
-		function(){ return [ShotWeapon.Top_Shot]; },
+		[ShotWeapon.Top_Shot],
+		[ShotWeapon.Top_Shot],
 
-		function(){ return [ShotWeapon.Right_Shot, ShotWeapon.Left_Shot]; },
-		function(){ return [ShotWeapon.Right_Shot, ShotWeapon.Left_Shot]; },
-		function(){ return [ShotWeapon.Right_Shot, ShotWeapon.Left_Shot]; },
+		[ShotWeapon.Right_Shot, ShotWeapon.Left_Shot],
+		[ShotWeapon.Right_Shot, ShotWeapon.Left_Shot],
+		[ShotWeapon.Right_Shot, ShotWeapon.Left_Shot],
 
-		function(){ return [ShotWeapon.Top_Shot, ShotWeapon.Right_Shot, ShotWeapon.Left_Shot]; },
-		function(){ return [ShotWeapon.Top_Shot, ShotWeapon.Right_Shot, ShotWeapon.Left_Shot]; },
-		function(){ return [ShotWeapon.Top_Shot, ShotWeapon.Right_Shot, ShotWeapon.Left_Shot]; },
-		function(){ return [ShotWeapon.Top_Shot, ShotWeapon.Right_Shot, ShotWeapon.Left_Shot]; }
+		[ShotWeapon.Top_Shot, ShotWeapon.Right_Shot, ShotWeapon.Left_Shot],
+		[ShotWeapon.Top_Shot, ShotWeapon.Right_Shot, ShotWeapon.Left_Shot],
+		[ShotWeapon.Top_Shot, ShotWeapon.Right_Shot, ShotWeapon.Left_Shot],
+		[ShotWeapon.Top_Shot, ShotWeapon.Right_Shot, ShotWeapon.Left_Shot]
 	];
 
 	this.powerShotLevels = [
-		function(){ return [ShotWeapon.Single_Power_Shot_1]; },
-		
-		function(){ return [ShotWeapon.Single_Power_Shot_2]; },
+		[ShotWeapon.Single_Power_Shot_1],
+		[ShotWeapon.Single_Power_Shot_2],
+		[ShotWeapon.Single_Power_Shot_3],
 
-		function(){ return [ShotWeapon.Single_Power_Shot_3]; },
+		[ShotWeapon.Double_Power_Shot_1_A, ShotWeapon.Double_Power_Shot_1_B],
+		[ShotWeapon.Double_Power_Shot_2_A, ShotWeapon.Double_Power_Shot_2_B],
+		[ShotWeapon.Double_Power_Shot_3_A, ShotWeapon.Double_Power_Shot_3_B],
 
-		function(){ return [ShotWeapon.Double_Power_Shot_1_A, 
-							ShotWeapon.Double_Power_Shot_1_B]; },
-
-		function(){ return [ShotWeapon.Double_Power_Shot_2_A, 
-							ShotWeapon.Double_Power_Shot_2_B]; },
-
-		function(){ return [ShotWeapon.Double_Power_Shot_3_A, 
-							ShotWeapon.Double_Power_Shot_3_B]; },
-
-		function(){ return [ShotWeapon.Triple_Power_Shot_1_A, 
-							ShotWeapon.Triple_Power_Shot_1_B, 
-							ShotWeapon.Triple_Power_Shot_1_C]; },
-
-		function(){ return [ShotWeapon.Triple_Power_Shot_2_A, 
-							ShotWeapon.Triple_Power_Shot_2_B, 
-							ShotWeapon.Triple_Power_Shot_2_C]; },
-
-		function(){ return [ShotWeapon.Triple_Power_Shot_3_A, 
-							ShotWeapon.Triple_Power_Shot_3_B, 
-							ShotWeapon.Triple_Power_Shot_3_C]; }
+		[ShotWeapon.Triple_Power_Shot_1_A, ShotWeapon.Triple_Power_Shot_1_B, ShotWeapon.Triple_Power_Shot_1_C],
+		[ShotWeapon.Triple_Power_Shot_2_A, ShotWeapon.Triple_Power_Shot_2_B, ShotWeapon.Triple_Power_Shot_2_C],
+		[ShotWeapon.Triple_Power_Shot_3_A, ShotWeapon.Triple_Power_Shot_3_B, ShotWeapon.Triple_Power_Shot_3_C]
 	];
 
-	if(usePowerShot){
-		var c = ArrowKeyHandler.addKeyDownTimeOutCallback(ArrowKeyHandler.CTRL, function(){
-			inst.shotCharge.on();
-		}, 200);
+	this.idleTimer = TimeOutFactory.getTimeOut(500, 1, this, function(){
+		this.shotCharge.on();
+		this.chargeTimer.reset();
+	});
 
-		this.callbacks.push(c);
+	this.chargeTimer = TimeOutFactory.getTimeOut(2500, 1, this, function(){
+		this.shotCharge.off();
+		this.powerShotVoley = new PowerShotVoley(this.powerShotTypes[this.level], this.powerShotLevels[this.level], this.user, this.container);
+	}); 
+}
 
-		this.powerShotVoley = null;
+ShotWeapon.prototype.init = function(container) {
+	this.parent.init(container);
+	this.shotCharge.init(container);
 
-		c = ArrowKeyHandler.addKeyDownTimeOutCallback(ArrowKeyHandler.CTRL, function(){
-			inst.shotCharge.off();
+	var inst = this;
 
-			inst.powerShotVoley = new ShotVoley(inst.powerShotTypes[inst.level], inst.powerShotLevels[inst.level](), inst.user, inst.container, null, true);
-
-		}, 3000);
-
-		this.callbacks.push(c);
+	if(this.usePowerShot){		
+		this.idleTimer.start();
 	}
 
-	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.CTRL, function(){
+	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_1, function(){
 		if(inst.powerShotVoley != null){
 			inst.powerShotVoley.release();
 		}else{
 			if(inst.currentVoleyCount < inst.voleyAmounts[inst.level]){
 				inst.currentVoleyCount++;				
 
-				new ShotVoley(inst.shotTypes[inst.level], inst.shotLevels[inst.level](), inst.user, inst.container, function(){
+				new ShotVoley(inst.shotTypes[inst.level], inst.shotLevels[inst.level], inst.user, inst.container, function(){
 					inst.currentVoleyCount--;
-				}, false);	
+				});	
 			}
 		}
 
 		inst.shotCharge.off();
 		inst.powerShotVoley = null;
+		
+		if(inst.usePowerShot){
+			inst.idleTimer.reset();
+			inst.chargeTimer.stop();
+		}
 	});
 
 	this.callbacks.push(c);
 }
 
-ShotWeapon.prototype.init = function(container) {
-	this.parent.init(container);
-	this.shotCharge.init(container);
-}
-
 ShotWeapon.prototype.update = function() {
-	this.shotCharge.update();
+	if(this.shotCharge) this.shotCharge.update();
 }
 
 ShotWeapon.prototype.destroy = function() {
-	if(this.powerShotVoley != null){
-		this.powerShotVoley.release();
-	}
-
-	this.shotCharge.destroy();
-
-	ArrowKeyHandler.removeCallbacks(this.callbacks);
+	if(this.powerShotVoley) this.powerShotVoley.release();
+	if(this.shotCharge) this.shotCharge.destroy();
+	if(this.callbacks) ArrowKeyHandler.removeCallbacks(this.callbacks);
+	
 	DestroyUtils.destroyAllProperties(this);
-}
-
-ShotWeapon.prototype.getId = function() {
-	return WeaponPowerUp.SHOT;
 }
 
 ShotWeapon.prototype.createInstructions = function() {
@@ -174,44 +154,69 @@ ShotWeapon.prototype.createInstructions = function() {
 
 	var instructions = document.createElement("h2");
 	instructions.id = "shotInstructions";
-	instructions.innerHTML = "Keep pressed to CHARGE SHOT." + " Weapon Level: " + this.level;
+	instructions.innerHTML = "Stay IDLE to CHARGE SHOT -" + "- Weapon Level: " + this.level;
 	$("#main").append(instructions);
 }
 
-function ShotVoley(type, shots, user, container, onComplete, powerShot) {
+function ShotVoley(type, shots, user, container, onComplete) {
 	var shotCount = shots.length;
 
-	if(powerShot){ this.shots = []; }
+	var sin = Math.sin((user.rotation)*(Math.PI/180));
+	var cos = Math.cos((user.rotation)*(Math.PI/180));
+	var x, y;
 
-	for(var i=0; i<shots.length; i++){
+	var decreaseShotCount = function() {
+		shotCount--;
+		if(shotCount <= 0){				
+			onComplete();
+		}
+	}
+
+	for(var i=0; i<shots.length; i++){		
+		
+		x = cos * (shots[i][2]) - sin * (shots[i][3]) + user.x;
+		y = sin * (shots[i][2]) + cos * (shots[i][3]) + user.y;
+
+		if(!ScreenUtils.isInScreenBoundsXY(x, y, 20, 20)){
+			decreaseShotCount();
+			continue;
+		}
 
 		shots[i][0] = user;
 		shots[i][1] = container;
 
 		var shot = container.add(type, shots[i]);
 
-		if(powerShot){
-			this.shots.push(shot);
+		shot.x = x;
+		shot.y = y;
 
-			shot.addOnDestroyCallback(this, function(obj){
-				if(this.shots)
-					this.shots.splice(this.shots.indexOf(obj), 1);
-			});
-		}else{
-			shot.addOnDestroyCallback(this, function(obj){
-				shotCount--;
-				if(shotCount <= 0){				
-					onComplete();
-				}
-			});	
-		}
-	}
-
-	shots.length = 0;
-	shots 		 = null;	
+		shot.addOnDestroyCallback(this, function(obj){
+			decreaseShotCount();
+		});	
+	}	
 }
 
-ShotVoley.prototype.release = function(){
+function PowerShotVoley(type, shots, user, container) {
+	var shotCount = shots.length;
+
+	this.shots = [];
+
+	for(var i=0; i<shots.length; i++){		
+		shots[i][0] = user;
+		shots[i][1] = container;
+		
+		var shot = container.add(type, shots[i]);
+
+		this.shots.push(shot);
+
+		shot.addOnDestroyCallback(this, function(obj){
+			if(this.shots) 
+				this.shots.splice(this.shots.indexOf(obj), 1);
+		});		
+	}	
+}
+
+PowerShotVoley.prototype.release = function(){
 	for(var i=0; i<this.shots.length; i++){
 		if(this.shots[i] != null){
 			this.shots[i].release();

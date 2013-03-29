@@ -9,6 +9,16 @@ Attributes.prototype.init = function() {
 	this.updateAttributesTo(0);
 }
 
+Attributes.prototype.addDamageReceivedCallback    = function(scope, callback) { this.addCallback("onDamageReceivedDelegate"   , scope, callback); }
+Attributes.prototype.addAllDamageReceivedCallback = function(scope, callback) { this.addCallback("onAllDamageReceivedDelegate", scope, callback); }
+
+Attributes.prototype.removeAllCallbacks = function() {
+	GameObject.prototype.removeAllCallbacks.call(this);
+
+	this.destroyCallbacks("onDamageReceivedDelegate");
+	this.destroyCallbacks("onAllDamageReceivedDelegate");
+}
+
 Attributes.prototype.updateAttributesTo = function(level) {
 	this.currentLevel = level;
 
@@ -38,11 +48,34 @@ Attributes.prototype.increaseLevel = function() {
 	return false;
 }
 
-Attributes.prototype.onHPDiminished           = function(other) {}
-Attributes.prototype.onDamageBlocked          = function(other) {}
-Attributes.prototype.onDamageReceived         = function(other) {}
-Attributes.prototype.onLastDamageLevelReached = function(other) {}
-Attributes.prototype.onAllDamageReceived      = function(other) {}
+Attributes.prototype.recoverHP = function(amount) {	
+	this.currentHp += amount;
+
+	if(this.currentHp > this.currentHpMax){
+		var difference = this.currentHp - this.currentHpMax;
+		
+		if(this.currentLevel == TopLevel.attributesGetter.getFullAttributes(this.typeId).length-1){
+			this.onDamageRecoveredOutOfLastLevel();
+		}
+
+		if(this.currentLevel > 0){
+			this.currentLevel--;	
+		}
+
+		this.updateAttributesTo(this.currentLevel);
+		this.currentHp = difference;
+	}
+	
+	this.onDamageRecovered();
+}
+
+Attributes.prototype.onHPDiminished           		 = function(other) {}
+Attributes.prototype.onDamageBlocked          		 = function(other) {}
+Attributes.prototype.onDamageReceived         		 = function(other) {}
+Attributes.prototype.onDamageRecovered        		 = function(other) {}
+Attributes.prototype.onDamageRecoveredOutOfLastLevel = function(other) {}
+Attributes.prototype.onLastDamageLevelReached 		 = function(other) {}
+Attributes.prototype.onAllDamageReceived      		 = function(other) {}
 
 Attributes.prototype.onCollide = function(other) {
 	if(!TopLevel.attributesGetter.getFullAttributes(other.typeId)){
@@ -66,31 +99,13 @@ Attributes.prototype.onCollide = function(other) {
 				this.onLastDamageLevelReached(other);
 			}
 
+			this.executeCallbacks("onDamageReceivedDelegate", other);
+
 		}else{
 			this.blockDamage = true;
 			this.onAllDamageReceived(other);
+			
+			this.executeCallbacks("onAllDamageReceivedDelegate", other)
 		}		
 	}
-}
-
-function AttributesGetter() { this.attributesTable = {}; }
-
-AttributesGetter.prototype.setAttributes = function (id, hp, damageReceived, damageDealtMultiplier, additionalProperties) {
-	if(this.attributesTable[id] == null){
-		this.attributesTable[id] = [];
-	}
-
-	this.attributesTable[id].push({hp:hp, damageReceived:damageReceived, damageDealtMultiplier:damageDealtMultiplier, additionalProperties:additionalProperties});
-}
-
-AttributesGetter.prototype.getAttributes = function (id, level) {
-	if(this.attributesTable[id]){
-		return this.attributesTable[id][level];	
-	}
-
-	return null;
-}
-
-AttributesGetter.prototype.getFullAttributes = function (id) {
-	return this.attributesTable[id];
 }

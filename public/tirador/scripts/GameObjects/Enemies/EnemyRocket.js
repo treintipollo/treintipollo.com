@@ -135,7 +135,7 @@ EnemyRocket.prototype.update = function(delta) {
 
 	this.y += this.speed*delta;
 
-	if(this.y > 850){
+	if(ScreenUtils.isPastBottom(this.y, this.mainDimentionY)){
 		this.createExplosion = false;
 		this.setDestroyMode(GameObject.NO_CALLBACKS);
 	}
@@ -181,9 +181,10 @@ function EnemyRocketFactory() {
 	}
 }
 
-EnemyRocketFactory.prototype.addWave = function(rocketTypes, rocketsInWave, minSpeed, maxSpeed, creationTime, rocketsToPowerUp, callOnComplete) {
+EnemyRocketFactory.prototype.addWave = function(rocketTypes, rocketsInWave, minSpeed, maxSpeed, creationTime, rocketsToPowerUp, callOnComplete, powerUpsInWave) {
 	var wave = {
 		rocketTypes:rocketTypes.split(","),
+		powerUpsInWave:powerUpsInWave.split(","),
 		rocketsInWave:rocketsInWave,
 		minSpeed:minSpeed,
 		maxSpeed:maxSpeed,
@@ -229,7 +230,7 @@ EnemyRocketFactory.prototype.createEnemyRocket = function() {
 		wave.rocketsToPowerUp--;
 	
 		if(wave.rocketsToPowerUp <= 0){
-			this.container.add("WeaponPowerUp", [obj.x, obj.y]);
+			TopLevel.powerUpFactory.create(obj.x, obj.y, wave.powerUpsInWave[Random.getRandomInt(0, wave.powerUpsInWave.length-1)], 1, false);
 			wave.rocketsToPowerUp = wave.rocketsToPowerUpInit;
 		}
 	});

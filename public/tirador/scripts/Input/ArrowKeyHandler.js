@@ -26,6 +26,22 @@ $(function(){
     NUM_4: 52,
     NUM_5: 53,
 
+    GAME_LEFT    : -1,
+    GAME_RIGHT   : -1,
+    GAME_UP      : -1,
+    GAME_DOWN    : -1,
+    GAME_BUTTON_1: -1,
+    GAME_BUTTON_2: -1,
+
+    init: function(){
+      this.GAME_LEFT     = this.LEFT;
+      this.GAME_RIGHT    = this.RIGHT;
+      this.GAME_UP       = this.UP;
+      this.GAME_DOWN     = this.DOWN;
+      this.GAME_BUTTON_1 = this.A;
+      this.GAME_BUTTON_2 = this.S;      
+    },
+
     keyUpListeners: {},
     keyDownTimeOutListeners: {},
 
