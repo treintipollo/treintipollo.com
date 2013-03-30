@@ -151,7 +151,7 @@ EnemyRocket.prototype.onAllDamageReceived = function(other) {
 }
 
 function EnemyRocketFactory() {
-	this.maxWidth  = TopLevel.canvas.width;
+	this.maxWidth  = TopLevel.canvas.width - 20;
 	this.maxHeight = TopLevel.canvas.height;
 	this.container = TopLevel.container;
 	
@@ -181,7 +181,7 @@ function EnemyRocketFactory() {
 	}
 }
 
-EnemyRocketFactory.prototype.addWave = function(rocketTypes, rocketsInWave, minSpeed, maxSpeed, creationTime, rocketsToPowerUp, callOnComplete, powerUpsInWave) {
+EnemyRocketFactory.prototype.addWave = function(rocketTypes, rocketsInWave, startY, minSpeed, maxSpeed, creationTime, rocketsToPowerUp, callOnComplete, powerUpsInWave) {
 	var wave = {
 		rocketTypes:rocketTypes.split(","),
 		powerUpsInWave:powerUpsInWave.split(","),
@@ -191,6 +191,7 @@ EnemyRocketFactory.prototype.addWave = function(rocketTypes, rocketsInWave, minS
 		creationTime:creationTime,
 		rocketsToPowerUp:rocketsToPowerUp,
 		rocketsToPowerUpInit:rocketsToPowerUp,
+		startY:startY,
 		callOnComplete:callOnComplete
 	}
 
@@ -217,8 +218,8 @@ EnemyRocketFactory.prototype.stop = function() {
 EnemyRocketFactory.prototype.createEnemyRocket = function() {
 	var wave = this.waves[this.currentWave];
 
-	EnemyRocket.EnemryRocketArguments[0] = Math.random() * this.maxWidth;
-	EnemyRocket.EnemryRocketArguments[1] = -50;
+	EnemyRocket.EnemryRocketArguments[0] = Random.getRandomArbitary(20, this.maxWidth);
+	EnemyRocket.EnemryRocketArguments[1] = wave.startY;
 	EnemyRocket.EnemryRocketArguments[2] = Random.getRandomArbitary(wave.minSpeed ,wave.maxSpeed);
 	EnemyRocket.EnemryRocketArguments[3] = this.container;
 

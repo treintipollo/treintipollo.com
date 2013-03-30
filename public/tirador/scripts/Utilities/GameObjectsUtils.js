@@ -40,6 +40,23 @@ BoxCollider.prototype.init = function(width, height){
 	this.collider.h = height;
 }
 
+function PolyCollider() {}
+
+PolyCollider.prototype.create = function(points){
+	this.collider = new SAT.Polygon(new SAT.Vector(), points);
+
+	this.constructor.prototype.getColliderType = function(){
+		return GameObject.POLYGON_COLLIDER;
+	}
+
+	this.constructor.prototype.getCollider = function(){
+		this.collider.pos.x = this.x + this.centerX;
+		this.collider.pos.y = this.y + this.centerY;
+
+		return this.collider;
+	}
+}
+
 function Line() {}
 
 Line.inheritsFrom( GameObject );

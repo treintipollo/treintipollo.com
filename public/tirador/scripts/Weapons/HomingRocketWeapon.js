@@ -50,19 +50,6 @@ function HomingRocketWeapon(id, level, user, hasInstructions) {
 		addDeployPosition.call(this, 70, 22);
 	}
 
-	this.rocketLevel  = 
-	[
-		function(x, y, t, xOffset, yOffset, r, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, r]; },
-		function(x, y, t, xOffset, yOffset, r, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, r]; },
-		function(x, y, t, xOffset, yOffset, r, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, r]; },
-		function(x, y, t, xOffset, yOffset, r, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, r]; },
-		function(x, y, t, xOffset, yOffset, r, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, r]; },
-		function(x, y, t, xOffset, yOffset, r, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, r]; },
-		function(x, y, t, xOffset, yOffset, r, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, r]; },
-		function(x, y, t, xOffset, yOffset, r, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, r]; },
-		function(x, y, t, xOffset, yOffset, r, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, r]; }
-	];
-
 	this.targets 	        = [];
 	this.crossHairMode      = 0;
 	this.currentDeplayIndex = 0;
@@ -118,18 +105,15 @@ HomingRocketWeapon.prototype.init = function(container) {
 		var xOffset = Math.cos(inst.deployPosition[inst.currentDeplayIndex].radianRotation) * inst.deployPosition[inst.currentDeplayIndex].radius;
 		var yOffset = Math.sin(inst.deployPosition[inst.currentDeplayIndex].radianRotation) * inst.deployPosition[inst.currentDeplayIndex].radius;
 
-		var r = inst.container.add(inst.rocketTypes[inst.level], 
-								   inst.rocketLevel[inst.level]
-								   (
-								   		inst.user.x, 
-								   		inst.user.y, 
-								   		t.t, 
-								   		xOffset, 
-								   		yOffset, 
-								   		inst.deployPosition[inst.currentDeplayIndex].degreeRotation,
-								   		inst.container
-								   	)
-		);
+		RocketWeapon.RocketArguments[0]   = inst.user.x;
+		RocketWeapon.RocketArguments[1]   = inst.user.y;
+		RocketWeapon.RocketArguments[2].x = inst.user.x + xOffset;
+		RocketWeapon.RocketArguments[2].y = inst.user.y + yOffset;
+		RocketWeapon.RocketArguments[3]   = t.t;
+		RocketWeapon.RocketArguments[4]   = inst.container;
+		RocketWeapon.RocketArguments[5]   = 0;
+		
+		var r = inst.container.add(inst.rocketTypes[inst.level], RocketWeapon.RocketArguments);
 
 		if(r){
 			inst.currentDeplayIndex++;

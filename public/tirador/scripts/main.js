@@ -52,6 +52,8 @@ var TopLevel = {
 
 			var p = TopLevel.container.add(type, this.args);	
 
+			if(!p) return;
+
 			p.addOnCollideCallback(this, function(other){
 				var callbacks = this.powerUpTypes[trueType];
 
@@ -259,12 +261,6 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 
-//Special enemies to carry power ups.
-	//Single Enemy waves.
-	//Cargo Ship
-		//Delivery de Pizza, espacial. (Space Pizza).
-
-//Minimalistic Hud, showing lives, health, speed and weapon level.
 
 //Messages
 	//Warning Message
@@ -275,12 +271,16 @@ window.TopLevel = TopLevel;
 	//Game Over
 
 //TODO: Poner un splash para que si el juego arranca sin saber si tiene el foco o no, no pase nada.
-		//Usar hasFOcus del document.
+		//Usar hasFocus del document.
+
+//Minimalistic Hud, showing lives, health, speed and weapon level.
 
 //TODO: Emoticons.
 	//Ship.
 	//Boss
 	//Emoticon Manager
+
+//TODO: Mini story sequence.
 
 //TODO: Tweek base damages and damage multipliers. Everything.
 	   //Tweek powerup show up ratio.
@@ -288,14 +288,19 @@ window.TopLevel = TopLevel;
 	   //Tweek power up bonuses.
 	   //Tweek weapons
 	   		//Rocket Amount
-	   		//Homing Amount (when unlocked)
+	   		//Homing Amount (locked and unlocked)
+	   			//Implement that difference.
 	   		//Shot speed and amount.
-	   		//Charge shot speed.
+	   		//Charge shot  charging speed.
 
-//TODO: Usar TimeOutFactory dentro de ArrowKeyHandler.
+//TODO: Reduce memory Footprint.
+//TODO: Optimize drawing method.
+		//Cache procedural drawing in memory. Then draw that image in place each frame, instead of redrawing proceduraly each frame.
+		//This will not be possible where procedural animations take place. Like the eye of the Boss or its tentacles. But things like Rockets and particles could be cached.
 
-//TODO: Utility methods to draw lines, sqaures and circles. Should recieve a context along with other parameters.
-		//TODO:Utility Object, so that the global scope has less litter.
+//TODO: Use TimeOutFactory in ArrowKeyHandler.
+
+//TODO:Single Utility Object, so that the global scope has less litter.
 
 //TODO: Hacer que el add del ObjectContainer te devuelva el objeto que va a usar, con todo configurado menos la inicializacion. 
 		//De ahi puedo llamar directamente al init de ese objeto con los parametros que yo quiera, sin andar creado arrays intermedios.
@@ -309,66 +314,77 @@ $(function(){
 	TopLevel.container 	= new ObjectsContainer(TopLevel.context);
 
 	var createObjectPools = function(){
+		//This Pools can not be reduced by means of clever coding.
+		//-------------------------------------------------------
 		TopLevel.container.createTypePool("Ship"	 , Ship		, 1);
 		TopLevel.container.createTypePool("CloneShip", CloneShip, 10);
+		TopLevel.container.createTypePool("CargoShip", CargoShip, 1);
 
-		TopLevel.container.createTypePool("Star", Star, 30);
+		TopLevel.container.createTypePool("Star"	 , Star, 30);
+		TopLevel.container.createTypePool("Shot"     , Shot, 70);
+		TopLevel.container.createTypePool("Target"      , Target, 6);
+		TopLevel.container.createTypePool("HomingTarget", HomingTarget, 6);
+		TopLevel.container.createTypePool("Explosion"    , Explosion, 40);
+		TopLevel.container.createTypePool("Debry"        , Debry, 30);
+
+		TopLevel.container.createTypePool("Boss_1"    	   , Boss_1, 4);
+		TopLevel.container.createTypePool("Tentacle"   	   , Tentacle, 20);
+		TopLevel.container.createTypePool("TentacleSegment", TentacleSegment, 400);
 		
+		TopLevel.container.createTypePool("EnemyRocket", EnemyRocket, 30);
+		TopLevel.container.createTypePool("Fireball"      , Fireball, 40);
+		TopLevel.container.createTypePool("MultiShot"     , MultiShot, 20);
+
+		TopLevel.container.createTypePool("Line"          , Line, 3);
+		TopLevel.container.createTypePool("PercentageLine", PercentageLine, 66);
+		TopLevel.container.createTypePool("PowerUpText"	  , PowerUpText, 3);
+		TopLevel.container.createTypePool("WhiteFlash"     , WhiteFlash, 2);
+
+		//The Pools below could be reduced drastically with a little extra work.
+		//---------------------------------------------------------------------
+		//Provided all of this is implemented It would reduce pools from 5456 objects in memory to 2533. That's about a 53% memory footprint reduction!
+		//A little less since I would have to create additional configuration objects, but still, probably over 50%.
+
+		//This pool can be reduced drastically by implementing line Vs. Circle and line Vs. Polygon colision detection
+		//Also, Boss beam would look better as a result, and the code in StraightBeam would be slightly simplified. From 200 objects to maybe 3. That's like a 98%!
+		TopLevel.container.createTypePool("BeamCollider"   , BeamCollider, 200);
+		
+		//All the things below can be solved by extending the configurationSystem, to be able to receive an object with initialization arguments.
+
+		//This looks like a place where I can reduce the pool size, significantly. From 120 to 20 Objects. A Wooping 84%!
+		//I would need to have a base Rocket, which receives the prototypes for Small, Large and Cluster for drawing aswell as Swarm and Homing for behaviour.
+		TopLevel.container.createTypePool("SmallSwarmRocket"  , SmallSwarmRocket  , 20);
+		TopLevel.container.createTypePool("LargeSwarmRocket"  , LargeSwarmRocket  , 20);
+		TopLevel.container.createTypePool("ClusterSwarmRocket", ClusterSwarmRocket, 20);
+		TopLevel.container.createTypePool("SmallHomingRocket"  , SmallHomingRocket  , 20);
+		TopLevel.container.createTypePool("LargeHomingRocket"  , LargeHomingRocket  , 20);
+		TopLevel.container.createTypePool("ClusterHomingRocket", ClusterHomingRocket, 20);
+		//This pools could definetely be reduced. From 4340 objects to maybe 2500. That's like a 42% decrease!
+		//It would take quite a bit of work because all the particle structure is a kind of shaky.
 		TopLevel.container.createTypePool("ExhaustParticle"    , ExhaustParticle, 500);
 		TopLevel.container.createTypePool("ShotChargeParticle" , ShotChargeParticle, 40);
 		TopLevel.container.createTypePool("BurstParticle"      , BurstParticle, 500);
 		TopLevel.container.createTypePool("BurstParticleRadius", BurstParticleRadius, 300);
 		TopLevel.container.createTypePool("StraightParticle"   , StraightParticle, 3000);
-
-		TopLevel.container.createTypePool("Shot"           , Shot, 70);
+		//Small gain, but instead of pooling 10 objects I could pool only five if I used MultiPowerUp for all my powerUp needs.
+		TopLevel.container.createTypePool("ShotPowerUp"  		, ShotPowerUp, 1);
+		TopLevel.container.createTypePool("RocketPowerUp"		, RocketPowerUp, 1);
+		TopLevel.container.createTypePool("HomingRocketPowerUp" , HomingRocketPowerUp, 1);
+		TopLevel.container.createTypePool("WeaponPowerUp"		, WeaponPowerUp, 2);
+		TopLevel.container.createTypePool("HPPowerUp"    		, HPPowerUp, 1);
+		TopLevel.container.createTypePool("SpeedPowerUp" 		, SpeedPowerUp, 2);
+		TopLevel.container.createTypePool("LivesPowerUp" 		, LivesPowerUp, 1);
+		TopLevel.container.createTypePool("MultiPowerUp" 		, MultiPowerUp, 2);
+		//Insignificant gain possible here. Using a method similar that to the rockets. 50% reduction. Out of 6 objects is not that much :/ 
 		TopLevel.container.createTypePool("PowerShot"      , PowerShot, 1);
 		TopLevel.container.createTypePool("PowerShotSine"  , PowerShotSine, 2);
 		TopLevel.container.createTypePool("PowerShotCircle", PowerShotCircle, 3);
-		
-		TopLevel.container.createTypePool("SmallSwarmRocket"  , SmallSwarmRocket  , 20);
-		TopLevel.container.createTypePool("LargeSwarmRocket"  , LargeSwarmRocket  , 20);
-		TopLevel.container.createTypePool("ClusterSwarmRocket", ClusterSwarmRocket, 20);
-		
-		TopLevel.container.createTypePool("SmallHomingRocket"  , SmallHomingRocket  , 20);
-		TopLevel.container.createTypePool("LargeHomingRocket"  , LargeHomingRocket  , 20);
-		TopLevel.container.createTypePool("ClusterHomingRocket", ClusterHomingRocket, 20);
-
-		TopLevel.container.createTypePool("Target"      , Target, 6);
-		TopLevel.container.createTypePool("HomingTarget", HomingTarget, 6);
-
-		TopLevel.container.createTypePool("Explosion"    , Explosion, 50);
-		TopLevel.container.createTypePool("Debry"        , Debry, 40);
-
-		TopLevel.container.createTypePool("ShotPowerUp"  		, ShotPowerUp, 2);
-		TopLevel.container.createTypePool("RocketPowerUp"		, RocketPowerUp, 2);
-		TopLevel.container.createTypePool("WeaponPowerUp"		, WeaponPowerUp, 8);
-		TopLevel.container.createTypePool("HPPowerUp"    		, HPPowerUp, 1);
-		TopLevel.container.createTypePool("SpeedPowerUp" 		, SpeedPowerUp, 8);
-		TopLevel.container.createTypePool("LivesPowerUp" 		, LivesPowerUp, 1);
-		TopLevel.container.createTypePool("MultiPowerUp" 		, MultiPowerUp, 2);
-		TopLevel.container.createTypePool("HomingRocketPowerUp" , HomingRocketPowerUp, 2);
-
-		TopLevel.container.createTypePool("EnemyRocket", EnemyRocket, 30);
-		
-		TopLevel.container.createTypePool("Boss_1"    	   , Boss_1, 4);
-		TopLevel.container.createTypePool("Tentacle"   	   , Tentacle, 20);
-		TopLevel.container.createTypePool("TentacleSegment", TentacleSegment, 400);
-		TopLevel.container.createTypePool("BeamCollider"   , BeamCollider, 200);
-		TopLevel.container.createTypePool("WhiteFlash"     , WhiteFlash, 2);
-
-		TopLevel.container.createTypePool("Fireball"       , Fireball, 40);
-		TopLevel.container.createTypePool("MultiShot"      , MultiShot, 20);
-
-		TopLevel.container.createTypePool("Line"          , Line, 2);
-		TopLevel.container.createTypePool("PercentageLine", PercentageLine, 66);
-		TopLevel.container.createTypePool("PowerUpText"	  , PowerUpText, 3);		
 	}
 
 	var createObjectConfigurations = function() {
 		//Configurations
 		//Collidable GameObjects
 		TopLevel.container.createTypeConfiguration("Ship", "Ship", "Ship", 0, true);
-		TopLevel.container.createTypeConfiguration("CloneShip", "CloneShip", "CloneShip", 1, true);
 
 		TopLevel.container.createTypeConfiguration("Small_Shot"      , "Shot", "Shot"     , 1, true);
 		TopLevel.container.createTypeConfiguration("Big_Shot"        , "Shot", "Shot"     , 1, true);
@@ -407,17 +423,19 @@ $(function(){
 		TopLevel.container.createTypeConfiguration("LivesPowerUp" , "LivesPowerUp" , "PowerUp", 0, true);
 		TopLevel.container.createTypeConfiguration("MultiPowerUp" , "MultiPowerUp" , "PowerUp", 0, true);
 
-		TopLevel.container.createTypeConfiguration("Small_EnemyRocket_1", "EnemyRocket", "EnemyRocket", 3, true);
-		TopLevel.container.createTypeConfiguration("Small_EnemyRocket_2", "EnemyRocket", "EnemyRocket", 3, true);
-		TopLevel.container.createTypeConfiguration("Small_EnemyRocket_3", "EnemyRocket", "EnemyRocket", 3, true);
-
-		TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_1"  , "EnemyRocket", "EnemyRocket", 3, true);
-		TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_2"  , "EnemyRocket", "EnemyRocket", 3, true);
-		TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_3"  , "EnemyRocket", "EnemyRocket", 3, true);
-		
-		TopLevel.container.createTypeConfiguration("Large_EnemyRocket_1", "EnemyRocket", "EnemyRocket", 3, true);
-		TopLevel.container.createTypeConfiguration("Large_EnemyRocket_2", "EnemyRocket", "EnemyRocket", 3, true);
-		TopLevel.container.createTypeConfiguration("Large_EnemyRocket_3", "EnemyRocket", "EnemyRocket", 3, true);
+		TopLevel.container.createTypeConfiguration("CloneShip"			, "CloneShip"  , "Common_Baddy", 1, true);
+		TopLevel.container.createTypeConfiguration("CargoShip"			, "CargoShip"  , "Common_Baddy", 1, true);
+		TopLevel.container.createTypeConfiguration("Small_EnemyRocket_1", "EnemyRocket", "Common_Baddy", 3, true);
+		TopLevel.container.createTypeConfiguration("Small_EnemyRocket_2", "EnemyRocket", "Common_Baddy", 3, true);
+		TopLevel.container.createTypeConfiguration("Small_EnemyRocket_3", "EnemyRocket", "Common_Baddy", 3, true);
+		TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_1"  , "EnemyRocket", "Common_Baddy", 3, true);
+		TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_2"  , "EnemyRocket", "Common_Baddy", 3, true);
+		TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_3"  , "EnemyRocket", "Common_Baddy", 3, true);
+		TopLevel.container.createTypeConfiguration("Large_EnemyRocket_1", "EnemyRocket", "Common_Baddy", 3, true);
+		TopLevel.container.createTypeConfiguration("Large_EnemyRocket_2", "EnemyRocket", "Common_Baddy", 3, true);
+		TopLevel.container.createTypeConfiguration("Large_EnemyRocket_3", "EnemyRocket", "Common_Baddy", 3, true);
+		TopLevel.container.createTypeConfiguration("Fireball" 			, "Fireball"   , "Bullet_Baddy", 0, true );
+		TopLevel.container.createTypeConfiguration("MultiShot"			, "MultiShot"  , "Bullet_Baddy", 0, true );
 
 		TopLevel.container.createTypeConfiguration("Boss_1_A", "Boss_1", "Boss_1", 2, true, ObjectsContainer.UNSHIFT);
 		TopLevel.container.createTypeConfiguration("Boss_1_B", "Boss_1", "Boss_1", 2, true, ObjectsContainer.UNSHIFT);
@@ -445,9 +463,6 @@ $(function(){
 		TopLevel.container.createTypeConfiguration("TentacleSegment_Show"   , "TentacleSegment", "TentacleSegment", 3, false, ObjectsContainer.UNSHIFT);
 
 		TopLevel.container.createTypeConfiguration("BeamCollider"  	        , "BeamCollider"   , "BeamCollider"	  , 0, true );
-		
-		TopLevel.container.createTypeConfiguration("Fireball" , "Fireball" , "Fireball" , 0, true );
-		TopLevel.container.createTypeConfiguration("MultiShot", "MultiShot", "MultiShot", 0, true );
 
 		
 		//Visual Only GameObjects
@@ -474,34 +489,28 @@ $(function(){
 	
 	var createCollisionPairs = function(){
 		//Collision pairs
-		TopLevel.container.addCollisionPair("Ship", "EnemyRocket");
-		TopLevel.container.addCollisionPair("Ship", "PowerUp");
-		TopLevel.container.addCollisionPair("Ship", "BeamCollider");
-		TopLevel.container.addCollisionPair("Ship", "Boss_1");
-		TopLevel.container.addCollisionPair("Ship", "Fireball");
-		TopLevel.container.addCollisionPair("Ship", "TentacleSegment");
-		TopLevel.container.addCollisionPair("Ship", "MultiShot");
-		TopLevel.container.addCollisionPair("Ship", "CloneShot");
-		TopLevel.container.addCollisionPair("Ship", "CloneShip");
-
-		TopLevel.container.addCollisionPair("Shot"     , "CloneShip");		
-		TopLevel.container.addCollisionPair("PowerShot", "CloneShip");
-		TopLevel.container.addCollisionPair("Rocket"   , "CloneShip");
-
-		TopLevel.container.addCollisionPair("Shot"     , "EnemyRocket");
-		TopLevel.container.addCollisionPair("PowerShot", "EnemyRocket");
-		TopLevel.container.addCollisionPair("Rocket"   , "EnemyRocket");
-
-		TopLevel.container.addCollisionPair("Target"   , "EnemyRocket");
-		TopLevel.container.addCollisionPair("Target"   , "Boss_1");		
-
-		TopLevel.container.addCollisionPair("Shot"     , "Boss_1");		
-		TopLevel.container.addCollisionPair("PowerShot", "Boss_1");
-		TopLevel.container.addCollisionPair("Rocket"   , "Boss_1");
+		TopLevel.container.addCollisionPair("Ship"	   , "PowerUp");
+		TopLevel.container.addCollisionPair("Ship"	   , "BeamCollider");
+		TopLevel.container.addCollisionPair("Ship"	   , "Common_Baddy");
+		TopLevel.container.addCollisionPair("Ship"	   , "Bullet_Baddy");
+		TopLevel.container.addCollisionPair("Ship"	   , "Boss_1");
+		TopLevel.container.addCollisionPair("Ship"	   , "TentacleSegment");
 		
+		
+		TopLevel.container.addCollisionPair("Shot"     , "Common_Baddy");		
+		TopLevel.container.addCollisionPair("Shot"     , "Boss_1");		
 		TopLevel.container.addCollisionPair("Shot"     , "TentacleSegment");
+		
+		TopLevel.container.addCollisionPair("PowerShot", "Common_Baddy");
+		TopLevel.container.addCollisionPair("PowerShot", "Boss_1");
 		TopLevel.container.addCollisionPair("PowerShot", "TentacleSegment");
+		
+		TopLevel.container.addCollisionPair("Rocket"   , "Common_Baddy");
+		TopLevel.container.addCollisionPair("Rocket"   , "Boss_1");
 		TopLevel.container.addCollisionPair("Rocket"   , "TentacleSegment");
+		
+		TopLevel.container.addCollisionPair("Target"   , "Common_Baddy");
+		TopLevel.container.addCollisionPair("Target"   , "Boss_1");		
 	}
 	
 	var createAttributesTable = function(){
@@ -511,6 +520,7 @@ $(function(){
 		TopLevel.attributesGetter.setAttributes("Ship", 10 , 1 , 10 );
 
 		TopLevel.attributesGetter.setAttributes("CloneShip", 10 , 3 , 10 );
+		TopLevel.attributesGetter.setAttributes("CargoShip", 10 , 1 , 10 );
 
 		TopLevel.attributesGetter.setAttributes("Small_Shot", 0 , 0 , 0.5, {big:false} ); 
 		TopLevel.attributesGetter.setAttributes("Big_Shot"	, 0 , 0 , 0.6, {big:true} );
@@ -716,9 +726,9 @@ $(function(){
 	var bossDrops = {};
 
 	var currentBoss = -1;
-	var bosses      = [{name:"Boss_1_A", createNext:false, args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
-					   {name:"Boss_1_B", createNext:false, args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
-					   {name:"Boss_1_C", createNext:false, args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
+	var bosses      = [{name:"Boss_1_A", createNext:false, args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null},
+					   {name:"Boss_1_B", createNext:false, args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
+					   {name:"Boss_1_C", createNext:false, args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
 					   
 					   {name:"SubBoss_1", createNext:true , args:bossArgs, targetPos:{x:w/2-100, y:h/2-150, time:3}, powerUp:null},
 					   {name:"SubBoss_1", createNext:false, args:bossArgs, targetPos:{x:w/2+100, y:h/2-150, time:3}, powerUp:null},
@@ -736,14 +746,21 @@ $(function(){
 
 					   {name:"Boss_1_F", createNext:false , args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null}];
 
-	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 40, 200, 350, 800, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
-	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 30, 200, 350, 800, 10, true , "WeaponPowerUp,SpeedPowerUp");
+	//First Set
+	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 40, -50, 200, 350, 800, 10, false, "SpeedPowerUp");	
+	rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -50, -70, 600, 10, false, "MultiWeaponPowerUp");
+	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 30, -50, 200, 350, 800, 10, true , "WeaponPowerUp,MultiWeaponPowerUp,SpeedPowerUp");
 	
-	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, 100, 500, 600, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
-	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, 100, 500, 600, 10, true,  "WeaponPowerUp,SpeedPowerUp");
+	//Second Set
+	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, -50, 100, 500, 600, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
+	rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -90, -100, 600, 10, false, "MultiWeaponPowerUp");
+	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, -50, 100, 500, 600, 10, true,  "WeaponPowerUp,SpeedPowerUp");
 	
-	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, 100, 500, 500, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
-	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, 100, 500, 500, 10, true,  "WeaponPowerUp,SpeedPowerUp");
+	//Third Set
+	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 100, 500, 500, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
+	rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -200, -250, 600, 10, false, "MultiWeaponPowerUp");
+	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 100, 500, 500, 10, true,  "WeaponPowerUp,SpeedPowerUp");
+
 
 	/*var boss = TopLevel.container.add("Boss_1_D", [TopLevel.canvas.width/2, -200, ship]);		
 	
@@ -760,8 +777,6 @@ $(function(){
 			currentBoss = currentBoss >= bosses.length ? 0 : currentBoss;
 
 			var bossInit = bosses[currentBoss];
-
-			debugger;
 
 			var boss = TopLevel.container.add(bossInit.name, bossInit.args);		
 

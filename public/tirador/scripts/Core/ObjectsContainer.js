@@ -59,6 +59,8 @@ ObjectsContainer.prototype.update = function(delta) {
 							if(this.collisionOpponent.alive){
 								if(this.areColliding(object, this.collisionOpponent)){
 									
+									console.log("blablabal");
+
 									if(!object.checkingCollisions) break;
 
 									object.onCollide(this.collisionOpponent);	

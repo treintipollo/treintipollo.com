@@ -167,6 +167,8 @@ Ship.prototype.gotoInitialState = function() {
 
 Ship.prototype.draw = function(context) { 
 	context.strokeStyle = this.color;
+	context.lineWidth 	= 1;
+	context.fillStyle   = "#000000";
 
 	//30 grados	
 	context.beginPath();
@@ -193,18 +195,12 @@ Ship.prototype.draw = function(context) {
 	context.moveTo(0, 0);
 	context.arc(0, 0, 20, 145*(Math.PI/180), 155*(Math.PI/180));
 	context.closePath();
-
-	context.strokeStyle = this.color;
 	context.stroke();
 
 	context.beginPath();
 	context.moveTo(0, 0);
 	context.arc(0, 0, 15, 0, Math.PI*2, false);
 	context.closePath();
-
-	context.lineStyle = this.color; 
-	context.lineWidth = 2;
-	context.fillStyle = "#000000";
 	context.stroke();
 	context.fill();
 
@@ -212,9 +208,6 @@ Ship.prototype.draw = function(context) {
 	context.arc(40, -40, 40, Math.PI/2, Math.PI, false);
 	context.arc(-40, -40, 40, 0, Math.PI/2, false);
 	context.closePath();
-
-	context.lineWidth = 1;
-	context.strokeStyle = this.color;
 	context.stroke();
 }
 

@@ -12,11 +12,12 @@ RocketWeapon.populateTargetGrid = function(sizeX, sizeY, spaceX, spaceY, offSetX
 	}
 }
 
+RocketWeapon.RocketArguments = [null, null, {x:0, y:0}, null, null, null];
+
 function RocketWeapon(id, level, user, hasInstructions) {
 	Weapon.apply(this, arguments);
 
 	this.targetType = "Target";
-
 
 	RocketWeapon.populateTargetGrid(5, 5, 50, 50, -100, -500);
 
@@ -53,17 +54,8 @@ function RocketWeapon(id, level, user, hasInstructions) {
 						 "ClusterSwarmRocket",
 						 "ClusterSwarmRocket"];
 
-	this.rocketLevel  = 
-	[
-		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0]; },
-		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0]; },
-		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0]; },
-		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0]; },
-		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0]; },
-		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0]; },
-		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0, 2]; },
-		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0, 3]; },
-		function(x, y, t, xOffset, yOffset, c){ return [x, y, {x:x + xOffset, y:y + yOffset}, t, c, 0, 4]; }
+	this.rocketSpecificArguments  = [
+		[0], [0], [0], [0], [0], [0], [2], [3], [4] 
 	];
 
 	this.targets 	   = [];
@@ -122,7 +114,16 @@ RocketWeapon.prototype.init = function(container) {
 		var xOffset = Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1);
 		var yOffset = Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1);
 
-		var r = inst.container.add(inst.rocketTypes[inst.level], inst.rocketLevel[inst.level](inst.user.x, inst.user.y, t.t, xOffset, yOffset, inst.container));
+		RocketWeapon.RocketArguments[0]   = inst.user.x;
+		RocketWeapon.RocketArguments[1]   = inst.user.y;
+		RocketWeapon.RocketArguments[2].x = inst.user.x + xOffset;
+		RocketWeapon.RocketArguments[2].y = inst.user.y + yOffset;
+		RocketWeapon.RocketArguments[3]   = t.t;
+		RocketWeapon.RocketArguments[4]   = inst.container;
+		RocketWeapon.RocketArguments[5]   = 0;
+		RocketWeapon.RocketArguments[6]   = inst.rocketSpecificArguments[inst.level][0];
+
+		var r = inst.container.add(inst.rocketTypes[inst.level], RocketWeapon.RocketArguments);
 
 		if(r){
 			t.rocketLimit--;
