@@ -169,22 +169,22 @@ CargoShip.prototype.createStateMachine = function() {
 }
 
 CargoShip.prototype.draw = function(context) { 
-	//60 grados
+	context.strokeStyle = this.color;
+
+	context.beginPath();
+	
 	context.moveTo(0, this.exhaustOffset);
 	context.arc(0, this.exhaustOffset, this.exhaustRadius, 55*(Math.PI/180), 65*(Math.PI/180));
 	context.closePath();
 
-	//90 grados
 	context.moveTo(0, this.exhaustOffset);
 	context.arc(0, this.exhaustOffset, this.exhaustRadius, 85*(Math.PI/180), 95*(Math.PI/180));
 	context.closePath();
 
-	//120 grados
 	context.moveTo(0, this.exhaustOffset);
 	context.arc(0, this.exhaustOffset, this.exhaustRadius, 115*(Math.PI/180), 125*(Math.PI/180));
 	context.closePath();
 
-	context.strokeStyle = this.color;
 	context.stroke();
 
 	DrawUtils.circle(context, 0, this.exhaustOffset, this.engineSize, "#000000", this.color, 1);

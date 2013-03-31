@@ -28,8 +28,8 @@ BoxCollider.prototype.create = function(){
 	}
 
 	this.constructor.prototype.getCollider = function(){
-		this.collider.pos.x = this.x;
-		this.collider.pos.y = this.y;
+		this.collider.pos.x = this.x + this.centerX;
+		this.collider.pos.y = this.y + this.centerY;
 
 		return this.collider.toPolygon();
 	}

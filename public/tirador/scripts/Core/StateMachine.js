@@ -11,9 +11,9 @@ StateMachine.prototype.add = function(init, update, complete) {
 	return this.states.push(state)-1;		
 }
 
-StateMachine.prototype.set = function(stateId, args) {
+StateMachine.prototype.set = function(stateId, newStateArgsInitArgs, lastStateCompleteArgs) {
 	if(this.currentStateId != -1 && this.states[this.currentStateId].complete){
-		this.states[this.currentStateId].complete.apply(this.scope, args);
+		this.states[this.currentStateId].complete.apply(this.scope, lastStateCompleteArgs);
 	}
 
 	if(this.currentStateId != -1 && this.states[this.currentStateId].update){
@@ -23,7 +23,7 @@ StateMachine.prototype.set = function(stateId, args) {
 	this.currentStateId = stateId;
 
 	if(this.states[this.currentStateId].init){
-		this.states[this.currentStateId].init.apply(this.scope, args);
+		this.states[this.currentStateId].init.apply(this.scope, newStateArgsInitArgs);
 	}
 }
 

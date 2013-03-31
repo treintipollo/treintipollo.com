@@ -111,7 +111,7 @@ HomingRocketWeapon.prototype.init = function(container) {
 		RocketWeapon.RocketArguments[2].y = inst.user.y + yOffset;
 		RocketWeapon.RocketArguments[3]   = t.t;
 		RocketWeapon.RocketArguments[4]   = inst.container;
-		RocketWeapon.RocketArguments[5]   = 0;
+		RocketWeapon.RocketArguments[5]   = inst.deployPosition[inst.currentDeplayIndex].degreeRotation;
 		
 		var r = inst.container.add(inst.rocketTypes[inst.level], RocketWeapon.RocketArguments);
 

@@ -2,22 +2,23 @@ function GameText() {};
 
 GameText.inheritsFrom( GameObject );
 
-GameText.prototype.init  = function(x, y, text, font, size, fillColor, strokeColor, lineWidth, align, baseline) {
-	this.fill   = fillColor ? true : false;
-	this.stroke = strokeColor ? true : false;
-
-	this.align     = align ? align : "start";
-	this.baseline  = baseline ? baseline : "top";
-	this.lineWidth = lineWidth ? lineWidth : 1;
-
+GameText.prototype.init  = function(x, y) {
 	this.x = x;
 	this.y = y;	
 
-	this.fillColor   = fillColor;
-	this.strokeColor = strokeColor;
+	if(!this.align) 	this.align 		 = "start";
+	if(!this.baseline) 	this.baseline 	 = "top";
+	if(!this.lineWidth) this.lineWidth 	 = 1;
+	if(!this.fill) 		this.fillColor 	 = "#000000";
+	if(!this.stroke) 	this.strokeColor = "#FFFFFF";	
+	if(!this.text) 		this.text 		 = "Needs More Text";
+	if(!this.size) 		this.size 		 = 10;
 
-	this.text = text;
-	this.font = size + "px" + " " + font;
+	if(!this.font){
+		this.font = this.size + "px" + " " + "Arial";
+	}else{
+		this.font = this.size + "px" + " " + this.font;
+	}
 }
 
 GameText.prototype.draw  = function(context) {	
@@ -27,25 +28,46 @@ GameText.prototype.draw  = function(context) {
 
 	if(this.fill){
 		context.lineWidth = this.lineWidth;
-		context.fillStyle = this.fillColor;
+		context.fillStyle = this.fill;
     	context.fillText(this.text, 0, 0);
 	}
 
 	if(this.stroke){
-		context.strokeStyle = this.strokeColor;
+		context.strokeStyle = this.stroke;
     	context.strokeText(this.text, 0, 0);
 	}
+}
+
+function ConcreteText() {}
+
+ConcreteText.inheritsFrom( GameText );
+
+ConcreteText.prototype.init = function(x, y) {	
+	this.tProto.init.call(this, x, y);
 }
 
 function PowerUpText() {}
 
 PowerUpText.inheritsFrom( GameText );
 
-PowerUpText.prototype.init = function(args) {
-	this.parent.init.call(this, args.x, args.y, args.text, args.font, args.size, args.fillColor, args.strokeColor, args.lineWidth, args.align, args.baseline);
+PowerUpText.prototype.init = function(x, y) {
+	GameText.prototype.init.call(this, x, y);
 	this.y -= 40;
 	TweenMax.to(this, 0.7, {y:this.y-40, ease:Back.easeOut, onCompleteScope:this, onComplete:function(){
 		this.alive = false;
 	}});
 }
 
+function WarningText() {}
+
+WarningText.inheritsFrom( GameText );
+
+WarningText.prototype.init = function(x, y) {
+	GameText.prototype.init.call(this, x, y);
+	
+	TweenMax.to(this, this.introSpeed, {x:TopLevel.canvas.width/2, ease:Back.easeOut, onCompleteScope:this, onComplete:function(){
+		TweenMax.to(this, this.introSpeed, {delay:1, x:TopLevel.canvas.width*2, ease:Back.easeIn, onCompleteScope:this, onComplete:function(){
+			this.alive = false;
+		}});
+	}});
+}

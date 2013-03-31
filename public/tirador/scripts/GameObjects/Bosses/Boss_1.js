@@ -6,9 +6,14 @@ function Boss_1() {
 	this.bloodStream   = new BloodStream(this);
 	this.whiteFlash    = new WhiteFlashContainer();
 
-	this.blinkTimer   = TimeOutFactory.getTimeOut(0, 2, this, null); 
-	this.trembleTimer = TimeOutFactory.getTimeOut(1, 70, this, null);
+	this.blinkTimer    = TimeOutFactory.getTimeOut(0, 2, this, null); 
+	this.trembleTimer  = TimeOutFactory.getTimeOut(1, 70, this, null);
+
 	this.deathTimer   = TimeOutFactory.getTimeOut(3000, 1, this, function(){
+		this.stopAttack();
+		TweenMax.killTweensOf(this);
+		TweenMax.killTweensOf(this.currentPos);
+
 		this.currentMotion.set(this.currentStats.get().deathMotion);
 	});
 
@@ -173,24 +178,19 @@ Boss_1.prototype.init = function(x, y, target) {
 
 		this.stopAttack();	
 	
-		var moveVector = VectorUtils.getFullVectorInfo(tentacle.x, tentacle.y, this.x, this.y);
-
 		this.tentacleBlood.parent = tentacle;
 		this.tentacleBlood.initFromObject(this.config.tentacleBloodProps, this);
 		this.tentacleBlood.on();
 		
-		TweenMax.to(this, 0.2, {eyeHeight:this.eyeheightMax/2, ease:Back.easeOut});
-
-		this.gotoPosition(this.currentPos.x + (moveVector.dir.x * 70), this.currentPos.y + (moveVector.dir.y * 70), 1, function(){	
-			this.gotoAnchor(this.currentStats.get().recoverFromKnockTime);
+		TweenMax.to(this, 0.7, {eyeHeight:this.eyeheightMax/2, ease:Back.easeOut, onCompleteScope:this, onComplete:function(){
 			this.startAttack();
 			this.currentMotion.set(this.config.IDLE_MOTION);
 			
+			TweenMax.to(this, 0.5, {rotation:0, ease:Back.easeOut});
 			TweenMax.to(this, 2, {eyeHeight:this.eyeheightMax, ease:Back.easeInOut});
 
 			this.tentacleBlood.off();
-
-		}, Power4.easeOut);	
+		}});	
 	}
 
 	var damage = function(hitter, onComplete){
@@ -203,7 +203,7 @@ Boss_1.prototype.init = function(x, y, target) {
 		TweenMax.to(this, 1, {rotation:Random.getRandomArbitary(-360, 360), ease:Power4.easeOut});
 		TweenMax.to(this, 0.2, {eyeHeight:this.eyeheightMax/2, ease:Back.easeOut});
 
-		this.gotoPosition(this.currentPos.x + (moveVector.dir.x * 70), this.currentPos.y + (moveVector.dir.y * 70), 1, function(){	
+		this.gotoPosition(this.currentPos.x + (moveVector.dir.x * 80), this.currentPos.y + (moveVector.dir.y * 80), 1, function(){	
 			this.gotoAnchor(this.currentStats.get().recoverFromKnockTime);
 			this.startAttack();
 			this.currentMotion.set(this.config.IDLE_MOTION);
@@ -211,10 +211,12 @@ Boss_1.prototype.init = function(x, y, target) {
 			TweenMax.to(this, 0.5, {rotation:0, ease:Back.easeOut});
 			TweenMax.to(this, 2, {eyeHeight:this.eyeheightMax, ease:Back.easeInOut});
 
+			this.tentacleBlood.off();
+
 			this.generateTentacles();
 
 			onComplete();
-
+		
 		}, Power4.easeOut);	
 
 		this.currentTentacleMotion.set(this.currentStats.get().tentacleMotion);
@@ -252,7 +254,6 @@ Boss_1.prototype.init = function(x, y, target) {
 		this.gotoPosition(x, y, 4, function(){
 			TweenMax.to(this, 1, {scaleX:1, scaleY:1, ease:Back.easeOut.config(3), onCompleteScope:this, onComplete:function(){
 				this.blockDamage = false;
-				//this.generateTentacles();
 				this.generateTentacles(true);
 				this.startAttack();
 			}});
@@ -264,12 +265,8 @@ Boss_1.prototype.init = function(x, y, target) {
 	}
 
 	this.trembleTimer.callback = function(){
-		if(this.currentMotion.isCurrentState(this.config.HELPER_INITIAL_MOTION)){
-			return;
-		}
-
-		this.scaleX = Random.getRandomArbitary(1, 1.05);
-		this.scaleY = Random.getRandomArbitary(1, 1.05);
+		this.scaleX = Random.getRandomArbitary(0.9, 1.1);
+		this.scaleY = Random.getRandomArbitary(0.9, 1.1);
 	}
 
 	this.trembleTimer.onComplete = function() {
@@ -286,8 +283,10 @@ Boss_1.prototype.init = function(x, y, target) {
 	this.config.DEATH_1_MOTION 		  = this.currentMotion.add(function(){ death_explosions_blood.call(this); shrinkTentacles_2.call(this); }, shake, null);
 	this.config.DEATH_2_MOTION 		  = this.currentMotion.add(function(){ death_explosions_retreate.call(this); shrinkTentacles_2.call(this); }, shake, null);
 	this.config.INIT_DEATH_MOTION 	  = this.currentMotion.add(death_init, aim, null);
+	
 	this.config.TENTACLE_DESTROYED 	  = this.currentMotion.add(tentacleDamage, shake, null);
 	this.config.BIG_DAMAGED 		  = this.currentMotion.add(damage, shake, null);
+	
 	this.config.LIGHT_DAMAGED 		  = this.currentMotion.add(tremble, null, null);
 	this.config.HELPER_INITIAL_MOTION = this.currentMotion.add(helperInitialMotion, idle, null);
 	this.config.INIT_STATE 			  = this.currentMotion.add(null, idle, null);
@@ -476,7 +475,6 @@ Boss_1.prototype.init = function(x, y, target) {
 	}
 	var insectEye = function(context){
 		this.drawEyeShape(context, 0, 0, 1);
-
 		this.drawBugEyeCluster( 21  ,  0, 7, this.color, context, true, true , true , true, false, false);
 		this.drawBugEyeCluster(-21  ,  0, 7, this.color, context, true, false, false, true, true , true );
 		this.drawBugEyeCluster(  0  ,  0, 7, this.color, context, true, true , true , true, true , true );
@@ -518,9 +516,11 @@ Boss_1.prototype.init = function(x, y, target) {
 	this.eyeDrawLogic[this.config.ROUND_EYE] 		  = roundEye;
 	this.eyeDrawLogic[this.config.SNAKE_EYE] 		  = snakeEye;
 	this.eyeDrawLogic[this.config.INSECT_EYE] 		  = insectEye;
+
 	this.eyeDrawLogic[this.config.ROUND_EYE_STRAIGHT] = roundEye;
 	this.eyeDrawLogic[this.config.INSECT_EYE_ANGLED]  = roundEye;
 	this.eyeDrawLogic[this.config.SNAKE_EYE_SNIPER]   = snakeEye;
+	
 	this.eyeDrawLogic[this.config.MULTI_EYE]  		  = multiEye;
 	this.eyeDrawLogic[this.config.CLONE_EYE]   		  = cloneEye;
 	this.eyeDrawLogic[this.config.INSECT_EYE_FOLLOW]  = insectEye;
@@ -529,22 +529,22 @@ Boss_1.prototype.init = function(x, y, target) {
 }
 
 Boss_1.prototype.gotoPosition = function(x, y, time, onFinish, ease, setAsAnchor){
-	if(setAsAnchor){
-		this.anchorPos = {x:x, y:y};
-	}
+	if(setAsAnchor)
+		this.anchorPos = {x:x, y:y}; 
 
-	if(this.goToAnchorTween)
+	if(this.goToAnchorTween) 
 		this.goToAnchorTween.kill();
-
-	TweenMax.to(this.currentPos, time, {x:x, y:y, ease:(ease != null ? ease : Linear.ease), onComplete:onFinish, onCompleteScope:this, overwrite:"none"});
+	
+	return TweenMax.to(this.currentPos, time, {x:x, y:y, ease:(ease != null ? ease : Linear.ease), onComplete:onFinish, onCompleteScope:this, overwrite:"none"});;
 }
 
 Boss_1.prototype.gotoAnchor = function(time){
 	this.goToAnchorTween = TweenMax.to(this.currentPos, time, {x:this.anchorPos.x, y:this.anchorPos.y, overwrite:"none"});
-	//this.goToAnchorTween = TweenMax.to(this, time, {x:this.anchorPos.x, y:this.anchorPos.y, overwrite:"none"});
 }
 
 Boss_1.prototype.startAttack = function(){
+	if(this.deathTimer.isRunning) return;
+	
 	this.blinkCount = 0;
 	this.blinkTimer.delay = this.currentStats.get().blinkTime;
 	this.blinkTimer.start();
@@ -552,8 +552,13 @@ Boss_1.prototype.startAttack = function(){
 
 Boss_1.prototype.stopAttack = function(force){
 	force ? this.weapon.forceDisable() : this.weapon.disable();
+	
 	this.blinkTimer.stop();
-	if(this.blinkingTween) this.blinkingTween.kill();
+	
+	if(this.blinkingTween) {
+		this.blinkingTween.kill();
+		this.blinkingTween = null;
+	}
 }
 
 Boss_1.prototype.generateTentacles = function(override){
@@ -622,6 +627,7 @@ Boss_1.prototype.draw = function(context) {
 	context.beginPath();
 	context.arc(0, 0, this.size, 0, Math.PI*2, false);	
 	context.closePath();
+
 	context.fill();
 	context.stroke();
 
@@ -641,7 +647,7 @@ Boss_1.prototype.drawEyeShape = function(context, offSetX, offSetY, eyeSizeMulti
 	context.quadraticCurveTo(offSetX, -eyeHeight+offSetY, eyeSize+offSetX, offSetY);
 	context.moveTo(-eyeSize + offSetX, offSetY);
 	context.quadraticCurveTo(offSetX, eyeHeight+offSetY, eyeSize+offSetX, offSetY);
-
+	
 	context.stroke();
 	context.fill();
 
@@ -737,6 +743,10 @@ Boss_1.prototype.update = function(delta) {
 
 Boss_1.prototype.destroy = function(){
 	this.stopAttack();
+	TweenMax.killTweensOf(this);
+	TweenMax.killTweensOf(this.currentPos);
+
+	this.tentacleBlood.off();
 	this.bloodStream.off();
 	this.explosionArea.stop();
 	this.trembleTimer.stop();
@@ -750,8 +760,6 @@ Boss_1.prototype.destroy = function(){
 	this.currentMotion.destroy();
 	this.currentTentacleMotion.destroy();
 
-	TweenMax.killTweensOf(this);
-	TweenMax.killTweensOf(this.currentPos);
 
 	this.executeOnAllTentacles(function(t){
 		t.destroyWithOutCallBacks();
@@ -759,7 +767,7 @@ Boss_1.prototype.destroy = function(){
 }
 
 Boss_1.prototype.onHPDiminished = function(other) { this.currentMotion.set(this.config.LIGHT_DAMAGED); }
-Boss_1.prototype.onDamageBlocked = function(other) { this.currentMotion.set(this.config.LIGHT_DAMAGED); }
+Boss_1.prototype.onDamageBlocked = function(other) { }
 
 Boss_1.prototype.onDamageReceived = function(other) {
 	this.explosionArea.init(this, this.size, this.size/2, 15, 100);
@@ -1201,10 +1209,10 @@ Boss_1_Weapon_Follow.inheritsFrom( Boss_1_Weapon );
 
 Boss_1_Weapon_Follow.prototype.update = function() { }
 Boss_1_Weapon_Follow.prototype.fire = function() { 
-	this.user.gotoPosition(this.target.x, this.target.y, this.user.config.followProps.speed, this.onComplete, true); 
+	this.followTween = this.user.gotoPosition(this.target.x, this.target.y, this.user.config.followProps.speed, this.onComplete, true); 
 }
 Boss_1_Weapon_Follow.prototype.charge = function() {  }
-Boss_1_Weapon_Follow.prototype.disable = function() {  }
+Boss_1_Weapon_Follow.prototype.disable = function() { if(this.followTween) this.followTween.kill(); }
 Boss_1_Weapon_Follow.prototype.forceDisable = function() {  }
 Boss_1_Weapon_Follow.prototype.needsAiming = function() { return false; }
 Boss_1_Weapon_Follow.prototype.available = function() { return true; }

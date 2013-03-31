@@ -59,8 +59,6 @@ ObjectsContainer.prototype.update = function(delta) {
 							if(this.collisionOpponent.alive){
 								if(this.areColliding(object, this.collisionOpponent)){
 									
-									console.log("blablabal");
-
 									if(!object.checkingCollisions) break;
 
 									object.onCollide(this.collisionOpponent);	
@@ -113,6 +111,7 @@ ObjectsContainer.prototype.add = function(name, args) {
 	var checkCollision = configuration.collide;
 	var addMode 	   = configuration.addMode;
 	var initCall       = configuration.initCall;
+	var hardArguments  = configuration.hardArguments;
 
 	//Create drawing layer if it doesn't exist
 	if(this.mainObjects[layer] == null){
@@ -126,27 +125,25 @@ ObjectsContainer.prototype.add = function(name, args) {
 
 	//Get one object from the pool
 	var pooledObject = this.objectPools[type].pop();
-	
-	//This id will be used for collision detection groups
+
 	pooledObject.typeId      = name;
+	//This id will be used for collision detection groups
 	pooledObject.collisionId = collisionType;
-
-	//Add it to its rendering layer
-	if(addMode == ObjectsContainer.PUSH){
-		this.mainObjects[layer].push(pooledObject);
-	}else{
-		this.mainObjects[layer].unshift(pooledObject);
-	}
-
 	//This sets if the object will check for collisions or not
-	pooledObject.checkingCollisions = checkCollision;
+	pooledObject.checkingCollisions = (collisionType != "");
 
-	//Initialize it with given arguments
-	if(initCall == ObjectsContainer.APPLY){
-		pooledObject.init.apply(pooledObject, args);
-	}else{
-		pooledObject.init.call(pooledObject, args);		
+	//Add it to its rendering layer. To the end or the beggining of the list, depending of the configuration
+	this.mainObjects[layer][addMode](pooledObject);
+	
+	//This sets unchanging arguments (hard), specified on the configuration object.
+	if(hardArguments){
+		for(var ha in hardArguments) {
+			pooledObject[ha] = hardArguments[ha];
+		}	
 	}
+
+	//Initialize it with given arguments. Arguments are passes as a single object or a list depending on configuration. Look up APPLY and CALL
+	pooledObject.init[initCall](pooledObject, args);
 
 	//Nasty logic to add an object to the corresponding collision checking lists
 	if(pooledObject.checkingCollisions){
@@ -226,11 +223,22 @@ ObjectsContainer.UNSHIFT = "unshift";
 ObjectsContainer.CALL    = "call";
 ObjectsContainer.APPLY   = "apply";
 
-ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type, collisionType, layer, collide, addMode, initCall) {
-	if(!layer)   { layer = 0; }
-	if(!collide) { collide = false; }
-	if(!addMode) { addMode = ObjectsContainer.PUSH; }
-	if(!initCall) { initCall = ObjectsContainer.APPLY; }
+ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type, layer) {
+	var configuration = {type:type, 
+						 layer:layer, 
+						 collisionType:"", 
+						 addMode:"push", 
+						 initCall:"apply", 
+						 hardArguments:null,
 
-	this.configurations[typeAlias] = { type:type, collisionType:collisionType, layer:layer, collide:collide, addMode:addMode, initCall:initCall};
+						 setCollisionId:function(cType) { this.collisionType = cType; return this; },
+						 setAddMode:function(aMode) { this.addMode = aMode; return this; },
+						 setInitCall:function(iCall) { this.initCall = iCall; return this; },
+						 setArgs:function(args) { this.hardArguments = args; return this; }
+
+	};
+
+	this.configurations[typeAlias] = configuration;
+
+	return configuration;
 }

@@ -27,7 +27,7 @@ $(function(){
 		TENTACLE_DESTROYED    : 6,
 		BIG_DAMAGED 		  : 7,
 		LIGHT_DAMAGED 	      : 8,
-		HELPER_INITIAL_MOTION : 9
+		HELPER_INITIAL_MOTION : 9,
   	},
 
 	//chargeRadius, chargeColor, chargeParticleSize, burstColor1, burstColor2, burstParticleSize, burst1ParticlesInCycle, beam1ParticlesInCycle, beam2ParticlesInCycle, beam1ParticlesLife, beam2ParticlesLife, beamParticleSize			   

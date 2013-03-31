@@ -268,9 +268,9 @@ MultiPowerUp.prototype.init = function(x, y, stayInPlace, prototypes) {
 }
 
 MultiPowerUp.prototype.changeState = function() {
-	MultiPowerUp.prototype.setColorAndSize = this.prototypes[this.stateIndex].pro.setColorAndSize;
-	MultiPowerUp.prototype.draw            = this.prototypes[this.stateIndex].pro.draw;
-	this.id 							   = this.prototypes[this.stateIndex].id;
+	this.setColorAndSize = this.prototypes[this.stateIndex].pro.setColorAndSize;
+	this.draw            = this.prototypes[this.stateIndex].pro.draw;
+	this.id 			 = this.prototypes[this.stateIndex].id;
 
 	this.stateIndex++;
 	if(this.stateIndex >= this.prototypes.length){
