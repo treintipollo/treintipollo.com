@@ -33,12 +33,16 @@ GameObject.prototype.addCallback = function(delegateName, scope, callback) {
 	this[delegateName].push({scope:scope, callback:callback});
 }
 
-GameObject.prototype.executeCallbacks = function(delegateName, args) {
+GameObject.prototype.executeCallbacks = function(delegateName, args, onComplete) {
 	if(!this[delegateName]){ return; }
 
 	for(var i=0; i<this[delegateName].length; i++){
 		var callbackObject = this[delegateName][i];
 		callbackObject.callback.call(callbackObject.scope, args);		
+	}
+
+	if(onComplete){
+		onComplete();
 	}
 }
 

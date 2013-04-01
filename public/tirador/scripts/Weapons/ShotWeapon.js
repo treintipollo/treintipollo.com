@@ -132,6 +132,8 @@ ShotWeapon.prototype.init = function(container) {
 			inst.idleTimer.reset();
 			inst.chargeTimer.stop();
 		}
+
+		inst.user.executeCallbacks("firstShotDelegate", inst.user);
 	});
 
 	this.callbacks.push(c);

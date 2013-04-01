@@ -57,6 +57,10 @@ WhiteFlash.prototype.draw = function(context) {
 	}
 }
 
+WhiteFlash.prototype.destroy = function() { 	
+	TweenMax.killTweensOf(this);
+}
+
 WhiteFlashContainer.Arguments = [];
 
 function WhiteFlashContainer() {}

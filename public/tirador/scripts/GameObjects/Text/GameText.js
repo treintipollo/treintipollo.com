@@ -52,6 +52,7 @@ PowerUpText.inheritsFrom( GameText );
 
 PowerUpText.prototype.init = function(x, y) {
 	GameText.prototype.init.call(this, x, y);
+
 	this.y -= 40;
 	TweenMax.to(this, 0.7, {y:this.y-40, ease:Back.easeOut, onCompleteScope:this, onComplete:function(){
 		this.alive = false;
@@ -71,3 +72,4 @@ WarningText.prototype.init = function(x, y) {
 		}});
 	}});
 }
+

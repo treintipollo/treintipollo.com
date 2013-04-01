@@ -3,9 +3,29 @@ var TopLevel = {
 	context: null,
 	container:null,
 	lastUpdate: Date.now(),
+	
+	initialized: false,
+	showSplash:true,
+	hideSplash:true,
+	setUpGame:null,
+
 	focus: true,
 	blur: true,
+	
 	tweensTimeLine: null,
+
+	resetGame: function() {
+		/*this.showSplash  = true;
+		this.hideSplash  = true;
+
+		this.rocketFactory.clear();
+
+		this.playerData.lives = 1;
+
+		this.setUpGame();*/
+
+		console.log("ResetGame");
+	},
 
 	attributesGetter: {
 		attributesTable: {},
@@ -212,8 +232,11 @@ var TopLevel = {
 		recreateTimer: null,
 		playerActionsCallbacks: {},
 
-		init: function() {
-			this.recreateTimer = TimeOutFactory.getTimeOut(1000, 1, this, function(){ this.createPlayerShipNoArgs(); });
+		init: function(onShipRecreated) {
+			this.recreateTimer = TimeOutFactory.getTimeOut(1000, 1, this, function(){ 
+				this.createPlayerShipNoArgs(); 
+				onShipRecreated();
+			});
 		},
 
 		firstShip: function(x, y){
@@ -254,26 +277,30 @@ var TopLevel = {
 		addCallbacksToAction: function(actionName, callbacks) {
 			this.playerActionsCallbacks[actionName] = callbacks;
 		}
-	}
+	},
+
+	rocketFactory: null,
+	starFactory:null
 };
 window.TopLevel = TopLevel;
 
-//Messages
-	//Congratulations message
-		//Game Completed
-	//Game Over
-
-//TODO: Poner un splash para que si el juego arranca sin saber si tiene el foco o no, no pase nada.
-		//Usar hasFocus del document.
-
-//Minimalistic Hud, showing lives, health, speed and weapon level.
+//GameOver
+	//Mensaje, reiniciar el juego.
+	//Configure which objects can be eliminated from the ObjectsContainer when needed.
+	
+//Hud, showing lives, health, speed and weapon level.
 
 //TODO: Emoticons.
 	//Ship.
 	//Boss
 	//Emoticon Manager
 
+//TODO: Secret Boss.
+		//CargoShip
+
 //TODO: Mini story sequence.
+		//Intro.
+		//Ending.
 
 //TODO: Tweek base damages and damage multipliers. Everything.
 	   //Tweek powerup show up ratio.
@@ -286,10 +313,16 @@ window.TopLevel = TopLevel;
 	   		//Shot speed and amount.
 	   		//Charge shot  charging speed.
 
-//TODO: Reduce memory Footprint.
-//TODO: Optimize drawing method.
-		//Cache procedural drawing in memory. Then draw that image in place each frame, instead of redrawing proceduraly each frame.
-		//This will not be possible where procedural animations take place. Like the eye of the Boss or its tentacles. But things like Rockets and particles could be cached.
+//TODO: Optimizations
+	//TODO: Reduce memory Footprint.
+			//Reduce object pool sizes.
+			//Reduce amount of objects created to cache data.
+	//TODO: Optimize drawing method.
+			//Cache procedural drawing in memory. Then draw that image in place each frame, instead of redrawing proceduraly each frame.
+			//This will not be possible where procedural animations take place. Like the eye of the Boss or its tentacles. But things like Rockets and particles could be cached.
+	//TODO: //I Could setup the GameObjects in a way in which I can specify if they need an update or not. 
+			//That could reduce method calls greatly, since a lot of GameObjects don't use update at all.
+			//Same could be done with drawing, as some GameObjects could only exist as data containers.
 
 //TODO: Use TimeOutFactory in ArrowKeyHandler.
 
@@ -299,12 +332,224 @@ window.TopLevel = TopLevel;
 		//De ahi puedo llamar directamente al init de ese objeto con los parametros que yo quiera, sin andar creado arrays intermedios.
 
 $(function(){
-	TopLevel.canvas    = document.getElementById("game");
-	TopLevel.context   = TopLevel.canvas.getContext("2d");
-	
-	ArrowKeyHandler.init();
+	var frameRequest, mainLoop;
 
-	TopLevel.container 	= new ObjectsContainer(TopLevel.context);
+	//Setteing up the onBlur and onFocus events.
+	//If the game is not initialized because it has no focus, these will be created anyway.
+	//Once the document gains fucos, it will create the game, if it hasn't so already.
+	var onBlur = function(event){
+		if(TopLevel.blur){
+			TopLevel.blur = false;
+			TopLevel.focus = true;
+
+			TimeOutFactory.pauseAllTimeOuts();
+			
+			TopLevel.tweensTimeLine = TimelineLite.exportRoot();
+			TopLevel.tweensTimeLine.pause();
+
+			window.cancelAnimationFrame(frameRequest);
+		}
+	}
+
+	var onFocus = function(event){
+		//In the case the game is not already created when the document gains focus for the first time, it is created here.
+		if(!TopLevel.initialized){
+			creation();
+		}else{
+			if(TopLevel.focus){
+				TopLevel.blur = true;
+				TopLevel.focus = false;
+
+				TimeOutFactory.resumeAllTimeOuts();
+
+				TopLevel.tweensTimeLine.resume();
+				
+				frameRequest = window.requestAnimationFrame(mainLoop);
+			}
+		}
+	}
+
+	$(window).on("blur", onBlur);
+	$(window).on("focus", onFocus);
+
+	//From here on, are all the creation functions.
+	//--------------------------------------------
+
+	//This is the main creation function, the game officially starts when this is called.
+	var creation = function() {
+		TopLevel.initialized = true;
+
+		TopLevel.canvas    		 = document.getElementById("game");
+		TopLevel.context   		 = TopLevel.canvas.getContext("2d");
+		TopLevel.container 	     = new ObjectsContainer(TopLevel.context);
+		TopLevel.rocketFactory   = new EnemyRocketFactory();
+		TopLevel.starFactory     = new StartFactory(TopLevel.canvas.width, TopLevel.canvas.height, 50, 200, 600, 1, TopLevel.container);
+		
+		ArrowKeyHandler.init();
+
+		//GameObject pooling method
+		createObjectPools();
+		
+		//All things related to GameObject configuration
+		createObjectConfigurations();
+		createCollisionPairs();
+		createAttributesTable();
+		createPowerUps();
+		configurePlayerShipFactory();
+
+		TopLevel.playerData.ship = TopLevel.playerShipFactory.firstShip(TopLevel.canvas.width/2, TopLevel.canvas.height + 50);
+		TopLevel.setUpGame 		 = setUpGame;
+
+		//This is the game basic logic. It takes care of creating the baddies in the order specified.
+		setUpGame();
+
+		//This is the main update loop. It uses requestAnimationFrame 
+		setUpGameLoop();
+	}
+
+	var setUpGame = function() {	
+		var starFactory   = TopLevel.starFactory;
+		var rocketFactory = TopLevel.rocketFactory;
+
+		var ship = TopLevel.playerData.ship;
+
+		var w = TopLevel.canvas.width;
+		var h = TopLevel.canvas.height;
+
+		var bossArgs = [w/2,-200, ship];
+		var bossDrops = {};
+
+		var currentBoss = -1;
+		var bosses      = [{name:"Boss_1_A", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null},
+						   {name:"Boss_1_B", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
+						   {name:"Boss_1_C", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
+						   
+						   {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-100, y:h/2-150, time:3}, powerUp:null},
+						   {name:"SubBoss_1", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+100, y:h/2-150, time:3}, powerUp:null},
+
+						   {name:"Boss_1_D", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
+						   
+						   {name:"SubBoss_2", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-100, y:h/2-150, time:3}, powerUp:null},
+						   {name:"SubBoss_2", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+100, y:h/2-150, time:3}, powerUp:null},
+
+						   {name:"Boss_1_E", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"LivesPowerUp"},
+						   
+						   {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-150, y:h/2-150, time:3}, powerUp:null},
+						   {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+150, y:h/2-150, time:3}, powerUp:null},
+						   {name:"SubBoss_3", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2,     y:h/2-200, time:3}, powerUp:null},
+
+						   {name:"Boss_1_F", createNext:false , intro:"warning", winMessage:"complete", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null}];
+		
+
+		//First Set
+		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 40, -50, 200, 350, 800, 10, false, "SpeedPowerUp");	
+		rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -50, -70, 600, 10, false, "MultiWeaponPowerUp");
+		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 30, -50, 200, 350, 800, 10, true , "WeaponPowerUp,MultiWeaponPowerUp,SpeedPowerUp");
+		
+		//Second Set
+		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, -50, 100, 500, 600, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
+		rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -90, -100, 600, 10, false, "MultiWeaponPowerUp");
+		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, -50, 100, 500, 600, 10, true,  "WeaponPowerUp,SpeedPowerUp");
+		
+		//Third Set
+		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 20, 100, 500, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
+		rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -200, -250, 600, 10, false, "MultiWeaponPowerUp");
+		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 100, 500, 500, 10, true,  "WeaponPowerUp,SpeedPowerUp");
+
+		rocketFactory.onWaveComplete = FuntionUtils.bindScope(this, function(){
+			var bossesCreated = 0;
+
+			do{
+				currentBoss++;
+				bossesCreated++;
+				currentBoss = currentBoss >= bosses.length ? 0 : currentBoss;
+
+				var bossInit = bosses[currentBoss];
+
+				if(bossInit.intro == "none"){
+
+					var boss = TopLevel.container.add(bossInit.name, bossInit.args);		
+
+					bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
+
+					boss.gotoPosition(bossInit.targetPos.x, bossInit.targetPos.y, bossInit.targetPos.time, function(){
+						this.startAttack();
+					}, null, true);
+
+					boss.addOnDestroyCallback(this, function(obj){
+						TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
+						
+						bossesCreated--;
+						if(bossesCreated <= 0){
+							TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
+							rocketFactory.start();
+						}
+					});
+
+				}else{
+					var intro = TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.intro, -200, TopLevel.canvas.height/2 );
+
+					intro.addOnDestroyCallback(this, function(obj){
+						
+						var boss = TopLevel.container.add(bossInit.name, bossInit.args);		
+
+						bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
+
+						boss.gotoPosition(bossInit.targetPos.x, bossInit.targetPos.y, bossInit.targetPos.time, function(){
+							this.startAttack();
+						}, null, true);
+
+						boss.addOnDestroyCallback(this, function(obj){
+							TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
+							TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
+
+							rocketFactory.start();
+						});
+					});
+				}
+				
+			}while(bossInit.createNext)
+
+		});
+		
+		starFactory.start();
+	}
+
+	var setUpGameLoop = function() {
+		mainLoop = function() {
+			var now = Date.now();
+			var dt = now - TopLevel.lastUpdate;
+			TopLevel.lastUpdate = now;
+
+			if(dt < 30){
+				TopLevel.container.update(dt/1000);
+				TopLevel.container.draw();
+			}
+			
+			frameRequest = window.requestAnimationFrame(mainLoop);
+		}
+
+		var vendors = ['ms', 'moz', 'webkit', 'o'];
+		
+		for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+			window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+			window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+		}
+
+		if (!window.requestAnimationFrame){
+			window.requestAnimationFrame = function(callback) {
+				return window.setTimeout(callback, 1000 / 60);;
+			};
+		}
+
+		if (!window.cancelAnimationFrame){
+			window.cancelAnimationFrame = function(id) {
+				clearTimeout(id);
+			};
+		}
+
+		frameRequest = window.requestAnimationFrame(mainLoop);
+	}
 
 	var createObjectPools = function(){
 		//This Pools can not be reduced by means of clever coding.
@@ -332,6 +577,8 @@ $(function(){
 		TopLevel.container.createTypePool("PercentageLine", PercentageLine, 66);
 		TopLevel.container.createTypePool("Text"	      , ConcreteText, 3);
 		TopLevel.container.createTypePool("WhiteFlash"    , WhiteFlash, 2);
+
+		TopLevel.container.createTypePool("Splash"    , Splash, 1);
 
 		//The Pools below could be reduced drastically with a little extra work.
 		//---------------------------------------------------------------------
@@ -377,7 +624,9 @@ $(function(){
 	var createObjectConfigurations = function() {
 		//Configurations
 		//Collidable GameObjects
-		TopLevel.container.createTypeConfiguration("Ship", "Ship", 0).setCollisionId("Ship");
+		TopLevel.container.createTypeConfiguration("Ship", "Ship", 0).setCollisionId("Ship");//.saveOnClean();
+
+		TopLevel.container.createTypeConfiguration("Splash", "Splash", 0);
 
 		TopLevel.container.createTypeConfiguration("Small_Shot"      , "Shot", 1).setCollisionId("Shot").setArgs({big:false});
 		TopLevel.container.createTypeConfiguration("Big_Shot"        , "Shot", 1).setCollisionId("Shot").setArgs({big:true});
@@ -477,10 +726,16 @@ $(function(){
 		TopLevel.container.createTypeConfiguration("health" , "Text", 0).setArgs({ tProto:PowerUpText.prototype, text:"HEALTH UP!", font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:1, align:"center", baseline:"middle" });
 		TopLevel.container.createTypeConfiguration("1up"    , "Text", 0).setArgs({ tProto:PowerUpText.prototype, text:"1-UP!"     , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#777777", lineWidth:1, align:"center", baseline:"middle" });
 
-		TopLevel.container.createTypeConfiguration("warning", "Text", 0).setArgs({ introSpeed:0.7, tProto:WarningText.prototype, text:"WARNING!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" }).setCollisionId("Common_Baddy");
-		TopLevel.container.createTypeConfiguration("boom", "Text", 0).setArgs({ introSpeed:0.5, tProto:WarningText.prototype, text:"BOOM! :D", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" }).setCollisionId("Common_Baddy");
-		TopLevel.container.createTypeConfiguration("nice", "Text", 0).setArgs({ introSpeed:0.7, tProto:WarningText.prototype, text:"NICE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#0000FF", lineWidth:3, align:"center", baseline:"middle" }).setCollisionId("Common_Baddy");
-		
+		TopLevel.container.createTypeConfiguration("warning" , "Text", 0).setArgs({ introSpeed:0.7, tProto:WarningText.prototype, text:"WARNING!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("boom"    , "Text", 0).setArgs({ introSpeed:0.5, tProto:WarningText.prototype, text:"BOOM! :D", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("nice"    , "Text", 0).setArgs({ introSpeed:0.7, tProto:WarningText.prototype, text:"NICE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#0000FF", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("complete", "Text", 0).setArgs({ introSpeed:0.7, tProto:WarningText.prototype, text:"COMPLETE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("gameOver", "Text", 0).setArgs({ introSpeed:0.7, tProto:WarningText.prototype, text:"BLE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
+
+		TopLevel.container.createTypeConfiguration("space"    , "Text", 0).setArgs({ tProto:GameText.prototype, text:"SPACE", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("shooting" , "Text", 0).setArgs({ tProto:GameText.prototype, text:"SHOOTING", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("adventure", "Text", 0).setArgs({ tProto:GameText.prototype, text:"ADVENTURE", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
+
 		TopLevel.container.createTypeConfiguration("Line"		   , "Line"	   		 , 0);
 		TopLevel.container.createTypeConfiguration("PercentageLine", "PercentageLine", 0);
 		
@@ -505,7 +760,6 @@ $(function(){
 		TopLevel.container.addCollisionPair("Ship", "Bullet_Baddy");
 		TopLevel.container.addCollisionPair("Ship", "Boss_1");
 		TopLevel.container.addCollisionPair("Ship", "TentacleSegment");
-		
 		
 		TopLevel.container.addCollisionPair("Shot", "Common_Baddy");		
 		TopLevel.container.addCollisionPair("Shot", "Boss_1");		
@@ -633,13 +887,13 @@ $(function(){
 	
 	var createPowerUps = function() {
 		TopLevel.powerUpFactory.addPowerUpTypes("ShotPowerUp", [ 
-				{scope:TopLevel.playerData			 , callback:function(powerUp){ this.setWeapon(TopLevel.weaponFactory.SHOT_WEAPON); } },
-				{scope:TopLevel.textFeedbackDisplayer, callback:function(powerUp){ this.showFeedBack("shot", TopLevel.playerData.ship.x, TopLevel.playerData.ship.y ); } }
+			{scope:TopLevel.playerData			 , callback:function(powerUp){ this.setWeapon(TopLevel.weaponFactory.SHOT_WEAPON); } },
+			{scope:TopLevel.textFeedbackDisplayer, callback:function(powerUp){ this.showFeedBack("shot", TopLevel.playerData.ship.x, TopLevel.playerData.ship.y ); } }
 		]);
 
 		TopLevel.powerUpFactory.addPowerUpTypes("RocketPowerUp", [
-				{scope:TopLevel.playerData			 , callback:function(powerUp){ this.setWeapon(TopLevel.weaponFactory.ROCKET_WEAPON); } },
-				{scope:TopLevel.textFeedbackDisplayer, callback:function(powerUp){ this.showFeedBack("rockets", TopLevel.playerData.ship.x, TopLevel.playerData.ship.y ); } }
+			{scope:TopLevel.playerData			 , callback:function(powerUp){ this.setWeapon(TopLevel.weaponFactory.ROCKET_WEAPON); } },
+			{scope:TopLevel.textFeedbackDisplayer, callback:function(powerUp){ this.showFeedBack("rockets", TopLevel.playerData.ship.x, TopLevel.playerData.ship.y ); } }
 		]); 
 
 		TopLevel.powerUpFactory.addPowerUpTypes("HomingRocketPowerUp", [
@@ -697,218 +951,64 @@ $(function(){
 		]);
 		
 		TopLevel.playerShipFactory.addCallbacksToAction("addAllDamageReceivedCallback", [
-			{scope:TopLevel.playerData, callback:function(){ this.decreaseLives(); } }
+			{scope:TopLevel.playerData, callback:function(){ this.decreaseLives(); } },
 		]);
 
-		TopLevel.playerShipFactory.init();
+
+		//Super nasty logic to execute the Splash intro and outro animations :P
+		//The good thing is that all this very specific code is kept outside Ship.js
+		var splash;
+
+		TopLevel.playerShipFactory.addCallbacksToAction("addInitialPositionReachedCallback", [
+			{scope:TopLevel, callback:function(ship){ 
+
+				if(this.showSplash){
+					this.showSplash = false;
+
+					splash = this.container.add("Splash", [
+						function(){
+							ship.addFirstShotCallback(TopLevel, function(ship){
+								if(this.hideSplash){
+									this.hideSplash = false;
+									splash.exit();
+									splash = null;
+								}
+							}, function(){
+								ship.destroyCallbacks("firstShotDelegate");
+							});
+						},
+						function(){
+							TopLevel.rocketFactory.start();
+						}
+					]);
+
+					splash.enter();				
+				}
+			} }
+		]);
+
+		TopLevel.playerShipFactory.init(function(){
+			if(TopLevel.playerData.lives < 0){
+				TopLevel.resetGame();
+			}	
+		});
 	}
 
-	//All those configuration functions above are executed here.
-	createObjectPools();
-	createObjectConfigurations();
-	createCollisionPairs();
-	createAttributesTable();
-	createPowerUps();
-	configurePlayerShipFactory();
-
-	var starFactory   = new StartFactory(TopLevel.canvas.width, TopLevel.canvas.height, 50, 200, 600, 1, TopLevel.container);
-	var rocketFactory = new EnemyRocketFactory();
-
-	var ship = TopLevel.playerShipFactory.firstShip(TopLevel.canvas.width/2, TopLevel.canvas.height + 50);
-
-	var w = TopLevel.canvas.width;
-	var h = TopLevel.canvas.height;
-
-	var bossArgs = [w/2,-200, ship];
-	var bossDrops = {};
-
-	var currentBoss = -1;
-	var bosses      = [{name:"Boss_1_A", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null},
-					   {name:"Boss_1_B", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
-					   {name:"Boss_1_C", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
-					   
-					   {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-100, y:h/2-150, time:3}, powerUp:null},
-					   {name:"SubBoss_1", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+100, y:h/2-150, time:3}, powerUp:null},
-
-					   {name:"Boss_1_D", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
-					   
-					   {name:"SubBoss_2", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-100, y:h/2-150, time:3}, powerUp:null},
-					   {name:"SubBoss_2", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+100, y:h/2-150, time:3}, powerUp:null},
-
-					   {name:"Boss_1_E", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"LivesPowerUp"},
-					   
-					   {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-150, y:h/2-150, time:3}, powerUp:null},
-					   {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+150, y:h/2-150, time:3}, powerUp:null},
-					   {name:"SubBoss_3", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2,     y:h/2-200, time:3}, powerUp:null},
-
-					   {name:"Boss_1_F", createNext:false , intro:"warning", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null}];
-	
-
-	//First Set
-	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 40, -50, 200, 350, 800, 10, false, "SpeedPowerUp");	
-	rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -50, -70, 600, 10, false, "MultiWeaponPowerUp");
-	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 30, -50, 200, 350, 800, 10, true , "WeaponPowerUp,MultiWeaponPowerUp,SpeedPowerUp");
-	//Second Set
-	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, -50, 100, 500, 600, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
-	rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -90, -100, 600, 10, false, "MultiWeaponPowerUp");
-	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, -50, 100, 500, 600, 10, true,  "WeaponPowerUp,SpeedPowerUp");
-	
-	//Third Set
-	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 20, 100, 500, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
-	rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -200, -250, 600, 10, false, "MultiWeaponPowerUp");
-	rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 100, 500, 500, 10, true,  "WeaponPowerUp,SpeedPowerUp");
-
-	//warning
-
-	//First Set
-	//rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -50, -70, 600, 10, true, "MultiWeaponPowerUp");
-	//Second Set
-	//rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -90, -100, 600, 10, true, "MultiWeaponPowerUp");
-	//Third Set
-	//rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -200, -250, 600, 10, true, "MultiWeaponPowerUp");
-
-	/*var bossInit = bosses[currentBoss];
-
-	var boss = TopLevel.container.add(bossInit.name, bossInit.args);		
-
-	boss.gotoPosition(TopLevel.canvas.width/2, TopLevel.canvas.height/2-100, 3, function(){
-		this.startAttack();
-	}, null, true);*/
-
-	rocketFactory.onWaveComplete = FuntionUtils.bindScope(this, function(){
-		var bossesCreated = 0;
-
-		do{
-			currentBoss++;
-			bossesCreated++;
-			currentBoss = currentBoss >= bosses.length ? 0 : currentBoss;
-
-			var bossInit = bosses[currentBoss];
-
-			if(bossInit.intro == "none"){
-
-				var boss = TopLevel.container.add(bossInit.name, bossInit.args);		
-
-				bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
-
-				boss.gotoPosition(bossInit.targetPos.x, bossInit.targetPos.y, bossInit.targetPos.time, function(){
-					this.startAttack();
-				}, null, true);
-
-				boss.addOnDestroyCallback(this, function(obj){
-					TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
-					
-					bossesCreated--;
-					if(bossesCreated <= 0){
-						TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
-						rocketFactory.start();
-					}
-				});
-
-			}else{
-				var intro = TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.intro, -200, TopLevel.canvas.height/2 );
-
-				intro.addOnDestroyCallback(this, function(obj){
-					
-					var boss = TopLevel.container.add(bossInit.name, bossInit.args);		
-
-					bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
-
-					boss.gotoPosition(bossInit.targetPos.x, bossInit.targetPos.y, bossInit.targetPos.time, function(){
-						this.startAttack();
-					}, null, true);
-
-					boss.addOnDestroyCallback(this, function(obj){
-						TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
-						TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
-
-						rocketFactory.start();
-					});
-				});
-			}
-			
-		}while(bossInit.createNext)
-
-	});
-	
-
-
-	starFactory.start();
-	rocketFactory.start();
-
-	ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.Z, FuntionUtils.bindScope(this, function(){
-		//TopLevel.container.add("CargoShip", [100, 100, 10, TopLevel.container]);		
-	}));
-
-	ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.D, FuntionUtils.bindScope(this, function(){
-		//TopLevel.powerUpFactory.create(TopLevel.canvas.width/2-100, TopLevel.canvas.height/2, "MultiWeaponPowerUp", 1, true);
-
-		
-	}));
-
-	ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.C, FuntionUtils.bindScope(this, function(){
-		//TopLevel.powerUpFactory.create(TopLevel.canvas.width/2+100, TopLevel.canvas.height/2, "MultiWeaponPowerUp", 1, true);
-	}));
-
-	var frameRequest;
-	
-	var vendors = ['ms', 'moz', 'webkit', 'o'];
-	for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-		window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-		window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+	//In the case the Game is opened with out focus, like in a browser restart, game will not be created right now.
+	//It will be created once the document gains focus
+	if(document.hasFocus()){ 
+		creation();
 	}
-
-	if (!window.requestAnimationFrame){
-		window.requestAnimationFrame = function(callback) {
-			return window.setTimeout(callback, 1000 / 60);;
-		};
-	}
-
-	if (!window.cancelAnimationFrame){
-		window.cancelAnimationFrame = function(id) {
-			clearTimeout(id);
-		};
-	}
-
-	frameRequest = window.requestAnimationFrame(mainLoop);
-
-	function mainLoop() {
-		var now = Date.now();
-		var dt = now - TopLevel.lastUpdate;
-		TopLevel.lastUpdate = now;
-
-		if(dt < 30){
-			TopLevel.container.update(dt/1000);
-			TopLevel.container.draw();
-		}
-		
-		frameRequest = window.requestAnimationFrame(mainLoop);
-	}
-
-	$(window).on("blur", function(event) {
-		
-		if(TopLevel.blur){
-			TopLevel.blur = false;
-			TopLevel.focus = true;
-
-			TimeOutFactory.pauseAllTimeOuts();
-			
-			TopLevel.tweensTimeLine = TimelineLite.exportRoot();
-			TopLevel.tweensTimeLine.pause();
-
-			window.cancelAnimationFrame(frameRequest);
-		}
-		
-	});
-
-	$(window).on("focus", function(event) {
-		if(TopLevel.focus){
-			TopLevel.blur = true;
-			TopLevel.focus = false;
-
-			TimeOutFactory.resumeAllTimeOuts();
-			TopLevel.tweensTimeLine.resume();
-			frameRequest = window.requestAnimationFrame(mainLoop);
-		}
-	});
 });
+	
+//ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.Z, FuntionUtils.bindScope(this, function(){
+	//TopLevel.container.add("CargoShip", [100, 100, 10, TopLevel.container]);		
+//}));
+
+//ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.D, FuntionUtils.bindScope(this, function(){
+	//TopLevel.powerUpFactory.create(TopLevel.canvas.width/2-100, TopLevel.canvas.height/2, "MultiWeaponPowerUp", 1, true);
+//}));
+
+//ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.C, FuntionUtils.bindScope(this, function(){
+	//TopLevel.powerUpFactory.create(TopLevel.canvas.width/2+100, TopLevel.canvas.height/2, "MultiWeaponPowerUp", 1, true);
+//}));

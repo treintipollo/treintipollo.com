@@ -144,6 +144,8 @@ Ship.prototype.createStateMachine = function() {
 		TweenMax.to(this, 1, {y:this.y - 150, onCompleteScope:this, onComplete:function(){
 			this.blockControls = false;
 			this.blockDamage   = false;
+
+			 this.executeCallbacks("onInitialPositionDelegate", this);
 		}});
 	}
 
@@ -160,6 +162,9 @@ Ship.prototype.createStateMachine = function() {
 	this.NONE_STOP_SHAKE_MOTION = this.currentMotion.add(slowAllDown, shake, null);
 	this.START_MOTION 			= this.currentMotion.add(gotoInitPosition, idle, null);
 }
+
+Ship.prototype.addInitialPositionReachedCallback = function(scope, callback) { this.addCallback("onInitialPositionDelegate", scope, callback); }
+Ship.prototype.addFirstShotCallback = function(scope, callback) { this.addCallback("firstShotDelegate", scope, callback); }
 
 Ship.prototype.gotoInitialState = function() {
 	this.currentMotion.set(this.START_MOTION);
@@ -258,7 +263,9 @@ Ship.prototype.update = function(delta) {
 	this.exhaust120.update(); 
 	this.exhaust150.update();
 
-	if(this.weapon) this.weapon.update();
+	if(this.weapon) {
+		this.weapon.update();
+	}
 }
 
 Ship.prototype.destroy = function(){
@@ -270,6 +277,8 @@ Ship.prototype.destroy = function(){
 
 	this.explosionArea.stop();
 	TweenMax.killTweensOf(this);
+
+	this.destroyCallbacks("onInitialPositionDelegate");
 
 	this.weapon.destroy();
 }

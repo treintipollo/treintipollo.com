@@ -743,13 +743,16 @@ Boss_1.prototype.update = function(delta) {
 
 Boss_1.prototype.destroy = function(){
 	this.stopAttack();
+	
 	TweenMax.killTweensOf(this);
 	TweenMax.killTweensOf(this.currentPos);
 
 	this.tentacleBlood.off();
 	this.bloodStream.off();
+	
 	this.explosionArea.stop();
 	this.trembleTimer.stop();
+	this.deathTimer.stop();
 
 	for(var i=0; i<this.weapons.length; i++){
 		this.weapons[i].destroyAll();
@@ -759,7 +762,6 @@ Boss_1.prototype.destroy = function(){
 
 	this.currentMotion.destroy();
 	this.currentTentacleMotion.destroy();
-
 
 	this.executeOnAllTentacles(function(t){
 		t.destroyWithOutCallBacks();
@@ -952,7 +954,8 @@ Boss_1_Backup.prototype.destroyAll = function() {
 	}
 
 	this.beam.destroy();	
-	this.beam = null;
+	this.beam 	   = null;
+	this.positions = null;
 }
 
 Boss_1_Backup.prototype.charge = function() { this.beam.charge(); }
@@ -1165,8 +1168,6 @@ function Boss_1_Weapon_Clones(user, target, onComplete) {
 			cloneArguments[4] = cloneProps;
 
 			TopLevel.container.add(cloneProps.name, cloneArguments);		
-
-
 		}
 		
 		this.currentWave++;
@@ -1216,7 +1217,7 @@ Boss_1_Weapon_Follow.prototype.disable = function() { if(this.followTween) this.
 Boss_1_Weapon_Follow.prototype.forceDisable = function() {  }
 Boss_1_Weapon_Follow.prototype.needsAiming = function() { return false; }
 Boss_1_Weapon_Follow.prototype.available = function() { return true; }
-Boss_1_Weapon_Follow.prototype.destroyAll = function() { }
+Boss_1_Weapon_Follow.prototype.destroyAll = function() { this.disable(); }
 
 function Tentacle() {       
     this.girth = 15;
