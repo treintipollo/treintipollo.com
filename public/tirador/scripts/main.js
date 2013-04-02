@@ -285,7 +285,8 @@ var TopLevel = {
 window.TopLevel = TopLevel;
 
 //GameOver
-	//Mensaje, reiniciar el juego.
+	//Mensaje. 
+	//Reiniciar el juego.
 	//Configure which objects can be eliminated from the ObjectsContainer when needed.
 	
 //Hud, showing lives, health, speed and weapon level.
@@ -295,13 +296,6 @@ window.TopLevel = TopLevel;
 	//Boss
 	//Emoticon Manager
 
-//TODO: Secret Boss.
-		//CargoShip
-
-//TODO: Mini story sequence.
-		//Intro.
-		//Ending.
-
 //TODO: Tweek base damages and damage multipliers. Everything.
 	   //Tweek powerup show up ratio.
 	   //Tweek boss attacks.
@@ -310,8 +304,15 @@ window.TopLevel = TopLevel;
 	   		//Rocket Amount
 	   		//Homing Amount (locked and unlocked)
 	   			//Implement that difference.
+	   			//Homing rockets explosion size.
 	   		//Shot speed and amount.
-	   		//Charge shot  charging speed.
+	   		//Charge shot charging speed.
+
+//TODO: Secret Boss.
+		//CargoShip
+//TODO: Mini story sequence.
+		//Intro.
+		//Ending.
 
 //TODO: Optimizations
 	//TODO: Reduce memory Footprint.
