@@ -161,6 +161,24 @@ ObjectsContainer.prototype.add = function(name, args) {
 	return pooledObject;
 }
 
+ObjectsContainer.prototype.removeAll = function (typesToOmmit) {	
+	for (var i=0; i<this.mainObjects.length; i++){
+		debugger;
+
+		var a = this.mainObjects[i];
+
+		if(a != null){
+			for (var j=a.length-1; j>=0; j--){
+				var object = a[j];
+
+				if(typesToOmmit.search(object.typeId) == -1){
+					object.setDestroyMode(GameObject.NO_CALLBACKS);
+				}
+			}
+		}
+	}	
+}
+
 ObjectsContainer.prototype.addCollisionPair = function (first, second) {	
 	if(this.collisionLists[first] == null){
 		this.collisionLists[first] = [];

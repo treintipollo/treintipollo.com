@@ -213,6 +213,10 @@ EnemyRocketFactory.prototype.start = function() {
 
 EnemyRocketFactory.prototype.stop = function() {
 	this.rocketTimer.stop();
+
+	this.waves 			= [];
+	this.onWaveComplete = null;
+	this.currentWave	= 0;
 }
 
 EnemyRocketFactory.prototype.createEnemyRocket = function() {

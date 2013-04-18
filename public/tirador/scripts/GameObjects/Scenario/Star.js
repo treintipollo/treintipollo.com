@@ -73,11 +73,15 @@ function StartFactory(maxWidth, maxHeight, starSpeedMin, starSpeedMax, creationT
 }
 
 StartFactory.prototype.start = function() {
-	var starCreationTimer = TimeOutFactory.getTimeOut(this.creationTime, -1, this, function(){
+	this.starCreationTimer = TimeOutFactory.getTimeOut(this.creationTime, -1, this, function(){
 		this.createStart();
 	});
 
-	starCreationTimer.start();
+	this.starCreationTimer.start();
+}
+
+StartFactory.prototype.stop = function() {
+	this.starCreationTimer.stop();
 }
 
 StartFactory.prototype.createStart = function() {

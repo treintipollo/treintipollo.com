@@ -228,7 +228,7 @@ CargoShip.prototype.onHPDiminished = function(other) {
 }
 
 CargoShip.prototype.onAllDamageReceived = function(other) {
-	TopLevel.powerUpFactory.create(this.x, this.y, "MultiWeaponPowerUp", 1, false);
+	TopLevel.powerUpFactory.create(this.x, this.y, "HPPowerUp", 1, false);
 	
 	this.explosionArea.init(this, this.size, 35, 10, 30, function(){
 		this.origin.alive = false;
