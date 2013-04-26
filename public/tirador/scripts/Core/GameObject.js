@@ -28,6 +28,16 @@ GameObject.prototype.setDestroyMode = function(mode) {
 	this.alive 		 = false;
 }
 
+GameObject.prototype.destroyWithCallbacks = function(){
+	this.alive 		 = false;
+	this.destroyMode = GameObject.EXECUTE_CALLBACKS;
+}
+
+GameObject.prototype.destroyWithOutCallBacks = function(){
+	this.alive 		 = false;
+	this.destroyMode = GameObject.NO_CALLBACKS;
+}
+
 GameObject.prototype.addCallback = function(delegateName, scope, callback) {
 	if(!this[delegateName]){ this[delegateName] = []; }
 	this[delegateName].push({scope:scope, callback:callback});
@@ -115,10 +125,6 @@ GameObject.prototype.clearGameObject = function(){
 	this.destroy();
 }
 
-GameObject.prototype.destroyWithOutCallBacks = function(){
-	this.alive 		 = false;
-	this.destroyMode = GameObject.NO_CALLBACKS;
-}
 
 GameObject.prototype.afterCreate = function(){}
 GameObject.prototype.init        = function(){}

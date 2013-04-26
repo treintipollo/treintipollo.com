@@ -256,7 +256,7 @@ ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type, l
 						 setAddMode:function(aMode) { this.addMode = aMode; return this; },
 						 setInitCall:function(iCall) { this.initCall = iCall; return this; },
 						 setArgs:function(args) { this.hardArguments = args; return this; },
-						 saveOnReset:function() {this.doNotDestroy = true; }
+						 saveOnReset:function() {this.doNotDestroy = true; return this; }
 
 	};
 
