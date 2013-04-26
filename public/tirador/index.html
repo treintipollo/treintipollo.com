@@ -7,10 +7,24 @@
 	<link rel="stylesheet" href="styles/main.css" />
 </head>
 <body>
+
 	<div id="main">
 		<canvas id="game" width="450" height="800">
 			Sorry, your web browser does not support Canvas content.
 		</canvas>	
+		
+		<div id="hud">
+			<div id="lives"  class="hudText">Lives x 1</div>
+			<div id="level"  class="hudText">2-2</div>
+			<div id="weapon" class="hudText">Shot x 3</div>
+
+			<div class="hp">
+				<span style="width:100%"></span>
+			</div>
+
+			<div id="speed"  class="hudText">Speed x 3</div>
+		</div>
+
 		<h2 id="moveInstructions">Arrow Keys to Move. A to SHOOT</h2>	
 	</div>
 

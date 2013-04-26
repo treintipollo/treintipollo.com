@@ -4,23 +4,19 @@ Splash.inheritsFrom( GameObject );
 
 Splash.prototype.init  = function(onStartComplete, onExitComplete) {
 
-	var space     = TopLevel.textFeedbackDisplayer.showFeedBack("space", -100, -100);
-	var shooting  = TopLevel.textFeedbackDisplayer.showFeedBack("shooting", -100, -100);
+	var space     = TopLevel.textFeedbackDisplayer.showFeedBack("space"    , -100, -100);
+	var shooting  = TopLevel.textFeedbackDisplayer.showFeedBack("shooting" , -100, -100);
 	var adventure = TopLevel.textFeedbackDisplayer.showFeedBack("adventure", -100, -100);
 
 	this.introSplashTimeLine = new TimelineLite({onComplete:onStartComplete});
 
-	this.introSplashTimeLine.fromTo(space    , 1.2, {x:TopLevel.canvas.width/2, y:-100}, {x:TopLevel.canvas.width/2, y:200, ease:Back.easeOut}, 0);
+	this.introSplashTimeLine.fromTo(space    , 1.2, {x:TopLevel.canvas.width/2, y:-100}, {x:TopLevel.canvas.width/2, y:200, ease:Back.easeOut},  0);
 	this.introSplashTimeLine.fromTo(shooting , 1.2, {x:TopLevel.canvas.width/2, y:-100}, {x:TopLevel.canvas.width/2, y:270, ease:Back.easeOut}, -1);
 	this.introSplashTimeLine.fromTo(adventure, 1.2, {x:TopLevel.canvas.width/2, y:-100}, {x:TopLevel.canvas.width/2, y:340, ease:Back.easeOut}, -1);
 
 	this.outroSplashTimeLine = new TimelineLite({onCompleteScope:this, onComplete:function(){
 		onExitComplete();
-
-		this.alive      = false;
-		space.alive     = false;
-		shooting.alive  = false;
-		adventure.alive = false;
+		this.alive = false;
 	}});
 
 	this.outroSplashTimeLine.to(space    , 1.2, {y:"-=500", ease:Back.easeIn},  0)
@@ -29,6 +25,12 @@ Splash.prototype.init  = function(onStartComplete, onExitComplete) {
 
 	this.introSplashTimeLine.stop();
 	this.outroSplashTimeLine.stop();
+}
+
+Splash.prototype.destroy = function() {
+	space.alive     = false;
+	shooting.alive  = false;
+	adventure.alive = false;
 }
 
 Splash.prototype.enter = function() {

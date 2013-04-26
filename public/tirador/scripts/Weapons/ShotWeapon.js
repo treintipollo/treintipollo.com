@@ -148,6 +148,9 @@ ShotWeapon.prototype.destroy = function() {
 	if(this.shotCharge) this.shotCharge.destroy();
 	if(this.callbacks) ArrowKeyHandler.removeCallbacks(this.callbacks);
 	
+	if(this.idleTimer)this.idleTimer.stop();
+	if(this.chargeTimer)this.chargeTimer.stop();
+
 	DestroyUtils.destroyAllProperties(this);
 }
 

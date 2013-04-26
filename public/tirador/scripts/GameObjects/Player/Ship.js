@@ -68,6 +68,7 @@ function Ship() {
 	});
 
 	this.explosionArea = new ExplosionsArea();
+	this.whiteFlash    = new WhiteFlashContainer();
 }
 
 Ship.prototype.afterCreate = function(){
@@ -315,21 +316,34 @@ Ship.prototype.onLastDamageLevelReached = function(other) {
 }
 
 Ship.prototype.onAllDamageReceived = function(other) {
-	this.explosionArea.stop();
-	this.currentMotion.set(this.NONE_STOP_SHAKE_MOTION);
-
-	var d 		  = (TopLevel.canvas.height + 50 - this.y );
-	var speed 	  = d / 100.0;
-	this.rotation = 5;
-	
-	this.explosionArea.init(this, 35, 20, -1, 50);
-
 	this.blockControls 		= true;
 	this.checkingCollisions = false;
 	
-	TweenMax.to(this, speed, {y:this.y + d, rotation:720, ease:Linear.easeNone, onCompleteScope:this, onComplete:function(){
-		this.alive = false;
-	}});	
+	this.currentMotion.set(this.NONE_STOP_SHAKE_MOTION);
+	this.explosionArea.stop();
+	
+	if(TopLevel.playerData.lives <= 0){
+		this.explosionArea.init(
+			this, 
+			35, 
+			30, 
+			100, 
+			30, 
+			FuntionUtils.bindScope(this, function(){ 
+				this.whiteFlash.on(FuntionUtils.bindScope(this, function(){ this.alive = false; }), null, this);
+			})
+		);
+	}else{
+		this.explosionArea.init(this, 35, 20, -1, 50);
+
+		var d 		  = (TopLevel.canvas.height + 50 - this.y );
+		var speed 	  = d / 100.0;
+		this.rotation = 5;
+			
+		TweenMax.to(this, speed, {y:this.y + d, rotation:720, ease:Linear.easeNone, onCompleteScope:this, onComplete:function(){
+			this.alive = false;
+		}});		
+	}
 }
 
 Ship.prototype.onDamageRecoveredOutOfLastLevel = function(other) {

@@ -226,6 +226,8 @@ RocketWeapon.prototype.destroy = function() {
 	if(this.callbacks)
 		ArrowKeyHandler.removeCallbacks(this.callbacks);
 	
+	if(this.idleTimer) this.idleTimer.stop();
+
 	DestroyUtils.destroyAllProperties(this);
 }
 

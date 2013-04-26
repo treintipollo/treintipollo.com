@@ -161,17 +161,19 @@ ObjectsContainer.prototype.add = function(name, args) {
 	return pooledObject;
 }
 
-ObjectsContainer.prototype.removeAll = function (typesToOmmit) {	
-	for (var i=0; i<this.mainObjects.length; i++){
-		debugger;
+ObjectsContainer.prototype.removeAll = function () {
+	var configuration;
 
+	for (var i=0; i<this.mainObjects.length; i++){
 		var a = this.mainObjects[i];
 
 		if(a != null){
 			for (var j=a.length-1; j>=0; j--){
 				var object = a[j];
 
-				if(typesToOmmit.search(object.typeId) == -1){
+				configuration = this.configurations[object.typeId];
+
+				if(!configuration.doNotDestroy){
 					object.setDestroyMode(GameObject.NO_CALLBACKS);
 				}
 			}
@@ -248,11 +250,13 @@ ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type, l
 						 addMode:"push", 
 						 initCall:"apply", 
 						 hardArguments:null,
+						 doNotDestroy:false,
 
 						 setCollisionId:function(cType) { this.collisionType = cType; return this; },
 						 setAddMode:function(aMode) { this.addMode = aMode; return this; },
 						 setInitCall:function(iCall) { this.initCall = iCall; return this; },
-						 setArgs:function(args) { this.hardArguments = args; return this; }
+						 setArgs:function(args) { this.hardArguments = args; return this; },
+						 saveOnReset:function() {this.doNotDestroy = true; }
 
 	};
 

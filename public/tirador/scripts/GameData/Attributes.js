@@ -9,6 +9,7 @@ Attributes.prototype.init = function() {
 	this.updateAttributesTo(0);
 }
 
+Attributes.prototype.addHpDeminishedCallback      = function(scope, callback) { this.addCallback("onHpDeminishedDelegate"     , scope, callback); }
 Attributes.prototype.addDamageReceivedCallback    = function(scope, callback) { this.addCallback("onDamageReceivedDelegate"   , scope, callback); }
 Attributes.prototype.addAllDamageReceivedCallback = function(scope, callback) { this.addCallback("onAllDamageReceivedDelegate", scope, callback); }
 
@@ -17,6 +18,7 @@ Attributes.prototype.removeAllCallbacks = function() {
 
 	this.destroyCallbacks("onDamageReceivedDelegate");
 	this.destroyCallbacks("onAllDamageReceivedDelegate");
+	this.destroyCallbacks("onHpDeminishedDelegate");
 }
 
 Attributes.prototype.updateAttributesTo = function(level) {
@@ -91,6 +93,9 @@ Attributes.prototype.onCollide = function(other) {
 	
 	if(this.currentHp > 0){
 		this.onHPDiminished(other);
+		
+		this.executeCallbacks("onHpDeminishedDelegate", other);
+
 	}else{
 		if(this.increaseLevel()){
 			this.onDamageReceived(other);
