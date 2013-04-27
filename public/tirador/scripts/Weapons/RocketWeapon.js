@@ -14,7 +14,7 @@ RocketWeapon.populateTargetGrid = function(sizeX, sizeY, spaceX, spaceY, offSetX
 
 RocketWeapon.RocketArguments = [null, null, {x:0, y:0}, null, null, null];
 
-function RocketWeapon(id, level, user, hasInstructions) {
+function RocketWeapon(id, name, level, user, hasInstructions) {
 	Weapon.apply(this, arguments);
 
 	this.targetType = "Target";

@@ -65,10 +65,37 @@ Attributes.prototype.recoverHP = function(amount) {
 		}
 
 		this.updateAttributesTo(this.currentLevel);
-		this.currentHp = difference;
+		
+		if(this.currentLevel > 0){			
+			this.currentHp = difference;	
+		}
 	}
 	
 	this.onDamageRecovered();
+}
+
+Attributes.prototype.getTotalHp = function() {
+	var fullAttributes = TopLevel.attributesGetter.getFullAttributes(this.typeId);
+	var totalHp = 0;
+
+	for(var i=0; i<fullAttributes.length; i++){
+		totalHp += fullAttributes[i].hp;		
+	}
+
+	return totalHp;
+}
+
+Attributes.prototype.getCurrentHp = function() {
+	var fullAttributes = TopLevel.attributesGetter.getFullAttributes(this.typeId);
+	
+	var currentHp = this.currentHp;
+	var level     = this.currentLevel + 1;
+
+	for(var i=level; i<fullAttributes.length; i++){
+		currentHp += fullAttributes[i].hp;		
+	}
+
+	return currentHp;
 }
 
 Attributes.prototype.onHPDiminished           		 = function(other) {}

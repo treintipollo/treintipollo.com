@@ -1,6 +1,6 @@
 HomingRocketWeapon.inheritsFrom( RocketWeapon );
 
-function HomingRocketWeapon(id, level, user, hasInstructions) {
+function HomingRocketWeapon(id, name, level, user, hasInstructions) {
 	Weapon.apply(this, arguments);
 
 	this.targetType = "HomingTarget";

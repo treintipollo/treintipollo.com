@@ -140,10 +140,10 @@ var TopLevel = {
 		HOMING_ROCKET_WEAPON: 3,
 
 		weaponsTypes: [
-			function(level, user){ return new ShotWeapon(this.SHOT_WEAPON                 , level, user, true, true, "Small_Shot", "Big_Shot"); }, 
-			function(level, user){ return new RocketWeapon(this.ROCKET_WEAPON             , level, user, true); },
-			function(level, user){ return new ShotWeapon(this.CLONE_SHOT_WEAPON           , level, user, false, false, "Clone_Small_Shot", "Clone_Big_Shot"); },
-			function(level, user){ return new HomingRocketWeapon(this.HOMING_ROCKET_WEAPON, level, user, true); }
+			function(level, user){ return new ShotWeapon(this.SHOT_WEAPON, "Shot", level, user, true, true, "Small_Shot", "Big_Shot"); }, 
+			function(level, user){ return new RocketWeapon(this.ROCKET_WEAPON, "Rocket", level, user, true); },
+			function(level, user){ return new ShotWeapon(this.CLONE_SHOT_WEAPON, "Clone", level, user, false, false, "Clone_Small_Shot", "Clone_Big_Shot"); },
+			function(level, user){ return new HomingRocketWeapon(this.HOMING_ROCKET_WEAPON, "Homing", level, user, true); }
 		],
 		
 		getInitializedWeapon: function(id, level, user, lastWeapon) {
@@ -159,13 +159,30 @@ var TopLevel = {
 		},		
 	},
 
-	playerData: {
+	playerData: Object.make(Delegate.prototype, {
+		constructor    : Delegate,
+
+		INIT 			  :"init",
+		SOFT_RESET        :"softReset",
+		RESET 			  :"reset",
+		WEAPON_INIT       :"weaponInitialized",
+		WEAPON_SET        :"weaponSet",
+		WEAPON_POWER_UP   :"weaponPowerUp",
+		WEAPON_POWER_DOWN :"weaponPowerDown",
+		SPEED_UP          :"speedUp",
+		LIVES_UP          :"increaseLives",
+		HP_UP             :"increaseHp",
+		HP_DOWN           :"decreaseHp",
+		LIVES_DOWN        :"decreaseLives",
+		STAGE_UP          :"increaseStage",
+
 		weapon         : null,
 		lastWeaponType : 0,
 		speedPowerUps  : 0,
 		ship           : null,
 		speed          : 0,
 		lives          : 1, 
+		gameStage      : 0,
 
 		livesReset     : 1,
 		speedReset     : 125,
@@ -176,65 +193,90 @@ var TopLevel = {
 		init: function(ship) {
 			this.reset();
 
-			this.ship 		 = ship;
-			this.ship.weapon = this.initWeapon();
+			this.ship = ship;
+			this.initWeapon();
 
-			ship.addHpDeminishedCallback(this, function(other){ 
-
-			});
+			ship.addHpDeminishedCallback(this, function(other){ this.execute(this.HP_DOWN, this); });
+			ship.addDamageReceivedCallback(this, function(other){ this.execute(this.HP_DOWN, this); });   		
 			
-			ship.addDamageReceivedCallback(this, function(other){ 
-
-			});   
-			
+			this.execute(this.INIT, this);
 		},
 
 		hasLives: function() { return this.lives >= 0 },
+
+		increaseStage: function () { 
+			this.gameStage++; 
+			this.execute(this.STAGE_UP, this);
+		},
 
 		softReset: function() {
 			this.speed  		= this.speedReset;
 			this.speedPowerUps  = 0;
 			this.lives          = this.livesReset;
+			this.gameStage      = 0;
 
 			if(this.weapon) this.weapon.destroy();
 
 			this.lastWeaponType = 0;
-			this.ship.weapon    = this.initWeapon();
+			this.initWeapon();
+
+			this.execute(this.SOFT_RESET, this);
 		},
 
 		reset: function() {
 			this.speed  		= this.speedReset;
 			this.speedPowerUps  = 0;
 			if(this.weapon) this.weapon.destroy();
+
+			this.execute(this.RESET, this);
 		},		
 
 		initWeapon: function() {
 			this.weapon = TopLevel.weaponFactory.getInitializedWeapon(this.lastWeaponType, 0, this.ship, this.weapon);
 			//this.weapon = TopLevel.weaponFactory.getInitializedWeapon(this.lastWeaponType, 8, this.ship, this.weapon);
 			this.lastWeaponType = this.weapon.getId();
-			return this.weapon;
+			this.ship.weapon    = this.weapon;
+
+			this.execute(this.WEAPON_INIT, this);
 		},
 
 		setWeapon: function(weaponId) {
 			if(this.lastWeaponType == weaponId){
 				this.powerUpWeapon();
 			}else{
-				this.weapon = TopLevel.weaponFactory.getInitializedWeapon(weaponId, this.weapon.getLevel(), this.ship, this.weapon);
+				this.weapon         = TopLevel.weaponFactory.getInitializedWeapon(weaponId, this.weapon.getLevel(), this.ship, this.weapon);
 				this.lastWeaponType = this.weapon.getId();
+				this.ship.weapon    = this.weapon;
+
+				this.execute(this.WEAPON_SET, this);
 			}
 		},
 
-		powerUpWeapon  : function() { this.weapon.powerUp();   },
-		powerDownWeapon: function() { this.weapon.powerDown(); },
+		powerUpWeapon  : function() { 
+			this.weapon.powerUp();
+			this.ship.weapon = this.weapon;   
+			this.execute(this.WEAPON_POWER_UP, this);
+		},
+
+		powerDownWeapon: function() {
+			this.weapon.powerDown(); 
+			this.ship.weapon = this.weapon;
+			this.execute(this.WEAPON_POWER_DOWN, this); 
+		},
 		
 		increaseSpeed: function() { 
 			if(this.speed < this.speedCap){
 				this.speed += 10; 
 				this.speedPowerUps++;
+				this.execute(this.SPEED_UP, this);
 			}
 		},
 		
-		increaseLives: function() { this.lives++; },
+		increaseLives: function() { 
+			this.lives++; 
+			this.execute(this.LIVES_UP, this);
+		},
+
 		decreaseLives: function() { 
 			TopLevel.powerUpFactory.addToBulkCreate("WeaponPowerUp", Math.floor(this.weapon.getLevel()/this.weaponDivider) );
 			TopLevel.powerUpFactory.addToBulkCreate("SpeedPowerUp", Math.floor(this.speedPowerUps/this.speedDivider) );
@@ -242,12 +284,14 @@ var TopLevel = {
 
 			this.reset();
 			this.lives--; 
+			this.execute(this.LIVES_DOWN, this);
 		},	
 
 		increaseHP: function() {
 			this.ship.recoverHP(5);
+			this.execute(this.HP_UP, this);
 		},
-	},
+	}),
 
 	playerShipFactory: {
 		playerShipArguments: [],
@@ -265,7 +309,6 @@ var TopLevel = {
 				}else{
 					this.createPlayerShipNoArgs(); 
 				}
-
 			});
 		},
 
@@ -312,20 +355,90 @@ var TopLevel = {
 		}
 	},
 
+	hudController: {
+		updateWeapon : function(playerData) {
+			var name  = playerData.ship.weapon.getName();
+			var level = playerData.ship.weapon.getLevel() + 1;
+			$("#weapon").text( (name + " x " + level).toString() );
+		},
+		
+		updateLives : function(playerData) {
+			var lives = playerData.lives;
+			$("#lives").text( "Lives x " + lives.toString() );
+		},
+
+		updateSpeed : function(playerData) {
+			var speed = playerData.speedPowerUps + 1;
+			$("#speed").text( "Speed x " + speed.toString() );
+		},
+
+		updateStage : function(playerData) {
+			var stage = playerData.gameStage + 1;
+			$("#level").text( (" - " + stage + " - ").toString() );
+		},
+
+		updateHP : function(playerData) {
+			var totalHp   = playerData.ship.getTotalHp();
+			var currentHp = playerData.ship.getCurrentHp();
+
+			var domHp    = $(".hp");
+			var domMeter = $(".hp>span");
+
+			var totalWidth = domHp.width();
+
+			var hpPercentage    = currentHp / totalHp;
+			var meterPercentage = totalWidth * hpPercentage;
+
+			domMeter.stop(true);
+			domMeter.animate({ width:meterPercentage }, 500);
+		},
+
+		init: function(playerData){
+			playerData.add(playerData.INIT, this, function(playerData){
+				this.updateWeapon(playerData);
+				this.updateLives(playerData);
+				this.updateSpeed(playerData);
+				this.updateStage(playerData);
+				this.updateHP(playerData);
+			});
+			playerData.add(playerData.WEAPON_INIT, this, function(playerData){
+				this.updateWeapon(playerData);
+			});
+			playerData.add(playerData.WEAPON_SET, this, function(playerData){
+				this.updateWeapon(playerData);
+			});
+			playerData.add(playerData.WEAPON_POWER_UP, this, function(playerData){
+				this.updateWeapon(playerData);
+			});
+			playerData.add(playerData.WEAPON_POWER_DOWN, this, function(playerData){
+				this.updateWeapon(playerData);
+			});
+			playerData.add(playerData.SPEED_UP, this, function(playerData){
+				this.updateSpeed(playerData);
+			});
+			playerData.add(playerData.LIVES_UP, this, function(playerData){
+				this.updateLives(playerData);	
+			});
+			playerData.add(playerData.LIVES_DOWN, this, function(playerData){
+				this.updateHP(playerData);	
+			});
+			playerData.add(playerData.HP_UP, this, function(playerData){
+				this.updateHP(playerData);
+			});
+			playerData.add(playerData.HP_DOWN, this, function(playerData){
+				this.updateHP(playerData);
+			});
+			playerData.add(playerData.STAGE_UP, this, function(playerData){
+				this.updateStage(playerData);
+			});
+		}
+	},
+
 	rocketFactory: null,
 	starFactory:null
 };
 window.TopLevel = TopLevel;
 	
-//Hud, showing lives, health, speed and weapon level.
-	//Poner todas las cosas en la parte de arriba. (DONE!)
-	//Probar la animacion de la barra de HP. (DONE!)
-	//Hacer un objeto que se ocupe de updatear todas las cosas cuando playerData despache eventos.
-		//Tiene que usar jQuery adentro para seleccionar los objetos del DOM correspondientes.
-		//Tiene que recivir lo que haga falta para hacer el update.
-	//Actualizar el hud cada vez que se genera un player. 
-		
-
 //BUG: Se cuelga cuando perdes contra el boss con hijos que disparan laser
 //BUG: Make screen smaller and wider.
 
@@ -435,8 +548,13 @@ $(function(){
 		createPowerUps();
 		configurePlayerShipFactory();
 
+		//This takes care of updating the HUD
+		TopLevel.hudController.init(TopLevel.playerData);
+
+		//The reference to the player ship held in PlayerData
 		TopLevel.playerData.ship = TopLevel.playerShipFactory.firstShip(TopLevel.canvas.width/2, TopLevel.canvas.height + 50);
-		TopLevel.setUpGame 		 = setUpGame;
+		//Used to reset the game when needed.
+		TopLevel.setUpGame = setUpGame;
 
 		//This is the game basic logic. It takes care of creating the baddies in the order specified.
 		setUpGame();
@@ -546,6 +664,9 @@ $(function(){
 						bossesCreated--;
 						if(bossesCreated <= 0){
 							TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
+
+							TopLevel.playerData.increaseStage();
+
 							rocketFactory.start();
 						}
 					});
@@ -566,6 +687,8 @@ $(function(){
 						boss.addOnDestroyCallback(this, function(obj){
 							TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
 							TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
+
+							TopLevel.playerData.increaseStage();
 
 							rocketFactory.start();
 						});

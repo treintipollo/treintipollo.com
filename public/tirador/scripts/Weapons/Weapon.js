@@ -1,4 +1,4 @@
-function Weapon(id, level, user, hasInstructions){
+function Weapon(id, name, level, user, hasInstructions){
 	this.user      		 = user;
 	this.level	   		 = level;
 	this.hasInstructions = hasInstructions;
@@ -8,6 +8,7 @@ function Weapon(id, level, user, hasInstructions){
 	
 	this.voleyAmounts;
 	this.id = id;
+	this.name = name;
 
 	if(this.hasInstructions)
 		this.createInstructions();
@@ -45,6 +46,10 @@ Weapon.prototype.getLevel = function() {
 
 Weapon.prototype.getId = function() {
 	return this.id;
+}
+
+Weapon.prototype.getName = function() {
+	return this.name;
 }
 
 Weapon.prototype.createInstructions = function() {}

@@ -33,7 +33,7 @@ ShotWeapon.Triple_Power_Shot_3_C = [null, null, 7, 550, 25, 10, 270, 60, "#89F28
 
 ShotWeapon.inheritsFrom( Weapon );
 
-function ShotWeapon(id, level, user, hasInstructions, usePowerShot, shotType, bigShotType) {
+function ShotWeapon(id, name, level, user, hasInstructions, usePowerShot, shotType, bigShotType) {
 	Weapon.apply(this, arguments);
 
 	this.usePowerShot = usePowerShot;
