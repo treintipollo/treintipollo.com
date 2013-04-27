@@ -12,6 +12,10 @@ StateMachine.prototype.add = function(init, update, complete) {
 }
 
 StateMachine.prototype.set = function(stateId, newStateArgsInitArgs, lastStateCompleteArgs) {
+	if(this.states == null){
+		return;
+	}
+
 	if(this.currentStateId != -1 && this.states[this.currentStateId].complete){
 		this.states[this.currentStateId].complete.apply(this.scope, lastStateCompleteArgs);
 	}

@@ -439,7 +439,6 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 	
-//BUG: Se cuelga cuando perdes contra el boss con hijos que disparan laser
 //BUG: Make screen smaller and wider.
 
 //TODO: Mini story sequence.
