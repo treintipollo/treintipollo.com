@@ -301,7 +301,7 @@ Ship.prototype.onDamageReceived = function(other) {
 	vec.dir.x = Math.cos(rA + vec.angle) * 80;
 	vec.dir.y = Math.sin(rA + vec.angle) * 80;
 
-	this.knockBackTween = TweenMax.to(this, 0.4, {x:this.x + vec.dir.x, y:this.y + vec.dir.y, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){	
+	TweenMax.to(this, 0.4, {x:this.x + vec.dir.x, y:this.y + vec.dir.y, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){	
 		this.blockDamage = false;
 	}});
 	

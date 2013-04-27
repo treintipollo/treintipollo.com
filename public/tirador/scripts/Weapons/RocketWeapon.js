@@ -230,12 +230,3 @@ RocketWeapon.prototype.destroy = function() {
 
 	DestroyUtils.destroyAllProperties(this);
 }
-
-RocketWeapon.prototype.createInstructions = function() {
-	$("#main #shotInstructions").remove();	
-	
-	var instructions = document.createElement("h2");
-	instructions.id = "shotInstructions";
-	instructions.innerHTML = "S to change AIM -" + "- Weapon Level: " + this.level;
-	$("#main").append(instructions);
-}

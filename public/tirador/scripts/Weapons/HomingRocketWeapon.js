@@ -154,12 +154,3 @@ HomingRocketWeapon.prototype.init = function(container) {
 
 	this.callbacks.push(c);
 }
-
-HomingRocketWeapon.prototype.createInstructions = function() {
-	$("#main #shotInstructions").remove();	
-	
-	var instructions = document.createElement("h2");
-	instructions.id = "shotInstructions";
-	instructions.innerHTML = "S to change AIM -" + "- Weapon Level: " + this.level;
-	$("#main").append(instructions);
-}

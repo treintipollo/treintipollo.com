@@ -1,7 +1,13 @@
 #main {
-	margin: 0 auto;
-	position: relative;
+	position: fixed;
+	
 	width: 450px;
+	height: 700px;
+
+	top:50%;
+    left:50%;
+    margin-left:-225px;
+    margin-top:-350px;
 }
 
 .hud {
@@ -9,7 +15,7 @@
 }
 
 .hudText {
-	color: #ff0000;
+	color: #ffffff;
 	font-family: 'Russo One', sans-serif;
 }
 
@@ -79,16 +85,6 @@
 }
 
 h1 {
-	text-align: center;
-	font-family: 'Russo One', sans-serif;
-}
-
-#moveInstructions {
-	text-align: center;
-	font-family: 'Russo One', sans-serif;
-}
-
-#shotInstructions {
 	text-align: center;
 	font-family: 'Russo One', sans-serif;
 }

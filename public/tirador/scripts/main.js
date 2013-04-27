@@ -439,7 +439,7 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 	
-//BUG: Make screen smaller and wider.
+//BUG: Se rompe el laser del Boss y no colisiona mas hasta que chocas con otra cosa
 
 //TODO: Mini story sequence.
 		//Intro.
@@ -761,7 +761,7 @@ $(function(){
 
 		TopLevel.container.createTypePool("Line"          , Line, 3);
 		TopLevel.container.createTypePool("PercentageLine", PercentageLine, 66);
-		TopLevel.container.createTypePool("Text"	      , ConcreteText, 6);
+		TopLevel.container.createTypePool("Text"	      , ConcreteText, 8);
 		TopLevel.container.createTypePool("WhiteFlash"    , WhiteFlash, 2);
 
 		TopLevel.container.createTypePool("Splash"    , Splash, 1);
@@ -926,6 +926,8 @@ $(function(){
 		TopLevel.container.createTypeConfiguration("space"    , "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"SPACE", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
 		TopLevel.container.createTypeConfiguration("shooting" , "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"SHOOTING", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
 		TopLevel.container.createTypeConfiguration("adventure", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"ADVENTURE", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("controls_1", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"'A' -- Shoot", font:"Russo One", size:30, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("controls_2", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"'Arrows' -- Move", font:"Russo One", size:30, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
 
 		TopLevel.container.createTypeConfiguration("Line"		   , "Line"	   		 , middleLayerIndex);
 		TopLevel.container.createTypeConfiguration("PercentageLine", "PercentageLine", middleLayerIndex);

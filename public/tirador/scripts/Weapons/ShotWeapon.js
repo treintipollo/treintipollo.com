@@ -154,15 +154,6 @@ ShotWeapon.prototype.destroy = function() {
 	DestroyUtils.destroyAllProperties(this);
 }
 
-ShotWeapon.prototype.createInstructions = function() {
-	$("#main #shotInstructions").remove();	
-
-	var instructions = document.createElement("h2");
-	instructions.id = "shotInstructions";
-	instructions.innerHTML = "Stay IDLE to CHARGE SHOT -" + "- Weapon Level: " + this.level;
-	$("#main").append(instructions);
-}
-
 function ShotVoley(type, shots, user, container, onComplete) {
 	var shotCount = shots.length;
 

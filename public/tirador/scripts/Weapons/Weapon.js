@@ -9,9 +9,6 @@ function Weapon(id, name, level, user, hasInstructions){
 	this.voleyAmounts;
 	this.id = id;
 	this.name = name;
-
-	if(this.hasInstructions)
-		this.createInstructions();
 }
 
 Weapon.prototype.init = function(container) {
@@ -25,9 +22,6 @@ Weapon.prototype.update = function() {}
 Weapon.prototype.powerUp = function() {
 	if(this.level < this.voleyAmounts.length-1){
 		this.level++;
-
-		if(this.hasInstructions)
-			this.createInstructions();
 	}	
 }
 
@@ -51,5 +45,3 @@ Weapon.prototype.getId = function() {
 Weapon.prototype.getName = function() {
 	return this.name;
 }
-
-Weapon.prototype.createInstructions = function() {}
