@@ -176,10 +176,12 @@ var TopLevel = {
 		LIVES_DOWN        :"decreaseLives",
 		STAGE_UP          :"increaseStage",
 
-		weapon         : null,
+		ship           : null,
+		//weapon         : null,
+		partner        : null,
+
 		lastWeaponType : 0,
 		speedPowerUps  : 0,
-		ship           : null,
 		speed          : 0,
 		lives          : 1, 
 		gameStage      : 0,
@@ -191,9 +193,10 @@ var TopLevel = {
 		speedDivider   : 4,
 
 		init: function(ship) {
+			this.ship = ship;
+
 			this.reset();
 
-			this.ship = ship;
 			this.initWeapon();
 
 			ship.addHpDeminishedCallback(this, function(other){ this.execute(this.HP_DOWN, this); });
@@ -215,7 +218,8 @@ var TopLevel = {
 			this.lives          = this.livesReset;
 			this.gameStage      = 0;
 
-			if(this.weapon) this.weapon.destroy();
+			if(this.ship.weapon) 
+				this.ship.weapon.destroy();
 
 			this.lastWeaponType = 0;
 			this.initWeapon();
@@ -226,16 +230,18 @@ var TopLevel = {
 		reset: function() {
 			this.speed  		= this.speedReset;
 			this.speedPowerUps  = 0;
-			if(this.weapon) this.weapon.destroy();
+			
+			if(this.ship.weapon) 
+				this.ship.weapon.destroy();
 
 			this.execute(this.RESET, this);
 		},		
 
 		initWeapon: function() {
-			this.weapon = TopLevel.weaponFactory.getInitializedWeapon(this.lastWeaponType, 0, this.ship, this.weapon);
+			this.ship.weapon = TopLevel.weaponFactory.getInitializedWeapon(this.lastWeaponType, 0, this.ship, this.weapon);
 			//this.weapon = TopLevel.weaponFactory.getInitializedWeapon(this.lastWeaponType, 8, this.ship, this.weapon);
-			this.lastWeaponType = this.weapon.getId();
-			this.ship.weapon    = this.weapon;
+			this.lastWeaponType = this.ship.weapon.getId();
+			//this.ship.weapon    = this.weapon;
 
 			this.execute(this.WEAPON_INIT, this);
 		},
@@ -244,23 +250,23 @@ var TopLevel = {
 			if(this.lastWeaponType == weaponId){
 				this.powerUpWeapon();
 			}else{
-				this.weapon         = TopLevel.weaponFactory.getInitializedWeapon(weaponId, this.weapon.getLevel(), this.ship, this.weapon);
-				this.lastWeaponType = this.weapon.getId();
-				this.ship.weapon    = this.weapon;
+				this.ship.weapon    = TopLevel.weaponFactory.getInitializedWeapon(weaponId, this.weapon.getLevel(), this.ship, this.weapon);
+				this.lastWeaponType = this.ship.weapon.getId();
+				//this.ship.weapon    = this.weapon;
 
 				this.execute(this.WEAPON_SET, this);
 			}
 		},
 
 		powerUpWeapon  : function() { 
-			this.weapon.powerUp();
-			this.ship.weapon = this.weapon;   
+			this.ship.weapon.powerUp();
+			//this.ship.weapon = this.weapon;   
 			this.execute(this.WEAPON_POWER_UP, this);
 		},
 
 		powerDownWeapon: function() {
-			this.weapon.powerDown(); 
-			this.ship.weapon = this.weapon;
+			this.ship.weapon.powerDown(); 
+			//this.ship.weapon = this.weapon;
 			this.execute(this.WEAPON_POWER_DOWN, this); 
 		},
 		
@@ -439,29 +445,16 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 	
-//BUG: Se rompe el laser del Boss y no colisiona mas hasta que chocas con otra cosa
-
 //TODO: Mini story sequence.
-		//Intro.
-		//Ending.
+	//Intro.
+	//Ending.
 
 //TODO: Emoticons.
 	//Ship.
-	//Boss
-	//Emoticon Manager
+	//Boss.
+	//Emoticon Manager.
 
-//TODO: Tweek base damages and damage multipliers. Everything.
-	   //Tweek powerup show up ratio.
-	   //Tweek boss attacks.
-	   //Tweek power up bonuses.
-	   //Tweek weapons
-	   		//Rocket Amount
-	   		//Homing Amount (locked and unlocked)
-	   			//Implement that difference.
-	   			//Homing rockets explosion size.
-	   		//Shot speed and amount.
-	   		//Charge shot charging speed.
-
+//BUG: Se rompe el laser del Boss y no colisiona mas hasta que chocas con otra cosa
 
 //TODO: Optimizations
 	//TODO: Reduce memory Footprint.
@@ -477,6 +470,18 @@ window.TopLevel = TopLevel;
 //TODO: Use TimeOutFactory in ArrowKeyHandler.
 
 //TODO:Single Utility Object, so that the global scope has less litter.
+
+//TODO: Tweek base damages and damage multipliers. Everything.
+	   //Tweek powerup show up ratio.
+	   //Tweek boss attacks.
+	   //Tweek power up bonuses.
+	   //Tweek weapons
+	   		//Rocket Amount
+	   		//Homing Amount (locked and unlocked)
+	   			//Implement that difference.
+	   			//Homing rockets explosion size.
+	   		//Shot speed and amount.
+	   		//Charge shot charging speed.
 
 //TODO: Hacer que el add del ObjectContainer te devuelva el objeto que va a usar, con todo configurado menos la inicializacion. 
 		//De ahi puedo llamar directamente al init de ese objeto con los parametros que yo quiera, sin andar creado arrays intermedios.
@@ -551,7 +556,7 @@ $(function(){
 		TopLevel.hudController.init(TopLevel.playerData);
 
 		//The reference to the player ship held in PlayerData
-		TopLevel.playerData.ship = TopLevel.playerShipFactory.firstShip(TopLevel.canvas.width/2, TopLevel.canvas.height + 50);
+		TopLevel.playerData.ship = TopLevel.playerShipFactory.firstShip(TopLevel.canvas.width/2 - 45, TopLevel.canvas.height + 50);
 		//Used to reset the game when needed.
 		TopLevel.setUpGame = setUpGame;
 
@@ -566,7 +571,12 @@ $(function(){
 		var starFactory   = TopLevel.starFactory;
 		var rocketFactory = TopLevel.rocketFactory;
 
-		var ship = TopLevel.playerData.ship;
+		var ship = TopLevel.playerData.ship;		
+
+		//Lazy way of creating partner
+		var partnerShip    = TopLevel.container.add("Ship", [ship.x + 90, ship.y, TopLevel.container]);
+		partnerShip.weapon = TopLevel.weaponFactory.getInitializedWeapon(TopLevel.weaponFactory.SHOT_WEAPON, 0, partnerShip, partnerShip.weapon);
+		TopLevel.playerData.partner = partnerShip;
 
 		var w = TopLevel.canvas.width;
 		var h = TopLevel.canvas.height;
@@ -740,7 +750,7 @@ $(function(){
 	var createObjectPools = function(){
 		//This Pools can not be reduced by means of clever coding.
 		//-------------------------------------------------------
-		TopLevel.container.createTypePool("Ship"	 , Ship		, 1);
+		TopLevel.container.createTypePool("Ship"	 , Ship		, 2);
 		TopLevel.container.createTypePool("CloneShip", CloneShip, 10);
 		TopLevel.container.createTypePool("CargoShip", CargoShip, 1);
 
@@ -802,7 +812,7 @@ $(function(){
 		TopLevel.container.createTypePool("LivesPowerUp" 		, LivesPowerUp, 1);
 		TopLevel.container.createTypePool("MultiPowerUp" 		, MultiPowerUp, 2);
 		//Insignificant gain possible here. Using a method similar that to the rockets. 50% reduction. Out of 6 objects is not that much :/ 
-		TopLevel.container.createTypePool("PowerShot"      , PowerShot, 1);
+		TopLevel.container.createTypePool("PowerShot"      , PowerShot, 2);
 		TopLevel.container.createTypePool("PowerShotSine"  , PowerShotSine, 2);
 		TopLevel.container.createTypePool("PowerShotCircle", PowerShotCircle, 3);
 	}
@@ -1196,14 +1206,6 @@ $(function(){
 	//It will be created once the document gains focus
 	if(document.hasFocus()){ 
 		creation();
-
-		// ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.Z, FuntionUtils.bindScope(this, function() {
-
-		// 	$(".hp>span").data("origWidth", $(".hp>span").width())
-		// 	  			 .width(0)
-		// 	   			 .animate({ width: $(".hp>span").data("origWidth") }, 1000);
-
-		// }));
 	}
 });
 	

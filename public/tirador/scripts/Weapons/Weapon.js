@@ -28,9 +28,6 @@ Weapon.prototype.powerUp = function() {
 Weapon.prototype.powerDown = function() {
 	if(this.level > 0){
 		this.level--;
-		
-		if(this.hasInstructions)
-			this.createInstructions();
 	}
 }
 
