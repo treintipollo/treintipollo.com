@@ -282,7 +282,7 @@ Ship.prototype.onDamageReceived = function(other) {
 
 	//This is bullshit, that's what it is.
 	var rA = 0;	
-	if(other.typeId != "BadGuy"){
+	if(other.typeId != "IntroBadGuy"){
 		rA = Random.getRandomArbitary(-25, 25) * (Math.PI/180);
 	}else{
 		this.weapon.stop();

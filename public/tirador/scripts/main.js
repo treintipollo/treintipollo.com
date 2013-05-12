@@ -25,6 +25,8 @@ var TopLevel = {
 		
 		this.playerData.softReset();
 
+		this.animationActors.reset();
+
 		this.setUpGame();
 	},
 
@@ -453,6 +455,9 @@ var TopLevel = {
 		},
 
 		getPartner: function() {
+			if(this.partner)
+				return this.partner;
+
 			this.partner = TopLevel.container.add("Ship", [this.ship.x + 90, this.ship.y, TopLevel.container]);
 			this.partner.weapon = TopLevel.weaponFactory.getInitializedWeapon(TopLevel.weaponFactory.SHOT_WEAPON, 0, this.partner, this.partner.weapon);
 
@@ -460,11 +465,37 @@ var TopLevel = {
 				this.disablePlayerMovement();
 			}, true);
 
+			this.partner.addOnRecicleCallback(this, function(){
+				this.partner = null;
+			}, true);
+
 			return this.partner;
 		},
 
-		getBadguy: function(onTractorBeamComplete) {
-			this.badguy = TopLevel.container.add("BadGuy", [this.ship.x + 45, TopLevel.canvas.height + 80, TopLevel.container, this.partner, onTractorBeamComplete]);
+		getIntroBadguy: function(onTractorBeamComplete) {
+			if(this.badguy)
+				return this.badguy;
+			
+			this.badguy = TopLevel.container.add("IntroBadGuy", [TopLevel.canvas.width/2, TopLevel.canvas.height + 80, TopLevel.container, this.partner, onTractorBeamComplete]);
+
+			this.badguy.addOnRecicleCallback(this, function(){
+				this.badguy = null;
+			}, true);
+
+			return this.badguy;
+		},
+
+		getMiddleBadguy: function(onDefeat) {
+			if(this.badguy)
+				return this.badguy;
+			
+			this.badguy = TopLevel.container.add("MiddleBadGuy", [TopLevel.canvas.width/2, -80, TopLevel.container, this.partner, this.ship]);
+
+			this.badguy.addOnRecicleCallback(this, function(){
+				onDefeat();
+				this.badguy = null;
+			}, true);
+
 			return this.badguy;
 		},
 
@@ -483,7 +514,9 @@ var TopLevel = {
 		badGuyEscape: function(onEscapeComplete) {
 			this.partner.setAllExhaustState(Exhaust.OFF);
 			this.partner.checkingCollisions = false;
-			
+			this.partner.rotation = 10;
+			this.partner.weapon.stop();
+
 			this.ship.blockControls = false;
 			this.ship.weapon.start();
 			
@@ -499,25 +532,28 @@ var TopLevel = {
 		enablePlayerMovement: function() {
 			this.ship.blockControls    = false;
 			this.partner.blockControls = false;
+		},
+
+		reset: function () {
+			this.ship     = null;
+			this.partner  = null;
+			this.badguy   = null;
+			this.bossArgs = null;
 		}	
 	}
 };
 window.TopLevel = TopLevel;
 	
-//TODO: Mini story sequence.
-	//Intro.
-		// Change game name. Once upon, ; a time... ; IN SPACE! (DONE!)
-		// Once title goes away, wait a few seconds. (DONE!)
-		// Kidnap sequence (DONE!)
-		// Choose player
-		// Bad guy shoots missiles and escapes. (DONE!)
-		// Game starts.
-
-		//Make Badguy collidable with player shots
-	
+//TODO: Mini story sequence.	
 	//Fight with Badguy before each boss.
-	
+		//When the fight is complete he calls the Big Boss.
+			//Make the rocket class that will handle all the rockets used by the BadGuy
+		//He should be carrying the partner while you fight him.
+
 	//Ending.
+
+//Design female ship.
+	//Make male and female ship drawing swapable.
 
 //TODO: Emoticons.
 	//Ship.
@@ -650,52 +686,20 @@ $(function(){
 		var h = TopLevel.canvas.height;
 
 		var currentBoss = -1;
-		// var bosses      = [{name:"Boss_1_A", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null},
-		// 				   {name:"Boss_1_B", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
-		// 				   {name:"Boss_1_C", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
-						   
-		// 				   {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-100, y:h/2-150, time:3}, powerUp:null},
-		// 				   {name:"SubBoss_1", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+100, y:h/2-150, time:3}, powerUp:null},
+				
+		var bosses = [
+			{name:"Boss_1_B", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
+			{name:"Boss_1_C", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
+							   
+			{name:"Boss_1_D", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
+		    {name:"Boss_1_E", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"LivesPowerUp"},
+		   
+		    {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-150, y:h/2-150, time:3}, powerUp:null},
+		    {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+150, y:h/2-150, time:3}, powerUp:null},
+		    {name:"SubBoss_3", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2,     y:h/2-200, time:3}, powerUp:null},
 
-		// 				   {name:"Boss_1_D", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
-						   
-		// 				   {name:"SubBoss_2", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-100, y:h/2-150, time:3}, powerUp:null},
-		// 				   {name:"SubBoss_2", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+100, y:h/2-150, time:3}, powerUp:null},
-
-		// 				   {name:"Boss_1_E", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"LivesPowerUp"},
-						   
-		// 				   {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-150, y:h/2-150, time:3}, powerUp:null},
-		// 				   {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+150, y:h/2-150, time:3}, powerUp:null},
-		// 				   {name:"SubBoss_3", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2,     y:h/2-200, time:3}, powerUp:null},
-
-		// 				   {name:"Boss_1_F", createNext:false , intro:"warning", winMessage:"complete", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null}];
-		
-		var bosses      = [{name:"Boss_1_B", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
-						   {name:"Boss_1_C", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
-						   
-						   {name:"Boss_1_D", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
-						   {name:"Boss_1_E", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"LivesPowerUp"},
-						   
-						   {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-150, y:h/2-150, time:3}, powerUp:null},
-						   {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+150, y:h/2-150, time:3}, powerUp:null},
-						   {name:"SubBoss_3", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2,     y:h/2-200, time:3}, powerUp:null},
-
-						   {name:"Boss_1_F", createNext:false , intro:"warning", winMessage:"complete", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null}];
-
-		//First Set
-		// rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 40, -50, 200, 350, 800, 10, false, "SpeedPowerUp");	
-		// rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -50, -70, 600, 10, false, "MultiWeaponPowerUp");
-		// rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 30, -50, 200, 350, 800, 10, true , "WeaponPowerUp,MultiWeaponPowerUp,SpeedPowerUp");
-		
-		//Second Set
-		// rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, -50, 100, 500, 600, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
-		// rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -90, -100, 600, 10, false, "MultiWeaponPowerUp");
-		// rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, -50, 100, 500, 600, 10, true,  "WeaponPowerUp,SpeedPowerUp");
-		
-		//Third Set
-		// rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 20, 100, 500, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
-		// rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -200, -250, 600, 10, false, "MultiWeaponPowerUp");
-		// rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 100, 500, 500, 10, true,  "WeaponPowerUp,SpeedPowerUp");
+		    {name:"Boss_1_F", createNext:false , intro:"warning", winMessage:"complete", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null}
+	    ];
 
 		//First Set
 		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 25, -50, 200, 350, 800, 5, false, "SpeedPowerUp");	
@@ -745,30 +749,31 @@ $(function(){
 					});
 
 				}else{
-					var intro = TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.intro, -200, TopLevel.canvas.height/2 );
+					TopLevel.animationActors.getMiddleBadguy(function(){
+						var intro = TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.intro, -200, TopLevel.canvas.height/2 );
 
-					intro.addOnDestroyCallback(this, function(obj){
-						var boss = TopLevel.container.add(bossInit.name, bossInit.args.call(TopLevel.animationActors));		
+						intro.addOnDestroyCallback(this, function(obj){
+							var boss = TopLevel.container.add(bossInit.name, bossInit.args.call(TopLevel.animationActors));		
 
-						bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
+							bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
 
-						boss.gotoPosition(bossInit.targetPos.x, bossInit.targetPos.y, bossInit.targetPos.time, function(){
-							this.startAttack();
-						}, null, true);
+							boss.gotoPosition(bossInit.targetPos.x, bossInit.targetPos.y, bossInit.targetPos.time, function(){
+								this.startAttack();
+							}, null, true);
 
-						boss.addOnDestroyCallback(this, function(obj){
-							TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
-							TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
+							boss.addOnDestroyCallback(this, function(obj){
+								TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
+								TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
 
-							TopLevel.playerData.increaseStage();
+								TopLevel.playerData.increaseStage();
 
-							rocketFactory.start();
+								rocketFactory.start();
+							});
 						});
 					});
 				}
 				
-			}while(bossInit.createNext)
-
+			}while(bossInit.createNext);
 		});
 		
 		starFactory.start();
@@ -814,7 +819,7 @@ $(function(){
 		//This Pools can not be reduced by means of clever coding.
 		//-------------------------------------------------------
 		TopLevel.container.createTypePool("Ship"  , Ship   , 2);
-		TopLevel.container.createTypePool("BadGuy", BadGuy , 1);
+		TopLevel.container.createTypePool("BadGuy", ConcreteBadGuy , 1);
 
 		TopLevel.container.createTypePool("CloneShip", CloneShip, 10);
 		TopLevel.container.createTypePool("CargoShip", CargoShip, 1);
@@ -898,8 +903,9 @@ $(function(){
 
 		//Configurations
 		//Collidable GameObjects
-		TopLevel.container.createTypeConfiguration("Ship", "Ship", middleLayerIndex).setCollisionId("Ship").saveOnReset();
-		TopLevel.container.createTypeConfiguration("BadGuy", "BadGuy", middleLayerIndex).setCollisionId("BadGuy");
+		TopLevel.container.createTypeConfiguration("Ship", "Ship", middleLayerIndex).setCollisionId("Ship").saveOnReset();		
+		TopLevel.container.createTypeConfiguration("IntroBadGuy", "BadGuy", middleLayerIndex).setCollisionId("BadGuy").setArgs({ tProto:IntroBadGuy.prototype});
+		TopLevel.container.createTypeConfiguration("MiddleBadGuy", "BadGuy", middleLayerIndex).setCollisionId("BadGuy").setArgs({ tProto:MiddleBadGuy.prototype});
 
 		TopLevel.container.createTypeConfiguration("Splash", "Splash", middleLayerIndex);
 
@@ -1014,6 +1020,7 @@ $(function(){
 		TopLevel.container.createTypeConfiguration("adventure", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"IN SPACE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
 		TopLevel.container.createTypeConfiguration("controls_1", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"'A' -- Shoot", font:"Russo One", size:30, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
 		TopLevel.container.createTypeConfiguration("controls_2", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"'Arrows' -- Move", font:"Russo One", size:30, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("playerMarker", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"^", font:"Russo One", size:50, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
 
 		TopLevel.container.createTypeConfiguration("Line"		   , "Line"	   		 , middleLayerIndex);
 		TopLevel.container.createTypeConfiguration("PercentageLine", "PercentageLine", middleLayerIndex);
@@ -1035,7 +1042,6 @@ $(function(){
 	var createCollisionPairs = function(){
 		//Collision pairs
 		TopLevel.container.addCollisionPair("Ship", "BadGuy");		
-
 		TopLevel.container.addCollisionPair("Ship", "PowerUp");		
 		TopLevel.container.addCollisionPair("Ship", "BeamCollider");
 		TopLevel.container.addCollisionPair("Ship", "Common_Baddy");
@@ -1043,18 +1049,22 @@ $(function(){
 		TopLevel.container.addCollisionPair("Ship", "Boss_1");
 		TopLevel.container.addCollisionPair("Ship", "TentacleSegment");
 		
+		TopLevel.container.addCollisionPair("Shot", "BadGuy");
 		TopLevel.container.addCollisionPair("Shot", "Common_Baddy");		
 		TopLevel.container.addCollisionPair("Shot", "Boss_1");		
 		TopLevel.container.addCollisionPair("Shot", "TentacleSegment");
 		
+		TopLevel.container.addCollisionPair("PowerShot", "BadGuy");
 		TopLevel.container.addCollisionPair("PowerShot", "Common_Baddy");
 		TopLevel.container.addCollisionPair("PowerShot", "Boss_1");
 		TopLevel.container.addCollisionPair("PowerShot", "TentacleSegment");
 		
+		TopLevel.container.addCollisionPair("Rocket", "BadGuy");
 		TopLevel.container.addCollisionPair("Rocket", "Common_Baddy");
 		TopLevel.container.addCollisionPair("Rocket", "Boss_1");
 		TopLevel.container.addCollisionPair("Rocket", "TentacleSegment");
 		
+		TopLevel.container.addCollisionPair("Target", "BadGuy");
 		TopLevel.container.addCollisionPair("Target", "Common_Baddy");
 		TopLevel.container.addCollisionPair("Target", "Boss_1");		
 	}
@@ -1065,9 +1075,10 @@ $(function(){
 		TopLevel.attributesGetter.setAttributes("Ship", 10 , 1 , 10 );
 		TopLevel.attributesGetter.setAttributes("Ship", 10 , 1 , 10 );
 
-		TopLevel.attributesGetter.setAttributes("BadGuy", 10 , 1 , 10 );
-		TopLevel.attributesGetter.setAttributes("BadGuy", 10 , 1 , 10 );
-		TopLevel.attributesGetter.setAttributes("BadGuy", 10 , 1 , 10 );
+		TopLevel.attributesGetter.setAttributes("IntroBadGuy", 100 , 1 , 10 );
+		
+		TopLevel.attributesGetter.setAttributes("MiddleBadGuy", 10 , 1 , 10 );
+		TopLevel.attributesGetter.setAttributes("MiddleBadGuy", 10 , 1 , 10 );
 
 		TopLevel.attributesGetter.setAttributes("CloneShip", 10 , 3 , 10 );
 		TopLevel.attributesGetter.setAttributes("CargoShip", 10 , 1 , 10 );
@@ -1259,8 +1270,36 @@ $(function(){
 
 					splash = this.container.add("Splash", [
 						function(){
+
+							var playerMarker = TopLevel.textFeedbackDisplayer.showFeedBack("playerMarker", ship.x, ship.y + 50); 
+
+							var swapShip = function() {
+								var shipX = ship.x;
+								var shipY = ship.y;
+
+								var partnerX = TopLevel.animationActors.getPartner().x; 
+								var partnerY = TopLevel.animationActors.getPartner().y;
+
+								ship.x = partnerX;
+								ship.y = partnerY;
+
+								playerMarker.x = ship.x;
+
+								TopLevel.animationActors.getPartner().x = shipX;
+								TopLevel.animationActors.getPartner().y = shipY;
+							}
+
+							var leftCallback = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.LEFT, FuntionUtils.bindScope(this, swapShip));
+							var rightCallback = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.RIGHT, FuntionUtils.bindScope(this, swapShip));
+
 							ship.addFirstShotCallback(TopLevel, function(ship){
 								if(this.hideSplash){
+
+									playerMarker.alive = false;
+
+									ArrowKeyHandler.removeKeyUpCallback(ArrowKeyHandler.LEFT, leftCallback);
+									ArrowKeyHandler.removeKeyUpCallback(ArrowKeyHandler.RIGHT, rightCallback);
+									
 									this.hideSplash = false;
 									splash.exit();
 									splash = null;
@@ -1292,7 +1331,7 @@ $(function(){
 
 	var introSequence = function() {
 		TimeOutFactory.getTimeOut(2000, 1, this, function() {
-			var badGuy = TopLevel.animationActors.getBadguy(function(){
+			var badGuy = TopLevel.animationActors.getIntroBadguy(function(){
 				TopLevel.animationActors.badGuyEscape(function(){
 					TopLevel.rocketFactory.start();
 				});
