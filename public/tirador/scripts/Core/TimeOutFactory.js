@@ -3,13 +3,14 @@ $(function(){
 
 		timeOuts : [],
 
-		getTimeOut: function(delay, repeatCount, scope, callback) {
+		getTimeOut: function(delay, repeatCount, scope, callback, removeOnComplete) {
 			var self = this;
 
 			var timeOutObject = {
 				callback:callback, 
 				scope:scope, 
 				delay:delay,
+				removeOnComplete:removeOnComplete,
 				repeateCount:repeatCount,
 				initRepeatCount:repeatCount,
 				onComplete:null,
@@ -75,6 +76,10 @@ $(function(){
 
 								if(to.onComplete != null){
 									to.onComplete.call(to.scope);
+
+									if(to.removeOnComplete){
+										to.remove();
+									}
 								}
 							}
 						}

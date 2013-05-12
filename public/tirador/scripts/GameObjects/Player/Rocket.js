@@ -279,7 +279,6 @@ HomingRocket.prototype.moveToDeployPosition = function() {
 
 HomingRocket.prototype.update = function(delta) {
 	if(this.startLockOnMotion){
-
 		this.targetAngle = (Math.atan2(this.y - this.target.y, this.x - this.target.x) * (180/Math.PI)) - 90;
 		this.targetAngle = this.targetAngle - this.rotation;
 
@@ -368,6 +367,37 @@ ClusterSwarmRocket.prototype.destroy = function() {
 
 //Homing Rockets
 //------------------------------------------------------------
+
+function BadGuySmallHomingRocket() {
+	HomingRocket.call(this);
+	Rocket.smallInitConfig.call(this);
+}
+
+BadGuySmallHomingRocket.inheritsFrom( HomingRocket );
+
+BadGuySmallHomingRocket.prototype.moveToDeployPosition = function() {
+	var inst = this;
+	inst.startLockOnMotion = false;
+
+	this.acceleration = Random.getRandomArbitary(0.1, 0.5);
+
+	TweenMax.to(inst, Random.getRandomArbitary(0.8, 1.3), {x:inst.deploy.x, y:inst.deploy.y, onComplete:function(){
+		inst.exhaust.speedUp();
+		inst.startLockOnMotion = true;
+		inst.rotation 		   = inst.initialRotation;
+	}});
+
+	this.exhaust.init(this.container);
+	this.exhaust.off();
+}
+
+BadGuySmallHomingRocket.prototype.init    = function()        { HomingRocket.prototype.init.apply(this, arguments); }
+BadGuySmallHomingRocket.prototype.draw    = function(context) { Rocket.smallDrawing.call(this, context);           }
+
+BadGuySmallHomingRocket.prototype.destroy = function() { 
+	HomingRocket.prototype.destroy.call(this);
+	Rocket.smallExplosion.call(this);	                
+}
 
 function SmallHomingRocket() {
 	HomingRocket.call(this);

@@ -112,7 +112,7 @@ ShotWeapon.prototype.init = function(container) {
 		this.idleTimer.start();
 	}
 
-	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_1, function(){
+	this.keyUpCallback = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_1, function(){
 		if(inst.powerShotVoley != null){
 			inst.powerShotVoley.release();
 		}else{
@@ -136,7 +136,7 @@ ShotWeapon.prototype.init = function(container) {
 		inst.user.executeCallbacks("firstShotDelegate", inst.user);
 	});
 
-	this.callbacks.push(c);
+	this.callbacks.push(this.keyUpCallback);
 }
 
 ShotWeapon.prototype.update = function() {
@@ -152,6 +152,34 @@ ShotWeapon.prototype.destroy = function() {
 	if(this.chargeTimer)this.chargeTimer.stop();
 
 	DestroyUtils.destroyAllProperties(this);
+}
+
+ShotWeapon.prototype.stop = function() {
+	ArrowKeyHandler.removeKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_1, this.keyUpCallback);
+	this.callbacks.pop();
+
+	this.shotCharge.off();
+
+	if (this.powerShotVoley) {
+		this.powerShotVoley.release();
+	}
+	if (this.idleTimer) {
+		this.idleTimer.stop();
+	}
+	if (this.chargeTimer) {
+		this.chargeTimer.stop();
+	}
+}
+
+ShotWeapon.prototype.start = function() {
+	if (this.usePowerShot) {
+		if (this.idleTimer) {
+			this.idleTimer.start();
+		}
+	}
+
+	ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_1, this.keyUpCallback.callback);
+	this.callbacks.push(this.keyUpCallback);
 }
 
 function ShotVoley(type, shots, user, container, onComplete) {
@@ -213,6 +241,9 @@ function PowerShotVoley(type, shots, user, container) {
 }
 
 PowerShotVoley.prototype.release = function(){
+	if(!this.shots)
+		return;
+
 	for(var i=0; i<this.shots.length; i++){
 		if(this.shots[i] != null){
 			this.shots[i].release();

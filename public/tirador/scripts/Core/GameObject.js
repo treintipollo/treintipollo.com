@@ -38,9 +38,10 @@ GameObject.prototype.destroyWithOutCallBacks = function(){
 	this.destroyMode = GameObject.NO_CALLBACKS;
 }
 
-GameObject.prototype.addCallback = function(delegateName, scope, callback) {
+GameObject.prototype.addCallback = function(delegateName, scope, callback, removeOnExecute) {
 	if(!this[delegateName]){ this[delegateName] = []; }
-	this[delegateName].push({scope:scope, callback:callback});
+
+	this[delegateName].push({scope:scope, callback:callback, removeOnExecute:removeOnExecute});
 }
 
 GameObject.prototype.executeCallbacks = function(delegateName, args, onComplete) {
@@ -48,12 +49,35 @@ GameObject.prototype.executeCallbacks = function(delegateName, args, onComplete)
 
 	for(var i=0; i<this[delegateName].length; i++){
 		var callbackObject = this[delegateName][i];
-		callbackObject.callback.call(callbackObject.scope, args);		
+		
+		if(!callbackObject) {
+			continue;
+		}
+
+		callbackObject.callback.call(callbackObject.scope, args);	
+
+		if(callbackObject.removeOnExecute){
+			this[delegateName][i] = null;		
+		}
 	}
 
 	if(onComplete){
 		onComplete();
 	}
+}
+
+GameObject.prototype.removeCallback = function(delegateName, callback) {
+	var delegate = this[delegateName];
+
+	if(!delegate){ return; }
+
+	for(var i=0; i<delegate.length; i++){
+		var callbackObject = delegate[i];
+
+		if(callbackObject.callback === callback){
+			delegate.splice(i, 1);
+		}			
+	}	
 }
 
 GameObject.prototype.destroyCallbacks = function(delegateName) {

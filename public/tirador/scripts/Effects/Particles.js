@@ -42,6 +42,50 @@ ExhaustParticle.prototype.update = function(delta) {
 	}
 }
 
+function TractorBeamParticle() {}
+
+TractorBeamParticle.inheritsFrom( GameObject );
+
+TractorBeamParticle.prototype.init = function(parentContext, bezierPoints, color, life, side) {
+	this.parentContext = parentContext;
+	this.bezierPoints  = bezierPoints;
+	this.color 		   = color;
+
+	this.life = 0;
+	this.step = 1.0/life;
+	this.side = side;
+
+	var pos = BezierCurve.getPoint(0, this.bezierPoints.call(this.parentContext, this.side));
+
+	this.x = pos.x;
+	this.y = pos.y;
+}
+
+TractorBeamParticle.prototype.draw = function(context) { 
+	context.strokeStyle = this.color;
+
+	context.beginPath();
+	context.rect(-2.5/2, -2.5/2, 2.5, 2.5);
+	context.closePath();
+
+	context.stroke();
+}
+
+TractorBeamParticle.prototype.update = function(delta) { 	
+	this.life += this.step * (delta * 50);
+
+	this.alive = this.parentContext.alive;
+	
+	if(this.life >= 1.0){
+		this.alive = false;
+	}else{
+		var pos = BezierCurve.getPoint(this.life, this.bezierPoints.call(this.parentContext, this.side));
+
+		this.x = pos.x;
+		this.y = pos.y;	
+	}
+}
+
 function ShotChargeParticle() {}
 
 ShotChargeParticle.inheritsFrom( GameObject );

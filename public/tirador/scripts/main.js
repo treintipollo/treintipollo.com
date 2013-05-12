@@ -177,9 +177,7 @@ var TopLevel = {
 		STAGE_UP          :"increaseStage",
 
 		ship           : null,
-		//weapon         : null,
-		partner        : null,
-
+	
 		lastWeaponType : 0,
 		speedPowerUps  : 0,
 		speed          : 0,
@@ -238,10 +236,8 @@ var TopLevel = {
 		},		
 
 		initWeapon: function() {
-			this.ship.weapon = TopLevel.weaponFactory.getInitializedWeapon(this.lastWeaponType, 0, this.ship, this.weapon);
-			//this.weapon = TopLevel.weaponFactory.getInitializedWeapon(this.lastWeaponType, 8, this.ship, this.weapon);
+			this.ship.weapon = TopLevel.weaponFactory.getInitializedWeapon(this.lastWeaponType, 0, this.ship, this.ship.weapon);
 			this.lastWeaponType = this.ship.weapon.getId();
-			//this.ship.weapon    = this.weapon;
 
 			this.execute(this.WEAPON_INIT, this);
 		},
@@ -250,9 +246,8 @@ var TopLevel = {
 			if(this.lastWeaponType == weaponId){
 				this.powerUpWeapon();
 			}else{
-				this.ship.weapon    = TopLevel.weaponFactory.getInitializedWeapon(weaponId, this.weapon.getLevel(), this.ship, this.weapon);
+				this.ship.weapon    = TopLevel.weaponFactory.getInitializedWeapon(weaponId, this.ship.weapon.getLevel(), this.ship, this.ship.weapon);
 				this.lastWeaponType = this.ship.weapon.getId();
-				//this.ship.weapon    = this.weapon;
 
 				this.execute(this.WEAPON_SET, this);
 			}
@@ -260,13 +255,11 @@ var TopLevel = {
 
 		powerUpWeapon  : function() { 
 			this.ship.weapon.powerUp();
-			//this.ship.weapon = this.weapon;   
 			this.execute(this.WEAPON_POWER_UP, this);
 		},
 
 		powerDownWeapon: function() {
 			this.ship.weapon.powerDown(); 
-			//this.ship.weapon = this.weapon;
 			this.execute(this.WEAPON_POWER_DOWN, this); 
 		},
 		
@@ -284,7 +277,7 @@ var TopLevel = {
 		},
 
 		decreaseLives: function() { 
-			TopLevel.powerUpFactory.addToBulkCreate("WeaponPowerUp", Math.floor(this.weapon.getLevel()/this.weaponDivider) );
+			TopLevel.powerUpFactory.addToBulkCreate("WeaponPowerUp", Math.floor(this.ship.weapon.getLevel()/this.weaponDivider) );
 			TopLevel.powerUpFactory.addToBulkCreate("SpeedPowerUp", Math.floor(this.speedPowerUps/this.speedDivider) );
 			TopLevel.powerUpFactory.createBulk(this.ship.x, this.ship.y, true);
 
@@ -312,6 +305,7 @@ var TopLevel = {
 
 				if(allLivesLost){
 					this.createPlayerShip(this.firstPosX, this.firstPosY);
+					TopLevel.animationActors.getPartner();
 				}else{
 					this.createPlayerShipNoArgs(); 
 				}
@@ -322,7 +316,12 @@ var TopLevel = {
 			this.firstPosX = x;
 			this.firstPosY = y;
 
-			return this.createPlayerShip(x, y);
+			var ship = this.createPlayerShip(x, y);
+
+			TopLevel.animationActors.setShip(ship);
+			TopLevel.animationActors.getPartner();
+
+			return ship;
 		},
 
 		createPlayerShipNoArgs: function() {
@@ -441,12 +440,83 @@ var TopLevel = {
 	},
 
 	rocketFactory: null,
-	starFactory:null
+	starFactory:null,
+
+	animationActors: {
+		ship: null,
+		partner : null,
+		badguy: null,
+		bossArgs: null,
+
+		setShip: function(ship) {
+			this.ship = ship;			
+		},
+
+		getPartner: function() {
+			this.partner = TopLevel.container.add("Ship", [this.ship.x + 90, this.ship.y, TopLevel.container]);
+			this.partner.weapon = TopLevel.weaponFactory.getInitializedWeapon(TopLevel.weaponFactory.SHOT_WEAPON, 0, this.partner, this.partner.weapon);
+
+			this.partner.addCallback("onInitialPositionDelegate", this, function(){
+				this.disablePlayerMovement();
+			}, true);
+
+			return this.partner;
+		},
+
+		getBadguy: function(onTractorBeamComplete) {
+			this.badguy = TopLevel.container.add("BadGuy", [this.ship.x + 45, TopLevel.canvas.height + 80, TopLevel.container, this.partner, onTractorBeamComplete]);
+			return this.badguy;
+		},
+
+		getBossArguments: function() {
+			if(!this.bossArgs) {
+				this.bossArgs = [];
+			}
+
+			this.bossArgs[0] = TopLevel.canvas.width/2;
+			this.bossArgs[1] = -200;
+			this.bossArgs[2] = this.ship;
+
+			return this.bossArgs;
+		},
+
+		badGuyEscape: function(onEscapeComplete) {
+			this.partner.setAllExhaustState(Exhaust.OFF);
+			this.partner.checkingCollisions = false;
+			
+			this.ship.blockControls = false;
+			this.ship.weapon.start();
+			
+			this.badguy.fireRockets();
+			this.badguy.escape(onEscapeComplete);
+		},
+
+		disablePlayerMovement: function() {
+			this.ship.blockControls    = true;
+			this.partner.blockControls = true;
+		},
+
+		enablePlayerMovement: function() {
+			this.ship.blockControls    = false;
+			this.partner.blockControls = false;
+		}	
+	}
 };
 window.TopLevel = TopLevel;
 	
 //TODO: Mini story sequence.
 	//Intro.
+		// Change game name. Once upon, ; a time... ; IN SPACE! (DONE!)
+		// Once title goes away, wait a few seconds. (DONE!)
+		// Kidnap sequence (DONE!)
+		// Choose player
+		// Bad guy shoots missiles and escapes. (DONE!)
+		// Game starts.
+
+		//Make Badguy collidable with player shots
+	
+	//Fight with Badguy before each boss.
+	
 	//Ending.
 
 //TODO: Emoticons.
@@ -572,17 +642,12 @@ $(function(){
 		var rocketFactory = TopLevel.rocketFactory;
 
 		var ship = TopLevel.playerData.ship;		
-
-		//Lazy way of creating partner
-		var partnerShip    = TopLevel.container.add("Ship", [ship.x + 90, ship.y, TopLevel.container]);
-		partnerShip.weapon = TopLevel.weaponFactory.getInitializedWeapon(TopLevel.weaponFactory.SHOT_WEAPON, 0, partnerShip, partnerShip.weapon);
-		TopLevel.playerData.partner = partnerShip;
+			
+		var bossArgs = TopLevel.animationActors.getBossArguments;
+		var bossDrops = {};
 
 		var w = TopLevel.canvas.width;
 		var h = TopLevel.canvas.height;
-
-		var bossArgs = [w/2,-200, ship];
-		var bossDrops = {};
 
 		var currentBoss = -1;
 		// var bosses      = [{name:"Boss_1_A", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null},
@@ -658,8 +723,7 @@ $(function(){
 				var bossInit = bosses[currentBoss];
 
 				if(bossInit.intro == "none"){
-
-					var boss = TopLevel.container.add(bossInit.name, bossInit.args);		
+					var boss = TopLevel.container.add(bossInit.name, bossInit.args.call(TopLevel.animationActors));		
 
 					bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
 
@@ -684,8 +748,7 @@ $(function(){
 					var intro = TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.intro, -200, TopLevel.canvas.height/2 );
 
 					intro.addOnDestroyCallback(this, function(obj){
-						
-						var boss = TopLevel.container.add(bossInit.name, bossInit.args);		
+						var boss = TopLevel.container.add(bossInit.name, bossInit.args.call(TopLevel.animationActors));		
 
 						bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
 
@@ -750,7 +813,9 @@ $(function(){
 	var createObjectPools = function(){
 		//This Pools can not be reduced by means of clever coding.
 		//-------------------------------------------------------
-		TopLevel.container.createTypePool("Ship"	 , Ship		, 2);
+		TopLevel.container.createTypePool("Ship"  , Ship   , 2);
+		TopLevel.container.createTypePool("BadGuy", BadGuy , 1);
+
 		TopLevel.container.createTypePool("CloneShip", CloneShip, 10);
 		TopLevel.container.createTypePool("CargoShip", CargoShip, 1);
 
@@ -792,9 +857,14 @@ $(function(){
 		TopLevel.container.createTypePool("SmallSwarmRocket"  , SmallSwarmRocket  , 20);
 		TopLevel.container.createTypePool("LargeSwarmRocket"  , LargeSwarmRocket  , 20);
 		TopLevel.container.createTypePool("ClusterSwarmRocket", ClusterSwarmRocket, 20);
+		
 		TopLevel.container.createTypePool("SmallHomingRocket"  , SmallHomingRocket  , 20);
 		TopLevel.container.createTypePool("LargeHomingRocket"  , LargeHomingRocket  , 20);
 		TopLevel.container.createTypePool("ClusterHomingRocket", ClusterHomingRocket, 20);
+
+		TopLevel.container.createTypePool("BadGuySmallHomingRocket", BadGuySmallHomingRocket  , 10);
+
+
 		//This pools could definetely be reduced. From 4340 objects to maybe 2500. That's like a 42% decrease!
 		//It would take quite a bit of work because all the particle structure is a kind of shaky.
 		TopLevel.container.createTypePool("ExhaustParticle"    , ExhaustParticle, 500);
@@ -802,6 +872,8 @@ $(function(){
 		TopLevel.container.createTypePool("BurstParticle"      , BurstParticle, 500);
 		TopLevel.container.createTypePool("BurstParticleRadius", BurstParticleRadius, 300);
 		TopLevel.container.createTypePool("StraightParticle"   , StraightParticle, 3000);
+		TopLevel.container.createTypePool("TractorBeamParticle", TractorBeamParticle, 300);
+
 		//Small gain, but instead of pooling 10 objects I could pool only five if I used MultiPowerUp for all my powerUp needs.
 		TopLevel.container.createTypePool("ShotPowerUp"  		, ShotPowerUp, 1);
 		TopLevel.container.createTypePool("RocketPowerUp"		, RocketPowerUp, 1);
@@ -821,11 +893,13 @@ $(function(){
 		//This index denotes de main layer. It is convenient for it to be larger than 0 because that way there can be things that are on top of it.
 		//GameObjects with smaller layer indexes will be drawn last, showing up as on top of other GameObjects with higher layer indexes.
 		//Smallest layer index is 0.
+		//TODO: Meter este numero por defecto en Objects container.
 		var middleLayerIndex = 2;
 
 		//Configurations
 		//Collidable GameObjects
 		TopLevel.container.createTypeConfiguration("Ship", "Ship", middleLayerIndex).setCollisionId("Ship").saveOnReset();
+		TopLevel.container.createTypeConfiguration("BadGuy", "BadGuy", middleLayerIndex).setCollisionId("BadGuy");
 
 		TopLevel.container.createTypeConfiguration("Splash", "Splash", middleLayerIndex);
 
@@ -859,6 +933,8 @@ $(function(){
 		TopLevel.container.createTypeConfiguration("SpeedPowerUp" , "SpeedPowerUp" , middleLayerIndex).setCollisionId("PowerUp");
 		TopLevel.container.createTypeConfiguration("LivesPowerUp" , "LivesPowerUp" , middleLayerIndex).setCollisionId("PowerUp");
 		TopLevel.container.createTypeConfiguration("MultiPowerUp" , "MultiPowerUp" , middleLayerIndex).setCollisionId("PowerUp");
+
+		TopLevel.container.createTypeConfiguration("BadGuySmallHomingRocket", "BadGuySmallHomingRocket", middleLayerIndex+3).setCollisionId("Common_Baddy");
 
 		TopLevel.container.createTypeConfiguration("CloneShip"			, "CloneShip"  , middleLayerIndex+2).setCollisionId("Common_Baddy");
 		TopLevel.container.createTypeConfiguration("CargoShip"			, "CargoShip"  , middleLayerIndex+2).setCollisionId("Common_Baddy");
@@ -933,9 +1009,9 @@ $(function(){
 		TopLevel.container.createTypeConfiguration("complete", "Text", middleLayerIndex-1).setArgs({ introSpeed:0.7, tProto:WarningText.prototype, text:"COMPLETE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
 		TopLevel.container.createTypeConfiguration("gameover", "Text", middleLayerIndex-1).setArgs({ introSpeed:0.7, tProto:WarningText.prototype, text:"DEAD MEAT", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
 
-		TopLevel.container.createTypeConfiguration("space"    , "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"SPACE", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("shooting" , "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"SHOOTING", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("adventure", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"ADVENTURE", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("space"    , "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"Once upon", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("shooting" , "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"a time...", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("adventure", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"IN SPACE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
 		TopLevel.container.createTypeConfiguration("controls_1", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"'A' -- Shoot", font:"Russo One", size:30, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
 		TopLevel.container.createTypeConfiguration("controls_2", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"'Arrows' -- Move", font:"Russo One", size:30, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
 
@@ -948,6 +1024,7 @@ $(function(){
 		TopLevel.container.createTypeConfiguration("BurstParticle_Blood", "BurstParticle"      , middleLayerIndex+3);	
 		TopLevel.container.createTypeConfiguration("StraightParticle"   , "StraightParticle"   , middleLayerIndex);
 		TopLevel.container.createTypeConfiguration("BurstParticleRadius", "BurstParticleRadius", middleLayerIndex);
+		TopLevel.container.createTypeConfiguration("TractorBeamParticle", "TractorBeamParticle", middleLayerIndex+1);
 
 		//-------------------------------------------------------
 		//-------------------------------------------------------
@@ -957,7 +1034,9 @@ $(function(){
 	
 	var createCollisionPairs = function(){
 		//Collision pairs
-		TopLevel.container.addCollisionPair("Ship", "PowerUp");
+		TopLevel.container.addCollisionPair("Ship", "BadGuy");		
+
+		TopLevel.container.addCollisionPair("Ship", "PowerUp");		
 		TopLevel.container.addCollisionPair("Ship", "BeamCollider");
 		TopLevel.container.addCollisionPair("Ship", "Common_Baddy");
 		TopLevel.container.addCollisionPair("Ship", "Bullet_Baddy");
@@ -985,6 +1064,10 @@ $(function(){
 		TopLevel.attributesGetter.setAttributes("Ship", 10 , 1 , 10 );
 		TopLevel.attributesGetter.setAttributes("Ship", 10 , 1 , 10 );
 		TopLevel.attributesGetter.setAttributes("Ship", 10 , 1 , 10 );
+
+		TopLevel.attributesGetter.setAttributes("BadGuy", 10 , 1 , 10 );
+		TopLevel.attributesGetter.setAttributes("BadGuy", 10 , 1 , 10 );
+		TopLevel.attributesGetter.setAttributes("BadGuy", 10 , 1 , 10 );
 
 		TopLevel.attributesGetter.setAttributes("CloneShip", 10 , 3 , 10 );
 		TopLevel.attributesGetter.setAttributes("CargoShip", 10 , 1 , 10 );
@@ -1074,6 +1157,8 @@ $(function(){
 		TopLevel.attributesGetter.setAttributes("BeamCollider", 1 , 1 , 1); 
 		TopLevel.attributesGetter.setAttributes("Fireball"	  , 0 , 0 , 1); 
 		TopLevel.attributesGetter.setAttributes("MultiShot"	  , 0 , 0 , 5);
+
+		TopLevel.attributesGetter.setAttributes("BadGuySmallHomingRocket", 0, 0, 3);
 
 		TopLevel.attributesGetter.setAttributes("Small_EnemyRocket_1", 0, 0, 3);
 		TopLevel.attributesGetter.setAttributes("Small_EnemyRocket_2", 0, 0, 3);
@@ -1184,13 +1269,16 @@ $(function(){
 						},
 						function(){							
 							ship.destroyCallbacks("firstShotDelegate");
-							TopLevel.rocketFactory.start();
+
+							introSequence();
 						}
 					]);
 
 					splash.enter();				
+
+					TopLevel.animationActors.disablePlayerMovement();
 				}
-			} }
+			}}
 		]);
 
 		TopLevel.playerShipFactory.init(function(){
@@ -1200,6 +1288,20 @@ $(function(){
 			}	
 			return false;
 		});
+	}
+
+	var introSequence = function() {
+		TimeOutFactory.getTimeOut(2000, 1, this, function() {
+			var badGuy = TopLevel.animationActors.getBadguy(function(){
+				TopLevel.animationActors.badGuyEscape(function(){
+					TopLevel.rocketFactory.start();
+				});
+			});
+
+			badGuy.addCallback("onInitialPositionDelegate", this, function(){
+				badGuy.tractorBeam.on();
+			}, true);
+		}, true).start();
 	}
 
 	//In the case the Game is opened with out focus, like in a browser restart, game will not be created right now.

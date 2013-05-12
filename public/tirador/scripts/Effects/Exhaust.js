@@ -3,6 +3,13 @@ Exhaust.UP 		= 1;
 Exhaust.DOWN 	= 2;
 Exhaust.OFF 	= 3;
 
+Exhaust.INIT    = "init";
+Exhaust.REGULAR = "neutral";
+Exhaust.FAST 	= "speedUp";
+Exhaust.SLOW 	= "slowDown";
+Exhaust.OFF 	= "off";
+Exhaust.UPDATE  = "update";
+
 function Exhaust(particleBezierPoints, parentContext) {
 	this.particleBezierPoints = particleBezierPoints;
 	this.colors = ["#F2A007", "#FF0000", "#A30808"];
@@ -30,7 +37,7 @@ Exhaust.prototype.neutral  = function() { this.state = Exhaust.NEUTRAL; }
 Exhaust.prototype.speedUp  = function() { this.state = Exhaust.UP;      }
 Exhaust.prototype.slowDown = function() { this.state = Exhaust.DOWN;    }
 
-Exhaust.prototype.off      = function() { 
+Exhaust.prototype.off = function() { 
 	this.clearAllIntervals();
 	this.state = Exhaust.OFF;     
 }

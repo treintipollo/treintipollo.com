@@ -19,6 +19,10 @@ Weapon.prototype.destroy = function() {}
 
 Weapon.prototype.update = function() {}
 
+Weapon.prototype.start = function() {}
+
+Weapon.prototype.stop = function() {}
+
 Weapon.prototype.powerUp = function() {
 	if(this.level < this.voleyAmounts.length-1){
 		this.level++;

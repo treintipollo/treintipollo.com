@@ -30,7 +30,7 @@ function Ship() {
 		var cosPerp = 0.0;
 		var divide  = 2;
 
-		if(type == Exhaust.NEUTRAL) { divide = 2; }
+		if(type == Exhaust.REGULAR) { divide = 2; }
 		if(type == Exhaust.UP)	    { divide = 1; }
 		if(type == Exhaust.DOWN)    { divide = 2.5; }
 
@@ -91,11 +91,7 @@ Ship.prototype.init = function(x, y, container){
 	this.totalVariation = {x:0, y:0};
 	this.lastVar        = {x:0, y:0};
 
-	this.exhaust30.init(this.container);
-	this.exhaust60.init(this.container);
-	this.exhaust90.init(this.container);
-	this.exhaust120.init(this.container);
-	this.exhaust150.init(this.container);
+	this.setAllExhaustState(Exhaust.INIT, this.container);
 
 	this.createStateMachine();
 	this.gotoInitialState();
@@ -136,26 +132,20 @@ Ship.prototype.createStateMachine = function() {
 		this.blockControls = true;
 		this.blockDamage   = true;
 
-		this.exhaust30.speedUp();
-		this.exhaust60.speedUp();
-		this.exhaust90.speedUp();
-		this.exhaust120.speedUp(); 
-		this.exhaust150.speedUp();
+		this.setAllExhaustState(Exhaust.FAST);
 
 		TweenMax.to(this, 1, {y:this.y - 150, onCompleteScope:this, onComplete:function(){
 			this.blockControls = false;
 			this.blockDamage   = false;
 
-			 this.executeCallbacks("onInitialPositionDelegate", this);
+			this.setAllExhaustState(Exhaust.REGULAR);
+
+			this.executeCallbacks("onInitialPositionDelegate", this);
 		}});
 	}
 
-	var slowAllDown = function(){
-		this.exhaust30.slowDown();
-		this.exhaust60.slowDown();
-		this.exhaust90.slowDown();
-		this.exhaust120.slowDown(); 
-		this.exhaust150.slowDown();
+	var slowAllDown = function(){		
+		this.setAllExhaustState(Exhaust.SLOW);
 	}
 
 	this.SHAKE_MOTION 			= this.currentMotion.add(startTrembleTimer, shake, null); 
@@ -169,6 +159,14 @@ Ship.prototype.addFirstShotCallback = function(scope, callback) { this.addCallba
 
 Ship.prototype.gotoInitialState = function() {
 	this.currentMotion.set(this.START_MOTION);
+}
+
+Ship.prototype.setAllExhaustState = function(state, args) {
+	this.exhaust30[state](args);
+	this.exhaust60[state](args);
+	this.exhaust90[state](args);
+	this.exhaust120[state](args); 
+	this.exhaust150[state](args);
 }
 
 Ship.prototype.draw = function(context) { 
@@ -221,11 +219,7 @@ Ship.prototype.update = function(delta) {
 	this.currentMotion.update();
 
 	if(!this.blockControls){
-		this.exhaust30.neutral();
-		this.exhaust60.neutral();
-		this.exhaust90.neutral();
-		this.exhaust120.neutral(); 
-		this.exhaust150.neutral();
+		this.setAllExhaustState(Exhaust.REGULAR);
 
 		if(ArrowKeyHandler.isDown(ArrowKeyHandler.LEFT))  { 
 			this.x -= TopLevel.playerData.speed * delta; 
@@ -247,41 +241,30 @@ Ship.prototype.update = function(delta) {
 		if(ArrowKeyHandler.isDown(ArrowKeyHandler.DOWN))  { 
 			this.y += TopLevel.playerData.speed * delta; 
 			
-			this.exhaust30.slowDown();
-			this.exhaust60.slowDown();
-			this.exhaust90.slowDown();
-			this.exhaust120.slowDown(); 
-			this.exhaust150.slowDown();
+			this.setAllExhaustState(Exhaust.SLOW);
 		}
 	}
 		
 	this.x += this.totalVariation.x;
 	this.y += this.totalVariation.y;
 
-	this.exhaust30.update();
-	this.exhaust60.update();
-	this.exhaust90.update();
-	this.exhaust120.update(); 
-	this.exhaust150.update();
+	this.setAllExhaustState(Exhaust.UPDATE);
 
 	if(this.weapon) {
 		this.weapon.update();
 	}
 }
 
-Ship.prototype.destroy = function(){
-	this.exhaust30.off();
-	this.exhaust60.off();
-	this.exhaust90.off();
-	this.exhaust120.off(); 
-	this.exhaust150.off();	
+Ship.prototype.destroy = function(){	
+	this.setAllExhaustState(Exhaust.OFF);
 
 	this.explosionArea.stop();
 	TweenMax.killTweensOf(this);
 
 	this.destroyCallbacks("onInitialPositionDelegate");
 
-	this.weapon.destroy();
+	if(this.weapon)
+		this.weapon.destroy();
 }
 
 Ship.prototype.onHPDiminished = function(other) {
@@ -296,8 +279,15 @@ Ship.prototype.onDamageReceived = function(other) {
 	this.blockDamage = true;
 
 	var vec = VectorUtils.getFullVectorInfo(this.x, this.y, other.x, other.y);
-	var rA = Random.getRandomArbitary(-25, 25) * (Math.PI/180);
-	
+
+	//This is bullshit, that's what it is.
+	var rA = 0;	
+	if(other.typeId != "BadGuy"){
+		rA = Random.getRandomArbitary(-25, 25) * (Math.PI/180);
+	}else{
+		this.weapon.stop();
+	}
+
 	vec.dir.x = Math.cos(rA + vec.angle) * 80;
 	vec.dir.y = Math.sin(rA + vec.angle) * 80;
 
