@@ -1,3 +1,5 @@
+BadGuy.RocketArguments = [null, null, {x:0, y:0}, null, null, null, {min:0, max:0}, {min:0, max:0}];
+
 BadGuy.inheritsFrom( Ship );
 
 function BadGuy() {
@@ -19,6 +21,7 @@ function BadGuy() {
 }
 
 BadGuy.prototype.getTractorBeamPoints = function(result, x, y, target, side){}
+BadGuy.prototype.fireRockets = function(){}
 
 BadGuy.prototype.init = function(x, y, container, target){
 	Ship.prototype.init.call(this, x, y, container);
@@ -100,69 +103,11 @@ BadGuy.prototype.update = function(delta) {
 	this.setAllExhaustState(Exhaust.UPDATE);
 }
 
-BadGuy.RocketArguments = [null, null, {x:0, y:0}, null, null, null];
-
-BadGuy.prototype.fireRockets = function() {
-	TimeOutFactory.getTimeOut(100, 30, this, function(){ 
-		var a = Random.getRandomArbitary(200, 340) * (Math.PI/180);
-
-		var deployX = this.x + Math.cos( a ) * 200;
-		var deployY = this.y + Math.sin( a ) * 200;
-
-		BadGuy.RocketArguments[0]   = this.x;
-		BadGuy.RocketArguments[1]   = this.y;
-		BadGuy.RocketArguments[2].x = deployX;
-		BadGuy.RocketArguments[2].y = deployY;
-		BadGuy.RocketArguments[3]   = {x:deployX, y:TopLevel.canvas.height + 100};
-		BadGuy.RocketArguments[4]   = TopLevel.container;
-		BadGuy.RocketArguments[5]   = 180;
-
-		TopLevel.container.add("BadGuySmallHomingRocket", BadGuy.RocketArguments);
-	}, true).start();
-}
-
-BadGuy.prototype.fireAimedRockets = function() {
-	TimeOutFactory.getTimeOut(100, 30, this, function(){ 
-		var a = Random.getRandomArbitary(200, 340) * (Math.PI/180);
-
-		var deployX = this.x + Math.cos( a ) * 200;
-		var deployY = this.y + Math.sin( a ) * 200;
-
-		BadGuy.RocketArguments[0]   = this.x;
-		BadGuy.RocketArguments[1]   = this.y;
-		BadGuy.RocketArguments[2].x = deployX;
-		BadGuy.RocketArguments[2].y = deployY;
-		BadGuy.RocketArguments[3]   = {x:TopLevel.playerData.ship.x, y:TopLevel.playerData.ship.y};
-		BadGuy.RocketArguments[4]   = TopLevel.container;
-		BadGuy.RocketArguments[5]   = 180;
-
-		TopLevel.container.add("BadGuySmallHomingRocket", BadGuy.RocketArguments);
-	}, true).start();
-}
-
-BadGuy.prototype.fireWideRockets = function() {
-	TimeOutFactory.getTimeOut(100, 30, this, function(){ 
-		var a = Random.getRandomArbitary(200, 340) * (Math.PI/180);
-
-		var deployX = this.x + Math.cos( a ) * 200;
-		var deployY = this.y + Math.sin( a ) * 200;
-
-		BadGuy.RocketArguments[0]   = this.x;
-		BadGuy.RocketArguments[1]   = this.y;
-		BadGuy.RocketArguments[2].x = deployX;
-		BadGuy.RocketArguments[2].y = deployY;
-		BadGuy.RocketArguments[3]   = {x:TopLevel.playerData.ship.x, y:TopLevel.playerData.ship.y};
-		BadGuy.RocketArguments[4]   = TopLevel.container;
-		BadGuy.RocketArguments[5]   = 180;
-
-		TopLevel.container.add("BadGuySmallHomingRocket", BadGuy.RocketArguments);
-	}, true).start();
-}
-
 BadGuy.prototype.escape = function(onComplete) {	
 	this.setAllExhaustState(Exhaust.SLOW);
 
-	this.blockDamage = true;
+	this.blockDamage        = true;
+	this.checkingCollisions = false;
 
 	var lastPosY = this.y;
 
@@ -206,11 +151,6 @@ BadGuy.prototype.destroy = function() {
 	this.tractorBeam.destroy();
 }
 
-BadGuy.prototype.onLastDamageLevelReached = function(other) {
-	Ship.prototype.onLastDamageLevelReached.call(this, other);	
-	this.escape();
-}
-
 function ConcreteBadGuy() {
 	BadGuy.call(this);
 }
@@ -218,8 +158,10 @@ function ConcreteBadGuy() {
 ConcreteBadGuy.inheritsFrom( BadGuy );
 
 ConcreteBadGuy.prototype.init = function() {	
-	ConcreteBadGuy.prototype.getTractorBeamPoints = this.tProto.getTractorBeamPoints;
-	ConcreteBadGuy.prototype.createStateMachine   = this.tProto.createStateMachine;	
+	ConcreteBadGuy.prototype.getTractorBeamPoints     = this.tProto.getTractorBeamPoints;
+	ConcreteBadGuy.prototype.createStateMachine       = this.tProto.createStateMachine;	
+	ConcreteBadGuy.prototype.onLastDamageLevelReached = this.tProto.onLastDamageLevelReached;
+	ConcreteBadGuy.prototype.fireRockets 			  = this.tProto.fireRockets;	
 
 	this.tProto.init.apply(this, arguments);
 }
@@ -234,6 +176,27 @@ IntroBadGuy.prototype.init = function(x, y, container, target, onTractorBeamComp
 	BadGuy.prototype.init.call(this, x, y, container, target);
 
 	this.tractorBeam.init(container, onTractorBeamComplete);
+}
+
+IntroBadGuy.prototype.fireRockets = function() {
+	TimeOutFactory.getTimeOut(100, 30, this, function(){ 
+		var a = Random.getRandomArbitary(200, 340) * (Math.PI/180);
+
+		var deployX = this.x + Math.cos( a ) * 200;
+		var deployY = this.y + Math.sin( a ) * 200;
+
+		BadGuy.RocketArguments[0]   = this.x;
+		BadGuy.RocketArguments[1]   = this.y;
+		BadGuy.RocketArguments[2].x = deployX;
+		BadGuy.RocketArguments[2].y = deployY;
+		BadGuy.RocketArguments[3]   = {x:deployX, y:TopLevel.canvas.height + 100};
+		BadGuy.RocketArguments[4]   = TopLevel.container;
+		BadGuy.RocketArguments[5]   = 180;
+		BadGuy.RocketArguments[6]   = {min:0.4, max:0.8};
+		BadGuy.RocketArguments[7]   = {min:0.5, max:1.5};
+
+		TopLevel.container.add("BadGuySmallHomingRocket", BadGuy.RocketArguments);
+	}, true).start();
 }
 
 IntroBadGuy.prototype.getTractorBeamPoints = function(result, x, y, target, side){
@@ -314,11 +277,32 @@ function MiddleBadGuy() {
 
 MiddleBadGuy.prototype.init = function(x, y, container, target, playerShip){
 	BadGuy.prototype.init.call(this, x, y, container, target);
-	
 	this.playerShip = playerShip;
-	// this.tractorBeam.init(container, function(){
+}
 
-	// });
+MiddleBadGuy.prototype.fireRockets = function() {
+	var playerPosX = this.playerShip.x;
+	var playerPosY = this.playerShip.y;
+
+	TimeOutFactory.getTimeOut(100, 15, this, function(){ 
+		var a = Random.getRandomArbitary(200, 340) * (Math.PI/180);
+
+		BadGuy.RocketArguments[0]   = this.x;
+		BadGuy.RocketArguments[1]   = this.y;
+		BadGuy.RocketArguments[2].x = this.x + Math.cos( a ) * 200;
+		BadGuy.RocketArguments[2].y = this.y + Math.sin( a ) * 200;
+		BadGuy.RocketArguments[3]   = {x:playerPosX, y:playerPosY};
+		BadGuy.RocketArguments[4]   = TopLevel.container;
+		BadGuy.RocketArguments[5]   = ( VectorUtils.getFullVectorInfo(this.x, this.y, playerPosX, playerPosY).angle * (180/Math.PI) ) - 90;
+		
+		BadGuy.RocketArguments[6].min = 0.5;
+		BadGuy.RocketArguments[6].max = 1;
+
+		BadGuy.RocketArguments[7].min = 1;
+		BadGuy.RocketArguments[7].max = 1.7;
+
+		TopLevel.container.add("BadGuySmallHomingRocket", BadGuy.RocketArguments);
+	}, true).start();
 }
 
 MiddleBadGuy.prototype.getTractorBeamPoints = function(result, x, y, target, side){
@@ -370,42 +354,64 @@ MiddleBadGuy.prototype.createStateMachine = function() {
 
 	var startMotion = this.currentMotion.get(this.START_MOTION);
 
+	var idle = this.currentMotion.get(this.IDLE_MOTION).update;
+
 	startMotion.init = function() {
 		this.blockDamage = true;
 
 		this.setAllExhaustState(Exhaust.SLOW);
 
-		TweenMax.to(this, 2.5, {y:"+=350", onCompleteScope:this, onComplete:function(){
+		TweenMax.to(this, 3.5, {y:"+=350", onCompleteScope:this, onComplete:function(){
 		 	this.blockDamage = false;
 		 	this.setAllExhaustState(Exhaust.REGULAR);
+
+		 	TimeOutFactory.getTimeOut(500, 1, this, function(){ 
+		 		this.currentMotion.set(this.MOVE);
+		 	}, true).start();
+
 		}});
 	}
 
-	var setExhaust = function(){		
-		var x = Random.getRandomArbitary(30, TopLevel.canvas.width -  30);
-		var y = Random.getRandomArbitary(30, TopLevel.canvas.height - 30);
+	var setExhaust = function(){
+		TimeOutFactory.getTimeOut(300, 1, this, function(){ 
+			var x = Random.getRandomArbitary(30, TopLevel.canvas.width -  30);
+			var y = Random.getRandomArbitary(30, TopLevel.canvas.height - 30);
 
-		TweenMax.to(this, 2.5, {x:x, y:y, onCompleteScope:this, onComplete:function(){
-		 	this.setAllExhaustState(Exhaust.REGULAR);
-			
-		 	if(Math.Random() < 0.5){
-				this.currentMotion.set(this.ATTACK_1);
-		 	}else{
-		 		this.currentMotion.set(this.ATTACK_2);
-		 	}
-		}});
+			var info  = VectorUtils.getFullVectorInfo(this.x, this.y, x, y);
+			var speed = info.distance / 250;
+
+			if(this.x < x){
+				this.exhaust30[Exhaust.SLOW]();
+				this.exhaust60[Exhaust.SLOW]();
+				this.exhaust120[Exhaust.FAST](); 
+				this.exhaust150[Exhaust.FAST]();		
+			}else{
+				this.exhaust30[Exhaust.FAST]();
+				this.exhaust60[Exhaust.FAST]();
+				this.exhaust120[Exhaust.SLOW](); 
+				this.exhaust150[Exhaust.SLOW]();
+			}
+
+			if(this.y < y){
+				this.setAllExhaustState(Exhaust.SLOW);
+			}else{
+				this.exhaust90[Exhaust.FAST]();
+			}
+
+			this.moveTween = TweenMax.to(this, speed, {x:x, y:y, ease:Linear.easeNone, onCompleteScope:this, onComplete:function(){
+			 	this.setAllExhaustState(Exhaust.REGULAR);
+				
+			 	if(Math.random() < 0.5){
+					this.currentMotion.set(this.ATTACK_1);
+			 	}else{
+			 		this.currentMotion.set(this.MOVE);
+			 	}
+			}});
+		},true).start();
 	}
 
 	var attack_1 = function(){		
-		this.fireAimedRockets();
-
-		TimeOutFactory.getTimeOut(Random.getRandomArbitary(500, 2000), 1, this, function(){ 
-			this.currentMotion.set(this.MOVE);
-		}, true).start();
-	}
-
-	var attack_2 = function(){		
-		this.fireWideRockets();
+		this.fireRockets();
 
 		TimeOutFactory.getTimeOut(Random.getRandomArbitary(500, 2000), 1, this, function(){ 
 			this.currentMotion.set(this.MOVE);
@@ -414,6 +420,12 @@ MiddleBadGuy.prototype.createStateMachine = function() {
 
 	this.MOVE 	  = this.currentMotion.add(setExhaust, idle, null); 
 	this.ATTACK_1 = this.currentMotion.add(attack_1  , idle, null);
-	this.ATTACK_2 = this.currentMotion.add(attack_2  , idle, null);
+}
+
+MiddleBadGuy.prototype.onLastDamageLevelReached = function(other) {	
+	BadGuy.prototype.onLastDamageLevelReached.call(this, other);
+	TimeOutFactory.removeAllTimeOutsWithScope(this);
+	if(this.moveTween) this.moveTween.kill();
+	this.escape();
 }
 

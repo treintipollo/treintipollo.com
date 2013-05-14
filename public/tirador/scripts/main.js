@@ -546,14 +546,19 @@ window.TopLevel = TopLevel;
 	
 //TODO: Mini story sequence.	
 	//Fight with Badguy before each boss.
-		//When the fight is complete he calls the Big Boss.
-			//Make the rocket class that will handle all the rockets used by the BadGuy
 		//He should be carrying the partner while you fight him.
 
 	//Ending.
+		//After the last Big Boss, he shows up again.
+			//Drops the captured ship when damaged.
+			//Transformers-like sequence.
+			//Final Show Down!
 
 //Design female ship.
 	//Make male and female ship drawing swapable.
+
+//Sound
+	//Whistle to call Big Boss.
 
 //TODO: Emoticons.
 	//Ship.
@@ -1077,8 +1082,8 @@ $(function(){
 
 		TopLevel.attributesGetter.setAttributes("IntroBadGuy", 100 , 1 , 10 );
 		
-		TopLevel.attributesGetter.setAttributes("MiddleBadGuy", 10 , 1 , 10 );
-		TopLevel.attributesGetter.setAttributes("MiddleBadGuy", 10 , 1 , 10 );
+		TopLevel.attributesGetter.setAttributes("MiddleBadGuy", 15 , 1 , 10 );
+		TopLevel.attributesGetter.setAttributes("MiddleBadGuy", 15 , 1 , 10 );
 
 		TopLevel.attributesGetter.setAttributes("CloneShip", 10 , 3 , 10 );
 		TopLevel.attributesGetter.setAttributes("CargoShip", 10 , 1 , 10 );

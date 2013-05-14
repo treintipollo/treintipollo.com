@@ -379,9 +379,7 @@ BadGuySmallHomingRocket.prototype.moveToDeployPosition = function() {
 	var inst = this;
 	inst.startLockOnMotion = false;
 
-	this.acceleration = Random.getRandomArbitary(0.1, 0.5);
-
-	TweenMax.to(inst, Random.getRandomArbitary(0.8, 1.3), {x:inst.deploy.x, y:inst.deploy.y, onComplete:function(){
+	TweenMax.to(inst, this.speed, {x:inst.deploy.x, y:inst.deploy.y, onComplete:function(){
 		inst.exhaust.speedUp();
 		inst.startLockOnMotion = true;
 		inst.rotation 		   = inst.initialRotation;
@@ -391,7 +389,12 @@ BadGuySmallHomingRocket.prototype.moveToDeployPosition = function() {
 	this.exhaust.off();
 }
 
-BadGuySmallHomingRocket.prototype.init    = function()        { HomingRocket.prototype.init.apply(this, arguments); }
+BadGuySmallHomingRocket.prototype.init    = function(x, y, deploy, target, container, rotation, acceleration, speed) { 
+	this.acceleration = Random.getRandomArbitary(acceleration.min, acceleration.max);
+	this.speed        = Random.getRandomArbitary(speed.min, speed.max);
+
+	HomingRocket.prototype.init.call(this, x, y, deploy, target, container, rotation); 
+}
 BadGuySmallHomingRocket.prototype.draw    = function(context) { Rocket.smallDrawing.call(this, context);           }
 
 BadGuySmallHomingRocket.prototype.destroy = function() { 

@@ -163,6 +163,14 @@ $(function(){
 			for(var i=this.timeOuts.length-1; i>=0; i--){
 				this.timeOuts[i].remove();
 			}
+		},
+
+		removeAllTimeOutsWithScope: function(scope){
+			for(var i=0; i<this.timeOuts.length; i++){
+				if(this.timeOuts[i].scope === scope){
+					this.timeOuts[i].remove();
+				}
+			}
 		}
 	}
 
