@@ -7,15 +7,23 @@
 	<link rel="stylesheet" href="tirador/styles/main.css" />
 </head>
 <body>
-	<header>
-		<h1>Space Shooting Game Prototype</h1>
-	</header>
 
 	<div id="main">
-		<canvas id="game" width="450" height="800">
+		<canvas id="game" width="450" height="700">
 			Sorry, your web browser does not support Canvas content.
 		</canvas>	
-		<h2 id="moveInstructions">Arrow Keys to Move. A to SHOOT</h2>	
+		
+		<div id="hud">
+			<div id="lives"  class="hudText">Lives x 1</div>
+			<div id="level"  class="hudText">2-2</div>
+			<div id="weapon" class="hudText">Shot x 3</div>
+
+			<div class="hp">
+				<span style="width:100%"></span>
+			</div>
+
+			<div id="speed"  class="hudText">Speed x 3</div>
+		</div>	
 	</div>
 
 	<script src="tirador/libs/jquery-1.8.3.min.js"></script>
@@ -30,6 +38,7 @@
 	<script src="tirador/scripts/Core/ObjectsContainer.js"></script>
 	<script src="tirador/scripts/Core/TimeOutFactory.js"></script>
 	<script src="tirador/scripts/Core/StateMachine.js"></script>
+	<script src="tirador/scripts/Core/CoreUtils.js"></script>
 	
 	<script src="tirador/scripts/Utilities/MiscMethodsUtils.js"></script>
 	<script src="tirador/scripts/Utilities/GameObjectsUtils.js"></script>
@@ -64,6 +73,8 @@
 	<script src="tirador/scripts/GameObjects/Enemies/Fireball.js"></script>
 	<script src="tirador/scripts/GameObjects/Enemies/CloneShip.js"></script>
 	<script src="tirador/scripts/GameObjects/Enemies/CargoShip.js"></script>
+	
+	<script src="tirador/scripts/GameObjects/Bosses/BadGuy.js"></script>
 	<script src="tirador/scripts/GameObjects/Bosses/Boss_1.js"></script>
 
 	<script src="tirador/scripts/Effects/Exhaust.js"></script>
@@ -75,6 +86,7 @@
 	<script src="tirador/scripts/Effects/BloodStream.js"></script>
 	<script src="tirador/scripts/Effects/WhiteFlash.js"></script>
 	<script src="tirador/scripts/Effects/MultiGun.js"></script>
+	<script src="tirador/scripts/Effects/TractorBeam.js"></script>
 
 	<script src="tirador/scripts/main.js"></script>
 </body>
