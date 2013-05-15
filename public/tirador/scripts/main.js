@@ -319,8 +319,6 @@ var TopLevel = {
 			this.firstPosY = y;
 
 			var ship = this.createPlayerShip(x, y);
-
-			TopLevel.animationActors.setShip(ship);
 			TopLevel.animationActors.getPartner();
 
 			return ship;
@@ -450,11 +448,9 @@ var TopLevel = {
 		badguy: null,
 		bossArgs: null,
 
-		setShip: function(ship) {
-			this.ship = ship;			
-		},
-
 		getPartner: function() {
+			this.ship = TopLevel.playerData.ship;
+
 			if(this.partner)
 				return this.partner;
 
@@ -473,6 +469,8 @@ var TopLevel = {
 		},
 
 		getIntroBadguy: function(onTractorBeamComplete) {
+			this.ship = TopLevel.playerData.ship;
+
 			if(this.badguy)
 				return this.badguy;
 			
@@ -486,6 +484,8 @@ var TopLevel = {
 		},
 
 		getMiddleBadguy: function(onDefeat) {
+			this.ship = TopLevel.playerData.ship;
+
 			if(this.badguy)
 				return this.badguy;
 			
@@ -500,6 +500,8 @@ var TopLevel = {
 		},
 
 		getBossArguments: function() {
+			this.ship = TopLevel.playerData.ship;
+
 			if(!this.bossArgs) {
 				this.bossArgs = [];
 			}
@@ -512,6 +514,8 @@ var TopLevel = {
 		},
 
 		badGuyEscape: function(onEscapeComplete) {
+			this.ship = TopLevel.playerData.ship;
+
 			this.partner.setAllExhaustState(Exhaust.OFF);
 			this.partner.checkingCollisions = false;
 			this.partner.rotation = 10;
@@ -525,11 +529,15 @@ var TopLevel = {
 		},
 
 		disablePlayerMovement: function() {
+			this.ship = TopLevel.playerData.ship;
+
 			this.ship.blockControls    = true;
 			this.partner.blockControls = true;
 		},
 
 		enablePlayerMovement: function() {
+			this.ship = TopLevel.playerData.ship;
+
 			this.ship.blockControls    = false;
 			this.partner.blockControls = false;
 		},
@@ -566,6 +574,7 @@ window.TopLevel = TopLevel;
 	//Emoticon Manager.
 
 //BUG: Se rompe el laser del Boss y no colisiona mas hasta que chocas con otra cosa
+//BUG: Game is not properly reset against a Boss with kids.
 
 //TODO: Optimizations
 	//TODO: Reduce memory Footprint.
@@ -682,7 +691,7 @@ $(function(){
 		var starFactory   = TopLevel.starFactory;
 		var rocketFactory = TopLevel.rocketFactory;
 
-		var ship = TopLevel.playerData.ship;		
+		var ship = TopLevel.playerData.ship;	
 			
 		var bossArgs = TopLevel.animationActors.getBossArguments;
 		var bossDrops = {};
@@ -693,7 +702,18 @@ $(function(){
 		var currentBoss = -1;
 				
 		var bosses = [
-			{name:"Boss_1_B", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
+			// {name:"Boss_1_B", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
+			// {name:"Boss_1_C", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
+							   
+			// {name:"Boss_1_D", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
+		 //    {name:"Boss_1_E", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"LivesPowerUp"},
+		   
+		 //    {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-150, y:h/2-150, time:3}, powerUp:null},
+		 //    {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+150, y:h/2-150, time:3}, powerUp:null},
+		 //    {name:"SubBoss_3", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2,     y:h/2-200, time:3}, powerUp:null},
+
+		 //    {name:"Boss_1_F", createNext:false , intro:"warning", winMessage:"complete", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null}
+
 			{name:"Boss_1_C", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
 							   
 			{name:"Boss_1_D", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
