@@ -265,6 +265,8 @@ Ship.prototype.destroy = function(){
 
 	if(this.weapon)
 		this.weapon.destroy();
+
+	this.currentMotion.destroy();
 }
 
 Ship.prototype.onHPDiminished = function(other) {

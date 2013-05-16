@@ -162,6 +162,7 @@ ConcreteBadGuy.prototype.init = function() {
 	ConcreteBadGuy.prototype.createStateMachine       = this.tProto.createStateMachine;	
 	ConcreteBadGuy.prototype.onLastDamageLevelReached = this.tProto.onLastDamageLevelReached;
 	ConcreteBadGuy.prototype.fireRockets 			  = this.tProto.fireRockets;	
+	ConcreteBadGuy.prototype.onDamageReceived 	      = this.tProto.onDamageReceived;
 
 	this.tProto.init.apply(this, arguments);
 }
@@ -194,6 +195,7 @@ IntroBadGuy.prototype.fireRockets = function() {
 		BadGuy.RocketArguments[5]   = 180;
 		BadGuy.RocketArguments[6]   = {min:0.4, max:0.8};
 		BadGuy.RocketArguments[7]   = {min:0.5, max:1.5};
+		BadGuy.RocketArguments[8]   = 15;
 
 		TopLevel.container.add("BadGuySmallHomingRocket", BadGuy.RocketArguments);
 	}, true).start();
@@ -271,8 +273,7 @@ function MiddleBadGuy() {
 	BadGuy.call(this);
 
 	this.MOVE;
-	this.ATTACK_1;
-	this.ATTACK_2;
+	this.ATTACK;
 }
 
 MiddleBadGuy.prototype.init = function(x, y, container, target, playerShip){
@@ -280,71 +281,58 @@ MiddleBadGuy.prototype.init = function(x, y, container, target, playerShip){
 	this.playerShip = playerShip;
 }
 
-MiddleBadGuy.prototype.fireRockets = function() {
-	var playerPosX = this.playerShip.x;
-	var playerPosY = this.playerShip.y;
+MiddleBadGuy.prototype.rocketConfig = function(){}
 
-	TimeOutFactory.getTimeOut(100, 15, this, function(){ 
-		var a = Random.getRandomArbitary(200, 340) * (Math.PI/180);
+MiddleBadGuy.prototype.fireRocket = function(){
+	TimeOutFactory.getTimeOut(this.rocketTimeOut, this.rocketAmount, this, function() {
 
-		BadGuy.RocketArguments[0]   = this.x;
-		BadGuy.RocketArguments[1]   = this.y;
-		BadGuy.RocketArguments[2].x = this.x + Math.cos( a ) * 200;
-		BadGuy.RocketArguments[2].y = this.y + Math.sin( a ) * 200;
-		BadGuy.RocketArguments[3]   = {x:playerPosX, y:playerPosY};
-		BadGuy.RocketArguments[4]   = TopLevel.container;
-		BadGuy.RocketArguments[5]   = ( VectorUtils.getFullVectorInfo(this.x, this.y, playerPosX, playerPosY).angle * (180/Math.PI) ) - 90;
-		
-		BadGuy.RocketArguments[6].min = 0.5;
-		BadGuy.RocketArguments[6].max = 1;
+		this.rocketConfig();
 
-		BadGuy.RocketArguments[7].min = 1;
-		BadGuy.RocketArguments[7].max = 1.7;
+		TopLevel.container.add(this.rocketType, BadGuy.RocketArguments);
 
-		TopLevel.container.add("BadGuySmallHomingRocket", BadGuy.RocketArguments);
 	}, true).start();
 }
 
 MiddleBadGuy.prototype.getTractorBeamPoints = function(result, x, y, target, side){
-	var deltaX = target.x - x;
-	var deltaY = target.y - y;
+	// var deltaX = target.x - x;
+	// var deltaY = target.y - y;
 	
-	var d = Math.sqrt( (deltaX*deltaX) + (deltaY*deltaY) );
-	var a = Math.atan2(deltaY, deltaX);
+	// var d = Math.sqrt( (deltaX*deltaX) + (deltaY*deltaY) );
+	// var a = Math.atan2(deltaY, deltaX);
 
-	var sin = Math.sin(a);
-	var cos = Math.cos(a);
+	// var sin = Math.sin(a);
+	// var cos = Math.cos(a);
 
-	var sinPerp1 = 0.0;
-	var cosPerp1 = 0.0;
+	// var sinPerp1 = 0.0;
+	// var cosPerp1 = 0.0;
 
-	if(side){
-		sinPerp1 = Math.sin(a - (90 * (Math.PI/180)) );
-		cosPerp1 = Math.cos(a - (90 * (Math.PI/180)) );
+	// if(side){
+	// 	sinPerp1 = Math.sin(a - (90 * (Math.PI/180)) );
+	// 	cosPerp1 = Math.cos(a - (90 * (Math.PI/180)) );
 
-	}else{
-		sinPerp1 = Math.sin(a + (90 * (Math.PI/180)) );
-		cosPerp1 = Math.cos(a + (90 * (Math.PI/180)) );
-	}
+	// }else{
+	// 	sinPerp1 = Math.sin(a + (90 * (Math.PI/180)) );
+	// 	cosPerp1 = Math.cos(a + (90 * (Math.PI/180)) );
+	// }
 
-	d += 50;
+	// d += 50;
 
-	result[0].x = x + cosPerp1 * 10;
-	result[0].y = y + sinPerp1 * 10;
+	// result[0].x = x + cosPerp1 * 10;
+	// result[0].y = y + sinPerp1 * 10;
 
-	result[1].x = x + ( cos * (d*(3/4) + 30) );
-	result[1].y = y + ( sin * (d*(3/4) + 30) );
+	// result[1].x = x + ( cos * (d*(3/4) + 30) );
+	// result[1].y = y + ( sin * (d*(3/4) + 30) );
 
-	result[2].x = x + ( cos  * (d*(2/4) + 30) );
-	result[2].y = y + ( sin  * (d*(2/4) + 30) );
+	// result[2].x = x + ( cos  * (d*(2/4) + 30) );
+	// result[2].y = y + ( sin  * (d*(2/4) + 30) );
 
-	result[3].x = target.x + ( cosPerp1  * 115 );
-	result[3].y = target.y + ( sinPerp1  * 115 );
+	// result[3].x = target.x + ( cosPerp1  * 115 );
+	// result[3].y = target.y + ( sinPerp1  * 115 );
 
-	result[4].x = x + ( cos * d );
-	result[4].y = y + ( sin * d );
+	// result[4].x = x + ( cos * d );
+	// result[4].y = y + ( sin * d );
 
-	return result;
+	// return result;
 }
 
 MiddleBadGuy.prototype.createStateMachine = function() {
@@ -410,7 +398,7 @@ MiddleBadGuy.prototype.createStateMachine = function() {
 		},true).start();
 	}
 
-	var attack_1 = function(){		
+	var attack = function(){		
 		this.fireRockets();
 
 		TimeOutFactory.getTimeOut(Random.getRandomArbitary(500, 2000), 1, this, function(){ 
@@ -418,14 +406,111 @@ MiddleBadGuy.prototype.createStateMachine = function() {
 		}, true).start();
 	}
 
-	this.MOVE 	  = this.currentMotion.add(setExhaust, idle, null); 
-	this.ATTACK_1 = this.currentMotion.add(attack_1  , idle, null);
+	this.MOVE 	= this.currentMotion.add(setExhaust, idle, null); 
+	this.ATTACK = this.currentMotion.add(attack  , idle, null);
 }
 
-MiddleBadGuy.prototype.onLastDamageLevelReached = function(other) {	
-	BadGuy.prototype.onLastDamageLevelReached.call(this, other);
+MiddleBadGuy.prototype.onDamageReceived = function(other) {
+	this.currentMotion.set(this.IDLE_MOTION);
+
+	this.blockDamage        = true;
+	this.checkingCollisions = false;
+
+	var vec = VectorUtils.getFullVectorInfo(this.x, this.y, other.x, other.y);	
+
+	vec.dir.x = Math.cos(vec.angle) * 80;
+	vec.dir.y = Math.sin(vec.angle) * 80;
+
 	TimeOutFactory.removeAllTimeOutsWithScope(this);
+	
 	if(this.moveTween) this.moveTween.kill();
-	this.escape();
+	
+	TweenMax.to(this, 0.4, {rotation:360, x:this.x + vec.dir.x, y:this.y + vec.dir.y, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){	
+		this.rotation = 0;	
+		this.escape();
+	}});
 }
 
+Middle_1_BadGuy.inheritsFrom( MiddleBadGuy );
+
+function Middle_1_BadGuy() {
+	MiddleBadGuy.call(this);
+}
+
+Middle_1_BadGuy.prototype.rocketConfig = function(){
+	var a = Random.getRandomArbitary(0, 360) * (Math.PI / 180);
+
+	BadGuy.RocketArguments[0] = this.x;
+	BadGuy.RocketArguments[1] = this.y;
+	BadGuy.RocketArguments[2].x = this.x + Math.cos(a) * 100;
+	BadGuy.RocketArguments[2].y = this.y + Math.sin(a) * 100;
+	BadGuy.RocketArguments[3] = this.playerShip;
+	BadGuy.RocketArguments[4] = TopLevel.container;
+	BadGuy.RocketArguments[5] = (VectorUtils.getFullVectorInfo(this.x, this.y, this.playerShip.x, this.playerShip.y).angle * (180 / Math.PI)) - 90;
+
+	BadGuy.RocketArguments[6].min = 0.8;
+	BadGuy.RocketArguments[6].max = 1.2;
+
+	BadGuy.RocketArguments[7].min = 1;
+	BadGuy.RocketArguments[7].max = 1.7;
+
+	BadGuy.RocketArguments[8] = 15;	
+}
+
+Middle_2_BadGuy.inheritsFrom( MiddleBadGuy );
+
+function Middle_2_BadGuy() {
+	MiddleBadGuy.call(this);
+}
+
+Middle_2_BadGuy.prototype.rocketConfig = function() {
+	var a = Random.getRandomArbitary(0, 360) * (Math.PI / 180);
+
+	BadGuy.RocketArguments[0] = this.x;
+	BadGuy.RocketArguments[1] = this.y;
+	BadGuy.RocketArguments[2].x = this.x + Math.cos(a) * 100;
+	BadGuy.RocketArguments[2].y = this.y + Math.sin(a) * 100;
+	BadGuy.RocketArguments[3] = this.playerShip;
+	BadGuy.RocketArguments[4] = TopLevel.container;
+	BadGuy.RocketArguments[5] = (VectorUtils.getFullVectorInfo(this.x, this.y, this.playerShip.x, this.playerShip.y).angle * (180 / Math.PI)) - 90;
+
+	BadGuy.RocketArguments[6].min = 0.4;
+	BadGuy.RocketArguments[6].max = 0.7;
+
+	BadGuy.RocketArguments[7].min = 1;
+	BadGuy.RocketArguments[7].max = 1.7;
+
+	BadGuy.RocketArguments[8] = 30;
+}
+
+Middle_3_BadGuy.inheritsFrom( MiddleBadGuy );
+
+function Middle_3_BadGuy() {
+	MiddleBadGuy.call(this);
+}
+
+Middle_3_BadGuy.prototype.rocketConfig = function(playerAngle) {
+	var a = Random.getRandomArbitary(0, 360) * (Math.PI / 180);
+
+	BadGuy.RocketArguments[0] = this.x;
+	BadGuy.RocketArguments[1] = this.y;
+	BadGuy.RocketArguments[2].x = this.x + Math.cos(a) * 100;
+	BadGuy.RocketArguments[2].y = this.y + Math.sin(a) * 100;
+	BadGuy.RocketArguments[3] = { x: this.x + Math.cos(playerAngle) * 500, y: this.y + Math.sin(playerAngle) * 500 };
+	BadGuy.RocketArguments[4] = TopLevel.container;
+	BadGuy.RocketArguments[5] = playerAngle;
+
+	BadGuy.RocketArguments[6].min = 0.8;
+	BadGuy.RocketArguments[6].max = 1.2;
+
+	BadGuy.RocketArguments[7].min = 1;
+	BadGuy.RocketArguments[7].max = 1.7;
+
+	BadGuy.RocketArguments[8] = 15;
+}
+
+Middle_3_BadGuy.prototype.fireRockets = function() {
+	var playerAngle = VectorUtils.getFullVectorInfo(this.x, this.y, this.playerShip.x, this.playerShip.y).angle * (180/Math.PI) - 90;
+
+	MiddleBadGuy.prototype.fireRockets.call(this, playerAngle);
+}

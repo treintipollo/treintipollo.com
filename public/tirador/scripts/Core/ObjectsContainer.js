@@ -243,20 +243,25 @@ ObjectsContainer.UNSHIFT = "unshift";
 ObjectsContainer.CALL    = "call";
 ObjectsContainer.APPLY   = "apply";
 
-ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type, layer) {
+ObjectsContainer.prototype.setDefaultLayer = function(layerIndex) {
+	this.defaultLayer = layerIndex;
+}
+
+ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type) {
 	var configuration = {type:type, 
-						 layer:layer, 
+						 layer:this.defaultLayer, 
 						 collisionType:"", 
 						 addMode:"push", 
 						 initCall:"apply", 
 						 hardArguments:null,
 						 doNotDestroy:false,
 
-						 setCollisionId:function(cType) { this.collisionType = cType; return this; },
-						 setAddMode:function(aMode) { this.addMode = aMode; return this; },
-						 setInitCall:function(iCall) { this.initCall = iCall; return this; },
-						 setArgs:function(args) { this.hardArguments = args; return this; },
-						 saveOnReset:function() {this.doNotDestroy = true; return this; }
+						 collisionId:function(cType) { this.collisionType = cType; return this; },
+						 addMode:function(aMode) { this.addMode = aMode; return this; },
+						 init:function(iCall) { this.initCall = iCall; return this; },
+						 args:function(args) { this.hardArguments = args; return this; },
+						 saveOnReset:function() {this.doNotDestroy = true; return this; },
+						 layer:function(offset) {this.layer += offset; return this; }
 
 	};
 

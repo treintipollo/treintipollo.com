@@ -76,10 +76,9 @@ $(function(){
 
 								if(to.onComplete != null){
 									to.onComplete.call(to.scope);
-
-									if(to.removeOnComplete){
-										to.remove();
-									}
+								}
+								if(to.removeOnComplete){
+									to.remove();
 								}
 							}
 						}

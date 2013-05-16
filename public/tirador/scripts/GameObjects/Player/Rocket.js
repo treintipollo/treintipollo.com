@@ -279,8 +279,7 @@ HomingRocket.prototype.moveToDeployPosition = function() {
 
 HomingRocket.prototype.update = function(delta) {
 	if(this.startLockOnMotion){
-		this.targetAngle = (Math.atan2(this.y - this.target.y, this.x - this.target.x) * (180/Math.PI)) - 90;
-		this.targetAngle = this.targetAngle - this.rotation;
+		this.calculateAngle();
 
 		if (this.targetAngle > 180) this.targetAngle -= 360;
 		if (this.targetAngle < -180) this.targetAngle += 360;
@@ -299,15 +298,28 @@ HomingRocket.prototype.update = function(delta) {
 		
 		this.x += this.dirX * this.acceleration * delta;
 		this.y += this.dirY * this.acceleration * delta;
-
-		if(VectorUtils.inRange(this.x, this.y, this.target.x, this.target.y, 15)){
-			this.alive = false;
-		}
+		
+		this.checkDeathCondition();
 	}else{
-		this.rotation += 30;
+		this.unlockedUpdate();
 	}
 	
 	this.exhaust.update();	
+}
+
+HomingRocket.prototype.checkDeathCondition = function() {
+	if(VectorUtils.inRange(this.x, this.y, this.target.x, this.target.y, 15)){
+		this.alive = false;
+	}
+}
+
+HomingRocket.prototype.calculateAngle = function() {
+	this.targetAngle = (Math.atan2(this.y - this.target.y, this.x - this.target.x) * (180/Math.PI)) - 90;
+	this.targetAngle = this.targetAngle - this.rotation;
+}
+
+HomingRocket.prototype.unlockedUpdate = function() {
+	this.rotation += 30;
 }
 
 //Below are the concrete Rocket classes.
@@ -367,40 +379,6 @@ ClusterSwarmRocket.prototype.destroy = function() {
 
 //Homing Rockets
 //------------------------------------------------------------
-
-function BadGuySmallHomingRocket() {
-	HomingRocket.call(this);
-	Rocket.smallInitConfig.call(this);
-}
-
-BadGuySmallHomingRocket.inheritsFrom( HomingRocket );
-
-BadGuySmallHomingRocket.prototype.moveToDeployPosition = function() {
-	var inst = this;
-	inst.startLockOnMotion = false;
-
-	TweenMax.to(inst, this.speed, {x:inst.deploy.x, y:inst.deploy.y, onComplete:function(){
-		inst.exhaust.speedUp();
-		inst.startLockOnMotion = true;
-		inst.rotation 		   = inst.initialRotation;
-	}});
-
-	this.exhaust.init(this.container);
-	this.exhaust.off();
-}
-
-BadGuySmallHomingRocket.prototype.init    = function(x, y, deploy, target, container, rotation, acceleration, speed) { 
-	this.acceleration = Random.getRandomArbitary(acceleration.min, acceleration.max);
-	this.speed        = Random.getRandomArbitary(speed.min, speed.max);
-
-	HomingRocket.prototype.init.call(this, x, y, deploy, target, container, rotation); 
-}
-BadGuySmallHomingRocket.prototype.draw    = function(context) { Rocket.smallDrawing.call(this, context);           }
-
-BadGuySmallHomingRocket.prototype.destroy = function() { 
-	HomingRocket.prototype.destroy.call(this);
-	Rocket.smallExplosion.call(this);	                
-}
 
 function SmallHomingRocket() {
 	HomingRocket.call(this);

@@ -489,7 +489,7 @@ var TopLevel = {
 			if(this.badguy)
 				return this.badguy;
 			
-			this.badguy = TopLevel.container.add("MiddleBadGuy", [TopLevel.canvas.width/2, -80, TopLevel.container, this.partner, this.ship]);
+			this.badguy = TopLevel.container.add("Middle_1_BadGuy", [TopLevel.canvas.width/2, -80, TopLevel.container, this.partner, this.ship]);
 
 			this.badguy.addOnRecicleCallback(this, function(){
 				onDefeat();
@@ -574,7 +574,6 @@ window.TopLevel = TopLevel;
 	//Emoticon Manager.
 
 //BUG: Se rompe el laser del Boss y no colisiona mas hasta que chocas con otra cosa
-//BUG: Game is not properly reset against a Boss with kids.
 
 //TODO: Optimizations
 	//TODO: Reduce memory Footprint.
@@ -881,8 +880,7 @@ $(function(){
 		TopLevel.container.createTypePool("LargeHomingRocket"  , LargeHomingRocket  , 20);
 		TopLevel.container.createTypePool("ClusterHomingRocket", ClusterHomingRocket, 20);
 
-		TopLevel.container.createTypePool("BadGuySmallHomingRocket", BadGuySmallHomingRocket  , 10);
-
+		TopLevel.container.createTypePool("BadGuyRocket", BadGuySmallHomingRocket  , 15);
 
 		//This pools could definetely be reduced. From 4340 objects to maybe 2500. That's like a 42% decrease!
 		//It would take quite a bit of work because all the particle structure is a kind of shaky.
@@ -912,140 +910,145 @@ $(function(){
 		//This index denotes de main layer. It is convenient for it to be larger than 0 because that way there can be things that are on top of it.
 		//GameObjects with smaller layer indexes will be drawn last, showing up as on top of other GameObjects with higher layer indexes.
 		//Smallest layer index is 0.
-		//TODO: Meter este numero por defecto en Objects container.
-		var middleLayerIndex = 2;
+		TopLevel.container.setDefaultLayer(2);
 
 		//Configurations
 		//Collidable GameObjects
-		TopLevel.container.createTypeConfiguration("Ship", "Ship", middleLayerIndex).setCollisionId("Ship").saveOnReset();		
-		TopLevel.container.createTypeConfiguration("IntroBadGuy", "BadGuy", middleLayerIndex).setCollisionId("BadGuy").setArgs({ tProto:IntroBadGuy.prototype});
-		TopLevel.container.createTypeConfiguration("MiddleBadGuy", "BadGuy", middleLayerIndex).setCollisionId("BadGuy").setArgs({ tProto:MiddleBadGuy.prototype});
-
-		TopLevel.container.createTypeConfiguration("Splash", "Splash", middleLayerIndex);
-
-		TopLevel.container.createTypeConfiguration("Small_Shot"      , "Shot", middleLayerIndex+1).setCollisionId("Shot").setArgs({big:false});
-		TopLevel.container.createTypeConfiguration("Big_Shot"        , "Shot", middleLayerIndex+1).setCollisionId("Shot").setArgs({big:true});
-		TopLevel.container.createTypeConfiguration("Clone_Small_Shot", "Shot", middleLayerIndex+1).setCollisionId("CloneShot").setArgs({big:false});
-		TopLevel.container.createTypeConfiguration("Clone_Big_Shot"  , "Shot", middleLayerIndex+1).setCollisionId("CloneShot").setArgs({big:true});
-
-		TopLevel.container.createTypeConfiguration("Single_Power_Shot_1", "PowerShot"	   , middleLayerIndex).setCollisionId("PowerShot");
-		TopLevel.container.createTypeConfiguration("Single_Power_Shot_2", "PowerShot"	   , middleLayerIndex).setCollisionId("PowerShot");
-		TopLevel.container.createTypeConfiguration("Single_Power_Shot_3", "PowerShot"	   , middleLayerIndex).setCollisionId("PowerShot");
-		TopLevel.container.createTypeConfiguration("Double_Power_Shot_1", "PowerShotSine"  , middleLayerIndex).setCollisionId("PowerShot");
-		TopLevel.container.createTypeConfiguration("Double_Power_Shot_2", "PowerShotSine"  , middleLayerIndex).setCollisionId("PowerShot");
-		TopLevel.container.createTypeConfiguration("Double_Power_Shot_3", "PowerShotSine"  , middleLayerIndex).setCollisionId("PowerShot");
-		TopLevel.container.createTypeConfiguration("Triple_Power_Shot_1", "PowerShotCircle", middleLayerIndex).setCollisionId("PowerShot");	
-		TopLevel.container.createTypeConfiguration("Triple_Power_Shot_2", "PowerShotCircle", middleLayerIndex).setCollisionId("PowerShot");
-		TopLevel.container.createTypeConfiguration("Triple_Power_Shot_3", "PowerShotCircle", middleLayerIndex).setCollisionId("PowerShot");
-
-		TopLevel.container.createTypeConfiguration("SmallSwarmRocket"   , "SmallSwarmRocket"   , middleLayerIndex+1).setCollisionId("Rocket");
-		TopLevel.container.createTypeConfiguration("LargeSwarmRocket"   , "LargeSwarmRocket"   , middleLayerIndex+1).setCollisionId("Rocket");
-		TopLevel.container.createTypeConfiguration("ClusterSwarmRocket" , "ClusterSwarmRocket" , middleLayerIndex+1).setCollisionId("Rocket");
-		TopLevel.container.createTypeConfiguration("SmallHomingRocket"  , "SmallHomingRocket"  , middleLayerIndex+1).setCollisionId("Rocket");
-		TopLevel.container.createTypeConfiguration("LargeHomingRocket"  , "LargeHomingRocket"  , middleLayerIndex+1).setCollisionId("Rocket");
-		TopLevel.container.createTypeConfiguration("ClusterHomingRocket", "ClusterHomingRocket", middleLayerIndex+1).setCollisionId("Rocket");
-		TopLevel.container.createTypeConfiguration("Debry"			    , "Debry"	  		   , middleLayerIndex+2).setCollisionId("Rocket");
+		TopLevel.container.createTypeConfiguration("Ship", "Ship").collisionId("Ship").saveOnReset();		
 		
-		TopLevel.container.createTypeConfiguration("ShotPowerUp"  , "ShotPowerUp"  , middleLayerIndex).setCollisionId("PowerUp");
-		TopLevel.container.createTypeConfiguration("RocketPowerUp", "RocketPowerUp", middleLayerIndex).setCollisionId("PowerUp");
-		TopLevel.container.createTypeConfiguration("WeaponPowerUp", "WeaponPowerUp", middleLayerIndex).setCollisionId("PowerUp");
-		TopLevel.container.createTypeConfiguration("HPPowerUp"    , "HPPowerUp"    , middleLayerIndex).setCollisionId("PowerUp");
-		TopLevel.container.createTypeConfiguration("SpeedPowerUp" , "SpeedPowerUp" , middleLayerIndex).setCollisionId("PowerUp");
-		TopLevel.container.createTypeConfiguration("LivesPowerUp" , "LivesPowerUp" , middleLayerIndex).setCollisionId("PowerUp");
-		TopLevel.container.createTypeConfiguration("MultiPowerUp" , "MultiPowerUp" , middleLayerIndex).setCollisionId("PowerUp");
+		TopLevel.container.createTypeConfiguration("IntroBadGuy", "BadGuy").collisionId("BadGuy").args({ tProto:IntroBadGuy.prototype});
+		
+		TopLevel.container.createTypeConfiguration("Middle_1_BadGuy", "BadGuy").collisionId("BadGuy").args({rocketType:"BadGuySmallAimedRocket", rocketTimeOut:100, rocketAmount:15, tProto:Middle_1_BadGuy.prototype});
+		TopLevel.container.createTypeConfiguration("Middle_2_BadGuy", "BadGuy").collisionId("BadGuy").args({rocketType:"BadGuyLargeHomingRocket", rocketTimeOut:200, rocketAmount:5, tProto:Middle_2_BadGuy.prototype});
+		TopLevel.container.createTypeConfiguration("Middle_3_BadGuy", "BadGuy").collisionId("BadGuy").args({rocketType:"BadGuyClusterAimedRocket", rocketTimeOut:150, rocketAmount:8, tProto:Middle_3_BadGuy.prototype});
 
-		TopLevel.container.createTypeConfiguration("BadGuySmallHomingRocket", "BadGuySmallHomingRocket", middleLayerIndex+3).setCollisionId("Common_Baddy");
+		TopLevel.container.createTypeConfiguration("BadGuySmallAimedRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto:BadGuySmallAimedRocket.prototype});
+		TopLevel.container.createTypeConfiguration("BadGuyLargeHomingRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto:BadGuyLargeHomingRocket.prototype});
+		TopLevel.container.createTypeConfiguration("BadGuyClusterAimedRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto:BadGuyClusterAimedRocket.prototype});
 
-		TopLevel.container.createTypeConfiguration("CloneShip"			, "CloneShip"  , middleLayerIndex+2).setCollisionId("Common_Baddy");
-		TopLevel.container.createTypeConfiguration("CargoShip"			, "CargoShip"  , middleLayerIndex+2).setCollisionId("Common_Baddy");
+		TopLevel.container.createTypeConfiguration("Splash", "Splash");
 
-		TopLevel.container.createTypeConfiguration("Small_EnemyRocket_1", "EnemyRocket", middleLayerIndex+3).setCollisionId("Common_Baddy").setArgs( {mainDim:7 } );
-		TopLevel.container.createTypeConfiguration("Small_EnemyRocket_2", "EnemyRocket", middleLayerIndex+3).setCollisionId("Common_Baddy").setArgs( {mainDim:8 } );
-		TopLevel.container.createTypeConfiguration("Small_EnemyRocket_3", "EnemyRocket", middleLayerIndex+3).setCollisionId("Common_Baddy").setArgs( {mainDim:9 } );
-		TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_1"  , "EnemyRocket", middleLayerIndex+3).setCollisionId("Common_Baddy").setArgs( {mainDim:11} );
-		TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_2"  , "EnemyRocket", middleLayerIndex+3).setCollisionId("Common_Baddy").setArgs( {mainDim:11} );
-		TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_3"  , "EnemyRocket", middleLayerIndex+3).setCollisionId("Common_Baddy").setArgs( {mainDim:12} );
-		TopLevel.container.createTypeConfiguration("Large_EnemyRocket_1", "EnemyRocket", middleLayerIndex+3).setCollisionId("Common_Baddy").setArgs( {mainDim:14} );
-		TopLevel.container.createTypeConfiguration("Large_EnemyRocket_2", "EnemyRocket", middleLayerIndex+3).setCollisionId("Common_Baddy").setArgs( {mainDim:14} );
-		TopLevel.container.createTypeConfiguration("Large_EnemyRocket_3", "EnemyRocket", middleLayerIndex+3).setCollisionId("Common_Baddy").setArgs( {mainDim:15} );
+		TopLevel.container.createTypeConfiguration("Small_Shot"      , "Shot").layer(1).collisionId("Shot").args({big:false});
+		TopLevel.container.createTypeConfiguration("Big_Shot"        , "Shot").layer(1).collisionId("Shot").args({big:true});
+		TopLevel.container.createTypeConfiguration("Clone_Small_Shot", "Shot").layer(1).collisionId("CloneShot").args({big:false});
+		TopLevel.container.createTypeConfiguration("Clone_Big_Shot"  , "Shot").layer(1).collisionId("CloneShot").args({big:true});
 
-		TopLevel.container.createTypeConfiguration("Fireball" 			, "Fireball"   , middleLayerIndex).setCollisionId("Bullet_Baddy");
-		TopLevel.container.createTypeConfiguration("MultiShot"			, "MultiShot"  , middleLayerIndex).setCollisionId("Bullet_Baddy");
+		TopLevel.container.createTypeConfiguration("Single_Power_Shot_1", "PowerShot"	   ).collisionId("PowerShot");
+		TopLevel.container.createTypeConfiguration("Single_Power_Shot_2", "PowerShot"	   ).collisionId("PowerShot");
+		TopLevel.container.createTypeConfiguration("Single_Power_Shot_3", "PowerShot"	   ).collisionId("PowerShot");
+		TopLevel.container.createTypeConfiguration("Double_Power_Shot_1", "PowerShotSine"  ).collisionId("PowerShot");
+		TopLevel.container.createTypeConfiguration("Double_Power_Shot_2", "PowerShotSine"  ).collisionId("PowerShot");
+		TopLevel.container.createTypeConfiguration("Double_Power_Shot_3", "PowerShotSine"  ).collisionId("PowerShot");
+		TopLevel.container.createTypeConfiguration("Triple_Power_Shot_1", "PowerShotCircle").collisionId("PowerShot");	
+		TopLevel.container.createTypeConfiguration("Triple_Power_Shot_2", "PowerShotCircle").collisionId("PowerShot");
+		TopLevel.container.createTypeConfiguration("Triple_Power_Shot_3", "PowerShotCircle").collisionId("PowerShot");
 
-		TopLevel.container.createTypeConfiguration("Boss_1_A", "Boss_1", middleLayerIndex+2).setCollisionId("Boss_1").setAddMode( ObjectsContainer.UNSHIFT );
-		TopLevel.container.createTypeConfiguration("Boss_1_B", "Boss_1", middleLayerIndex+2).setCollisionId("Boss_1").setAddMode( ObjectsContainer.UNSHIFT );
-		TopLevel.container.createTypeConfiguration("Boss_1_C", "Boss_1", middleLayerIndex+2).setCollisionId("Boss_1").setAddMode( ObjectsContainer.UNSHIFT );
-		TopLevel.container.createTypeConfiguration("Boss_1_D", "Boss_1", middleLayerIndex+2).setCollisionId("Boss_1").setAddMode( ObjectsContainer.UNSHIFT );
-		TopLevel.container.createTypeConfiguration("Boss_1_E", "Boss_1", middleLayerIndex+2).setCollisionId("Boss_1").setAddMode( ObjectsContainer.UNSHIFT );
-		TopLevel.container.createTypeConfiguration("Boss_1_F", "Boss_1", middleLayerIndex+2).setCollisionId("Boss_1").setAddMode( ObjectsContainer.UNSHIFT );
+		TopLevel.container.createTypeConfiguration("SmallSwarmRocket"   , "SmallSwarmRocket"   ).layer(1).collisionId("Rocket");
+		TopLevel.container.createTypeConfiguration("LargeSwarmRocket"   , "LargeSwarmRocket"   ).layer(1).collisionId("Rocket");
+		TopLevel.container.createTypeConfiguration("ClusterSwarmRocket" , "ClusterSwarmRocket" ).layer(1).collisionId("Rocket");
+		TopLevel.container.createTypeConfiguration("SmallHomingRocket"  , "SmallHomingRocket"  ).layer(1).collisionId("Rocket");
+		TopLevel.container.createTypeConfiguration("LargeHomingRocket"  , "LargeHomingRocket"  ).layer(1).collisionId("Rocket");
+		TopLevel.container.createTypeConfiguration("ClusterHomingRocket", "ClusterHomingRocket").layer(1).collisionId("Rocket");
+		TopLevel.container.createTypeConfiguration("Debry"			    , "Debry"	  		   ).layer(2).collisionId("Rocket");
+		
+		TopLevel.container.createTypeConfiguration("ShotPowerUp"  , "ShotPowerUp"  ).collisionId("PowerUp");
+		TopLevel.container.createTypeConfiguration("RocketPowerUp", "RocketPowerUp").collisionId("PowerUp");
+		TopLevel.container.createTypeConfiguration("WeaponPowerUp", "WeaponPowerUp").collisionId("PowerUp");
+		TopLevel.container.createTypeConfiguration("HPPowerUp"    , "HPPowerUp"    ).collisionId("PowerUp");
+		TopLevel.container.createTypeConfiguration("SpeedPowerUp" , "SpeedPowerUp" ).collisionId("PowerUp");
+		TopLevel.container.createTypeConfiguration("LivesPowerUp" , "LivesPowerUp" ).collisionId("PowerUp");
+		TopLevel.container.createTypeConfiguration("MultiPowerUp" , "MultiPowerUp" ).collisionId("PowerUp");
 
-		TopLevel.container.createTypeConfiguration("Boss_1_Helper_Beam_1"  , "Boss_1", middleLayerIndex).setCollisionId("Boss_1");
-		TopLevel.container.createTypeConfiguration("Boss_1_Helper_Sniper_1", "Boss_1", middleLayerIndex).setCollisionId("Boss_1");
-		TopLevel.container.createTypeConfiguration("Boss_1_Helper_Sniper_2", "Boss_1", middleLayerIndex).setCollisionId("Boss_1");
-		TopLevel.container.createTypeConfiguration("Boss_1_Helper_Multi_1" , "Boss_1", middleLayerIndex).setCollisionId("Boss_1");
-		TopLevel.container.createTypeConfiguration("Boss_1_Helper_Multi_2" , "Boss_1", middleLayerIndex).setCollisionId("Boss_1");
+		TopLevel.container.createTypeConfiguration("CloneShip", "CloneShip"  ).layer(2).collisionId("Common_Baddy");
+		TopLevel.container.createTypeConfiguration("CargoShip", "CargoShip"  ).layer(2).collisionId("Common_Baddy");
 
-		TopLevel.container.createTypeConfiguration("SubBoss_1", "Boss_1", middleLayerIndex+1).setCollisionId("Boss_1");
-		TopLevel.container.createTypeConfiguration("SubBoss_2", "Boss_1", middleLayerIndex+1).setCollisionId("Boss_1");
-		TopLevel.container.createTypeConfiguration("SubBoss_3", "Boss_1", middleLayerIndex+1).setCollisionId("Boss_1");
+		TopLevel.container.createTypeConfiguration("Small_EnemyRocket_1", "EnemyRocket").layer(3).collisionId("Common_Baddy").args( {mainDim:7 } );
+		TopLevel.container.createTypeConfiguration("Small_EnemyRocket_2", "EnemyRocket").layer(3).collisionId("Common_Baddy").args( {mainDim:8 } );
+		TopLevel.container.createTypeConfiguration("Small_EnemyRocket_3", "EnemyRocket").layer(3).collisionId("Common_Baddy").args( {mainDim:9 } );
+		TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_1"  , "EnemyRocket").layer(3).collisionId("Common_Baddy").args( {mainDim:11} );
+		TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_2"  , "EnemyRocket").layer(3).collisionId("Common_Baddy").args( {mainDim:11} );
+		TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_3"  , "EnemyRocket").layer(3).collisionId("Common_Baddy").args( {mainDim:12} );
+		TopLevel.container.createTypeConfiguration("Large_EnemyRocket_1", "EnemyRocket").layer(3).collisionId("Common_Baddy").args( {mainDim:14} );
+		TopLevel.container.createTypeConfiguration("Large_EnemyRocket_2", "EnemyRocket").layer(3).collisionId("Common_Baddy").args( {mainDim:14} );
+		TopLevel.container.createTypeConfiguration("Large_EnemyRocket_3", "EnemyRocket").layer(3).collisionId("Common_Baddy").args( {mainDim:15} );
 
-		TopLevel.container.createTypeConfiguration("BeamCollider", "BeamCollider", middleLayerIndex).setCollisionId("BeamCollider");
+		TopLevel.container.createTypeConfiguration("Fireball" , "Fireball" ).collisionId("Bullet_Baddy");
+		TopLevel.container.createTypeConfiguration("MultiShot", "MultiShot").collisionId("Bullet_Baddy");
+
+		TopLevel.container.createTypeConfiguration("Boss_1_A", "Boss_1").layer(2).collisionId("Boss_1").addMode( ObjectsContainer.UNSHIFT );
+		TopLevel.container.createTypeConfiguration("Boss_1_B", "Boss_1").layer(2).collisionId("Boss_1").addMode( ObjectsContainer.UNSHIFT );
+		TopLevel.container.createTypeConfiguration("Boss_1_C", "Boss_1").layer(2).collisionId("Boss_1").addMode( ObjectsContainer.UNSHIFT );
+		TopLevel.container.createTypeConfiguration("Boss_1_D", "Boss_1").layer(2).collisionId("Boss_1").addMode( ObjectsContainer.UNSHIFT );
+		TopLevel.container.createTypeConfiguration("Boss_1_E", "Boss_1").layer(2).collisionId("Boss_1").addMode( ObjectsContainer.UNSHIFT );
+		TopLevel.container.createTypeConfiguration("Boss_1_F", "Boss_1").layer(2).collisionId("Boss_1").addMode( ObjectsContainer.UNSHIFT );
+
+		TopLevel.container.createTypeConfiguration("Boss_1_Helper_Beam_1"  , "Boss_1").collisionId("Boss_1");
+		TopLevel.container.createTypeConfiguration("Boss_1_Helper_Sniper_1", "Boss_1").collisionId("Boss_1");
+		TopLevel.container.createTypeConfiguration("Boss_1_Helper_Sniper_2", "Boss_1").collisionId("Boss_1");
+		TopLevel.container.createTypeConfiguration("Boss_1_Helper_Multi_1" , "Boss_1").collisionId("Boss_1");
+		TopLevel.container.createTypeConfiguration("Boss_1_Helper_Multi_2" , "Boss_1").collisionId("Boss_1");
+
+		TopLevel.container.createTypeConfiguration("SubBoss_1", "Boss_1").layer(1).collisionId("Boss_1");
+		TopLevel.container.createTypeConfiguration("SubBoss_2", "Boss_1").layer(1).collisionId("Boss_1");
+		TopLevel.container.createTypeConfiguration("SubBoss_3", "Boss_1").layer(1).collisionId("Boss_1");
+
+		TopLevel.container.createTypeConfiguration("BeamCollider", "BeamCollider").collisionId("BeamCollider");
 
 		//-------------------------------------------------------
 		//-------------------------------------------------------
 		//GameObjects with non collidable counterparts
-		TopLevel.container.createTypeConfiguration("TentacleSegment_Collide", "TentacleSegment", middleLayerIndex+3).setCollisionId("TentacleSegment").setAddMode( ObjectsContainer.UNSHIFT );
-		TopLevel.container.createTypeConfiguration("HomingTarget"			, "HomingTarget"   , middleLayerIndex).setCollisionId("Target").saveOnReset();
-		TopLevel.container.createTypeConfiguration("Explosion_Damage"		, "Explosion"	   , middleLayerIndex).setCollisionId("Rocket");
+		TopLevel.container.createTypeConfiguration("TentacleSegment_Collide", "TentacleSegment").layer(3).collisionId("TentacleSegment").addMode( ObjectsContainer.UNSHIFT );
+		TopLevel.container.createTypeConfiguration("HomingTarget"			, "HomingTarget"   ).collisionId("Target").saveOnReset();
+		TopLevel.container.createTypeConfiguration("Explosion_Damage"		, "Explosion"	   ).collisionId("Rocket");
 		
 		//GameObjects with collidable counterparts
-		TopLevel.container.createTypeConfiguration("TentacleSegment_Show", "TentacleSegment", middleLayerIndex+3).setAddMode( ObjectsContainer.UNSHIFT );
-		TopLevel.container.createTypeConfiguration("Explosion_Effect"	 , "Explosion"		, middleLayerIndex);
-		TopLevel.container.createTypeConfiguration("Target"      		 , "Target"   		, middleLayerIndex).saveOnReset();
+		TopLevel.container.createTypeConfiguration("TentacleSegment_Show", "TentacleSegment").layer(3).addMode( ObjectsContainer.UNSHIFT );
+		TopLevel.container.createTypeConfiguration("Explosion_Effect"	 , "Explosion"		);
+		TopLevel.container.createTypeConfiguration("Target"      		 , "Target"   		).saveOnReset();
 
 		//-------------------------------------------------------
 		//-------------------------------------------------------
 		//Visual Only GameObjects
-		TopLevel.container.createTypeConfiguration("Tentacle"  	 , "Tentacle", middleLayerIndex+3).setAddMode( ObjectsContainer.UNSHIFT ).setArgs({ minLength:4 });
-		TopLevel.container.createTypeConfiguration("WeakTentacle", "Tentacle", middleLayerIndex+3).setAddMode( ObjectsContainer.UNSHIFT ).setArgs({ minLength:4 });
-		TopLevel.container.createTypeConfiguration("LongTentacle", "Tentacle", middleLayerIndex+3).setAddMode( ObjectsContainer.UNSHIFT ).setArgs({ minLength:4 });
-		TopLevel.container.createTypeConfiguration("BabyTentacle", "Tentacle", middleLayerIndex+1).setAddMode( ObjectsContainer.UNSHIFT ).setArgs({ minLength:4 });
+		TopLevel.container.createTypeConfiguration("Tentacle"  	 , "Tentacle").layer(3).addMode( ObjectsContainer.UNSHIFT ).args({ minLength:4 });
+		TopLevel.container.createTypeConfiguration("WeakTentacle", "Tentacle").layer(3).addMode( ObjectsContainer.UNSHIFT ).args({ minLength:4 });
+		TopLevel.container.createTypeConfiguration("LongTentacle", "Tentacle").layer(3).addMode( ObjectsContainer.UNSHIFT ).args({ minLength:4 });
+		TopLevel.container.createTypeConfiguration("BabyTentacle", "Tentacle").layer(1).addMode( ObjectsContainer.UNSHIFT ).args({ minLength:4 });
 		
-		TopLevel.container.createTypeConfiguration("Star"		, "Star"	   , middleLayerIndex+4).saveOnReset();
-		TopLevel.container.createTypeConfiguration("WhiteFlash"	, "WhiteFlash" , middleLayerIndex);
+		TopLevel.container.createTypeConfiguration("Star"		, "Star"	  ).layer(4).saveOnReset();
+		TopLevel.container.createTypeConfiguration("WhiteFlash"	, "WhiteFlash");
 
-		TopLevel.container.createTypeConfiguration("pUp"    , "Text", middleLayerIndex).setArgs({ tProto:PowerUpText.prototype, text:"POWER UP!" , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#FFFF00", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("pDown"  , "Text", middleLayerIndex).setArgs({ tProto:PowerUpText.prototype, text:"POWER DOWN", font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#777777", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("shot"   , "Text", middleLayerIndex).setArgs({ tProto:PowerUpText.prototype, text:"SHOT!"     , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("rockets", "Text", middleLayerIndex).setArgs({ tProto:PowerUpText.prototype, text:"ROCKETS!"  , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#0000FF", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("homing" , "Text", middleLayerIndex).setArgs({ tProto:PowerUpText.prototype, text:"HOMING!"   , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#00FF00", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("speed"  , "Text", middleLayerIndex).setArgs({ tProto:PowerUpText.prototype, text:"SPEED UP!" , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#00FF00", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("health" , "Text", middleLayerIndex).setArgs({ tProto:PowerUpText.prototype, text:"HEALTH UP!", font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("1up"    , "Text", middleLayerIndex).setArgs({ tProto:PowerUpText.prototype, text:"1-UP!"     , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#777777", lineWidth:1, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("pUp"    , "Text").args({ tProto:PowerUpText.prototype, text:"POWER UP!" , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#FFFF00", lineWidth:1, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("pDown"  , "Text").args({ tProto:PowerUpText.prototype, text:"POWER DOWN", font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#777777", lineWidth:1, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("shot"   , "Text").args({ tProto:PowerUpText.prototype, text:"SHOT!"     , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:1, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("rockets", "Text").args({ tProto:PowerUpText.prototype, text:"ROCKETS!"  , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#0000FF", lineWidth:1, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("homing" , "Text").args({ tProto:PowerUpText.prototype, text:"HOMING!"   , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#00FF00", lineWidth:1, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("speed"  , "Text").args({ tProto:PowerUpText.prototype, text:"SPEED UP!" , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#00FF00", lineWidth:1, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("health" , "Text").args({ tProto:PowerUpText.prototype, text:"HEALTH UP!", font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:1, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("1up"    , "Text").args({ tProto:PowerUpText.prototype, text:"1-UP!"     , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#777777", lineWidth:1, align:"center", baseline:"middle" });
 
-		TopLevel.container.createTypeConfiguration("warning" , "Text", middleLayerIndex-1).setArgs({ introSpeed:0.7, tProto:WarningText.prototype, text:"WARNING!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("boom"    , "Text", middleLayerIndex-1).setArgs({ introSpeed:0.5, tProto:WarningText.prototype, text:"BOOM! :D", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("nice"    , "Text", middleLayerIndex-1).setArgs({ introSpeed:0.7, tProto:WarningText.prototype, text:"NICE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#0000FF", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("complete", "Text", middleLayerIndex-1).setArgs({ introSpeed:0.7, tProto:WarningText.prototype, text:"COMPLETE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("gameover", "Text", middleLayerIndex-1).setArgs({ introSpeed:0.7, tProto:WarningText.prototype, text:"DEAD MEAT", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("warning" , "Text").layer(-1).args({ introSpeed:0.7, tProto:WarningText.prototype, text:"WARNING!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("boom"    , "Text").layer(-1).args({ introSpeed:0.5, tProto:WarningText.prototype, text:"BOOM! :D", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("nice"    , "Text").layer(-1).args({ introSpeed:0.7, tProto:WarningText.prototype, text:"NICE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#0000FF", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("complete", "Text").layer(-1).args({ introSpeed:0.7, tProto:WarningText.prototype, text:"COMPLETE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("gameover", "Text").layer(-1).args({ introSpeed:0.7, tProto:WarningText.prototype, text:"DEAD MEAT", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
 
-		TopLevel.container.createTypeConfiguration("space"    , "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"Once upon", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("shooting" , "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"a time...", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("adventure", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"IN SPACE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("controls_1", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"'A' -- Shoot", font:"Russo One", size:30, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("controls_2", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"'Arrows' -- Move", font:"Russo One", size:30, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("playerMarker", "Text", middleLayerIndex).setArgs({ tProto:GameText.prototype, text:"^", font:"Russo One", size:50, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("space"       , "Text").args({ tProto:GameText.prototype, text:"Once upon", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("shooting"    , "Text").args({ tProto:GameText.prototype, text:"a time...", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("adventure"   , "Text").args({ tProto:GameText.prototype, text:"IN SPACE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("controls_1"  , "Text").args({ tProto:GameText.prototype, text:"'A' -- Shoot", font:"Russo One", size:30, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("controls_2"  , "Text").args({ tProto:GameText.prototype, text:"'Arrows' -- Move", font:"Russo One", size:30, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("playerMarker", "Text").args({ tProto:GameText.prototype, text:"^", font:"Russo One", size:50, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
 
-		TopLevel.container.createTypeConfiguration("Line"		   , "Line"	   		 , middleLayerIndex);
-		TopLevel.container.createTypeConfiguration("PercentageLine", "PercentageLine", middleLayerIndex);
+		TopLevel.container.createTypeConfiguration("Line"		   , "Line"	   		 );
+		TopLevel.container.createTypeConfiguration("PercentageLine", "PercentageLine");
 		
-		TopLevel.container.createTypeConfiguration("ExhaustParticle"    , "ExhaustParticle"    , middleLayerIndex+1);
-		TopLevel.container.createTypeConfiguration("ShotChargeParticle" , "ShotChargeParticle" , middleLayerIndex);
-		TopLevel.container.createTypeConfiguration("BurstParticle"      , "BurstParticle"      , middleLayerIndex);
-		TopLevel.container.createTypeConfiguration("BurstParticle_Blood", "BurstParticle"      , middleLayerIndex+3);	
-		TopLevel.container.createTypeConfiguration("StraightParticle"   , "StraightParticle"   , middleLayerIndex);
-		TopLevel.container.createTypeConfiguration("BurstParticleRadius", "BurstParticleRadius", middleLayerIndex);
-		TopLevel.container.createTypeConfiguration("TractorBeamParticle", "TractorBeamParticle", middleLayerIndex+1);
+		TopLevel.container.createTypeConfiguration("ExhaustParticle"    , "ExhaustParticle"    ).layer(1);
+		TopLevel.container.createTypeConfiguration("ShotChargeParticle" , "ShotChargeParticle" );
+		TopLevel.container.createTypeConfiguration("BurstParticle"      , "BurstParticle"      );
+		TopLevel.container.createTypeConfiguration("BurstParticle_Blood", "BurstParticle"      ).layer(3);	
+		TopLevel.container.createTypeConfiguration("StraightParticle"   , "StraightParticle"   );
+		TopLevel.container.createTypeConfiguration("BurstParticleRadius", "BurstParticleRadius");
+		TopLevel.container.createTypeConfiguration("TractorBeamParticle", "TractorBeamParticle").layer(1);
 
 		//-------------------------------------------------------
 		//-------------------------------------------------------
