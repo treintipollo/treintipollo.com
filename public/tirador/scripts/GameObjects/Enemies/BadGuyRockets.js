@@ -10,10 +10,11 @@ function BadGuyRocket() {
 BadGuyRocket.inheritsFrom(HomingRocket);
 
 BadGuyRocket.prototype.init = function(x, y, deploy, target, container, rotation, acceleration, speed, deathRange) {
-	BadGuyRocket.prototype.calculateAngle = this.tProto.calculateAngle;
-	BadGuyRocket.prototype.unlockedUpdate = this.tProto.unlockedUpdate;
-	BadGuyRocket.prototype.draw 		  = this.tProto.draw;
-	BadGuyRocket.prototype.destroy 		  = this.tProto.destroy;
+	BadGuyRocket.prototype.calculateAngle      = this.tProto.calculateAngle;
+	BadGuyRocket.prototype.unlockedUpdate      = this.tProto.unlockedUpdate;
+	BadGuyRocket.prototype.draw 		       = this.tProto.draw;
+	BadGuyRocket.prototype.destroy 		       = this.tProto.destroy;
+	BadGuyRocket.prototype.checkDeathCondition = this.tProto.checkDeathCondition;
 
 	this.acceleration = Random.getRandomArbitary(acceleration.min, acceleration.max);
 	this.speed = Random.getRandomArbitary(speed.min, speed.max);
@@ -92,6 +93,22 @@ BadGuyLargeHomingRocket.prototype.init = function(x, y, deploy, target, containe
 	Rocket.largeInitConfig.call(this);
 	HomingRocket.prototype.init.call(this, x, y, deploy, target, container, rotation);
 }
+
+BadGuyLargeHomingRocket.prototype.calculateAngle = function() {
+	this.targetAngle = (Math.atan2(this.y - this.target.y, this.x - this.target.x) * (180/Math.PI)) - 90;
+	this.targetAngle = this.targetAngle - this.rotation;
+}
+
+BadGuyLargeHomingRocket.prototype.unlockedUpdate = function() {
+	this.rotation += 30;
+}
+
+BadGuyLargeHomingRocket.prototype.checkDeathCondition = function() {
+	if(VectorUtils.inRange(this.x, this.y, this.target.x, this.target.y, this.deathRange)){
+		this.alive = false;
+	}
+}
+
 BadGuyLargeHomingRocket.prototype.draw = function(context) {
 	Rocket.largeDrawing.call(this, context);
 }

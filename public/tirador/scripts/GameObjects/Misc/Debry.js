@@ -63,8 +63,6 @@ Debry.prototype.destroy = function() {
 	Rocket.ExplosionArguments[3] = this.radius;
 	Rocket.ExplosionArguments[4] = 5;
 
-	debugger;
-
 	this.container.add("Explosion_Effect", Rocket.ExplosionArguments);
 
 	TweenMax.killTweensOf(this);

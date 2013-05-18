@@ -164,6 +164,14 @@ $(function(){
 			}
 		},
 
+		stopAllTimeOutsWithScope: function(scope){
+			for(var i=0; i<this.timeOuts.length; i++){
+				if(this.timeOuts[i].scope === scope){
+					this.timeOuts[i].stop();
+				}
+			}
+		},
+
 		removeAllTimeOutsWithScope: function(scope){
 			for(var i=0; i<this.timeOuts.length; i++){
 				if(this.timeOuts[i].scope === scope){

@@ -107,9 +107,8 @@ ObjectsContainer.prototype.add = function(name, args) {
 
 	var type 		   = configuration.type;
 	var collisionType  = configuration.collisionType;
-	var layer 		   = configuration.layer;
-	var checkCollision = configuration.collide;
-	var addMode 	   = configuration.addMode;
+	var layer 		   = configuration.l;
+	var addMode 	   = configuration.mode;
 	var initCall       = configuration.initCall;
 	var hardArguments  = configuration.hardArguments;
 
@@ -249,19 +248,19 @@ ObjectsContainer.prototype.setDefaultLayer = function(layerIndex) {
 
 ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type) {
 	var configuration = {type:type, 
-						 layer:this.defaultLayer, 
+						 l:this.defaultLayer, 
 						 collisionType:"", 
-						 addMode:"push", 
+						 mode:"push", 
 						 initCall:"apply", 
 						 hardArguments:null,
 						 doNotDestroy:false,
 
 						 collisionId:function(cType) { this.collisionType = cType; return this; },
-						 addMode:function(aMode) { this.addMode = aMode; return this; },
+						 addMode:function(aMode) { this.mode = aMode; return this; },
 						 init:function(iCall) { this.initCall = iCall; return this; },
 						 args:function(args) { this.hardArguments = args; return this; },
 						 saveOnReset:function() {this.doNotDestroy = true; return this; },
-						 layer:function(offset) {this.layer += offset; return this; }
+						 layer:function(offset) {this.l += offset; return this; }
 
 	};
 
