@@ -57,9 +57,6 @@ Shot.prototype.update = function(delta) {
 	}
 }
 
-Shot.prototype.onHPDiminished = function(other) {}
-Shot.prototype.onDamageBlocked = function(other) {}
-Shot.prototype.onDamageReceived = function(other) {}
 Shot.prototype.onAllDamageReceived = function(other) {
 	this.alive = false;
 	this.hitEffect.on(this.rotation+120, this.rotation+60);

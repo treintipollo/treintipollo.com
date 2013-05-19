@@ -483,13 +483,13 @@ var TopLevel = {
 			return this.badguy;
 		},
 
-		getMiddleBadguy: function(onDefeat) {
+		getMiddleBadguy: function(middleBadGuyType, onDefeat) {
 			this.ship = TopLevel.playerData.ship;
 
 			if(this.badguy)
 				return this.badguy;
 			
-			this.badguy = TopLevel.container.add("Middle_1_BadGuy", [TopLevel.canvas.width/2, -80, TopLevel.container, this.partner, this.ship]);
+			this.badguy = TopLevel.container.add(middleBadGuyType, [TopLevel.canvas.width/2, -80, TopLevel.container, this.partner, this.ship]);
 
 			this.badguy.addOnRecicleCallback(this, function(){
 				onDefeat();
@@ -555,12 +555,17 @@ window.TopLevel = TopLevel;
 //TODO: Mini story sequence.	
 	//Fight with Badguy before each boss.
 		//He should be carrying the partner while you fight him.
+			//On top (Galaga style).
+			//Special force field to fit that distance.
 
 	//Ending.
 		//After the last Big Boss, he shows up again.
-			//Drops the captured ship when damaged.
-			//Transformers-like sequence.
+			//Drops the captured ship when damaged, once.
+			//Transformers-like sequence. (Galaga style).
 			//Final Show Down!
+				//Bad Guy uses all of his attacks and is very fast.
+				//Has losts of health.
+				//Can only be damaged by the Super Plasma Beam.
 
 //Design female ship.
 	//Make male and female ship drawing swapable.
@@ -568,32 +573,25 @@ window.TopLevel = TopLevel;
 //Sound
 	//Whistle to call Big Boss.
 
-//TODO: Emoticons.
-	//Ship.
-	//Boss.
-	//Emoticon Manager.
-
 //BUG: Se rompe el laser del Boss y no colisiona mas hasta que chocas con otra cosa
-//BUG: Boss invisible. WAT?!
 
 //TODO: Optimizations
 	//TODO: Reduce memory Footprint.
-			//Reduce object pool sizes.
-			//Reduce amount of objects created to cache data.
 	//TODO: Optimize drawing method.
 			//Cache procedural drawing in memory. Then draw that image in place each frame, instead of redrawing proceduraly each frame.
 			//This will not be possible where procedural animations take place. Like the eye of the Boss or its tentacles. But things like Rockets and particles could be cached.
+			//Reduce object pool sizes.
+			//Reduce amount of objects created to cache data.
 	//TODO: //I Could setup the GameObjects in a way in which I can specify if they need an update or not. 
 			//That could reduce method calls greatly, since a lot of GameObjects don't use update at all.
 			//Same could be done with drawing, as some GameObjects could only exist as data containers.
 
 //TODO: Use TimeOutFactory in ArrowKeyHandler.
 
-//TODO:Single Utility Object, so that the global scope has less litter.
-
 //TODO: Tweek base damages and damage multipliers. Everything.
 	   //Tweek powerup show up ratio.
 	   //Tweek boss attacks.
+	   //Tweek Bosses themselves.
 	   //Tweek power up bonuses.
 	   //Tweek weapons
 	   		//Rocket Amount
@@ -602,9 +600,14 @@ window.TopLevel = TopLevel;
 	   			//Homing rockets explosion size.
 	   		//Shot speed and amount.
 	   		//Charge shot charging speed.
+	   	//Tweek BadGuy speed
+	   		//Make move speed configurable.
+	   		//Make a slow and a fast version of each BadGuy type
 
-//TODO: Hacer que el add del ObjectContainer te devuelva el objeto que va a usar, con todo configurado menos la inicializacion. 
-		//De ahi puedo llamar directamente al init de ese objeto con los parametros que yo quiera, sin andar creado arrays intermedios.
+//Esto no es para este juego.
+	//TODO:Single Utility Object, so that the global scope has less litter.
+	//TODO: Hacer que el add del ObjectContainer te devuelva el objeto que va a usar, con todo configurado menos la inicializacion. 
+			//De ahi puedo llamar directamente al init de ese objeto con los parametros que yo quiera, sin andar creado arrays intermedios.
 
 $(function(){
 	var frameRequest, mainLoop;
@@ -700,108 +703,98 @@ $(function(){
 		var h = TopLevel.canvas.height;
 
 		var currentBoss = -1;
-				
-		var bosses = [
-			{name:"Boss_1_B", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
-			{name:"Boss_1_C", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
-							   
-			{name:"Boss_1_D", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
-		    {name:"Boss_1_E", createNext:false, intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"LivesPowerUp"},
-		   
-		    {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-150, y:h/2-150, time:3}, powerUp:null},
-		    {name:"SubBoss_1", createNext:true , intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+150, y:h/2-150, time:3}, powerUp:null},
-		    {name:"SubBoss_3", createNext:false, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2,     y:h/2-200, time:3}, powerUp:null},
+			
+		
 
-		    {name:"Boss_1_F", createNext:false , intro:"warning", winMessage:"complete", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null}
+		var bosses = [
+			{name:"Boss_1_B", createNext:false, badGuyId:"Middle_1_BadGuy", intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
+			{name:"Boss_1_C", createNext:false, badGuyId:"Middle_1_BadGuy", intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
+							   
+			{name:"Boss_1_D", createNext:false, badGuyId:"Middle_2_BadGuy", intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
+		    {name:"Boss_1_E", createNext:false, badGuyId:"Middle_2_BadGuy", intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"LivesPowerUp"},
+		   
+		    {name:"SubBoss_1", createNext:true , badGuyId:null, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-150, y:h/2-150, time:3}, powerUp:null},
+		    {name:"SubBoss_1", createNext:true , badGuyId:null, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+150, y:h/2-150, time:3}, powerUp:null},
+		    {name:"SubBoss_3", createNext:false, badGuyId:"Middle_3_BadGuy", intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2,     y:h/2-200, time:3}, powerUp:null},
+
+		    {name:"Boss_1_F", createNext:false , badGuyId:"Middle_3_BadGuy", intro:"warning", winMessage:"complete", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null}
 	    ];
 
 		//First Set
-		// rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 25, -50, 200, 350, 800, 5, false, "SpeedPowerUp");	
-		// rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -50, -70, 600, 10, false, "HPPowerUp");
-		// rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 25, -50, 200, 350, 800, 5, true , "WeaponPowerUp,MultiWeaponPowerUp");
-		
-		// //Second Set
-		// rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, -50, 100, 500, 600, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
-		// rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -90, -100, 600, 10, false, "HPPowerUp");
-		// rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, -50, 100, 500, 600, 10, true,  "WeaponPowerUp");
-		
-		// //Third Set
-		// rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 100, 200, 500, 10, false, "MultiWeaponPowerUp");
-		// rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -200, -250, 600, 10, false, "HPPowerUp");
-		// rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 100, 500, 500, 10, true,  "WeaponPowerUp,SpeedPowerUp");
-
+		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 25, -50, 200, 350, 800, 5, false, "SpeedPowerUp");	
+		rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -50, -70, 600, 10, false, "HPPowerUp");
 		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 25, -50, 200, 350, 800, 5, true , "WeaponPowerUp,MultiWeaponPowerUp");
-
-		// rocketFactory.onWaveComplete = FuntionUtils.bindScope(this, function(){
-		// 	var bossesCreated = 0;
-
-		// 	do{
-		// 		currentBoss++;
-		// 		bossesCreated++;
-		// 		currentBoss = currentBoss >= bosses.length ? 0 : currentBoss;
-
-		// 		var bossInit = bosses[currentBoss];
-
-		// 		if(bossInit.intro == "none"){
-		// 			var boss = TopLevel.container.add(bossInit.name, bossInit.args.call(TopLevel.animationActors));		
-
-		// 			bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
-
-		// 			boss.gotoPosition(bossInit.targetPos.x, bossInit.targetPos.y, bossInit.targetPos.time, function(){
-		// 				this.startAttack();
-		// 			}, null, true);
-
-		// 			boss.addOnDestroyCallback(this, function(obj){
-		// 				TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
-						
-		// 				bossesCreated--;
-		// 				if(bossesCreated <= 0){
-		// 					TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
-
-		// 					TopLevel.playerData.increaseStage();
-
-		// 					rocketFactory.start();
-		// 				}
-		// 			});
-
-		// 		}else{
-		// 			TopLevel.animationActors.getMiddleBadguy(function(){
-		// 				var intro = TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.intro, -200, TopLevel.canvas.height/2 );
-
-		// 				intro.addOnDestroyCallback(this, function(obj){
-		// 					var boss = TopLevel.container.add(bossInit.name, bossInit.args.call(TopLevel.animationActors));		
-
-		// 					bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
-
-		// 					boss.gotoPosition(bossInit.targetPos.x, bossInit.targetPos.y, bossInit.targetPos.time, function(){
-		// 						this.startAttack();
-		// 					}, null, true);
-
-		// 					boss.addOnDestroyCallback(this, function(obj){
-		// 						TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
-		// 						TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
-
-		// 						TopLevel.playerData.increaseStage();
-
-		// 						rocketFactory.start();
-		// 					});
-		// 				});
-		// 			});
-		// 		}
-				
-		// 	}while(bossInit.createNext);
-		// });
 		
+		//Second Set
+		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, -50, 100, 500, 600, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
+		rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -90, -100, 600, 10, false, "HPPowerUp");
+		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3"	   , 30, -50, 100, 500, 600, 10, true,  "WeaponPowerUp");
+		
+		//Third Set
+		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 100, 200, 500, 10, false, "MultiWeaponPowerUp");
+		rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -200, -250, 600, 10, false, "HPPowerUp");
+		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 100, 500, 500, 10, true,  "WeaponPowerUp,SpeedPowerUp");
+
 		rocketFactory.onWaveComplete = FuntionUtils.bindScope(this, function(){
-			var c = function(){
-				TopLevel.animationActors.getMiddleBadguy(c);	
-				rocketFactory.start();		
-			}
+			var bossesCreated = 0;
 
-			TopLevel.animationActors.getMiddleBadguy(c);
+			do{
+				currentBoss++;
+				bossesCreated++;
+				currentBoss = currentBoss >= bosses.length ? 0 : currentBoss;
+
+				var bossInit = bosses[currentBoss];
+
+				if(bossInit.intro == "none"){
+					var boss = TopLevel.container.add(bossInit.name, bossInit.args.call(TopLevel.animationActors));		
+
+					bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
+
+					boss.gotoPosition(bossInit.targetPos.x, bossInit.targetPos.y, bossInit.targetPos.time, function(){
+						this.startAttack();
+					}, null, true);
+
+					boss.addOnDestroyCallback(this, function(obj){
+						TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
+						
+						bossesCreated--;
+						if(bossesCreated <= 0){
+							TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
+
+							TopLevel.playerData.increaseStage();
+
+							rocketFactory.start();
+						}
+					});
+
+				}else{
+					TopLevel.animationActors.getMiddleBadguy(bossInit.badGuyId, function(){
+						var intro = TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.intro, -200, TopLevel.canvas.height/2 );
+
+						intro.addOnDestroyCallback(this, function(obj){
+							var boss = TopLevel.container.add(bossInit.name, bossInit.args.call(TopLevel.animationActors));		
+
+							bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
+
+							boss.gotoPosition(bossInit.targetPos.x, bossInit.targetPos.y, bossInit.targetPos.time, function(){
+								this.startAttack();
+							}, null, true);
+
+							boss.addOnDestroyCallback(this, function(obj){
+								TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
+								TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
+
+								TopLevel.playerData.increaseStage();
+
+								rocketFactory.start();
+							});
+						});
+					});
+				}
+				
+			}while(bossInit.createNext);
 		});
-
-
+		
 		starFactory.start();
 	}
 
@@ -931,9 +924,42 @@ $(function(){
 		
 		TopLevel.container.createTypeConfiguration("IntroBadGuy", "BadGuy").collisionId("BadGuy").args({ tProto:IntroBadGuy.prototype});
 		
-		TopLevel.container.createTypeConfiguration("Middle_1_BadGuy", "BadGuy").collisionId("BadGuy").args({rocketType:"BadGuySmallAimedRocket", rocketTimeOut:100, rocketAmount:15, tProto:Middle_1_BadGuy.prototype});
-		TopLevel.container.createTypeConfiguration("Middle_2_BadGuy", "BadGuy").collisionId("BadGuy").args({rocketType:"BadGuyLargeHomingRocket", rocketTimeOut:200, rocketAmount:5, tProto:Middle_2_BadGuy.prototype});
-		TopLevel.container.createTypeConfiguration("Middle_3_BadGuy", "BadGuy").collisionId("BadGuy").args({rocketType:"BadGuyClusterAimedRocket", rocketTimeOut:150, rocketAmount:8, tProto:Middle_3_BadGuy.prototype});
+		TopLevel.container.createTypeConfiguration("Middle_1_BadGuy", "BadGuy").collisionId("BadGuy").args({
+			tProto: MiddleBadGuy.prototype,
+			rocketType: "BadGuySmallAimedRocket",
+			rocketTimeOut: 100,
+			rocketAmount: 15,
+			rocketRadius: 100,
+			rocketAccelerationMin:0.8,
+			rocketAccelerationMax:1.2,
+			rocketDeploySpeedMin:1,
+			rocketDeploySpeedMax:1.7,
+			blastRadius:15
+		});
+		TopLevel.container.createTypeConfiguration("Middle_2_BadGuy", "BadGuy").collisionId("BadGuy").args({
+			tProto: MiddleBadGuy.prototype,
+			rocketType: "BadGuyLargeHomingRocket",
+			rocketTimeOut: 200,
+			rocketAmount: 5,
+			rocketRadius: 100,
+			rocketAccelerationMin:0.05,
+			rocketAccelerationMax:0.2,
+			rocketDeploySpeedMin:1,
+			rocketDeploySpeedMax:1.7,
+			blastRadius:15
+		});
+		TopLevel.container.createTypeConfiguration("Middle_3_BadGuy", "BadGuy").collisionId("BadGuy").args({
+			tProto: MiddleBadGuy.prototype,
+			rocketType: "BadGuyClusterAimedRocket",
+			rocketTimeOut: 150,
+			rocketAmount: 8,
+			rocketRadius: 100,
+			rocketAccelerationMin:0.8,
+			rocketAccelerationMax:1.2,
+			rocketDeploySpeedMin:0.6,
+			rocketDeploySpeedMax:1.8,
+			blastRadius:15
+		});
 
 		TopLevel.container.createTypeConfiguration("BadGuySmallAimedRocket"  , "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto:BadGuySmallAimedRocket.prototype});
 		TopLevel.container.createTypeConfiguration("BadGuyLargeHomingRocket" , "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto:BadGuyLargeHomingRocket.prototype});
@@ -1030,27 +1056,222 @@ $(function(){
 		TopLevel.container.createTypeConfiguration("Star"		, "Star"	  ).layer(4).saveOnReset();
 		TopLevel.container.createTypeConfiguration("WhiteFlash"	, "WhiteFlash");
 
-		TopLevel.container.createTypeConfiguration("pUp"    , "Text").args({ tProto:PowerUpText.prototype, text:"POWER UP!" , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#FFFF00", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("pDown"  , "Text").args({ tProto:PowerUpText.prototype, text:"POWER DOWN", font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#777777", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("shot"   , "Text").args({ tProto:PowerUpText.prototype, text:"SHOT!"     , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("rockets", "Text").args({ tProto:PowerUpText.prototype, text:"ROCKETS!"  , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#0000FF", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("homing" , "Text").args({ tProto:PowerUpText.prototype, text:"HOMING!"   , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#00FF00", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("speed"  , "Text").args({ tProto:PowerUpText.prototype, text:"SPEED UP!" , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#00FF00", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("health" , "Text").args({ tProto:PowerUpText.prototype, text:"HEALTH UP!", font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:1, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("1up"    , "Text").args({ tProto:PowerUpText.prototype, text:"1-UP!"     , font:"Russo One", size:20, fill:"#FFFFFF", stroke:"#777777", lineWidth:1, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("pUp", "Text").args({
+			tProto: PowerUpText.prototype,
+			text: "POWER UP!",
+			font: "Russo One",
+			size: 20,
+			fill: "#FFFFFF",
+			stroke: "#FFFF00",
+			lineWidth: 1,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("pDown", "Text").args({
+			tProto: PowerUpText.prototype,
+			text: "POWER DOWN",
+			font: "Russo One",
+			size: 20,
+			fill: "#FFFFFF",
+			stroke: "#777777",
+			lineWidth: 1,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("shot", "Text").args({
+			tProto: PowerUpText.prototype,
+			text: "SHOT!",
+			font: "Russo One",
+			size: 20,
+			fill: "#FFFFFF",
+			stroke: "#FF0000",
+			lineWidth: 1,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("rockets", "Text").args({
+			tProto: PowerUpText.prototype,
+			text: "ROCKETS!",
+			font: "Russo One",
+			size: 20,
+			fill: "#FFFFFF",
+			stroke: "#0000FF",
+			lineWidth: 1,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("homing", "Text").args({
+			tProto: PowerUpText.prototype,
+			text: "HOMING!",
+			font: "Russo One",
+			size: 20,
+			fill: "#FFFFFF",
+			stroke: "#00FF00",
+			lineWidth: 1,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("speed", "Text").args({
+			tProto: PowerUpText.prototype,
+			text: "SPEED UP!",
+			font: "Russo One",
+			size: 20,
+			fill: "#FFFFFF",
+			stroke: "#00FF00",
+			lineWidth: 1,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("health", "Text").args({
+			tProto: PowerUpText.prototype,
+			text: "HEALTH UP!",
+			font: "Russo One",
+			size: 20,
+			fill: "#FFFFFF",
+			stroke: "#FF0000",
+			lineWidth: 1,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("1up", "Text").args({
+			tProto: PowerUpText.prototype,
+			text: "1-UP!",
+			font: "Russo One",
+			size: 20,
+			fill: "#FFFFFF",
+			stroke: "#777777",
+			lineWidth: 1,
+			align: "center",
+			baseline: "middle"
+		});
 
-		TopLevel.container.createTypeConfiguration("warning" , "Text").layer(-1).args({ introSpeed:0.7, tProto:WarningText.prototype, text:"WARNING!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("boom"    , "Text").layer(-1).args({ introSpeed:0.5, tProto:WarningText.prototype, text:"BOOM! :D", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("nice"    , "Text").layer(-1).args({ introSpeed:0.7, tProto:WarningText.prototype, text:"NICE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#0000FF", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("complete", "Text").layer(-1).args({ introSpeed:0.7, tProto:WarningText.prototype, text:"COMPLETE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("gameover", "Text").layer(-1).args({ introSpeed:0.7, tProto:WarningText.prototype, text:"DEAD MEAT", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:3, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("warning", "Text").layer(-1).args({
+			introSpeed: 0.7,
+			tProto: WarningText.prototype,
+			text: "WARNING!",
+			font: "Russo One",
+			size: 60,
+			fill: "#FFFFFF",
+			stroke: "#FF0000",
+			lineWidth: 3,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("boom", "Text").layer(-1).args({
+			introSpeed: 0.5,
+			tProto: WarningText.prototype,
+			text: "BOOM! :D",
+			font: "Russo One",
+			size: 60,
+			fill: "#FFFFFF",
+			stroke: "#FF0000",
+			lineWidth: 3,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("nice", "Text").layer(-1).args({
+			introSpeed: 0.7,
+			tProto: WarningText.prototype,
+			text: "NICE!",
+			font: "Russo One",
+			size: 60,
+			fill: "#FFFFFF",
+			stroke: "#0000FF",
+			lineWidth: 3,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("complete", "Text").layer(-1).args({
+			introSpeed: 0.7,
+			tProto: WarningText.prototype,
+			text: "COMPLETE!",
+			font: "Russo One",
+			size: 60,
+			fill: "#FFFFFF",
+			stroke: "#FF0000",
+			lineWidth: 3,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("gameover", "Text").layer(-1).args({
+			introSpeed: 0.7,
+			tProto: WarningText.prototype,
+			text: "DEAD MEAT",
+			font: "Russo One",
+			size: 60,
+			fill: "#FFFFFF",
+			stroke: "#FF0000",
+			lineWidth: 3,
+			align: "center",
+			baseline: "middle"
+		});
 
-		TopLevel.container.createTypeConfiguration("space"       , "Text").args({ tProto:GameText.prototype, text:"Once upon", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("shooting"    , "Text").args({ tProto:GameText.prototype, text:"a time...", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("adventure"   , "Text").args({ tProto:GameText.prototype, text:"IN SPACE!", font:"Russo One", size:60, fill:"#FFFFFF", stroke:"#777777", lineWidth:3, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("controls_1"  , "Text").args({ tProto:GameText.prototype, text:"'A' -- Shoot", font:"Russo One", size:30, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("controls_2"  , "Text").args({ tProto:GameText.prototype, text:"'Arrows' -- Move", font:"Russo One", size:30, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
-		TopLevel.container.createTypeConfiguration("playerMarker", "Text").args({ tProto:GameText.prototype, text:"^", font:"Russo One", size:50, fill:"#FFFFFF", stroke:"#FF0000", lineWidth:2, align:"center", baseline:"middle" });
+		TopLevel.container.createTypeConfiguration("space", "Text").args({
+			tProto: GameText.prototype,
+			text: "Once upon",
+			font: "Russo One",
+			size: 60,
+			fill: "#FFFFFF",
+			stroke: "#777777",
+			lineWidth: 3,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("shooting", "Text").args({
+			tProto: GameText.prototype,
+			text: "a time...",
+			font: "Russo One",
+			size: 60,
+			fill: "#FFFFFF",
+			stroke: "#777777",
+			lineWidth: 3,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("adventure", "Text").args({
+			tProto: GameText.prototype,
+			text: "IN SPACE!",
+			font: "Russo One",
+			size: 60,
+			fill: "#FFFFFF",
+			stroke: "#777777",
+			lineWidth: 3,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("controls_1", "Text").args({
+			tProto: GameText.prototype,
+			text: "'A' -- Shoot",
+			font: "Russo One",
+			size: 30,
+			fill: "#FFFFFF",
+			stroke: "#FF0000",
+			lineWidth: 2,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("controls_2", "Text").args({
+			tProto: GameText.prototype,
+			text: "'Arrows' -- Move",
+			font: "Russo One",
+			size: 30,
+			fill: "#FFFFFF",
+			stroke: "#FF0000",
+			lineWidth: 2,
+			align: "center",
+			baseline: "middle"
+		});
+		TopLevel.container.createTypeConfiguration("playerMarker", "Text").args({
+			tProto: GameText.prototype,
+			text: "^",
+			font: "Russo One",
+			size: 50,
+			fill: "#FFFFFF",
+			stroke: "#FF0000",
+			lineWidth: 2,
+			align: "center",
+			baseline: "middle"
+		});
 
 		TopLevel.container.createTypeConfiguration("Line"		   , "Line"	   		 );
 		TopLevel.container.createTypeConfiguration("PercentageLine", "PercentageLine");
