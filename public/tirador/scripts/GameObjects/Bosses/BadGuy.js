@@ -161,7 +161,8 @@ ConcreteBadGuy.prototype.init = function() {
 	ConcreteBadGuy.prototype.getTractorBeamPoints     = this.tProto.getTractorBeamPoints;
 	ConcreteBadGuy.prototype.createStateMachine       = this.tProto.createStateMachine;	
 	ConcreteBadGuy.prototype.fireRockets 			  = this.tProto.fireRockets;
-	ConcreteBadGuy.prototype.rocketConfig 			  = this.tProto.rocketConfig;	
+	ConcreteBadGuy.prototype.rocketConfig 			  = this.tProto.rocketConfig;
+	ConcreteBadGuy.prototype.update 			      = this.tProto.update;	
 	
 	ConcreteBadGuy.prototype.onDamageReceived 	      = this.tProto.onDamageReceived;
 	ConcreteBadGuy.prototype.onLastDamageLevelReached = this.tProto.onLastDamageLevelReached;
@@ -286,6 +287,18 @@ MiddleBadGuy.prototype.init = function(x, y, container, target, playerShip){
 	
 	this.playerShip = playerShip;
 	this.escaping   = false;
+
+	this.tractorBeam.init(container);
+	this.tractorBeam.on();
+}
+
+MiddleBadGuy.prototype.update = function(delta){
+	BadGuy.prototype.update.call(this, delta);
+
+	if(this.target){
+		this.target.x = this.x;
+		this.target.y = this.y - 70;
+	}
 }
 
 MiddleBadGuy.prototype.fireRockets = function(){
@@ -315,45 +328,44 @@ MiddleBadGuy.prototype.fireRockets = function(){
 }
 
 MiddleBadGuy.prototype.getTractorBeamPoints = function(result, x, y, target, side){
-	// var deltaX = target.x - x;
-	// var deltaY = target.y - y;
+	var deltaX = target.x - x;
+	var deltaY = target.y - y;
 	
-	// var d = Math.sqrt( (deltaX*deltaX) + (deltaY*deltaY) );
-	// var a = Math.atan2(deltaY, deltaX);
+	var d = Math.sqrt( (deltaX*deltaX) + (deltaY*deltaY) );
+	var a = Math.atan2(deltaY, deltaX);
 
-	// var sin = Math.sin(a);
-	// var cos = Math.cos(a);
+	var sin = Math.sin(a);
+	var cos = Math.cos(a);
 
-	// var sinPerp1 = 0.0;
-	// var cosPerp1 = 0.0;
+	var sinPerp1 = 0.0;
+	var cosPerp1 = 0.0;
 
-	// if(side){
-	// 	sinPerp1 = Math.sin(a - (90 * (Math.PI/180)) );
-	// 	cosPerp1 = Math.cos(a - (90 * (Math.PI/180)) );
+	if(side){
+		sinPerp1 = Math.sin(a - (90 * (Math.PI/180)) );
+		cosPerp1 = Math.cos(a - (90 * (Math.PI/180)) );
+	}else{
+		sinPerp1 = Math.sin(a + (90 * (Math.PI/180)) );
+		cosPerp1 = Math.cos(a + (90 * (Math.PI/180)) );
+	}
 
-	// }else{
-	// 	sinPerp1 = Math.sin(a + (90 * (Math.PI/180)) );
-	// 	cosPerp1 = Math.cos(a + (90 * (Math.PI/180)) );
-	// }
+	d += 50;
 
-	// d += 50;
+	result[0].x = x + cosPerp1 * 15;
+	result[0].y = y + sinPerp1 * 15;
 
-	// result[0].x = x + cosPerp1 * 10;
-	// result[0].y = y + sinPerp1 * 10;
+	result[1].x = x + ( cos * (d*(2/10)) );
+	result[1].y = y + ( sin * (d*(2/10)) );
 
-	// result[1].x = x + ( cos * (d*(3/4) + 30) );
-	// result[1].y = y + ( sin * (d*(3/4) + 30) );
+	result[2].x = x + ( cos  * (d*(3/10)) );
+	result[2].y = y + ( sin  * (d*(3/10)) );
 
-	// result[2].x = x + ( cos  * (d*(2/4) + 30) );
-	// result[2].y = y + ( sin  * (d*(2/4) + 30) );
+	result[3].x = target.x + ( cosPerp1  * 115 );
+	result[3].y = target.y + ( sinPerp1  * 115 );
 
-	// result[3].x = target.x + ( cosPerp1  * 115 );
-	// result[3].y = target.y + ( sinPerp1  * 115 );
+	result[4].x = x + ( cos * d );
+	result[4].y = y + ( sin * d );
 
-	// result[4].x = x + ( cos * d );
-	// result[4].y = y + ( sin * d );
-
-	// return result;
+	return result;
 }
 
 MiddleBadGuy.prototype.createStateMachine = function() {

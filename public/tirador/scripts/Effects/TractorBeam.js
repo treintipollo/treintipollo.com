@@ -37,7 +37,8 @@ TractorBeam.prototype.createParticles = function(parentContext, life) {
 
 	if(particle && !this.firstParticleCreated) {
 		particle.addOnRecicleCallback(this, function(){
-			this.onComplete();
+			if(this.onComplete)
+				this.onComplete();
 		})
 	}
 

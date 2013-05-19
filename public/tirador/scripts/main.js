@@ -307,7 +307,7 @@ var TopLevel = {
 
 				if(allLivesLost){
 					this.createPlayerShip(this.firstPosX, this.firstPosY);
-					TopLevel.animationActors.getPartner();
+					TopLevel.animationActors.getIntroPartner();
 				}else{
 					this.createPlayerShipNoArgs(); 
 				}
@@ -319,7 +319,7 @@ var TopLevel = {
 			this.firstPosY = y;
 
 			var ship = this.createPlayerShip(x, y);
-			TopLevel.animationActors.getPartner();
+			TopLevel.animationActors.getIntroPartner();
 
 			return ship;
 		},
@@ -448,7 +448,7 @@ var TopLevel = {
 		badguy: null,
 		bossArgs: null,
 
-		getPartner: function() {
+		getIntroPartner: function() {
 			this.ship = TopLevel.playerData.ship;
 
 			if(this.partner)
@@ -489,8 +489,17 @@ var TopLevel = {
 			if(this.badguy)
 				return this.badguy;
 			
-			this.badguy = TopLevel.container.add(middleBadGuyType, [TopLevel.canvas.width/2, -80, TopLevel.container, this.partner, this.ship]);
+			this.partner = TopLevel.container.add("Ship", [-100, -100, TopLevel.container]);
+			
+			this.partner.addCallback("onInitialPositionDelegate", this, function(){
+				this.partner.setAllExhaustState(Exhaust.OFF);
+				this.partner.blockControls      = true;
+				this.partner.checkingCollisions = false;
+				this.partner.rotation           = 10;
+			}, true);
 
+			this.badguy = TopLevel.container.add(middleBadGuyType, [TopLevel.canvas.width/2, -80, TopLevel.container, this.partner, this.ship]);
+			
 			this.badguy.addOnRecicleCallback(this, function(){
 				onDefeat();
 				this.badguy = null;
@@ -553,11 +562,6 @@ var TopLevel = {
 window.TopLevel = TopLevel;
 	
 //TODO: Mini story sequence.	
-	//Fight with Badguy before each boss.
-		//He should be carrying the partner while you fight him.
-			//On top (Galaga style).
-			//Special force field to fit that distance.
-
 	//Ending.
 		//After the last Big Boss, he shows up again.
 			//Drops the captured ship when damaged, once.
@@ -704,8 +708,6 @@ $(function(){
 
 		var currentBoss = -1;
 			
-		
-
 		var bosses = [
 			{name:"Boss_1_B", createNext:false, badGuyId:"Middle_1_BadGuy", intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
 			{name:"Boss_1_C", createNext:false, badGuyId:"Middle_1_BadGuy", intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
@@ -794,7 +796,7 @@ $(function(){
 				
 			}while(bossInit.createNext);
 		});
-		
+
 		starFactory.start();
 	}
 
@@ -835,7 +837,7 @@ $(function(){
 	}
 
 	var createObjectPools = function(){
-		//This Pools can not be reduced by means of clever coding.
+		//This Pools can not be reduced by means of clever coding, or it is not worth it doing so.
 		//-------------------------------------------------------
 		TopLevel.container.createTypePool("Ship"  , Ship   , 2);
 		TopLevel.container.createTypePool("BadGuy", ConcreteBadGuy , 1);
@@ -864,6 +866,10 @@ $(function(){
 		TopLevel.container.createTypePool("WhiteFlash"    , WhiteFlash, 2);
 
 		TopLevel.container.createTypePool("Splash"    , Splash, 1);
+
+		TopLevel.container.createTypePool("PowerShot"      , PowerShot, 2);
+		TopLevel.container.createTypePool("PowerShotSine"  , PowerShotSine, 2);
+		TopLevel.container.createTypePool("PowerShotCircle", PowerShotCircle, 3);
 
 		//The Pools below could be reduced drastically with a little extra work.
 		//---------------------------------------------------------------------
@@ -906,10 +912,7 @@ $(function(){
 		TopLevel.container.createTypePool("SpeedPowerUp" 		, SpeedPowerUp, 2);
 		TopLevel.container.createTypePool("LivesPowerUp" 		, LivesPowerUp, 1);
 		TopLevel.container.createTypePool("MultiPowerUp" 		, MultiPowerUp, 2);
-		//Insignificant gain possible here. Using a method similar that to the rockets. 50% reduction. Out of 6 objects is not that much :/ 
-		TopLevel.container.createTypePool("PowerShot"      , PowerShot, 2);
-		TopLevel.container.createTypePool("PowerShotSine"  , PowerShotSine, 2);
-		TopLevel.container.createTypePool("PowerShotCircle", PowerShotCircle, 3);
+
 	}
 
 	var createObjectConfigurations = function() {
@@ -936,6 +939,7 @@ $(function(){
 			rocketDeploySpeedMax:1.7,
 			blastRadius:15
 		});
+
 		TopLevel.container.createTypeConfiguration("Middle_2_BadGuy", "BadGuy").collisionId("BadGuy").args({
 			tProto: MiddleBadGuy.prototype,
 			rocketType: "BadGuyLargeHomingRocket",
@@ -948,6 +952,7 @@ $(function(){
 			rocketDeploySpeedMax:1.7,
 			blastRadius:15
 		});
+
 		TopLevel.container.createTypeConfiguration("Middle_3_BadGuy", "BadGuy").collisionId("BadGuy").args({
 			tProto: MiddleBadGuy.prototype,
 			rocketType: "BadGuyClusterAimedRocket",
@@ -1067,6 +1072,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("pDown", "Text").args({
 			tProto: PowerUpText.prototype,
 			text: "POWER DOWN",
@@ -1078,6 +1084,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("shot", "Text").args({
 			tProto: PowerUpText.prototype,
 			text: "SHOT!",
@@ -1089,6 +1096,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("rockets", "Text").args({
 			tProto: PowerUpText.prototype,
 			text: "ROCKETS!",
@@ -1100,6 +1108,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("homing", "Text").args({
 			tProto: PowerUpText.prototype,
 			text: "HOMING!",
@@ -1111,6 +1120,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("speed", "Text").args({
 			tProto: PowerUpText.prototype,
 			text: "SPEED UP!",
@@ -1122,6 +1132,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("health", "Text").args({
 			tProto: PowerUpText.prototype,
 			text: "HEALTH UP!",
@@ -1133,6 +1144,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("1up", "Text").args({
 			tProto: PowerUpText.prototype,
 			text: "1-UP!",
@@ -1157,6 +1169,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("boom", "Text").layer(-1).args({
 			introSpeed: 0.5,
 			tProto: WarningText.prototype,
@@ -1169,6 +1182,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("nice", "Text").layer(-1).args({
 			introSpeed: 0.7,
 			tProto: WarningText.prototype,
@@ -1181,6 +1195,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("complete", "Text").layer(-1).args({
 			introSpeed: 0.7,
 			tProto: WarningText.prototype,
@@ -1193,6 +1208,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("gameover", "Text").layer(-1).args({
 			introSpeed: 0.7,
 			tProto: WarningText.prototype,
@@ -1217,6 +1233,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("shooting", "Text").args({
 			tProto: GameText.prototype,
 			text: "a time...",
@@ -1228,6 +1245,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("adventure", "Text").args({
 			tProto: GameText.prototype,
 			text: "IN SPACE!",
@@ -1239,6 +1257,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("controls_1", "Text").args({
 			tProto: GameText.prototype,
 			text: "'A' -- Shoot",
@@ -1250,6 +1269,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+		
 		TopLevel.container.createTypeConfiguration("controls_2", "Text").args({
 			tProto: GameText.prototype,
 			text: "'Arrows' -- Move",
@@ -1261,6 +1281,7 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
+
 		TopLevel.container.createTypeConfiguration("playerMarker", "Text").args({
 			tProto: GameText.prototype,
 			text: "^",
@@ -1513,7 +1534,7 @@ $(function(){
 		]);
 
 		//Super nasty logic to execute the Splash intro and outro animations :P
-		//The good thing is that all this very specific code is kept outside Ship.js
+		//The good thing is that all this very specific code is kept in a common ground
 		var splash;
 
 		TopLevel.playerShipFactory.addCallbacksToAction("addInitialPositionReachedCallback", [
@@ -1531,16 +1552,16 @@ $(function(){
 								var shipX = ship.x;
 								var shipY = ship.y;
 
-								var partnerX = TopLevel.animationActors.getPartner().x; 
-								var partnerY = TopLevel.animationActors.getPartner().y;
+								var partnerX = TopLevel.animationActors.getIntroPartner().x; 
+								var partnerY = TopLevel.animationActors.getIntroPartner().y;
 
 								ship.x = partnerX;
 								ship.y = partnerY;
 
 								playerMarker.x = ship.x;
 
-								TopLevel.animationActors.getPartner().x = shipX;
-								TopLevel.animationActors.getPartner().y = shipY;
+								TopLevel.animationActors.getIntroPartner().x = shipX;
+								TopLevel.animationActors.getIntroPartner().y = shipY;
 							}
 
 							var leftCallback = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.LEFT, FuntionUtils.bindScope(this, swapShip));
