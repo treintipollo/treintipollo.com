@@ -489,7 +489,7 @@ var TopLevel = {
 			if(this.badguy)
 				return this.badguy;
 			
-			this.partner = TopLevel.container.add("Ship", [-100, -100, TopLevel.container]);
+			this.partner = TopLevel.container.add("Ship", [-100, -100, TopLevel.container, Exhaust.OFF]);
 			
 			this.partner.addCallback("onInitialPositionDelegate", this, function(){
 				this.partner.setAllExhaustState(Exhaust.OFF);
@@ -564,8 +564,8 @@ window.TopLevel = TopLevel;
 //TODO: Mini story sequence.	
 	//Ending.
 		//After the last Big Boss, he shows up again.
-			//Drops the captured ship when damaged, once.
-			//Transformers-like sequence. (Galaga style).
+			//Drops the captured ship when damaged, once. (Galaga style) 
+			//Transformers-like sequence. (Galaga style)
 			//Final Show Down!
 				//Bad Guy uses all of his attacks and is very fast.
 				//Has losts of health.
@@ -576,6 +576,10 @@ window.TopLevel = TopLevel;
 
 //Sound
 	//Whistle to call Big Boss.
+
+//More work on the HUD
+	//Move things around
+	//Add life bar for BadGuy and Big Boss
 
 //BUG: Se rompe el laser del Boss y no colisiona mas hasta que chocas con otra cosa
 

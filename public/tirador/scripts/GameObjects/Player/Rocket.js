@@ -179,6 +179,7 @@ Rocket.smallExplosion = function() {
 	Rocket.ExplosionArguments[2] = this.rotation+90;
 	Rocket.ExplosionArguments[3] = 30;
 	Rocket.ExplosionArguments[4] = 100;
+	
 	this.container.add("Explosion_Damage", Rocket.ExplosionArguments);
 }
 
@@ -188,6 +189,7 @@ Rocket.largeExplosion = function() {
 	Rocket.ExplosionArguments[2] = this.rotation+90;
 	Rocket.ExplosionArguments[3] = 45;
 	Rocket.ExplosionArguments[4] = 220;
+
 	this.container.add("Explosion_Damage", Rocket.ExplosionArguments);
 }
 

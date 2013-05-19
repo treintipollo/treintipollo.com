@@ -75,7 +75,7 @@ Ship.prototype.afterCreate = function(){
 	CircleCollider.prototype.create.call(this);
 }
 
-Ship.prototype.init = function(x, y, container){
+Ship.prototype.init = function(x, y, container, exhaustState){
 	CircleCollider.prototype.init.call(this, 15);
 
 	Attributes.prototype.init.call(this);
@@ -91,8 +91,12 @@ Ship.prototype.init = function(x, y, container){
 	this.totalVariation = {x:0, y:0};
 	this.lastVar        = {x:0, y:0};
 
-	this.setAllExhaustState(Exhaust.INIT, this.container);
-
+	if(exhaustState){
+		this.setAllExhaustState(exhaustState, this.container);
+	}else{
+		this.setAllExhaustState(Exhaust.INIT, this.container);
+	}
+	
 	this.createStateMachine();
 	this.gotoInitialState();
 }
