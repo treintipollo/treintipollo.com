@@ -8,60 +8,7 @@ function Ship() {
 	this.NONE_STOP_SHAKE_MOTION;
 	this.START_MOTION;
 
-	var exhaustPoints = [];
-	exhaustPoints.push({ x:0, y:0 });
-	exhaustPoints.push({ x:0, y:0 });
-	exhaustPoints.push({ x:0, y:0 });
-	exhaustPoints.push({ x:0, y:0 });
-
-	function getExhaustPoints30(side, type)  { return getExhaustPoints(exhaustPoints, this.x, this.y, this.rotation, 30,  20, side, type); };
-	function getExhaustPoints60(side, type)  { return getExhaustPoints(exhaustPoints, this.x, this.y, this.rotation, 60,  20, side, type); };
-	function getExhaustPoints90(side, type)  { return getExhaustPoints(exhaustPoints, this.x, this.y, this.rotation, 90,  20, side, type); };
-	function getExhaustPoints120(side, type) { return getExhaustPoints(exhaustPoints, this.x, this.y, this.rotation, 120, 20, side, type); };
-	function getExhaustPoints150(side, type) { return getExhaustPoints(exhaustPoints, this.x, this.y, this.rotation, 150, 20, side, type); };
-
-	function getExhaustPoints(result, x, y, rotation, angle, r, side, type) {
-		angle += rotation;
-
-		var sin = Math.sin(angle * (Math.PI/180));
-		var cos = Math.cos(angle * (Math.PI/180));
-
-		var sinPerp = 0.0;
-		var cosPerp = 0.0;
-		var divide  = 2;
-
-		if(type == Exhaust.REGULAR) { divide = 2; }
-		if(type == Exhaust.UP)	    { divide = 1; }
-		if(type == Exhaust.DOWN)    { divide = 2.5; }
-
-		if(side){
-			sinPerp = Math.sin((angle-30)  * (Math.PI/180));
-			cosPerp = Math.cos((angle-30)  * (Math.PI/180));	
-		}else{
-			sinPerp = Math.sin((angle+30)  * (Math.PI/180));
-			cosPerp = Math.cos((angle+30)  * (Math.PI/180));
-		}
-
-		result[0].x = x + cos * r;
-		result[0].y = y + sin * r;
-
-		result[1].x = x + cosPerp * r * 2/divide;
-		result[1].y = y + sinPerp * r * 2/divide;
-
-		result[2].x = x + cos  * r * 3/divide;
-		result[2].y = y + sin  * r * 3/divide;
-
-		result[3].x = x + cos  * r * 4/divide;
-		result[3].y = y + sin  * r * 4/divide;
-
-		return result;
-	};
-
-	this.exhaust30  = new Exhaust(getExhaustPoints30, this);
-	this.exhaust60  = new Exhaust(getExhaustPoints60, this);
-	this.exhaust90  = new Exhaust(getExhaustPoints90, this);
-	this.exhaust120 = new Exhaust(getExhaustPoints120, this);
-	this.exhaust150 = new Exhaust(getExhaustPoints150, this);
+	this.exhausts = this.getExhausts();
 
 	this.trembleTimer = TimeOutFactory.getTimeOut(500, 1, this, function(){
 		this.currentMotion.set(this.IDLE_MOTION);
@@ -69,6 +16,85 @@ function Ship() {
 
 	this.explosionArea = new ExplosionsArea();
 	this.whiteFlash    = new WhiteFlashContainer();
+}
+
+Ship.prototype.getExhausts = function() {
+	var exhaustPoints = [];
+	exhaustPoints.push({ x:0, y:0 });
+	exhaustPoints.push({ x:0, y:0 });
+	exhaustPoints.push({ x:0, y:0 });
+	exhaustPoints.push({ x:0, y:0 });
+
+	function getExhaustPoints30(side, type)  { return this.getExhaustPoints(exhaustPoints, this.x, this.y, this.rotation, 30,  20, side, type); };
+	function getExhaustPoints60(side, type)  { return this.getExhaustPoints(exhaustPoints, this.x, this.y, this.rotation, 60,  20, side, type); };
+	function getExhaustPoints90(side, type)  { return this.getExhaustPoints(exhaustPoints, this.x, this.y, this.rotation, 90,  20, side, type); };
+	function getExhaustPoints120(side, type) { return this.getExhaustPoints(exhaustPoints, this.x, this.y, this.rotation, 120, 20, side, type); };
+	function getExhaustPoints150(side, type) { return this.getExhaustPoints(exhaustPoints, this.x, this.y, this.rotation, 150, 20, side, type); };
+
+	return [
+		new Exhaust(getExhaustPoints30, this), 
+		new Exhaust(getExhaustPoints60, this), 
+		new Exhaust(getExhaustPoints90, this), 
+		new Exhaust(getExhaustPoints120, this), 
+		new Exhaust(getExhaustPoints150, this)
+	];
+}
+
+Ship.prototype.getExhaustPoints = function(result, x, y, rotation, angle, r, side, type) {
+	angle += rotation;
+
+	var sin = Math.sin(angle * (Math.PI/180));
+	var cos = Math.cos(angle * (Math.PI/180));
+
+	var sinPerp = 0.0;
+	var cosPerp = 0.0;
+	var divide  = 2;
+
+	if(type == Exhaust.REGULAR) { divide = 2; }
+	if(type == Exhaust.UP)	    { divide = 1; }
+	if(type == Exhaust.DOWN)    { divide = 2.5; }
+
+	if(side){
+		sinPerp = Math.sin((angle-30)  * (Math.PI/180));
+		cosPerp = Math.cos((angle-30)  * (Math.PI/180));	
+	}else{
+		sinPerp = Math.sin((angle+30)  * (Math.PI/180));
+		cosPerp = Math.cos((angle+30)  * (Math.PI/180));
+	}
+
+	result[0].x = x + cos * r;
+	result[0].y = y + sin * r;
+
+	result[1].x = x + cosPerp * r * 2/divide;
+	result[1].y = y + sinPerp * r * 2/divide;
+
+	result[2].x = x + cos  * r * 3/divide;
+	result[2].y = y + sin  * r * 3/divide;
+
+	result[3].x = x + cos  * r * 4/divide;
+	result[3].y = y + sin  * r * 4/divide;
+
+	return result;
+}
+
+Ship.prototype.setAllExhaustState = function(state, args) {
+	for(var i=0; i<this.exhausts.length; i++){
+		this.exhausts[i][state](args);
+	}
+}
+
+Ship.prototype.setExhaustLeftState = function(state, args) {
+	this.exhausts[0][state](args);
+	this.exhausts[1][state](args);
+}
+
+Ship.prototype.setExhaustRightState = function(state, args) {
+	this.exhausts[3][state](args);
+	this.exhausts[4][state](args);
+}
+
+Ship.prototype.setExhaustForwardState = function(state, args) {
+	this.exhausts[2][state](args);
 }
 
 Ship.prototype.afterCreate = function(){
@@ -96,7 +122,7 @@ Ship.prototype.init = function(x, y, container, exhaustState){
 	}else{
 		this.setAllExhaustState(Exhaust.INIT, this.container);
 	}
-	
+
 	this.createStateMachine();
 	this.gotoInitialState();
 }
@@ -165,14 +191,6 @@ Ship.prototype.gotoInitialState = function() {
 	this.currentMotion.set(this.START_MOTION);
 }
 
-Ship.prototype.setAllExhaustState = function(state, args) {
-	this.exhaust30[state](args);
-	this.exhaust60[state](args);
-	this.exhaust90[state](args);
-	this.exhaust120[state](args); 
-	this.exhaust150[state](args);
-}
-
 Ship.prototype.draw = function(context) { 
 	context.strokeStyle = this.color;
 	context.lineWidth 	= 1;
@@ -180,6 +198,7 @@ Ship.prototype.draw = function(context) {
 
 	//30 grados	
 	context.beginPath();
+
 	context.moveTo(0, 0);
 	context.arc(0, 0, 20, 25*(Math.PI/180), 35*(Math.PI/180));
 	context.closePath();
@@ -203,6 +222,7 @@ Ship.prototype.draw = function(context) {
 	context.moveTo(0, 0);
 	context.arc(0, 0, 20, 145*(Math.PI/180), 155*(Math.PI/180));
 	context.closePath();
+	
 	context.stroke();
 
 	context.beginPath();
@@ -227,24 +247,18 @@ Ship.prototype.update = function(delta) {
 
 		if(ArrowKeyHandler.isDown(ArrowKeyHandler.LEFT))  { 
 			this.x -= TopLevel.playerData.speed * delta; 
-			
-			this.exhaust30.speedUp();
-			this.exhaust60.speedUp();	
+			this.setExhaustLeftState(Exhaust.FAST);
 		}
 		if(ArrowKeyHandler.isDown(ArrowKeyHandler.RIGHT)) { 
 			this.x += TopLevel.playerData.speed * delta; 
-			
-			this.exhaust120.speedUp();
-			this.exhaust150.speedUp();
+			this.setExhaustRightState(Exhaust.FAST);
 		}
 		if(ArrowKeyHandler.isDown(ArrowKeyHandler.UP))    { 
 			this.y -= TopLevel.playerData.speed * delta; 
-			
-			this.exhaust90.speedUp(); 
+			this.setExhaustForwardState(Exhaust.FAST);	
 		}
 		if(ArrowKeyHandler.isDown(ArrowKeyHandler.DOWN))  { 
 			this.y += TopLevel.playerData.speed * delta; 
-			
 			this.setAllExhaustState(Exhaust.SLOW);
 		}
 	}
@@ -345,6 +359,7 @@ Ship.prototype.onAllDamageReceived = function(other) {
 Ship.prototype.onDamageRecoveredOutOfLastLevel = function(other) {
 	this.explosionArea.stop();
 	TweenMax.to(this, 1, {colorProps:{color:"#FFFFFF"}, ease:Linear.ease});
+	
 	if(this.colorTween)
 		this.colorTween.kill();
 }

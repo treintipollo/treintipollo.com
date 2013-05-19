@@ -1,4 +1,3 @@
-
 CloneShip.inheritsFrom( Ship );
 
 function CloneShip() {
@@ -11,6 +10,7 @@ function CloneShip() {
 CloneShip.prototype.init = function(x, y, userX, userY, cloneProps){
 	this.attackPosition = {x:userX+Math.cos(cloneProps.endAngle*(Math.PI/180)) * cloneProps.endDistance, 
 						   y:userY+Math.sin(cloneProps.endAngle*(Math.PI/180)) * cloneProps.endDistance};
+
 	this.speedX      = cloneProps.speed;
 	this.advanceTime = cloneProps.advanceTime;
 
@@ -22,22 +22,14 @@ CloneShip.prototype.init = function(x, y, userX, userY, cloneProps){
 	this.scaleX = 0.4;
 	this.scaleY = 0.4;
 
-	this.exhaust30.setColors(cloneProps.exhaustColor);
-	this.exhaust60.setColors(cloneProps.exhaustColor);
-	this.exhaust90.setColors(cloneProps.exhaustColor);
-	this.exhaust120.setColors(cloneProps.exhaustColor); 
-	this.exhaust150.setColors(cloneProps.exhaustColor);
+	this.setAllExhaustState("setColors", cloneProps.exhaustColor);
 }
 
 CloneShip.prototype.createStateMachine = function() {
 	Ship.prototype.createStateMachine.call(this);
 	
 	var advance = function(){
-		this.exhaust30.neutral();
-		this.exhaust60.neutral();
-		this.exhaust90.neutral();
-		this.exhaust120.neutral(); 
-		this.exhaust150.neutral();
+		this.setAllExhaustState(Exhaust.REGULAR);
 
 		this.weapon = TopLevel.weaponFactory.getInitializedWeapon(TopLevel.weaponFactory.CLONE_SHOT_WEAPON, 0, this, this.weapon); 
 
@@ -47,11 +39,7 @@ CloneShip.prototype.createStateMachine = function() {
 	}
 
 	var gotoAttackPosition = function(){
-		this.exhaust30.slowDown();
-		this.exhaust60.slowDown();
-		this.exhaust90.slowDown();
-		this.exhaust120.slowDown(); 
-		this.exhaust150.slowDown();
+		this.setAllExhaustState(Exhaust.SLOW);
 
 		TweenMax.to(this, 1, {scaleX:1, scaleY:1, x:this.attackPosition.x, y:this.attackPosition.y, onCompleteScope:this, onComplete:function(){
 			this.currentMotion.set(this.ADVANCE);
@@ -113,13 +101,11 @@ CloneShip.prototype.update = function(delta) {
 	this.x += this.totalVariation.x;
 	this.y += this.totalVariation.y;
 
-	this.exhaust30.update();
-	this.exhaust60.update();
-	this.exhaust90.update();
-	this.exhaust120.update(); 
-	this.exhaust150.update();
+	this.setAllExhaustState(Exhaust.UPDATE);
 
-	if(this.weapon) this.weapon.update();
+	if(this.weapon) { 
+		this.weapon.update();
+	}
 }
 
 CloneShip.prototype.onAllDamageReceived = function(other) {

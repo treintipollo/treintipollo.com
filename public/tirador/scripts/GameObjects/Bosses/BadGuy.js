@@ -14,9 +14,9 @@ function BadGuy() {
 	tractorBeamPoints.push({ x:0, y:0 });
 	tractorBeamPoints.push({ x:0, y:0 });
 
-	function getExhaustPointsWrapper(side)  { return this.getTractorBeamPoints(tractorBeamPoints, this.x, this.y, this.target, side); };
+	function getTractorPointsWrapper(side)  { return this.getTractorBeamPoints(tractorBeamPoints, this.x, this.y, this.target, side); };
 
-	this.tractorBeam = new TractorBeam(getExhaustPointsWrapper, this);
+	this.tractorBeam = new TractorBeam(getTractorPointsWrapper, this);
 	this.target      = null;
 }
 
@@ -69,27 +69,13 @@ BadGuy.prototype.draw = function(context) {
 	context.fill();
 
 	context.beginPath();
-
 	context.moveTo(0, -40);
-	
-	context.bezierCurveTo(20, 10,
-						  40, -40,
-						  40, 10);
-
+	context.bezierCurveTo(20, 10, 40, -40, 40, 10);
 	context.moveTo(0, -40);
-
-	context.bezierCurveTo(-20, 10,
-						  -40, -40,
-						  -40, 10);
-
+	context.bezierCurveTo(-20, 10, -40, -40, -40, 10);
 	context.moveTo(-40, 10);
-
-	context.bezierCurveTo(-20, -5,
-						  20, -5,
-						  40, 10);
-
+	context.bezierCurveTo(-20, -5, 20, -5, 40, 10);
 	context.moveTo(0, -40);
-
 	context.closePath();
 	context.stroke();
 }
@@ -404,21 +390,17 @@ MiddleBadGuy.prototype.createStateMachine = function() {
 			var speed = info.distance / 250;
 
 			if(this.x < x){
-				this.exhaust30[Exhaust.SLOW]();
-				this.exhaust60[Exhaust.SLOW]();
-				this.exhaust120[Exhaust.FAST](); 
-				this.exhaust150[Exhaust.FAST]();		
+				this.setExhaustLeftState(Exhaust.REGULAR);
+				this.setExhaustRightState(Exhaust.FAST);		
 			}else{
-				this.exhaust30[Exhaust.FAST]();
-				this.exhaust60[Exhaust.FAST]();
-				this.exhaust120[Exhaust.SLOW](); 
-				this.exhaust150[Exhaust.SLOW]();
+				this.setExhaustLeftState(Exhaust.FAST);
+				this.setExhaustRightState(Exhaust.REGULAR);
 			}
 
 			if(this.y < y){
 				this.setAllExhaustState(Exhaust.SLOW);
 			}else{
-				this.exhaust90[Exhaust.FAST]();
+				this.setExhaustForwardState(Exhaust.FAST);
 			}
 
 			this.moveTween = TweenMax.to(this, speed, {x:x, y:y, ease:Linear.easeNone, onCompleteScope:this, onComplete:function(){

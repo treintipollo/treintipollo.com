@@ -75,7 +75,6 @@ CargoShip.prototype.afterCreate = function(){
 	this.middleWindow     = this.size*0.4;
 	this.middleDetailSize = this.size*0.025;
 
-
 	var x1 = Math.cos(270*(Math.PI/180)) * this.size;
 	var y1 = Math.sin(270*(Math.PI/180)) * this.size;
 
