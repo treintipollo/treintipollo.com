@@ -89,11 +89,10 @@ BadGuy.prototype.update = function(delta) {
 	this.setAllExhaustState(Exhaust.UPDATE);
 }
 
-BadGuy.prototype.escape = function(onComplete) {	
+BadGuy.prototype.escape = function() {	
 	this.setAllExhaustState(Exhaust.SLOW);
 
-	this.blockDamage        = true;
-	this.checkingCollisions = false;
+	this.blockDamage = true;
 
 	var lastPosY = this.y;
 
@@ -105,9 +104,8 @@ BadGuy.prototype.escape = function(onComplete) {
 			onUpdateScope: this,
 			onComplete: function() {
 				this.alive = false;
-				
-				if(onComplete)
-					onComplete();
+			
+				this.executeCallbacks("escapeComplete");
 			},
 			onUpdate: function() {
 				if (lastPosY > this.y) {
@@ -137,11 +135,16 @@ BadGuy.prototype.destroy = function() {
 	this.tractorBeam.destroy();
 }
 
+//-----------------------------------------------//
+//-----------------------------------------------//
+//-----------------------------------------------//
+//-----------------------------------------------//
+
+ConcreteBadGuy.inheritsFrom( BadGuy );
+
 function ConcreteBadGuy() {
 	BadGuy.call(this);
 }
-
-ConcreteBadGuy.inheritsFrom( BadGuy );
 
 ConcreteBadGuy.prototype.init = function() {	
 	ConcreteBadGuy.prototype.getTractorBeamPoints     = this.tProto.getTractorBeamPoints;
@@ -157,16 +160,21 @@ ConcreteBadGuy.prototype.init = function() {
 	this.tProto.init.apply(this, arguments);
 }
 
+//-----------------------------------------------//
+//-----------------------------------------------//
+//-----------------------------------------------//
+//-----------------------------------------------//
+
 IntroBadGuy.inheritsFrom( BadGuy );
 
-function IntroBadGuy() {
-	BadGuy.call(this);
-}
+function IntroBadGuy() {}
 
-IntroBadGuy.prototype.init = function(x, y, container, target, onTractorBeamComplete){
+IntroBadGuy.prototype.init = function(x, y, container, target){
 	BadGuy.prototype.init.call(this, x, y, container, target);
 
-	this.tractorBeam.init(container, onTractorBeamComplete);
+	this.tractorBeam.init(container, function(){
+		this.executeCallbacks("tractorBeamComplete");
+	});
 }
 
 IntroBadGuy.prototype.fireRockets = function() {
@@ -257,14 +265,14 @@ IntroBadGuy.prototype.createStateMachine = function() {
 	}
 }
 
+//-----------------------------------------------//
+//-----------------------------------------------//
+//-----------------------------------------------//
+//-----------------------------------------------//
+
 MiddleBadGuy.inheritsFrom( BadGuy );
 
-function MiddleBadGuy() {
-	BadGuy.call(this);
-
-	this.MOVE;
-	this.ATTACK;
-}
+function MiddleBadGuy() {}
 
 MiddleBadGuy.prototype.init = function(x, y, container, target, playerShip){
 	TimeOutFactory.removeAllTimeOutsWithScope(this);
@@ -434,9 +442,8 @@ MiddleBadGuy.prototype.onDamageReceived = function(other) {}
 MiddleBadGuy.prototype.onLastDamageLevelReached = function(other) {}
 
 MiddleBadGuy.prototype.onAllDamageReceived = function(other) {
-	this.escaping           = true;
-	this.blockControls 		= true;
-	this.checkingCollisions = false;
+	this.escaping    = true;
+	this.blockDamage = true;
 
 	TimeOutFactory.removeAllTimeOutsWithScope(this);
 
@@ -455,3 +462,108 @@ MiddleBadGuy.prototype.onAllDamageReceived = function(other) {
 		this.escape();
 	}});
 }
+
+//-----------------------------------------------//
+//-----------------------------------------------//
+//-----------------------------------------------//
+//-----------------------------------------------//
+
+//TODO: Work in progress
+
+End_1_BadGuy.inheritsFrom( MiddleBadGuy );
+
+function End_1_BadGuy() {}
+
+End_1_BadGuy.prototype.onAllDamageReceived = function(other) {
+	//Soltar a la nave capturada
+
+	this.executeCallbacks("releasePartner");
+
+	this.escaping    = true;
+	this.blockDamage = true;
+
+	TimeOutFactory.removeAllTimeOutsWithScope(this);
+
+	this.colorTween = TweenMax.to(this, 0.3, {colorProps:{color:"#FF0000"}, yoyo:true, repeat:-1, ease:Linear.ease});
+	this.explosionArea.init(this, 30, 15, -1, 200);
+
+	this.currentMotion.set(this.NONE_STOP_SHAKE_MOTION);
+
+	TweenMax.to(this, 5, {rotation:720, ease:Linear.easeNone, onCompleteScope:this, onComplete:function(){
+		this.alive = false;
+	}});
+}
+
+//-----------------------------------------------//
+//-----------------------------------------------//
+//-----------------------------------------------//
+//-----------------------------------------------//
+
+// End_2_BadGuy.inheritsFrom( MiddleBadGuy );
+
+// function End_2_BadGuy() {}
+
+// End_2_BadGuy.prototype.fireRockets = function(){
+// 	var rocketTypeIndex = Random.getRandomInt(0, rocketType.length-1);
+
+// 	TimeOutFactory.getTimeOut(this.rocketTimeOut[rocketTypeIndex], this.rocketAmount[rocketTypeIndex], this, function() {
+		
+// 		var a = Random.getRandomArbitary(0, 360) * (Math.PI / 180);
+
+// 		BadGuy.RocketArguments[0] = this.x;
+// 		BadGuy.RocketArguments[1] = this.y;
+// 		BadGuy.RocketArguments[2].x = this.x + Math.cos(a) * this.rocketRadius[rocketTypeIndex];
+// 		BadGuy.RocketArguments[2].y = this.y + Math.sin(a) * this.rocketRadius[rocketTypeIndex];
+// 		BadGuy.RocketArguments[3] = this.playerShip;
+// 		BadGuy.RocketArguments[4] = TopLevel.container;
+// 		BadGuy.RocketArguments[5] = (VectorUtils.getFullVectorInfo(this.x, this.y, this.playerShip.x, this.playerShip.y).angle * (180 / Math.PI)) - 90;
+
+// 		BadGuy.RocketArguments[6].min = this.rocketAccelerationMin[rocketTypeIndex];
+// 		BadGuy.RocketArguments[6].max = this.rocketAccelerationMax[rocketTypeIndex];
+
+// 		BadGuy.RocketArguments[7].min = this.rocketDeploySpeedMin[rocketTypeIndex];
+// 		BadGuy.RocketArguments[7].max = this.rocketDeploySpeedMax[rocketTypeIndex];
+
+// 		BadGuy.RocketArguments[8] = this.blastRadius[rocketTypeIndex];	
+		
+// 		TopLevel.container.add(this.rocketType[rocketTypeIndex], BadGuy.RocketArguments);
+
+// 	}, true).start();
+// }
+
+// End_2_BadGuy.prototype.onDamageReceived = function(other) {
+// 	MiddleBadGuy.prototype.onDamageReceived.call(this, other);
+
+// 	damageToReleasePartner--;
+
+// 	if(damageToReleasePartner <= 0){
+// 		//Enter Transformation animation
+// 	}
+
+// 	//damageToReleasePartner:2,
+// }
+
+// End_2_BadGuy.prototype.onLastDamageLevelReached = function(other) {}
+
+// End_2_BadGuy.prototype.onAllDamageReceived = function(other) {
+// 	this.escaping           = true;
+// 	this.blockControls 		= true;
+// 	this.checkingCollisions = false;
+
+// 	TimeOutFactory.removeAllTimeOutsWithScope(this);
+
+// 	this.colorTween = TweenMax.to(this, 0.3, {colorProps:{color:"#FF0000"}, yoyo:true, repeat:-1, ease:Linear.ease});
+// 	this.explosionArea.init(this, 30, 15, -1, 200);
+
+// 	this.currentMotion.set(this.IDLE_MOTION);
+
+// 	var vec = VectorUtils.getFullVectorInfo(this.x, this.y, other.x, other.y);
+
+// 	vec.dir.x = Math.cos(vec.angle) * 80;
+// 	vec.dir.y = Math.sin(vec.angle) * 80;
+
+// 	TweenMax.to(this, 0.4, {rotation:360, x:this.x + vec.dir.x, y:this.y + vec.dir.y, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){	
+// 		this.rotation = 0;	
+// 		this.escape();
+// 	}});
+// }

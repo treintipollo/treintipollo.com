@@ -128,6 +128,9 @@ var TopLevel = {
 		textArgs:[],
 
 		showFeedBack: function(name, x, y){
+			if(!name)
+				return;
+
 			this.textArgs[0] = x;
 			this.textArgs[1] = y;
 			
@@ -468,13 +471,13 @@ var TopLevel = {
 			return this.partner;
 		},
 
-		getIntroBadguy: function(onTractorBeamComplete) {
+		getIntroBadguy: function() {
 			this.ship = TopLevel.playerData.ship;
 
 			if(this.badguy)
 				return this.badguy;
 			
-			this.badguy = TopLevel.container.add("IntroBadGuy", [TopLevel.canvas.width/2, TopLevel.canvas.height + 80, TopLevel.container, this.partner, onTractorBeamComplete]);
+			this.badguy = TopLevel.container.add("IntroBadGuy", [TopLevel.canvas.width/2, TopLevel.canvas.height + 80, TopLevel.container, this.partner]);
 
 			this.badguy.addOnRecicleCallback(this, function(){
 				this.badguy = null;
@@ -483,32 +486,33 @@ var TopLevel = {
 			return this.badguy;
 		},
 
-		getMiddleBadguy: function(middleBadGuyType, onDefeat) {
+		getFightBadguy: function(fightBadguyType) {
+			if(!fightBadguyType)
+				return;
+
 			this.ship = TopLevel.playerData.ship;
 
 			if(this.badguy)
 				return this.badguy;
-			
+
 			this.partner = TopLevel.container.add("Ship", [-100, -100, TopLevel.container, Exhaust.OFF]);
 			
 			this.partner.addCallback("onInitialPositionDelegate", this, function(){
-				this.partner.setAllExhaustState(Exhaust.OFF);
 				this.partner.blockControls      = true;
 				this.partner.checkingCollisions = false;
 				this.partner.rotation           = 10;
 			}, true);
 
-			this.badguy = TopLevel.container.add(middleBadGuyType, [TopLevel.canvas.width/2, -80, TopLevel.container, this.partner, this.ship]);
+			this.badguy = TopLevel.container.add(fightBadguyType, [TopLevel.canvas.width/2, -80, TopLevel.container, this.partner, this.ship]);
 			
 			this.badguy.addOnRecicleCallback(this, function(){
-				onDefeat();
 				this.badguy = null;
 			}, true);
 
 			return this.badguy;
 		},
 
-		getBossArguments: function() {
+		getBoss: function(bossId) {
 			this.ship = TopLevel.playerData.ship;
 
 			if(!this.bossArgs) {
@@ -518,11 +522,37 @@ var TopLevel = {
 			this.bossArgs[0] = TopLevel.canvas.width/2;
 			this.bossArgs[1] = -200;
 			this.bossArgs[2] = this.ship;
+			
+			this.ship = TopLevel.playerData.ship;
 
-			return this.bossArgs;
+			return TopLevel.container.add(bossId, this.bossArgs);
 		},
 
-		badGuyEscape: function(onEscapeComplete) {
+		getMainBoss: function(bossId) {
+			var boss = TopLevel.animationActors.getBoss(bossId);
+			boss.gotoPosition(TopLevel.canvas.width/2, TopLevel.canvas.height/2-100, 3, function(){ this.startAttack(); }, null, true);
+			return boss;
+		},
+
+		getMiniBossCenter: function(bossId) {
+			var boss = TopLevel.animationActors.getBoss(bossId);
+			boss.gotoPosition(TopLevel.canvas.width/2, TopLevel.canvas.height/2-200, 3, function(){ this.startAttack(); }, null, true);
+			return boss;
+		},
+
+		getMiniBossRight: function(bossId) {
+			var boss = TopLevel.animationActors.getBoss(bossId);
+			boss.gotoPosition(TopLevel.canvas.width/2+150, TopLevel.canvas.height/2-150, 3, function(){ this.startAttack(); }, null, true);
+			return boss;
+		},
+
+		getMiniBossLeft: function(bossId) {
+			var boss = TopLevel.animationActors.getBoss(bossId);
+			boss.gotoPosition(TopLevel.canvas.width/2-150, TopLevel.canvas.height/2-150, 3, function(){ this.startAttack(); }, null, true);
+			return boss;
+		},
+
+		badGuyEscape: function() {
 			this.ship = TopLevel.playerData.ship;
 
 			this.partner.setAllExhaustState(Exhaust.OFF);
@@ -534,7 +564,7 @@ var TopLevel = {
 			this.ship.weapon.start();
 			
 			this.badguy.fireRockets();
-			this.badguy.escape(onEscapeComplete);
+			this.badguy.escape();
 		},
 
 		disablePlayerMovement: function() {
@@ -563,13 +593,14 @@ window.TopLevel = TopLevel;
 	
 //TODO: PowerShip
 	//GameObject (DONE)
-	//Drawingv (DONE)
+	//Drawing (DONE)
 	//Weapon
 
 //TODO: Mini story sequence.	
 	//Ending.
 		//After the last Big Boss, he shows up again.
-			//Drops the captured ship when damaged, once. (Galaga style) 
+			//EndBadGuy (DONE!)
+			//Regular Fight, Dies and drops de captured ship. (Galaga style) 
 			//Transformers-like sequence. (Galaga style)
 			//Final Show Down!
 				//Bad Guy uses all of his attacks and is very fast.
@@ -706,29 +737,29 @@ $(function(){
 	var setUpGame = function() {	
 		var starFactory   = TopLevel.starFactory;
 		var rocketFactory = TopLevel.rocketFactory;
-
-		var ship = TopLevel.playerData.ship;	
-			
-		var bossArgs = TopLevel.animationActors.getBossArguments;
+		
 		var bossDrops = {};
 
-		var w = TopLevel.canvas.width;
-		var h = TopLevel.canvas.height;
+		var getBadGuy         = TopLevel.animationActors.getFightBadguy;
+		var getMainBoss       = TopLevel.animationActors.getMainBoss;       
+		var getMiniBossCenter = TopLevel.animationActors.getMiniBossCenter; 
+		var getMiniBossRight  = TopLevel.animationActors.getMiniBossRight;  
+		var getMiniBossLeft   = TopLevel.animationActors.getMiniBossLeft; 
 
 		var currentBoss = -1;
 			
 		var bosses = [
-			{name:"Boss_1_B", createNext:false, badGuyId:"Middle_1_BadGuy", intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
-			{name:"Boss_1_C", createNext:false, badGuyId:"Middle_1_BadGuy", intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"MultiWeaponPowerUp"},
-							   
-			{name:"Boss_1_D", createNext:false, badGuyId:"Middle_2_BadGuy", intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"HPPowerUp"},
-		    {name:"Boss_1_E", createNext:false, badGuyId:"Middle_2_BadGuy", intro:"warning", winMessage:"boom", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:"LivesPowerUp"},
+			{main:{id:"Boss_1_C", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_1_BadGuy", get:getBadGuy}, intro:"warning", win:"boom", drop:"MultiWeaponPowerUp"},							   
+			{main:{id:"Boss_1_D", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_1_BadGuy", get:getBadGuy}, intro:"warning", win:"boom", drop:"HPPowerUp"},
+		    {main:{id:"Boss_1_E", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_2_BadGuy", get:getBadGuy}, intro:"warning", win:"boom", drop:"LivesPowerUp"},
 		   
-		    {name:"SubBoss_1", createNext:true , badGuyId:null, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2-150, y:h/2-150, time:3}, powerUp:null},
-		    {name:"SubBoss_1", createNext:true , badGuyId:null, intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2+150, y:h/2-150, time:3}, powerUp:null},
-		    {name:"SubBoss_3", createNext:false, badGuyId:"Middle_3_BadGuy", intro:"none", winMessage:"nice", args:bossArgs, targetPos:{x:w/2,     y:h/2-200, time:3}, powerUp:null},
+		    {main:{id:"SubBoss_1", get:getMiniBossLeft}  , next:true , last:false, sub:null, intro:null, win:"nice", drop:"MultiWeaponPowerUp"},
+		    {main:{id:"SubBoss_1", get:getMiniBossRight} , next:true , last:false, sub:null, intro:null, win:"nice", drop:"MultiWeaponPowerUp"},
+		    {main:{id:"SubBoss_3", get:getMiniBossCenter}, next:false, last:false, sub:{id:"Middle_2_BadGuy", get:getBadGuy}, intro:"watchout", win:"nice", drop:"HPPowerUp"},
 
-		    {name:"Boss_1_F", createNext:false , badGuyId:"Middle_3_BadGuy", intro:"warning", winMessage:"complete", args:bossArgs, targetPos:{x:w/2, y:h/2-100, time:3}, powerUp:null}
+		    {main:{id:"Boss_1_F", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_3_BadGuy", get:getBadGuy}, intro:"complete", win:"boom" , getMain:getMainBoss, drop:"HPPowerUp"},
+
+		    {mainId:"End_1_BadGuy", next:false, last:true, subId:null, intro:"ready", win:"victory", args:bossArgs, pos:bossPos, drop:null}
 	    ];
 
 		//First Set
@@ -749,61 +780,82 @@ $(function(){
 		rocketFactory.onWaveComplete = FuntionUtils.bindScope(this, function(){
 			var bossesCreated = 0;
 
+			var createSubBoss = function(bossInit) {
+				if(bossInit.next)
+					return;
+
+				if(!bossInit.sub){
+					createBossIntro(bossInit);
+					return;
+				}
+
+				var subBoss = bossInit.sub.get(bossInit.sub.id);
+
+				subBoss.addOnRecicleCallback(this, function(){
+					createBossIntro(bossInit);
+				}, true);
+			}
+
+			var createBossIntro = function(bossInit) {
+				if(bossInit.next)
+					return;
+
+				var intro = TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.intro, -200, TopLevel.canvas.height/2 );
+
+				if(intro){
+					intro.addOnDestroyCallback(this, function(){
+						createBoss(bossInit);
+					});
+				}else{
+					createBoss(bossInit);
+				}
+			}
+
+			var createBoss = function(bossInit) {
+				
+				if(bossInit.next)
+					return;
+
+				var onBossDestroy = function(obj){
+					TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId].pop(), 1, false);
+
+					bossesCreated--;
+					if(bossesCreated <= 0){
+						var win = TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.win, -200, TopLevel.canvas.height / 2);
+						
+						win.addOnDestroyCallback(this, function(){
+							TopLevel.playerData.increaseStage();
+							rocketFactory.start();
+						});
+					}
+				}
+
+				var currentBossIndex = currentBoss;
+
+				do {
+					var boss = bosses[currentBossIndex].main.get(bosses[currentBossIndex].main.id);
+					
+					if(!bossDrops[boss.typeId]){
+						bossDrops[boss.typeId] = [];
+					}
+
+					bossDrops[boss.typeId].push(bosses[currentBossIndex].drop);
+
+					boss.addOnDestroyCallback(this, onBossDestroy);
+					
+					currentBossIndex--;
+
+				}while(currentBossIndex >= 0 && bosses[currentBossIndex].next)
+			}
+
 			do{
 				currentBoss++;
 				bossesCreated++;
 				currentBoss = currentBoss >= bosses.length ? 0 : currentBoss;
 
-				var bossInit = bosses[currentBoss];
-
-				if(bossInit.intro == "none"){
-					var boss = TopLevel.container.add(bossInit.name, bossInit.args.call(TopLevel.animationActors));		
-
-					bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
-
-					boss.gotoPosition(bossInit.targetPos.x, bossInit.targetPos.y, bossInit.targetPos.time, function(){
-						this.startAttack();
-					}, null, true);
-
-					boss.addOnDestroyCallback(this, function(obj){
-						TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
-						
-						bossesCreated--;
-						if(bossesCreated <= 0){
-							TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
-
-							TopLevel.playerData.increaseStage();
-
-							rocketFactory.start();
-						}
-					});
-
-				}else{
-					TopLevel.animationActors.getMiddleBadguy(bossInit.badGuyId, function(){
-						var intro = TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.intro, -200, TopLevel.canvas.height/2 );
-
-						intro.addOnDestroyCallback(this, function(obj){
-							var boss = TopLevel.container.add(bossInit.name, bossInit.args.call(TopLevel.animationActors));		
-
-							bossDrops[boss.typeId] = bosses[currentBoss].powerUp;
-
-							boss.gotoPosition(bossInit.targetPos.x, bossInit.targetPos.y, bossInit.targetPos.time, function(){
-								this.startAttack();
-							}, null, true);
-
-							boss.addOnDestroyCallback(this, function(obj){
-								TopLevel.powerUpFactory.create(obj.x, obj.y, bossDrops[obj.typeId], 1, false);
-								TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.winMessage, -200, TopLevel.canvas.height/2 );
-
-								TopLevel.playerData.increaseStage();
-
-								rocketFactory.start();
-							});
-						});
-					});
-				}
+				createSubBoss(bosses[currentBoss]);			
 				
-			}while(bossInit.createNext);
+			}while(bosses[currentBoss].next);
 		});
 
 		starFactory.start();
@@ -943,11 +995,11 @@ $(function(){
 			rocketTimeOut: 100,
 			rocketAmount: 15,
 			rocketRadius: 100,
-			rocketAccelerationMin:0.8,
-			rocketAccelerationMax:1.2,
-			rocketDeploySpeedMin:1,
-			rocketDeploySpeedMax:1.7,
-			blastRadius:15
+			rocketAccelerationMin: 0.8,
+			rocketAccelerationMax: 1.2,
+			rocketDeploySpeedMin: 1,
+			rocketDeploySpeedMax: 1.7,
+			blastRadius: 15
 		});
 
 		TopLevel.container.createTypeConfiguration("Middle_2_BadGuy", "BadGuy").collisionId("BadGuy").args({
@@ -956,11 +1008,11 @@ $(function(){
 			rocketTimeOut: 200,
 			rocketAmount: 5,
 			rocketRadius: 100,
-			rocketAccelerationMin:0.05,
-			rocketAccelerationMax:0.2,
-			rocketDeploySpeedMin:1,
-			rocketDeploySpeedMax:1.7,
-			blastRadius:15
+			rocketAccelerationMin: 0.05,
+			rocketAccelerationMax: 0.2,
+			rocketDeploySpeedMin: 1,
+			rocketDeploySpeedMax: 1.7,
+			blastRadius: 15
 		});
 
 		TopLevel.container.createTypeConfiguration("Middle_3_BadGuy", "BadGuy").collisionId("BadGuy").args({
@@ -969,12 +1021,44 @@ $(function(){
 			rocketTimeOut: 150,
 			rocketAmount: 8,
 			rocketRadius: 100,
-			rocketAccelerationMin:0.8,
-			rocketAccelerationMax:1.2,
-			rocketDeploySpeedMin:0.6,
-			rocketDeploySpeedMax:1.8,
-			blastRadius:15
+			rocketAccelerationMin: 0.8,
+			rocketAccelerationMax: 1.2,
+			rocketDeploySpeedMin: 0.6,
+			rocketDeploySpeedMax: 1.8,
+			blastRadius: 15
 		});
+
+		//TODO: Hacen falta dos de estos, el primero cuando lo matas larga al partner.
+		//TODO: Cunado ocurre la transformacion destruyo al anterior y creo al segundo en su lugar.
+			//Trata de llamar al Big Boss pero no viene. 
+			//Se hace de una armadura y empice la batalla final.
+
+		TopLevel.container.createTypeConfiguration("End_1_BadGuy", "BadGuy").collisionId("BadGuy").args({
+			tProto: End_1_BadGuy.prototype,
+			rocketType: "BadGuySmallAimedRocket",
+			rocketTimeOut: 100,
+			rocketAmount: 15,
+			rocketRadius: 100,
+			rocketAccelerationMin: 0.8,
+			rocketAccelerationMax: 1.2,
+			rocketDeploySpeedMin: 1,
+			rocketDeploySpeedMax: 1.7,
+			blastRadius: 15
+		});
+
+		// TopLevel.container.createTypeConfiguration("End_2_BadGuy", "BadGuy").collisionId("BadGuy").args({
+		// 	tProto: End_2_BadGuy.prototype,
+		// 	rocketType: ["BadGuySmallAimedRocket,BadGuyLargeHomingRocket,BadGuyClusterAimedRocket"],
+		// 	rocketTimeOut: ["100,200,150"],
+		// 	rocketAmount: ["15,5,8"],
+		// 	rocketRadius: ["100,100,100"],
+		// 	rocketAccelerationMin: ["0.8,0.05,0.8"],
+		// 	rocketAccelerationMax: ["1.2,0.2,1.2"],
+		// 	rocketDeploySpeedMin: ["1,1,0.6"],
+		// 	rocketDeploySpeedMax: ["1.7,1.7,1.8"],
+		// 	blastRadius: ["15,15,15"],
+		// 	damageToReleasePartner: 2,
+		// });
 
 		TopLevel.container.createTypeConfiguration("BadGuySmallAimedRocket"  , "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto:BadGuySmallAimedRocket.prototype});
 		TopLevel.container.createTypeConfiguration("BadGuyLargeHomingRocket" , "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto:BadGuyLargeHomingRocket.prototype});
@@ -1179,7 +1263,21 @@ $(function(){
 			align: "center",
 			baseline: "middle"
 		});
-		
+
+		TopLevel.container.createTypeConfiguration("watchout", "Text").layer(-1).args({
+			introSpeed: 0.7,
+			tProto: WarningText.prototype,
+			text: "WATCH OUT!",
+			font: "Russo One",
+			size: 60,
+			fill: "#FFFFFF",
+			stroke: "#FF0000",
+			lineWidth: 3,
+			align: "center",
+			baseline: "middle"
+		});
+
+				
 		TopLevel.container.createTypeConfiguration("boom", "Text").layer(-1).args({
 			introSpeed: 0.5,
 			tProto: WarningText.prototype,
@@ -1206,6 +1304,32 @@ $(function(){
 			baseline: "middle"
 		});
 		
+		TopLevel.container.createTypeConfiguration("ready", "Text").layer(-1).args({
+			introSpeed: 0.7,
+			tProto: WarningText.prototype,
+			text: "READY?",
+			font: "Russo One",
+			size: 60,
+			fill: "#FFFFFF",
+			stroke: "#FF0000",
+			lineWidth: 3,
+			align: "center",
+			baseline: "middle"
+		});
+
+		TopLevel.container.createTypeConfiguration("victory", "Text").layer(-1).args({
+			introSpeed: 0.7,
+			tProto: WarningText.prototype,
+			text: "VICTORY!",
+			font: "Russo One",
+			size: 60,
+			fill: "#FFFFFF",
+			stroke: "#FF0000",
+			lineWidth: 3,
+			align: "center",
+			baseline: "middle"
+		});
+
 		TopLevel.container.createTypeConfiguration("complete", "Text").layer(-1).args({
 			introSpeed: 0.7,
 			tProto: WarningText.prototype,
@@ -1362,6 +1486,12 @@ $(function(){
 		TopLevel.attributesGetter.setAttributes("Middle_1_BadGuy", 20 , 1 , 10 );
 		TopLevel.attributesGetter.setAttributes("Middle_2_BadGuy", 20 , 1 , 10 );
 		TopLevel.attributesGetter.setAttributes("Middle_3_BadGuy", 20 , 1 , 10 );
+
+		TopLevel.attributesGetter.setAttributes("End_1_BadGuy", 25 , 1 , 10 );
+		
+		TopLevel.attributesGetter.setAttributes("End_2_BadGuy", 25 , 1 , 10 );
+		TopLevel.attributesGetter.setAttributes("End_2_BadGuy", 25 , 1 , 10 );
+		TopLevel.attributesGetter.setAttributes("End_2_BadGuy", 25 , 1 , 10 );
 
 		TopLevel.attributesGetter.setAttributes("CloneShip", 10 , 3 , 10 );
 		TopLevel.attributesGetter.setAttributes("CargoShip", 10 , 1 , 10 );
@@ -1616,11 +1746,15 @@ $(function(){
 
 	var introSequence = function() {
 		TimeOutFactory.getTimeOut(2000, 1, this, function() {
-			var badGuy = TopLevel.animationActors.getIntroBadguy(function(){
-				TopLevel.animationActors.badGuyEscape(function(){
-					TopLevel.rocketFactory.start();
-				});
-			});
+			var badGuy = TopLevel.animationActors.getIntroBadguy();
+
+			badGuy.addCallback("tractorBeamComplete", this, function(){
+				TopLevel.animationActors.badGuyEscape();
+			}, true);
+
+			badGuy.addCallback("escapeComplete", this, function(){
+				TopLevel.rocketFactory.start();
+			}, true);
 
 			badGuy.addCallback("onInitialPositionDelegate", this, function(){
 				badGuy.tractorBeam.on();

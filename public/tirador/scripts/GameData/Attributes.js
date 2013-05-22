@@ -137,7 +137,7 @@ Attributes.prototype.onCollide = function(other) {
 			this.blockDamage = true;
 			this.onAllDamageReceived(other);
 			
-			this.executeCallbacks("onAllDamageReceivedDelegate", other)
+			this.executeCallbacks("onAllDamageReceivedDelegate", other);
 		}		
 	}
 }

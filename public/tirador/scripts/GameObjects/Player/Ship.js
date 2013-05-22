@@ -110,19 +110,19 @@ Ship.prototype.init = function(x, y, container, exhaustState){
 	this.y 		   = y;
 	this.container = container;
 
-	this.color          = "#FFFFFF";
-	this.rotation       = 0;
-	this.blockControls  = false;
-	this.shakeCounter   = 0;
-	this.totalVariation = {x:0, y:0};
-	this.lastVar        = {x:0, y:0};
+	this.color             = "#FFFFFF";
+	this.rotation          = 0;
+	this.blockControls     = false;
+	this.shakeCounter      = 0;
+	this.totalVariation    = {x:0, y:0};
+	this.lastVar           = {x:0, y:0};
+	this.startExhaustState = exhaustState;
 
-	if(exhaustState){
-		this.setAllExhaustState(exhaustState, this.container);
-	}else{
-		this.setAllExhaustState(Exhaust.INIT, this.container);
+	this.setAllExhaustState(Exhaust.INIT, this.container);
+	if(this.startExhaustState){
+		this.setAllExhaustState(this.startExhaustState);
 	}
-
+	
 	this.createStateMachine();
 	this.gotoInitialState();
 }
@@ -162,13 +162,18 @@ Ship.prototype.createStateMachine = function() {
 		this.blockControls = true;
 		this.blockDamage   = true;
 
-		this.setAllExhaustState(Exhaust.FAST);
+		if(!this.startExhaustState){
+			this.setAllExhaustState(Exhaust.FAST);
+		}
+
 
 		TweenMax.to(this, 1, {y:this.y - 150, onCompleteScope:this, onComplete:function(){
 			this.blockControls = false;
 			this.blockDamage   = false;
 
-			this.setAllExhaustState(Exhaust.REGULAR);
+			if(!this.startExhaustState){
+				this.setAllExhaustState(Exhaust.REGULAR);
+			}
 
 			this.executeCallbacks("onInitialPositionDelegate", this);
 		}});
