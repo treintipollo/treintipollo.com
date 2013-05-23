@@ -395,7 +395,7 @@ MiddleBadGuy.prototype.createStateMachine = function() {
 			var y = Random.getRandomArbitary(30, TopLevel.canvas.height - 30);
 
 			var info  = VectorUtils.getFullVectorInfo(this.x, this.y, x, y);
-			var speed = info.distance / 250;
+			var speed = info.distance / this.speed;
 
 			if(this.x < x){
 				this.setExhaustLeftState(Exhaust.REGULAR);
@@ -446,6 +446,7 @@ MiddleBadGuy.prototype.onAllDamageReceived = function(other) {
 	this.blockDamage = true;
 
 	TimeOutFactory.removeAllTimeOutsWithScope(this);
+	TweenMax.killTweensOf(this);
 
 	this.colorTween = TweenMax.to(this, 0.3, {colorProps:{color:"#FF0000"}, yoyo:true, repeat:-1, ease:Linear.ease});
 	this.explosionArea.init(this, 30, 15, -1, 200);
@@ -475,23 +476,31 @@ End_1_BadGuy.inheritsFrom( MiddleBadGuy );
 function End_1_BadGuy() {}
 
 End_1_BadGuy.prototype.onAllDamageReceived = function(other) {
-	//Soltar a la nave capturada
-
-	this.executeCallbacks("releasePartner");
-
 	this.escaping    = true;
 	this.blockDamage = true;
 
 	TimeOutFactory.removeAllTimeOutsWithScope(this);
+	TweenMax.killTweensOf(this);
 
 	this.colorTween = TweenMax.to(this, 0.3, {colorProps:{color:"#FF0000"}, yoyo:true, repeat:-1, ease:Linear.ease});
 	this.explosionArea.init(this, 30, 15, -1, 200);
 
+	this.tractorBeam.off();
+
 	this.currentMotion.set(this.NONE_STOP_SHAKE_MOTION);
 
-	TweenMax.to(this, 5, {rotation:720, ease:Linear.easeNone, onCompleteScope:this, onComplete:function(){
-		this.alive = false;
+	TweenMax.to(this, 0.4, {rotation: "+=360", ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){	
+		this.executeCallbacks("releasePartner");	
 	}});
+}
+
+End_1_BadGuy.prototype.update = function(delta){
+	if(this.escaping){
+		BadGuy.prototype.update.call(this, delta);
+		this.rotation += 2;
+	}else{
+		MiddleBadGuy.prototype.update.call(this, delta);
+	}
 }
 
 //-----------------------------------------------//

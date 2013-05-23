@@ -44,7 +44,7 @@ GameObject.prototype.addCallback = function(delegateName, scope, callback, remov
 	this[delegateName].push({scope:scope, callback:callback, removeOnExecute:removeOnExecute});
 }
 
-GameObject.prototype.executeCallbacks = function(delegateName, args, onComplete) {
+GameObject.prototype.executeCallbacks = function(delegateName, args) {
 	if(!this[delegateName]){ return; }
 
 	for(var i=0; i<this[delegateName].length; i++){
@@ -59,10 +59,6 @@ GameObject.prototype.executeCallbacks = function(delegateName, args, onComplete)
 		if(callbackObject.removeOnExecute){
 			this[delegateName][i] = null;		
 		}
-	}
-
-	if(onComplete){
-		onComplete();
 	}
 }
 

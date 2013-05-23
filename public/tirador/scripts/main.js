@@ -512,6 +512,25 @@ var TopLevel = {
 			return this.badguy;
 		},
 
+		getEndBadGuy: function(fightBadGuyType) {
+			this.badguy = this.getFightBadguy(fightBadGuyType);
+
+			this.badguy.addCallback("releasePartner", this, function(){
+				this.disablePlayerMovement();
+
+				//TODO: Mover a player al medio de la pantalla
+				//TODO: Mover a partner al medio de la pantalla
+				//TODO: Ponerle los exhaust en regular a los dos.
+
+				//TODO: Cuando estan los dos en posicion,
+				//TODO: Empezar la animacion de transformacion!
+			});
+
+			//this.badguy = this.getFightBadguy("End_2_BadGuy");
+
+			return this.badguy;
+		},
+
 		getBoss: function(bossId) {
 			this.ship = TopLevel.playerData.ship;
 
@@ -740,26 +759,27 @@ $(function(){
 		
 		var bossDrops = {};
 
-		var getBadGuy         = TopLevel.animationActors.getFightBadguy;
-		var getMainBoss       = TopLevel.animationActors.getMainBoss;       
-		var getMiniBossCenter = TopLevel.animationActors.getMiniBossCenter; 
-		var getMiniBossRight  = TopLevel.animationActors.getMiniBossRight;  
-		var getMiniBossLeft   = TopLevel.animationActors.getMiniBossLeft; 
+		var getFightBadGuy    = FuntionUtils.bindScope(TopLevel.animationActors, TopLevel.animationActors.getFightBadguy);
+		var getEndBadGuy      = FuntionUtils.bindScope(TopLevel.animationActors, TopLevel.animationActors.getEndBadGuy);
+		var getMainBoss       = FuntionUtils.bindScope(TopLevel.animationActors, TopLevel.animationActors.getMainBoss);       
+		var getMiniBossCenter = FuntionUtils.bindScope(TopLevel.animationActors, TopLevel.animationActors.getMiniBossCenter); 
+		var getMiniBossRight  = FuntionUtils.bindScope(TopLevel.animationActors, TopLevel.animationActors.getMiniBossRight);  
+		var getMiniBossLeft   = FuntionUtils.bindScope(TopLevel.animationActors, TopLevel.animationActors.getMiniBossLeft); 
 
 		var currentBoss = -1;
 			
 		var bosses = [
-			{main:{id:"Boss_1_C", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_1_BadGuy", get:getBadGuy}, intro:"warning", win:"boom", drop:"MultiWeaponPowerUp"},							   
-			{main:{id:"Boss_1_D", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_1_BadGuy", get:getBadGuy}, intro:"warning", win:"boom", drop:"HPPowerUp"},
-		    {main:{id:"Boss_1_E", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_2_BadGuy", get:getBadGuy}, intro:"warning", win:"boom", drop:"LivesPowerUp"},
+			// {main:{id:"Boss_1_C", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_1_BadGuy", get:getFightBadGuy}, intro:"warning", win:"boom", drop:"MultiWeaponPowerUp"},							   
+			// {main:{id:"Boss_1_D", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_1_BadGuy", get:getFightBadGuy}, intro:"warning", win:"boom", drop:"HPPowerUp"},
+		 //    {main:{id:"Boss_1_E", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_2_BadGuy", get:getFightBadGuy}, intro:"warning", win:"boom", drop:"LivesPowerUp"},
 		   
-		    {main:{id:"SubBoss_1", get:getMiniBossLeft}  , next:true , last:false, sub:null, intro:null, win:"nice", drop:"MultiWeaponPowerUp"},
-		    {main:{id:"SubBoss_1", get:getMiniBossRight} , next:true , last:false, sub:null, intro:null, win:"nice", drop:"MultiWeaponPowerUp"},
-		    {main:{id:"SubBoss_3", get:getMiniBossCenter}, next:false, last:false, sub:{id:"Middle_2_BadGuy", get:getBadGuy}, intro:"watchout", win:"nice", drop:"HPPowerUp"},
+		 //    {main:{id:"SubBoss_1", get:getMiniBossLeft}  , next:true , last:false, sub:null, intro:null, win:"nice", drop:"MultiWeaponPowerUp"},
+		 //    {main:{id:"SubBoss_1", get:getMiniBossRight} , next:true , last:false, sub:null, intro:null, win:"nice", drop:"MultiWeaponPowerUp"},
+		 //    {main:{id:"SubBoss_3", get:getMiniBossCenter}, next:false, last:false, sub:{id:"Middle_2_BadGuy", get:getFightBadGuy}, intro:"watchout", win:"nice", drop:"HPPowerUp"},
 
-		    {main:{id:"Boss_1_F", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_3_BadGuy", get:getBadGuy}, intro:"complete", win:"boom" , getMain:getMainBoss, drop:"HPPowerUp"},
+		 //    {main:{id:"Boss_1_F", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_3_BadGuy", get:getFightBadGuy}, intro:"complete", win:"boom", drop:"HPPowerUp"},
 
-		    {mainId:"End_1_BadGuy", next:false, last:true, subId:null, intro:"ready", win:"victory", args:bossArgs, pos:bossPos, drop:null}
+		    {main:{id:"End_1_BadGuy", get:getEndBadGuy}, next:false, last:true, sub:null, intro:"ready", win:"victory", drop:null}
 	    ];
 
 		//First Set
@@ -824,8 +844,13 @@ $(function(){
 						var win = TopLevel.textFeedbackDisplayer.showFeedBack(bossInit.win, -200, TopLevel.canvas.height / 2);
 						
 						win.addOnDestroyCallback(this, function(){
-							TopLevel.playerData.increaseStage();
-							rocketFactory.start();
+							if(!bossInit.last){
+								TopLevel.playerData.increaseStage();
+								rocketFactory.start();
+							}
+							else{
+								createLastBoss();
+							}
 						});
 					}
 				}
@@ -846,6 +871,10 @@ $(function(){
 					currentBossIndex--;
 
 				}while(currentBossIndex >= 0 && bosses[currentBossIndex].next)
+			}
+
+			var createLastBoss = function() {
+				//TODO: Hacer algo para crear al ultimo Boss
 			}
 
 			do{
@@ -999,6 +1028,7 @@ $(function(){
 			rocketAccelerationMax: 1.2,
 			rocketDeploySpeedMin: 1,
 			rocketDeploySpeedMax: 1.7,
+			speed: 220,
 			blastRadius: 15
 		});
 
@@ -1012,6 +1042,7 @@ $(function(){
 			rocketAccelerationMax: 0.2,
 			rocketDeploySpeedMin: 1,
 			rocketDeploySpeedMax: 1.7,
+			speed: 220,
 			blastRadius: 15
 		});
 
@@ -1025,6 +1056,7 @@ $(function(){
 			rocketAccelerationMax: 1.2,
 			rocketDeploySpeedMin: 0.6,
 			rocketDeploySpeedMax: 1.8,
+			speed: 240,
 			blastRadius: 15
 		});
 
@@ -1043,6 +1075,7 @@ $(function(){
 			rocketAccelerationMax: 1.2,
 			rocketDeploySpeedMin: 1,
 			rocketDeploySpeedMax: 1.7,
+			speed: 260,
 			blastRadius: 15
 		});
 

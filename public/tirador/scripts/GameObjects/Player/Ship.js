@@ -148,6 +148,7 @@ Ship.prototype.createStateMachine = function() {
 	}
 
 	var startTrembleTimer = function(repeateCount){
+		this.shakeCounter = 0;
 		this.trembleTimer.start();	
 	}	
 
@@ -180,6 +181,7 @@ Ship.prototype.createStateMachine = function() {
 	}
 
 	var slowAllDown = function(){		
+		this.shakeCounter = 0;
 		this.setAllExhaustState(Exhaust.SLOW);
 	}
 

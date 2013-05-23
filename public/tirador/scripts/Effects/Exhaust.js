@@ -9,6 +9,7 @@ Exhaust.FAST 	= "speedUp";
 Exhaust.SLOW 	= "slowDown";
 Exhaust.OFF 	= "off";
 Exhaust.UPDATE  = "update";
+Exhaust.FAIL    = "failing";
 
 function Exhaust(particleBezierPoints, parentContext) {
 	this.particleBezierPoints = particleBezierPoints;
@@ -36,6 +37,7 @@ Exhaust.prototype.init = function(container) {
 Exhaust.prototype.neutral  = function() { this.state = Exhaust.NEUTRAL; }
 Exhaust.prototype.speedUp  = function() { this.state = Exhaust.UP;      }
 Exhaust.prototype.slowDown = function() { this.state = Exhaust.DOWN;    }
+Exhaust.prototype.failing  = function() { this.state = Exhaust.FAILING; }
 
 Exhaust.prototype.off = function() { 
 	this.clearAllIntervals();
@@ -48,9 +50,10 @@ Exhaust.prototype.update = function() {
 
 	this.clearAllIntervals();
 
-	if(this.state == Exhaust.NEUTRAL){ this.neutralTimer.start();   }
-	if(this.state == Exhaust.UP)	 { this.speedUpTimer.start();   }
-	if(this.state == Exhaust.DOWN)	 { this.speedDownTimer.start(); }
+	if(this.state == Exhaust.NEUTRAL) { this.neutralTimer.start();   }
+	if(this.state == Exhaust.UP)	  { this.speedUpTimer.start();   }
+	if(this.state == Exhaust.DOWN)	  { this.speedDownTimer.start(); }
+	if(this.state == Exhaust.FAILING) { this.speedDownTimer.start(); }
 
 	this.lastState = this.state;
 }
@@ -77,5 +80,11 @@ Exhaust.prototype.createParticles = function(parentContext, state, life) {
 	Exhaust.ParticleArguments[4] = life;
 	Exhaust.ParticleArguments[5] = this.particleSide;
 
-	this.container.add("ExhaustParticle", Exhaust.ParticleArguments);		
+	if(state == Exhaust.FAILING){
+		if(Math.random() > 0.5){
+			this.container.add("ExhaustParticle", Exhaust.ParticleArguments);	
+		}
+	}else{
+		this.container.add("ExhaustParticle", Exhaust.ParticleArguments);		
+	}
 }
