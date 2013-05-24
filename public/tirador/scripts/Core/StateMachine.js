@@ -4,6 +4,7 @@ function StateMachine(executePreviousUpdate, scope){
 	this.executePreviousUpdate = executePreviousUpdate;
 	this.currentStateId = -1;
 	this.lastStateId    = -1;
+	this.isBlocked      = false;
 }
 
 StateMachine.prototype.add = function(init, update, complete) {
@@ -11,8 +12,8 @@ StateMachine.prototype.add = function(init, update, complete) {
 	return this.states.push(state)-1;		
 }
 
-StateMachine.prototype.set = function(stateId, newStateArgsInitArgs, lastStateCompleteArgs) {
-	if(this.states == null){
+StateMachine.prototype.set = function(stateId, newStateInitArgs, lastStateCompleteArgs) {
+	if(this.isBlocked || this.states == null){
 		return;
 	}
 
@@ -27,7 +28,7 @@ StateMachine.prototype.set = function(stateId, newStateArgsInitArgs, lastStateCo
 	this.currentStateId = stateId;
 
 	if(this.states[this.currentStateId].init){
-		this.states[this.currentStateId].init.apply(this.scope, newStateArgsInitArgs);
+		this.states[this.currentStateId].init.apply(this.scope, newStateInitArgs);
 	}
 }
 
@@ -37,6 +38,14 @@ StateMachine.prototype.get = function(stateId) {
 
 StateMachine.prototype.isCurrentState = function(stateId) {
 	return this.currentStateId == stateId;;
+}
+
+StateMachine.prototype.block = function() {
+	this.isBlocked = true;
+}
+
+StateMachine.prototype.unblock = function() {
+	this.isBlocked = false;
 }
 
 StateMachine.prototype.update = function() {

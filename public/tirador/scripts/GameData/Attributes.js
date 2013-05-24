@@ -107,7 +107,13 @@ Attributes.prototype.onLastDamageLevelReached 		 = function(other) {}
 Attributes.prototype.onAllDamageReceived      		 = function(other) {}
 
 Attributes.prototype.onCollide = function(other) {
-	if(!TopLevel.attributesGetter.getFullAttributes(other.typeId)){
+	var fullAttributes = TopLevel.attributesGetter.getFullAttributes(other.typeId);
+
+	if(!fullAttributes){
+		return;
+	}
+
+	if(this.currentLevel >= fullAttributes.length-1 && this.currentHp < 0){
 		return;
 	}
 

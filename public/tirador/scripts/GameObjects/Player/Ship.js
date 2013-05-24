@@ -147,9 +147,13 @@ Ship.prototype.createStateMachine = function() {
 		this.shakeCounter++;
 	}
 
-	var startTrembleTimer = function(repeateCount){
+	var startTrembleTimer = function(){
 		this.shakeCounter = 0;
-		this.trembleTimer.start();	
+		this.trembleTimer.start();
+	}
+
+	var stopTrembleTimer = function(){
+		this.trembleTimer.stop();
 	}	
 
 	var idle = function(){
@@ -185,7 +189,7 @@ Ship.prototype.createStateMachine = function() {
 		this.setAllExhaustState(Exhaust.SLOW);
 	}
 
-	this.SHAKE_MOTION 			= this.currentMotion.add(startTrembleTimer, shake, null); 
+	this.SHAKE_MOTION 			= this.currentMotion.add(startTrembleTimer, shake, stopTrembleTimer); 
 	this.IDLE_MOTION 			= this.currentMotion.add(null, idle, null);
 	this.NONE_STOP_SHAKE_MOTION = this.currentMotion.add(slowAllDown, shake, null);
 	this.START_MOTION 			= this.currentMotion.add(gotoInitPosition, idle, null);

@@ -451,6 +451,13 @@ var TopLevel = {
 		badguy: null,
 		bossArgs: null,
 
+		shipInitX: 0,
+		shipInitY: 0,
+		partnerInitX: 0,
+		partnerInitY: 0,
+		badguyInitX: 0,
+		badguyInitY: 0,		
+
 		getIntroPartner: function() {
 			this.ship = TopLevel.playerData.ship;
 
@@ -462,6 +469,12 @@ var TopLevel = {
 
 			this.partner.addCallback("onInitialPositionDelegate", this, function(){
 				this.disablePlayerMovement();
+				
+				this.shipInitX = this.ship.x;
+				this.shipInitY = this.ship.y;
+
+				this.partnerInitX = this.partner.x;
+				this.partnerInitY = this.partner.y;
 			}, true);
 
 			this.partner.addOnRecicleCallback(this, function(){
@@ -505,11 +518,22 @@ var TopLevel = {
 
 			this.badguy = TopLevel.container.add(fightBadguyType, [TopLevel.canvas.width/2, -80, TopLevel.container, this.partner, this.ship]);
 			
+			this.badguy.addCallback("onInitialPositionDelegate", this, function(){
+				this.badguyInitX = this.badguy.x;
+				this.badguyInitY = this.badguy.y;
+			}, true);
+			
 			this.badguy.addOnRecicleCallback(this, function(){
 				this.badguy = null;
 			}, true);
 
 			return this.badguy;
+		},
+
+		moveToPosition: function(actor, endX, endY, onComplete) {
+			var speed = VectorUtils.getFullVectorInfo(actor.x, actor.y, endX, endY).distance / 50;
+			TweenMax.to(actor, speed, { x:endX, y:endY, ease: Linear.easeNone, onComplete:onComplete });
+			TweenMax.to(actor, 1, { rotation:0 });
 		},
 
 		getEndBadGuy: function(fightBadGuyType) {
@@ -518,15 +542,31 @@ var TopLevel = {
 			this.badguy.addCallback("releasePartner", this, function(){
 				this.disablePlayerMovement();
 
-				//TODO: Mover a player al medio de la pantalla
-				//TODO: Mover a partner al medio de la pantalla
-				//TODO: Ponerle los exhaust en regular a los dos.
+				TimeOutFactory.getTimeOut(500, 1, this, function(){
+					this.ship.setAllExhaustState(Exhaust.REGULAR);
+					this.partner.setAllExhaustState(Exhaust.REGULAR);
 
-				//TODO: Cuando estan los dos en posicion,
-				//TODO: Empezar la animacion de transformacion!
+					this.ship.weapon.stop();
+
+					var positions = 3;
+
+					var onPositionReached = function() {
+						positions--;
+
+						if(positions <= 0) {
+							//TODO: Empezar la animacion de transformacion!
+							//this.badguy = this.getFightBadguy("End_2_BadGuy");
+						}
+					}
+
+					this.moveToPosition(this.badguy, this.badguyInitX, this.badguyInitY, onPositionReached);
+					this.moveToPosition(this.ship, this.shipInitX, this.shipInitY, onPositionReached);
+					this.moveToPosition(this.partner, this.partnerInitX, this.partnerInitY, onPositionReached);
+
+				}, true).start();
+
 			});
 
-			//this.badguy = this.getFightBadguy("End_2_BadGuy");
 
 			return this.badguy;
 		},
@@ -703,15 +743,16 @@ $(function(){
 
 				TimeOutFactory.resumeAllTimeOuts();
 
-				TopLevel.tweensTimeLine.resume();
+				if(TopLevel.tweensTimeLine)
+					TopLevel.tweensTimeLine.resume();
 				
 				frameRequest = window.requestAnimationFrame(mainLoop);
 			}
 		}
 	}
 
-	$(window).on("blur", onBlur);
-	$(window).on("focus", onFocus);
+	//$(window).on("blur", onBlur);
+	//$(window).on("focus", onFocus);
 
 	//From here on, are all the creation functions.
 	//--------------------------------------------
@@ -783,8 +824,8 @@ $(function(){
 	    ];
 
 		//First Set
-		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 25, -50, 200, 350, 800, 5, false, "SpeedPowerUp");	
-		rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -50, -70, 600, 10, false, "HPPowerUp");
+		//rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 25, -50, 200, 350, 800, 5, false, "SpeedPowerUp");	
+		//rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height+50, -50, -70, 600, 10, false, "HPPowerUp");
 		rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 25, -50, 200, 350, 800, 5, true , "WeaponPowerUp,MultiWeaponPowerUp");
 		
 		//Second Set
@@ -1801,15 +1842,3 @@ $(function(){
 		creation();
 	}
 });
-	
-//ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.Z, FuntionUtils.bindScope(this, function(){
-	//TopLevel.container.add("CargoShip", [100, 100, 10, TopLevel.container]);		
-//}));
-
-//ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.D, FuntionUtils.bindScope(this, function(){
-	//TopLevel.powerUpFactory.create(TopLevel.canvas.width/2-100, TopLevel.canvas.height/2, "MultiWeaponPowerUp", 1, true);
-//}));
-
-//ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.C, FuntionUtils.bindScope(this, function(){
-	//TopLevel.powerUpFactory.create(TopLevel.canvas.width/2+100, TopLevel.canvas.height/2, "MultiWeaponPowerUp", 1, true);
-//}));

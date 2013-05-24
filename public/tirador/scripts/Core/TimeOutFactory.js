@@ -1,7 +1,7 @@
 $(function(){
 	var TimeOutFactory = {
 
-		timeOuts : [],
+		scopeTimeOuts: {},
 
 		getTimeOut: function(delay, repeatCount, scope, callback, removeOnComplete) {
 			var self = this;
@@ -43,6 +43,7 @@ $(function(){
 					this.startTime = Date.now();
 
 					this.isRunning = true;
+					this.isPaused  = false;
 
 					var actualDelay;
 
@@ -55,10 +56,9 @@ $(function(){
 					var to = this;
 
 					this.id = setTimeout(function(){
-						if(to.isRunning && !to.isPaused)
+						if(to.isRunning && !to.isPaused){
 							to.callback.call(to.scope);
-
-						if(!to.isRunning){
+						}else{
 							return;
 						}
 
@@ -87,12 +87,12 @@ $(function(){
 				},
 
 				stop: function(){
+					clearTimeout(this.id);
+
 					this.isRunning    = false;
 					this.isPaused     = false;
 					this.repeateCount = this.initRepeatCount;
 					this.resumeDelay  = -1;
-					
-					clearTimeout(this.id);
 				},
 
 				reset: function(){
@@ -129,53 +129,63 @@ $(function(){
 
 				remove : function(){
 					this.stop();
-					self.timeOuts.splice(self.timeOuts.indexOf(this), 1);
+					self.scopeTimeOuts[this.scope].splice(self.scopeTimeOuts[this.scope].indexOf(this), 1);
 				}
 			};
 
-			this.timeOuts.push(timeOutObject);
+			if(!this.scopeTimeOuts[scope]){
+				this.scopeTimeOuts[scope] = [];
+			}
+
+			this.scopeTimeOuts[scope].push(timeOutObject);
 
 			return timeOutObject;
 		},
 
 		stopAllTimeOuts: function(){
-			for(var i=0; i<this.timeOuts.length; i++){
-				this.timeOuts[i].stop();
+			for(var k in this.scopeTimeOuts){
+				for(var i=0; i<this.scopeTimeOuts[k].length; i++){
+					this.scopeTimeOuts[k][i].stop();
+				}
 			}
 		},
 
 		pauseAllTimeOuts: function(){
-			for(var i=0; i<this.timeOuts.length; i++){
-				this.timeOuts[i].pause();
+			for(var k in this.scopeTimeOuts){
+				for(var i=0; i<this.scopeTimeOuts[k].length; i++){
+					this.scopeTimeOuts[k][i].pause();
+				}
 			}
 		},
 
 		resumeAllTimeOuts: function(){
-			for(var i=0; i<this.timeOuts.length; i++){
-				this.timeOuts[i].resume();
+			for(var k in this.scopeTimeOuts){
+				for(var i=0; i<this.scopeTimeOuts[k].length; i++){
+					this.scopeTimeOuts[k][i].resume();
+				}
 			}
 		},
 
 		removeAllTimeOuts: function(){
-			this.stopAllTimeOuts();
-
-			for(var i=this.timeOuts.length-1; i>=0; i--){
-				this.timeOuts[i].remove();
+			for(var k in this.scopeTimeOuts){
+				for(var i=this.scopeTimeOuts[k].length-1; i>=0; i--){
+					this.scopeTimeOuts[k][i].remove();
+				}
 			}
 		},
 
 		stopAllTimeOutsWithScope: function(scope){
-			for(var i=0; i<this.timeOuts.length; i++){
-				if(this.timeOuts[i].scope === scope){
-					this.timeOuts[i].stop();
+			for(var i=0; i<this.scopeTimeOuts[scope].length; i++){
+				if(this.scopeTimeOuts[scope][i].scope === scope){
+					this.scopeTimeOuts[scope][i].stop();
 				}
 			}
 		},
 
 		removeAllTimeOutsWithScope: function(scope){
-			for(var i=0; i<this.timeOuts.length; i++){
-				if(this.timeOuts[i].scope === scope){
-					this.timeOuts[i].remove();
+			for(var i=this.scopeTimeOuts[scope].length-1; i>=0; i--){
+				if(this.scopeTimeOuts[scope][i].scope === scope){
+					this.scopeTimeOuts[scope][i].remove();
 				}
 			}
 		}

@@ -380,6 +380,8 @@ MiddleBadGuy.prototype.createStateMachine = function() {
 		 	this.blockDamage = false;
 		 	this.setAllExhaustState(Exhaust.REGULAR);
 
+		 	this.executeCallbacks("onInitialPositionDelegate", this);
+
 		 	TimeOutFactory.getTimeOut(500, 1, this, function(){ 
 		 		this.currentMotion.set(this.MOVE);
 		 	}, true).start();
@@ -469,8 +471,6 @@ MiddleBadGuy.prototype.onAllDamageReceived = function(other) {
 //-----------------------------------------------//
 //-----------------------------------------------//
 
-//TODO: Work in progress
-
 End_1_BadGuy.inheritsFrom( MiddleBadGuy );
 
 function End_1_BadGuy() {}
@@ -480,16 +480,24 @@ End_1_BadGuy.prototype.onAllDamageReceived = function(other) {
 	this.blockDamage = true;
 
 	TimeOutFactory.removeAllTimeOutsWithScope(this);
+	
 	TweenMax.killTweensOf(this);
 
 	this.colorTween = TweenMax.to(this, 0.3, {colorProps:{color:"#FF0000"}, yoyo:true, repeat:-1, ease:Linear.ease});
-	this.explosionArea.init(this, 30, 15, -1, 200);
+	
+	this.explosionArea.init(this, 30, 20, -1, 170);
 
 	this.tractorBeam.off();
 
 	this.currentMotion.set(this.NONE_STOP_SHAKE_MOTION);
 
-	TweenMax.to(this, 0.4, {rotation: "+=360", ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){	
+	var vec = VectorUtils.getFullVectorInfo(this.x, this.y, other.x, other.y);
+
+	vec.dir.x = Math.cos(vec.angle) * 80;
+	vec.dir.y = Math.sin(vec.angle) * 80;
+
+	TweenMax.to(this, 0.4, {rotation:720, x:this.x + vec.dir.x, y:this.y + vec.dir.y, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){	
+		this.rotation = 0;	
 		this.executeCallbacks("releasePartner");	
 	}});
 }
@@ -497,7 +505,6 @@ End_1_BadGuy.prototype.onAllDamageReceived = function(other) {
 End_1_BadGuy.prototype.update = function(delta){
 	if(this.escaping){
 		BadGuy.prototype.update.call(this, delta);
-		this.rotation += 2;
 	}else{
 		MiddleBadGuy.prototype.update.call(this, delta);
 	}
