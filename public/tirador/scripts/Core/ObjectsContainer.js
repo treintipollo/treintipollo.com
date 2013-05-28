@@ -12,6 +12,8 @@ function ObjectsContainer(drawContext) {
 
 	this.objectPools    = {};
 	this.configurations = {};
+
+	return this;
 }
 
 ObjectsContainer.prototype.draw = function() {
@@ -34,7 +36,7 @@ ObjectsContainer.prototype.draw = function() {
 }
 
 ObjectsContainer.prototype.update = function(delta) {
-	var i, j, k, a;
+	var i, j, k, a, m;
 	
 	for (i=0; i<this.mainObjects.length; i++){
 		a = this.mainObjects[i];
@@ -84,8 +86,8 @@ ObjectsContainer.prototype.update = function(delta) {
 						var indexes = this.toCollideCache[this.collisionId];
 
 						if(indexes != null && indexes.length > 0){
-							for(var i=0; i<indexes.length; i++){
-								this.collisionLists[indexes[i]].splice(this.collisionLists[indexes[i]].indexOf(object), 1);
+							for(m=0; m<indexes.length; m++){
+								this.collisionLists[indexes[m]].splice(this.collisionLists[indexes[m]].indexOf(object), 1);
 							}
 						}
 					}
@@ -141,6 +143,15 @@ ObjectsContainer.prototype.add = function(name, args) {
 		}	
 	}
 
+	//This settings ensure a GameObject is ready to be reused.
+	pooledObject.alive 		 = true;
+	pooledObject.destroyMode = GameObject.EXECUTE_CALLBACKS;
+	pooledObject.scaleX      = 1;
+	pooledObject.scaleY      = 1;
+	
+	//Removing any callbacks from previous encarnations of this GameObject
+	pooledObject.removeAllCallbacks();
+
 	//Initialize it with given arguments. Arguments are passes as a single object or a list depending on configuration. Look up APPLY and CALL
 	pooledObject.init[initCall](pooledObject, args);
 
@@ -173,7 +184,27 @@ ObjectsContainer.prototype.removeAll = function () {
 				configuration = this.configurations[object.typeId];
 
 				if(!configuration.doNotDestroy){
+					object.destroyCallbacks("onRecicleDelegate");
 					object.setDestroyMode(GameObject.NO_CALLBACKS);
+					
+					if(object.checkingCollisions){
+						this.collisionId = object.getCollisionId();
+
+						var indexes = this.toCollideCache[this.collisionId];
+
+						if(indexes != null && indexes.length > 0){
+							for(m=0; m<indexes.length; m++){
+								this.collisionLists[indexes[m]].splice(this.collisionLists[indexes[m]].indexOf(object), 1);
+							}
+						}
+					}
+
+					object.clearGameObject();
+					
+					this.objectPools[object.poolId].push(object);
+
+					a.splice(j, 1);
+					object = null;
 				}
 			}
 		}
@@ -244,6 +275,7 @@ ObjectsContainer.APPLY   = "apply";
 
 ObjectsContainer.prototype.setDefaultLayer = function(layerIndex) {
 	this.defaultLayer = layerIndex;
+	return this;
 }
 
 ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type) {

@@ -171,7 +171,6 @@ Ship.prototype.createStateMachine = function() {
 			this.setAllExhaustState(Exhaust.FAST);
 		}
 
-
 		TweenMax.to(this, 1, {y:this.y - 150, onCompleteScope:this, onComplete:function(){
 			this.blockControls = false;
 			this.blockDamage   = false;

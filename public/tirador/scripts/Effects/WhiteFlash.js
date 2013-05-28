@@ -1,18 +1,20 @@
-function WhiteFlash() {}
+function WhiteFlash() {
+	this.gradient = TopLevel.context.createLinearGradient(0,0,0,1);
+	this.gradient.addColorStop(0,"rgba(255, 255, 255, 1)");
+	this.gradient.addColorStop(1,"rgba(0, 0, 0, 0)");
+}
 
 WhiteFlash.inheritsFrom( GameObject );
 
-WhiteFlash.prototype.init = function(onMidPoint, onComplete, scaleToX, scaleToY, origin) {
+WhiteFlash.prototype.init = function(onMidPoint, onComplete, scaleToX, scaleToY, origin, rotation) {
 	this.x = Math.floor(origin.x);
 	this.y = Math.floor(origin.y);
-
-	this.gradient = TopLevel.context.createLinearGradient(0,0,0,5);
-	this.gradient.addColorStop(0,"rgba(255, 255, 255, 1)");
-	this.gradient.addColorStop(1,"rgba(0, 0, 0, 0)");
 
 	this.blockFill    = false;
 	this.drawGradient = true;
 	this.alpha        = 0;
+
+	this.rotation = rotation ? rotation : 0;
 
 	this.scaleX = 1;
 	this.scaleY = 1;
@@ -40,7 +42,7 @@ WhiteFlash.prototype.draw = function(context) {
 		context.fillStyle = this.gradient;
 		
 		context.beginPath();
-		context.fillRect(-this.x, 0, TopLevel.canvas.width, 1);	
+		context.fillRect(-this.x*3, 0, TopLevel.canvas.width*3, 1);	
 		context.closePath();
 
 		context.fill();
@@ -50,7 +52,7 @@ WhiteFlash.prototype.draw = function(context) {
 		context.fillStyle = "rgba(255, 255, 255," + this.alpha.toString() + ")";		
 		
 		context.beginPath();
-		context.fillRect(-this.x, 0, TopLevel.canvas.width, 1);	
+		context.fillRect(-this.x*3, 0, TopLevel.canvas.width*3, 1);	
 		context.closePath();
 
 		context.fill();
@@ -65,20 +67,22 @@ WhiteFlashContainer.Arguments = [];
 
 function WhiteFlashContainer() {}
 
-WhiteFlashContainer.prototype.on = function(onMidPoint, onComplete, origin) {
+WhiteFlashContainer.prototype.on = function(onMidPoint, onComplete, origin, rotation) {
 	WhiteFlashContainer.Arguments[0] = onMidPoint;
 	WhiteFlashContainer.Arguments[1] = onComplete;
 	WhiteFlashContainer.Arguments[2] = 1;
 	WhiteFlashContainer.Arguments[3] = 1000;
 	WhiteFlashContainer.Arguments[4] = origin;
+	WhiteFlashContainer.Arguments[5] = rotation;
 
-	TopLevel.container.add("WhiteFlash", WhiteFlashContainer.Arguments, 0);
+	TopLevel.container.add("WhiteFlash", WhiteFlashContainer.Arguments);
 	
 	WhiteFlashContainer.Arguments[0] = null;
 	WhiteFlashContainer.Arguments[1] = null;
 	WhiteFlashContainer.Arguments[2] = 1;
 	WhiteFlashContainer.Arguments[3] = -1000;
 	WhiteFlashContainer.Arguments[4] = origin;
+	WhiteFlashContainer.Arguments[5] = rotation;
 
-	TopLevel.container.add("WhiteFlash", WhiteFlashContainer.Arguments, 0);
+	TopLevel.container.add("WhiteFlash", WhiteFlashContainer.Arguments);
 }

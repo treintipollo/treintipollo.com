@@ -41,7 +41,9 @@ GameObject.prototype.destroyWithOutCallBacks = function(){
 GameObject.prototype.addCallback = function(delegateName, scope, callback, removeOnExecute) {
 	if(!this[delegateName]){ this[delegateName] = []; }
 
-	this[delegateName].push({scope:scope, callback:callback, removeOnExecute:removeOnExecute});
+	var r = removeOnExecute ? true : false;
+
+	this[delegateName].push({scope:scope, callback:callback, removeOnExecute:r});
 }
 
 GameObject.prototype.executeCallbacks = function(delegateName, args) {
@@ -134,13 +136,6 @@ GameObject.prototype.clearGameObject = function(){
 	}
 
 	this.executeCallbacks("onRecicleDelegate", this);
-
-	this.removeAllCallbacks();
-
-	this.alive 		 = true;
-	this.destroyMode = GameObject.EXECUTE_CALLBACKS;
-	this.scaleX      = 1;
-	this.scaleY      = 1;
 
 	this.destroy();
 }

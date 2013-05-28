@@ -491,12 +491,7 @@ End_1_BadGuy.prototype.onAllDamageReceived = function(other) {
 
 	this.currentMotion.set(this.NONE_STOP_SHAKE_MOTION);
 
-	var vec = VectorUtils.getFullVectorInfo(this.x, this.y, other.x, other.y);
-
-	vec.dir.x = Math.cos(vec.angle) * 80;
-	vec.dir.y = Math.sin(vec.angle) * 80;
-
-	TweenMax.to(this, 0.4, {rotation:720, x:this.x + vec.dir.x, y:this.y + vec.dir.y, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){	
+	TweenMax.to(this, 0.4, {rotation:720, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){	
 		this.rotation = 0;	
 		this.executeCallbacks("releasePartner");	
 	}});
