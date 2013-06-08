@@ -104,7 +104,6 @@ BadGuy.prototype.escape = function() {
 			onUpdateScope: this,
 			onComplete: function() {
 				this.alive = false;
-			
 				this.executeCallbacks("escapeComplete");
 			},
 			onUpdate: function() {
@@ -147,15 +146,15 @@ function ConcreteBadGuy() {
 }
 
 ConcreteBadGuy.prototype.init = function() {	
-	ConcreteBadGuy.prototype.getTractorBeamPoints     = this.tProto.getTractorBeamPoints;
-	ConcreteBadGuy.prototype.createStateMachine       = this.tProto.createStateMachine;	
-	ConcreteBadGuy.prototype.fireRockets 			  = this.tProto.fireRockets;
-	ConcreteBadGuy.prototype.rocketConfig 			  = this.tProto.rocketConfig;
-	ConcreteBadGuy.prototype.update 			      = this.tProto.update;	
+	this.getTractorBeamPoints     = this.tProto.getTractorBeamPoints;
+	this.createStateMachine       = this.tProto.createStateMachine;	
+	this.fireRockets 			  = this.tProto.fireRockets;
+	this.rocketConfig 			  = this.tProto.rocketConfig;
+	this.update 			      = this.tProto.update;	
 	
-	ConcreteBadGuy.prototype.onDamageReceived 	      = this.tProto.onDamageReceived;
-	ConcreteBadGuy.prototype.onLastDamageLevelReached = this.tProto.onLastDamageLevelReached;
-	ConcreteBadGuy.prototype.onAllDamageReceived      = this.tProto.onAllDamageReceived;
+	this.onDamageReceived 	      = this.tProto.onDamageReceived;
+	this.onLastDamageLevelReached = this.tProto.onLastDamageLevelReached;
+	this.onAllDamageReceived      = this.tProto.onAllDamageReceived;
 
 	this.tProto.init.apply(this, arguments);
 }
@@ -510,71 +509,96 @@ End_1_BadGuy.prototype.update = function(delta){
 //-----------------------------------------------//
 //-----------------------------------------------//
 
-// End_2_BadGuy.inheritsFrom( MiddleBadGuy );
+End_2_BadGuy.inheritsFrom( MiddleBadGuy );
 
-// function End_2_BadGuy() {}
+function End_2_BadGuy() {}
 
-// End_2_BadGuy.prototype.fireRockets = function(){
-// 	var rocketTypeIndex = Random.getRandomInt(0, rocketType.length-1);
+End_2_BadGuy.prototype.init = function(x, y, container, target, playerShip){
+	TimeOutFactory.removeAllTimeOutsWithScope(this);
 
-// 	TimeOutFactory.getTimeOut(this.rocketTimeOut[rocketTypeIndex], this.rocketAmount[rocketTypeIndex], this, function() {
+	BadGuy.prototype.init.call(this, x, y, container, target);
+	
+	this.playerShip = playerShip;
+	this.escaping   = false;
+}
+
+End_2_BadGuy.prototype.createStateMachine = function() {
+	MiddleBadGuy.prototype.createStateMachine.call(this);
+	
+	var startMotion = this.currentMotion.get(this.START_MOTION);
+	var moveMotion = this.currentMotion.get(this.MOVE);
+
+	startMotion.init = function() {
+		this.blockDamage = true;
+
+		this.setAllExhaustState(Exhaust.FAST);
+
+		TweenMax.to(this, 3.5, {y:"+=350", onCompleteScope:this, onComplete:function(){
+		 	this.blockDamage = false;
+
+		 	this.executeCallbacks("onInitialPositionDelegate", this);
+
+		 	TimeOutFactory.getTimeOut(500, 1, this, function(){ 
+		 		this.currentMotion.set(this.MOVE);
+		 	}, true).start();
+		}});
+	}
+
+	moveMotion.init = function() {
+		if(this.escaping) return;
+
+		TimeOutFactory.getTimeOut(300, 1, this, function(){ 
+			var x = Random.getRandomArbitary(30, TopLevel.canvas.width -  30);
+			var y = Random.getRandomArbitary(30, TopLevel.canvas.height - 30);
+
+			var info  = VectorUtils.getFullVectorInfo(this.x, this.y, x, y);
+			var speed = info.distance / this.speed;
+
+			if(this.y < y){
+				this.setAllExhaustState(Exhaust.SLOW);
+			}
+
+			this.moveTween = TweenMax.to(this, speed, {x:x, y:y, ease:Linear.easeNone, onCompleteScope:this, onComplete:function(){
+			 	this.setAllExhaustState(Exhaust.FAST);
+				
+			 	if(Math.random() < 0.5){
+					this.currentMotion.set(this.ATTACK);
+			 	}else{
+			 		this.currentMotion.set(this.MOVE);
+			 	}
+			}});
+		},true).start();
+	}
+}
+
+End_2_BadGuy.prototype.fireRockets = function(){
+	var rocketTypeIndex = Random.getRandomInt(0, this.rocketType.length-1);
+
+	TimeOutFactory.getTimeOut(this.rocketTimeOut[rocketTypeIndex], this.rocketAmount[rocketTypeIndex], this, function() {
 		
-// 		var a = Random.getRandomArbitary(0, 360) * (Math.PI / 180);
+		var a = Random.getRandomArbitary(0, 360) * (Math.PI / 180);
 
-// 		BadGuy.RocketArguments[0] = this.x;
-// 		BadGuy.RocketArguments[1] = this.y;
-// 		BadGuy.RocketArguments[2].x = this.x + Math.cos(a) * this.rocketRadius[rocketTypeIndex];
-// 		BadGuy.RocketArguments[2].y = this.y + Math.sin(a) * this.rocketRadius[rocketTypeIndex];
-// 		BadGuy.RocketArguments[3] = this.playerShip;
-// 		BadGuy.RocketArguments[4] = TopLevel.container;
-// 		BadGuy.RocketArguments[5] = (VectorUtils.getFullVectorInfo(this.x, this.y, this.playerShip.x, this.playerShip.y).angle * (180 / Math.PI)) - 90;
+		BadGuy.RocketArguments[0] = this.x;
+		BadGuy.RocketArguments[1] = this.y;
+		BadGuy.RocketArguments[2].x = this.x + Math.cos(a) * this.rocketRadius[rocketTypeIndex];
+		BadGuy.RocketArguments[2].y = this.y + Math.sin(a) * this.rocketRadius[rocketTypeIndex];
+		BadGuy.RocketArguments[3] = this.playerShip;
+		BadGuy.RocketArguments[4] = TopLevel.container;
+		BadGuy.RocketArguments[5] = (VectorUtils.getFullVectorInfo(this.x, this.y, this.playerShip.x, this.playerShip.y).angle * (180 / Math.PI)) - 90;
 
-// 		BadGuy.RocketArguments[6].min = this.rocketAccelerationMin[rocketTypeIndex];
-// 		BadGuy.RocketArguments[6].max = this.rocketAccelerationMax[rocketTypeIndex];
+		BadGuy.RocketArguments[6].min = this.rocketAccelerationMin[rocketTypeIndex];
+		BadGuy.RocketArguments[6].max = this.rocketAccelerationMax[rocketTypeIndex];
 
-// 		BadGuy.RocketArguments[7].min = this.rocketDeploySpeedMin[rocketTypeIndex];
-// 		BadGuy.RocketArguments[7].max = this.rocketDeploySpeedMax[rocketTypeIndex];
+		BadGuy.RocketArguments[7].min = this.rocketDeploySpeedMin[rocketTypeIndex];
+		BadGuy.RocketArguments[7].max = this.rocketDeploySpeedMax[rocketTypeIndex];
 
-// 		BadGuy.RocketArguments[8] = this.blastRadius[rocketTypeIndex];	
+		BadGuy.RocketArguments[8] = this.blastRadius[rocketTypeIndex];	
 		
-// 		TopLevel.container.add(this.rocketType[rocketTypeIndex], BadGuy.RocketArguments);
+		TopLevel.container.add(this.rocketType[rocketTypeIndex], BadGuy.RocketArguments);
 
-// 	}, true).start();
-// }
+	}, true).start();
+}
 
-// End_2_BadGuy.prototype.onDamageReceived = function(other) {
-// 	MiddleBadGuy.prototype.onDamageReceived.call(this, other);
-
-// 	damageToReleasePartner--;
-
-// 	if(damageToReleasePartner <= 0){
-// 		//Enter Transformation animation
-// 	}
-
-// 	//damageToReleasePartner:2,
-// }
-
-// End_2_BadGuy.prototype.onLastDamageLevelReached = function(other) {}
-
-// End_2_BadGuy.prototype.onAllDamageReceived = function(other) {
-// 	this.escaping           = true;
-// 	this.blockControls 		= true;
-// 	this.checkingCollisions = false;
-
-// 	TimeOutFactory.removeAllTimeOutsWithScope(this);
-
-// 	this.colorTween = TweenMax.to(this, 0.3, {colorProps:{color:"#FF0000"}, yoyo:true, repeat:-1, ease:Linear.ease});
-// 	this.explosionArea.init(this, 30, 15, -1, 200);
-
-// 	this.currentMotion.set(this.IDLE_MOTION);
-
-// 	var vec = VectorUtils.getFullVectorInfo(this.x, this.y, other.x, other.y);
-
-// 	vec.dir.x = Math.cos(vec.angle) * 80;
-// 	vec.dir.y = Math.sin(vec.angle) * 80;
-
-// 	TweenMax.to(this, 0.4, {rotation:360, x:this.x + vec.dir.x, y:this.y + vec.dir.y, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){	
-// 		this.rotation = 0;	
-// 		this.escape();
-// 	}});
-// }
+End_2_BadGuy.prototype.onAllDamageReceived = function(other) {
+	Ship.prototype.onAllDamageReceived(other);
+}

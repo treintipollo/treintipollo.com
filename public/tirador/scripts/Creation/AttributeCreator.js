@@ -25,6 +25,8 @@ AttributeCreator.prototype.create = function() {
 	TopLevel.attributesGetter.setAttributes("End_2_BadGuy", 25, 1, 10);
 	TopLevel.attributesGetter.setAttributes("End_2_BadGuy", 25, 1, 10);
 	TopLevel.attributesGetter.setAttributes("End_2_BadGuy", 25, 1, 10);
+	TopLevel.attributesGetter.setAttributes("End_2_BadGuy", 25, 1, 10);
+	TopLevel.attributesGetter.setAttributes("End_2_BadGuy", 25, 1, 10);
 
 	TopLevel.attributesGetter.setAttributes("CloneShip", 10, 3, 10);
 	TopLevel.attributesGetter.setAttributes("CargoShip", 10, 1, 10);

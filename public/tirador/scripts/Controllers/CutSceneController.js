@@ -27,8 +27,6 @@ function CutSceneController() {
 		this.partner = TopLevel.container.add("PartnerShip", [this.ship.x + 90, this.ship.y, TopLevel.container]);
 		this.partner.weapon = TopLevel.weaponFactory.getInitializedWeapon(TopLevel.weaponFactory.SHOT_WEAPON, 0, this.partner, this.partner.weapon);
 
-		console.log("Partner Created");
-
 		this.partner.addCallback("onInitialPositionDelegate", this, function() {
 
 			this.disablePlayerMovement();
@@ -45,8 +43,6 @@ function CutSceneController() {
 		});
 
 		this.partner.addOnRecicleCallback(this, function() {
-			console.log("Partner Destoryed");
-			debugger;
 			this.partner = null;
 		}, true);
 
@@ -96,6 +92,12 @@ function CutSceneController() {
 		return this.badguy;
 	};
 
+	this.moveToPosition = function(actor, endX, endY, ease, speed, onComplete) {
+		var s = VectorUtils.getFullVectorInfo(actor.x, actor.y, endX, endY).distance / speed;
+		TweenMax.to(actor, s, {x:endX, y:endY, ease:ease, onCompleteScope:this, onComplete:onComplete} );
+		TweenMax.to(actor, 0.3, {rotation:0} );
+	};
+
 	this.getEnd_1_BadGuy = function(fightBadGuyType) {
 		this.badguy = this.getFightBadguy(fightBadGuyType);
 
@@ -103,31 +105,41 @@ function CutSceneController() {
 			this.disablePlayerMovement();
 
 			this.ship.blockDamage = true;
+			this.ship.weapon.stop();
 
 			TimeOutFactory.getTimeOut(500, 1, this, function() {
 				this.ship.setAllExhaustState(Exhaust.REGULAR);
 				this.partner.setAllExhaustState(Exhaust.REGULAR);
 
-				this.ship.weapon.stop();
+				var moveAmount = 3;
 
-				var moveIntoTransform = new TimelineLite({
-					paused: true,
-					onCompleteScope: this,
-					onComplete: function() {
+				var onPositionReached = function() {
+					moveAmount--;
+
+					if(moveAmount <= 0){
 						this.startTransformation();
 					}
-				});
+				}
 
-				this.moveToPosition(moveIntoTransform, this.badguy, this.badguyInitX, this.badguyInitY, Linear.easeNone, 100, true);
-				this.moveToPosition(moveIntoTransform, this.ship, this.shipInitX, this.shipInitY, Linear.easeNone, 100);
-				this.moveToPosition(moveIntoTransform, this.partner, this.partnerInitX, this.partnerInitY, Linear.easeNone, 100);
-
-				TweenMax.to(this.partner, 0.5, {rotation: 0});
-
-				moveIntoTransform.gotoAndPlay("start");
+				this.moveToPosition(this.badguy, this.badguyInitX, this.badguyInitY, Linear.easeNone, 100, onPositionReached);
+				this.moveToPosition(this.ship, this.shipInitX, this.shipInitY, Linear.easeNone, 100, onPositionReached);
+				this.moveToPosition(this.partner, this.partnerInitX, this.partnerInitY, Linear.easeNone, 100, onPositionReached);
 
 			}, true).start();
 		});
+
+		return this.badguy;
+	};
+
+	this.getEnd_2_BadGuy = function(fightBadGuyType) {
+		if(this.badguy)
+			return this.badguy;
+
+		this.badguy = TopLevel.container.add(fightBadGuyType, [TopLevel.canvas.width / 2, -80, TopLevel.container, null, this.ship]);
+
+		this.badguy.addOnRecicleCallback(this, function() {
+			this.badguy = null;
+		}, true);
 
 		return this.badguy;
 	};
@@ -201,6 +213,17 @@ function CutSceneController() {
 
 						TopLevel.playerShipFactory.setPowerShip();
 
+						TopLevel.playerShipFactory.addCallbacksToAction("addInitCallback", [{
+						 		scope: this,
+						 		callback: function(obj) {
+						 			this.ship = obj;
+						 			this.ship.weapon.stop();
+						 			this.badguyEscapeAndPersue(this.ship);
+						 		},
+						 		removeOnComplete: true
+						 	}
+						]);
+
 						this.ship = null;
 						this.partner = null;
 					});
@@ -211,6 +234,44 @@ function CutSceneController() {
 
 		}, true).start();
 	};
+
+	this.badguyEscapeAndPersue = function() {
+		this.disablePlayerMovement(this.ship);
+		this.badguy.currentMotion.set(this.badguy.IDLE_MOTION);
+
+		TimeOutFactory.getTimeOut(500, 1, this, function() {
+			this.badguy.escape();	
+		}, true).start();
+
+		this.badguy.addCallback("escapeComplete", this, function(){
+			this.ship.setAllExhaustState(Exhaust.SLOW);
+
+			var lastPosY = this.ship.y;
+			var speedUp = false;
+
+			TweenMax.to(this.ship, 2, {
+				y: "-=50",
+				ease: Back.easeIn.config(7),
+				onUpdateScope: this,
+				onCompleteScope: this,				
+				onUpdate: function() {
+					if (lastPosY > this.ship.y) {
+
+						if(!speedUp){
+							TopLevel.starFactory.speedUp();
+						}
+
+						this.ship.setAllExhaustState(Exhaust.FAST);
+					}
+
+					lastPosY = this.ship.y;
+				},
+				onComplete: function() {
+					this.enablePlayerMovement(this.ship);
+				}
+			});
+		});
+	}
 
 	this.badGuyEscape = function() {
 		this.ship = TopLevel.playerData.ship;
@@ -227,8 +288,9 @@ function CutSceneController() {
 		this.badguy.escape();
 	};
 
-	this.disablePlayerMovement = function() {
-		this.ship = TopLevel.playerData.ship;
+	this.disablePlayerMovement = function(playerShip) {
+		if(!playerShip)
+			this.ship = TopLevel.playerData.ship;
 
 		if(this.ship)
 			this.ship.blockControls = true;
@@ -236,8 +298,9 @@ function CutSceneController() {
 			this.partner.blockControls = true;
 	};
 
-	this.enablePlayerMovement = function() {
-		this.ship = TopLevel.playerData.ship;
+	this.enablePlayerMovement = function(playerShip) {
+		if(!playerShip)
+			this.ship = TopLevel.playerData.ship;
 
 		if(this.ship)
 			this.ship.blockControls = false;
@@ -330,19 +393,5 @@ function CutSceneController() {
 
 		CutSceneController.showSplash = true;
 		CutSceneController.hideSplash = true;
-	};
-
-	this.moveToPosition = function(timeLine, actor, endX, endY, ease, speed, first) {
-		if (first) {
-			timeLine.addLabel("start", 0);
-		}
-
-		var s = VectorUtils.getFullVectorInfo(actor.x, actor.y, endX, endY).distance / speed;
-
-		timeLine.insert(TweenMax.to(actor, s, {
-			x: endX,
-			y: endY,
-			ease: ease
-		}), "start");
 	};
 }

@@ -54,30 +54,34 @@ var TopLevel = {
 window.TopLevel = TopLevel;
 	
 //TODO: PowerShip
-	//GameObject (DONE)
-	//Drawing (DONE)
+	//Disable other weapons asides from the Shot Weapon.
 	//Weapon
 
 //TODO: Mini story sequence.	
 	//Ending.
 		//After the last Big Boss, he shows up again.
-			//EndBadGuy (DONE!)
-			//Regular Fight, Dies and drops de captured ship. (Galaga style) 
-			//Transformers-like sequence. (Galaga style)
+			//Sequence after transformation and before the final fight.
+				// Badguy sets up armour
 			//Final Show Down!
-				//Bad Guy uses all of his attacks and is very fast.
-				//Has losts of health.
+				//Final attack for last piece of health.
 				//Can only be damaged by the Super Plasma Beam.
+
+//TODO: Ending sequence
+	//Credits Roll
+	//Main Actors Roll
+	//Badguy shows up again like in the beginning
+	//Stop.
+	//THE END
+	//Thanks for playing.
+	//Hope to see you again... IN SPACE!
 
 //Design female ship.
 	//Make male and female ship drawing swapable.
-
-//Sound
-	//Whistle to call Big Boss.
+	//Different Boss encounters for Male and Female game.
 
 //More work on the HUD
 	//Move things around
-	//Add life bar for BadGuy and Big Boss
+	//Add life bar for BadGuy and Big Boss when they show up.
 
 //BUG: Se rompe el laser del Boss y no colisiona mas hasta que chocas con otra cosa
 
@@ -111,6 +115,9 @@ window.TopLevel = TopLevel;
 	   		//Make a slow and a fast version of each BadGuy type
 
 //Esto no es para este juego.
+	//Simplify GameObject, extend Delegate.
+	//Be able to configure hitArea.
+	//Get a better "inherit" method.
 	//TODO:Single Utility Object, so that the global scope has less litter.
 	//TODO: Hacer que el add del ObjectContainer te devuelva el objeto que va a usar, con todo configurado menos la inicializacion. 
 			//De ahi puedo llamar directamente al init de ese objeto con los parametros que yo quiera, sin andar creado arrays intermedios.
@@ -199,7 +206,7 @@ $(function(){
 
 		 //    {main:{id:"Boss_1_F", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_3_BadGuy", get:getFightBadGuy}, intro:"warning", win:"complete", drop:"HPPowerUp"},
 
-		 	{main:null, next:false, last:false, sub:{id:"End_1_BadGuy", intro:"ready", win:"nice", get:getEnd_1_BadGuy}, drop:null},
+		 	{main:{id:"End_2_BadGuy", intro:"ready", win:null, get:getEnd_2_BadGuy}, next:false, last:false, sub:{id:"End_1_BadGuy", intro:null, win:null, get:getEnd_1_BadGuy}, drop:null},
 
 		    //{main:{id:"End_1_BadGuy", get:getEnd_1_BadGuy}, next:false, last:true, sub:null, intro:"ready", win:null, drop:null}
 		    //{main:{id:"End_2_BadGuy", get:getEnd_2_BadGuy}, next:false, last:true, sub:null, intro:"ready", win:null, drop:null}

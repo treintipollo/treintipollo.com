@@ -36,6 +36,10 @@ PowerShip.prototype.getExhausts = function() {
 	];
 }
 
+PowerShip.prototype.exhaustIdleState = function(){
+	this.setAllExhaustState(Exhaust.FAST);
+}
+
 PowerShip.prototype.setExhaustLeftState = function(state, args) {
 	this.exhausts[0][state](args);
 	if(ArrowKeyHandler.isDown(ArrowKeyHandler.UP)){
@@ -60,11 +64,16 @@ PowerShip.prototype.setExhaustForwardState = function(state, args) {
 }
 
 PowerShip.prototype.gotoInitialState = function() {
-	this.currentMotion.set(this.IDLE_MOTION);
+	if(ScreenUtils.isPastBottom(this.y, 0)){
+		this.currentMotion.set(this.START_MOTION);
+	}else{
+		this.setAllExhaustState(Exhaust.REGULAR);
+		this.currentMotion.set(this.IDLE_MOTION);
+	}
 }
 
-PowerShip.prototype.init = function(x, y, container, exhaustState){
-	Ship.prototype.init.call(this, x, y, container, exhaustState);
+PowerShip.prototype.init = function(x, y, container){
+	Ship.prototype.init.call(this, x, y, container);
 	
 	this.collider.r = 40; 
 }

@@ -55,11 +55,6 @@ ConfigurationCreator.prototype.create = function() {
 		blastRadius: 15
 	});
 
-	//TODO: Hacen falta dos de estos, el primero cuando lo matas larga al partner.
-	//TODO: Cunado ocurre la transformacion destruyo al anterior y creo al segundo en su lugar.
-	//Trata de llamar al Big Boss pero no viene. 
-	//Se hace de una armadura y empice la batalla final.
-
 	TopLevel.container.createTypeConfiguration("End_1_BadGuy", "BadGuy").collisionId("BadGuy").args({
 		tProto: End_1_BadGuy.prototype,
 		rocketType: "BadGuySmallAimedRocket",
@@ -70,23 +65,23 @@ ConfigurationCreator.prototype.create = function() {
 		rocketAccelerationMax: 1.2,
 		rocketDeploySpeedMin: 1,
 		rocketDeploySpeedMax: 1.7,
-		speed: 260,
+		speed: 250,
 		blastRadius: 15
 	});
 
-	// TopLevel.container.createTypeConfiguration("End_2_BadGuy", "BadGuy").collisionId("BadGuy").args({
-	// 	tProto: End_2_BadGuy.prototype,
-	// 	rocketType: ["BadGuySmallAimedRocket,BadGuyLargeHomingRocket,BadGuyClusterAimedRocket"],
-	// 	rocketTimeOut: ["100,200,150"],
-	// 	rocketAmount: ["15,5,8"],
-	// 	rocketRadius: ["100,100,100"],
-	// 	rocketAccelerationMin: ["0.8,0.05,0.8"],
-	// 	rocketAccelerationMax: ["1.2,0.2,1.2"],
-	// 	rocketDeploySpeedMin: ["1,1,0.6"],
-	// 	rocketDeploySpeedMax: ["1.7,1.7,1.8"],
-	// 	blastRadius: ["15,15,15"],
-	// 	damageToReleasePartner: 2,
-	// });
+	TopLevel.container.createTypeConfiguration("End_2_BadGuy", "BadGuy").collisionId("BadGuy").args({
+		tProto: End_2_BadGuy.prototype,
+		rocketType: ["BadGuySmallAimedRocket","BadGuyLargeHomingRocket","BadGuyClusterAimedRocket"],
+		rocketTimeOut: [100,200,150],
+		rocketAmount: [15,5,8],
+		rocketRadius: [100,100,100],
+		rocketAccelerationMin: [0.8,0.05,0.8],
+		rocketAccelerationMax: [1.2,0.2,1.2],
+		rocketDeploySpeedMin: [1,1,0.6],
+		rocketDeploySpeedMax: [1.7,1.7,1.8],
+		blastRadius: [15,15,15],
+		speed: 260
+	});
 
 	TopLevel.container.createTypeConfiguration("BadGuySmallAimedRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({
 		tProto: BadGuySmallAimedRocket.prototype

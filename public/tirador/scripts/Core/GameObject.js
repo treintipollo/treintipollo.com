@@ -82,11 +82,11 @@ GameObject.prototype.destroyCallbacks = function(delegateName) {
 	if(this[delegateName]) { this[delegateName].lenght = 0; this[delegateName] = null; }
 }
 
-GameObject.prototype.addOnRecicleCallback = function(scope, callback) { this.addCallback("onRecicleDelegate", scope, callback); }
-GameObject.prototype.addOnDestroyCallback = function(scope, callback) { this.addCallback("onDestroyDelegate", scope, callback); }
-GameObject.prototype.addOnCollideCallback = function(scope, callback) { this.addCallback("onCollideDelegate", scope, callback); }
-GameObject.prototype.addInitCallback 	  = function(scope, callback) { 
-	this.addCallback("onInitDelegate", scope, callback); 
+GameObject.prototype.addOnRecicleCallback = function(scope, callback, removeOnComplete) { this.addCallback("onRecicleDelegate", scope, callback, removeOnComplete); }
+GameObject.prototype.addOnDestroyCallback = function(scope, callback, removeOnComplete) { this.addCallback("onDestroyDelegate", scope, callback, removeOnComplete); }
+GameObject.prototype.addOnCollideCallback = function(scope, callback, removeOnComplete) { this.addCallback("onCollideDelegate", scope, callback, removeOnComplete); }
+GameObject.prototype.addInitCallback 	  = function(scope, callback, removeOnComplete) { 
+	this.addCallback("onInitDelegate", scope, callback, removeOnComplete); 
 	callback.call(scope, this);
 }
 

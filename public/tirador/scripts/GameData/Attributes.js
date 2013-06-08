@@ -9,9 +9,9 @@ Attributes.prototype.init = function() {
 	this.updateAttributesTo(0);
 }
 
-Attributes.prototype.addHpDeminishedCallback      = function(scope, callback) { this.addCallback("onHpDeminishedDelegate"     , scope, callback); }
-Attributes.prototype.addDamageReceivedCallback    = function(scope, callback) { this.addCallback("onDamageReceivedDelegate"   , scope, callback); }
-Attributes.prototype.addAllDamageReceivedCallback = function(scope, callback) { this.addCallback("onAllDamageReceivedDelegate", scope, callback); }
+Attributes.prototype.addHpDeminishedCallback      = function(scope, callback, removeOnComplete) { this.addCallback("onHpDeminishedDelegate"     , scope, callback, removeOnComplete); }
+Attributes.prototype.addDamageReceivedCallback    = function(scope, callback, removeOnComplete) { this.addCallback("onDamageReceivedDelegate"   , scope, callback, removeOnComplete); }
+Attributes.prototype.addAllDamageReceivedCallback = function(scope, callback, removeOnComplete) { this.addCallback("onAllDamageReceivedDelegate", scope, callback, removeOnComplete); }
 
 Attributes.prototype.removeAllCallbacks = function() {
 	GameObject.prototype.removeAllCallbacks.call(this);

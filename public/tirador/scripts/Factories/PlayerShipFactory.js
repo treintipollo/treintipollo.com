@@ -68,12 +68,24 @@ function PlayerShipFactory() {
 		for (var k in this.playerActionsCallbacks) {
 			for (var i = 0; i < this.playerActionsCallbacks[k].length; i++) {
 				var callbackObject = this.playerActionsCallbacks[k][i];
-				ship[k](callbackObject.scope, callbackObject.callback);
+				
+				if(!callbackObject)
+					continue;
+
+				ship[k](callbackObject.scope, callbackObject.callback, callbackObject.removeOnComplete);
+
+				if(callbackObject.removeOnComplete){
+					this.playerActionsCallbacks[k][i] = null;	
+				}
 			}
 		}
 	};
 
 	this.addCallbacksToAction = function(actionName, callbacks) {
-		this.playerActionsCallbacks[actionName] = callbacks;
+		if(!this.playerActionsCallbacks[actionName]){
+			this.playerActionsCallbacks[actionName] = [];
+		}
+		
+		this.playerActionsCallbacks[actionName] = this.playerActionsCallbacks[actionName].concat(callbacks);
 	};
 }

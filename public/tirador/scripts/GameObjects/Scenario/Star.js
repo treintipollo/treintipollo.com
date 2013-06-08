@@ -2,10 +2,11 @@ function Star() {}
 Star.inheritsFrom( GameObject );
 
 Star.prototype.init = function(x, y, speed) {
-	this.x     = x;
-	this.y     = y;
-	this.speed = speed;
-	this.type  = Math.floor(Math.random() * 4); 
+	this.x         = x;
+	this.y         = y;
+	this.speed     = speed;
+	this.baseSpeed = 1;
+	this.type      = Math.floor(Math.random() * 4); 
 }
 
 Star.prototype.draw = function(context) { 	
@@ -53,7 +54,7 @@ Star.prototype.draw = function(context) {
 }
 
 Star.prototype.update = function(delta) {
-	this.y += this.speed * delta;
+	this.y += (this.speed * this.baseSpeed) * delta;
 
 	if(this.y > 850){
 		this.alive = false;

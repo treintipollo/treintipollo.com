@@ -10,17 +10,17 @@ function BadGuyRocket() {
 BadGuyRocket.inheritsFrom(HomingRocket);
 
 BadGuyRocket.prototype.init = function(x, y, deploy, target, container, rotation, acceleration, speed, deathRange) {
-	BadGuyRocket.prototype.calculateAngle       = this.tProto.calculateAngle;
-	BadGuyRocket.prototype.unlockedUpdate       = this.tProto.unlockedUpdate;
-	BadGuyRocket.prototype.draw 		        = this.tProto.draw;
-	BadGuyRocket.prototype.destroy 		        = this.tProto.destroy;
-	BadGuyRocket.prototype.update 		        = this.tProto.update;
-	BadGuyRocket.prototype.checkDeathCondition  = this.tProto.checkDeathCondition;
-	BadGuyRocket.prototype.moveToDeployPosition = this.tProto.moveToDeployPosition;
+	this.calculateAngle       = this.tProto.calculateAngle;
+	this.unlockedUpdate       = this.tProto.unlockedUpdate;
+	this.draw 		          = this.tProto.draw;
+	this.destroy 		      = this.tProto.destroy;
+	this.update 		      = this.tProto.update;
+	this.checkDeathCondition  = this.tProto.checkDeathCondition;
+	this.moveToDeployPosition = this.tProto.moveToDeployPosition;
 
 	this.acceleration = Random.getRandomArbitary(acceleration.min, acceleration.max);
-	this.speed = Random.getRandomArbitary(speed.min, speed.max);
-	this.deathRange = deathRange;
+	this.speed        = Random.getRandomArbitary(speed.min, speed.max);
+	this.deathRange   = deathRange;
 
 	this.tProto.init.apply(this, arguments);
 }

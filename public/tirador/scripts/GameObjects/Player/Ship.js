@@ -101,6 +101,10 @@ Ship.prototype.afterCreate = function(){
 	CircleCollider.prototype.create.call(this);
 }
 
+Ship.prototype.exhaustIdleState = function(){
+	this.setAllExhaustState(Exhaust.REGULAR);
+}
+
 Ship.prototype.init = function(x, y, container, exhaustState){
 	CircleCollider.prototype.init.call(this, 15);
 
@@ -194,8 +198,8 @@ Ship.prototype.createStateMachine = function() {
 	this.START_MOTION 			= this.currentMotion.add(gotoInitPosition, idle, null);
 }
 
-Ship.prototype.addInitialPositionReachedCallback = function(scope, callback) { this.addCallback("onInitialPositionDelegate", scope, callback); }
-Ship.prototype.addFirstShotCallback = function(scope, callback) { this.addCallback("firstShotDelegate", scope, callback); }
+Ship.prototype.addInitialPositionReachedCallback = function(scope, callback, removeOnComplete) { this.addCallback("onInitialPositionDelegate", scope, callback, removeOnComplete); }
+Ship.prototype.addFirstShotCallback = function(scope, callback, removeOnComplete) { this.addCallback("firstShotDelegate", scope, callback, removeOnComplete); }
 
 Ship.prototype.gotoInitialState = function() {
 	this.currentMotion.set(this.START_MOTION);
@@ -253,7 +257,7 @@ Ship.prototype.update = function(delta) {
 	this.currentMotion.update();
 
 	if(!this.blockControls){
-		this.setAllExhaustState(Exhaust.REGULAR);
+		this.exhaustIdleState();
 
 		if(ArrowKeyHandler.isDown(ArrowKeyHandler.LEFT))  { 
 			this.x -= TopLevel.playerData.speed * delta; 

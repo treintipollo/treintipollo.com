@@ -214,32 +214,36 @@ TweenUtils.startValueOscilation = function (valueName, time, minValue, maxValue,
 function ScreenUtils(){}
 
 ScreenUtils.isInScreenBounds = function(pos, offsetX, offsetY){
-	if(!offsetX) offsetX = 0;
-	if(!offsetY) offsetY = 0;
+	offsetX = offsetX ? offsetX : 0;
+	offsetY = offsetY ? offsetY : 0;
 
 	return (pos.x > -offsetX && pos.x < TopLevel.canvas.width+offsetX) && (pos.y > -offsetY && pos.y < TopLevel.canvas.height+offsetY);
 }
 
 ScreenUtils.isInScreenBoundsXY = function(x, y, offsetX, offsetY){
-	if(!offsetX) offsetX = 0;
-	if(!offsetY) offsetY = 0;
+	offsetX = offsetX ? offsetX : 0;
+	offsetY = offsetY ? offsetY : 0;
 
 	return (x > -offsetX && x < TopLevel.canvas.width+offsetX) && (y > -offsetY && y < TopLevel.canvas.height+offsetY);
 }
 
 ScreenUtils.isPastBottom = function(y, offset){
+	offset = offset ? offset : 0;
 	return (y > TopLevel.canvas.height + offset);
 }
 
 ScreenUtils.isPastTop = function(y, offset){
+	offset = offset ? offset : 0;
 	return (y < -offset);
 }
 
 ScreenUtils.isPastRight = function(x, offset){
+	offset = offset ? offset : 0;
 	return (x > TopLevel.canvas.width + offset);
 }
 
 ScreenUtils.isPastLeft = function(x, offset){
+	offset = offset ? offset : 0;
 	return (x < -offset);
 }
 
