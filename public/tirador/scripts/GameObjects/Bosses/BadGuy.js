@@ -520,6 +520,8 @@ End_2_BadGuy.prototype.init = function(x, y, container, target, playerShip){
 	
 	this.playerShip = playerShip;
 	this.escaping   = false;
+
+	this.rocketTypeCount = {};
 }
 
 End_2_BadGuy.prototype.createStateMachine = function() {
@@ -574,8 +576,16 @@ End_2_BadGuy.prototype.createStateMachine = function() {
 End_2_BadGuy.prototype.fireRockets = function(){
 	var rocketTypeIndex = Random.getRandomInt(0, this.rocketType.length-1);
 
+	if(!this.rocketTypeCount[this.rocketType[rocketTypeIndex]]){
+		this.rocketTypeCount[this.rocketType[rocketTypeIndex]] = 0;
+	}
+
 	TimeOutFactory.getTimeOut(this.rocketTimeOut[rocketTypeIndex], this.rocketAmount[rocketTypeIndex], this, function() {
-		
+	
+		if(this.rocketTypeCount[this.rocketType[rocketTypeIndex]] > this.rocketAmount[rocketTypeIndex]){
+			return;
+		}
+
 		var a = Random.getRandomArbitary(0, 360) * (Math.PI / 180);
 
 		BadGuy.RocketArguments[0] = this.x;
@@ -594,7 +604,13 @@ End_2_BadGuy.prototype.fireRockets = function(){
 
 		BadGuy.RocketArguments[8] = this.blastRadius[rocketTypeIndex];	
 		
-		TopLevel.container.add(this.rocketType[rocketTypeIndex], BadGuy.RocketArguments);
+		var rocket = TopLevel.container.add(this.rocketType[rocketTypeIndex], BadGuy.RocketArguments);
+
+		this.rocketTypeCount[this.rocketType[rocketTypeIndex]]++;
+
+		rocket.addOnRecicleCallback(this, function(){
+			this.rocketTypeCount[this.rocketType[rocketTypeIndex]]--;
+		});
 
 	}, true).start();
 }

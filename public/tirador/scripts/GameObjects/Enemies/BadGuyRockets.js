@@ -140,6 +140,7 @@ BadGuyClusterAimedRocket.inheritsFrom(BadGuyRocket);
 BadGuyClusterAimedRocket.prototype.init = function(x, y, deploy, target, container, rotation, acceleration, speed, deathRange) {
 	Rocket.clusterInitConfig.call(this);
 	HomingRocket.prototype.init.call(this, x, y, deploy, target, container, rotation);
+	this.debryCount = 3;
 }
 
 BadGuyClusterAimedRocket.prototype.draw = function(context) {
@@ -175,3 +176,8 @@ BadGuyClusterAimedRocket.prototype.update = function(delta) {
 BadGuyClusterAimedRocket.prototype.unlockedUpdate = function() {
 	this.rotation += 30;
 }
+
+//-----------------------------------------------//
+//-----------------------------------------------//
+//-----------------------------------------------//
+//-----------------------------------------------//
