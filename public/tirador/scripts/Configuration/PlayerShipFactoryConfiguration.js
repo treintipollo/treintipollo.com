@@ -3,7 +3,15 @@ function PlayerShipFactoryConfiguration() {}
 PlayerShipFactoryConfiguration.prototype.setUp = function() {
 	TopLevel.playerShipFactory.addCallbacksToAction("addInitCallback", [
 		{scope:TopLevel.playerData, callback:function(obj){ 
-			this.init(obj); 
+			
+			if(obj.typeId == "Ship"){
+				this.init(obj); 
+			}
+
+			if(obj.typeId == "PowerShip"){
+				this.powerInit(obj);				
+			}
+			
 		} }
 	]);
 

@@ -54,8 +54,9 @@ var TopLevel = {
 window.TopLevel = TopLevel;
 	
 //TODO: PowerShip
-	//Disable other weapons asides from the Shot Weapon.
 	//Weapon
+		//Class stump
+		//Implementation details
 
 //TODO: Mini story sequence.	
 	//Ending.
@@ -63,8 +64,10 @@ window.TopLevel = TopLevel;
 			//Sequence after transformation and before the final fight.
 				// Badguy sets up armour
 			//Final Show Down!
-				//Final attack for last piece of health.
 				//Can only be damaged by the Super Plasma Beam.
+				//Final attack for last piece of health.
+					//TODO: 1) Shoot power shot from below (Guy)
+					//TODO: 2) Summon mini bosses (Gal)
 
 //TODO: Ending sequence
 	//Credits Roll
@@ -75,15 +78,17 @@ window.TopLevel = TopLevel;
 	//Thanks for playing.
 	//Hope to see you again... IN SPACE!
 
-//Design female ship.
-	//Make male and female ship drawing swapable.
-	//Different Boss encounters for Male and Female game.
+//TODO: Make different ship drawing.
+//TODO: Make male and female ship drawing swapable.
+//TODO: Different Boss encounters for Male and Female game.
 
 //More work on the HUD
 	//Move things around
 	//Add life bar for BadGuy and Big Boss when they show up.
 
 //BUG: Se rompe el laser del Boss y no colisiona mas hasta que chocas con otra cosa
+	//Intentar reproducir.
+	//Armar un escenario donde solo aparezca algun boss con laser.
 
 //TODO: Optimizations
 	//TODO: Reduce memory Footprint.

@@ -165,8 +165,7 @@ StraightBeam.prototype.destroy = function() {
 BeamCollider.inheritsFrom( Attributes );
 
 function BeamCollider() {
-	this.timer = TimeOutFactory.getTimeOut(0, 1, this, function(){ 
-		this.timer.stop();
+	this.timer = TimeOutFactory.getTimeOut(0, 1, this, function() { 
 		this.alive = false;
 	});
 }

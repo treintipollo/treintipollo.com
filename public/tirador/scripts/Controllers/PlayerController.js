@@ -23,11 +23,12 @@ function PlayerController() {
 	this.lives = 1;
 	this.gameStage = 0;
 
-	this.livesReset = 1;
-	this.speedReset = 125;
-	this.speedCap = 170;
-	this.weaponDivider = 4;
-	this.speedDivider = 4;
+	this.livesReset         = 1;
+	this.speedReset         = 125;
+	this.speedPowerUpCap    = 8;
+	this.speedPowerUpAmount = 5;
+	this.weaponDivider      = 4;
+	this.speedDivider       = 4;
 }
 
 PlayerController.prototype.init = function(ship) {
@@ -36,6 +37,31 @@ PlayerController.prototype.init = function(ship) {
 	this.reset();
 
 	this.initWeapon();
+
+	ship.addHpDeminishedCallback(this, function(other) {
+		this.execute(this.HP_DOWN, this);
+	});
+	ship.addDamageReceivedCallback(this, function(other) {
+		this.execute(this.HP_DOWN, this);
+	});
+
+	this.execute(this.INIT, this);
+}
+
+PlayerController.prototype.powerInit = function(ship) {
+	this.ship = ship;
+
+	this.speed = this.speedReset + (this.speedPowerUpCap * this.speedPowerUpAmount);
+	this.speedPowerUps = this.speedPowerUpCap;
+
+	if (this.ship.weapon) this.ship.weapon.destroy();
+
+	this.execute(this.RESET, this);
+
+	this.ship.weapon = TopLevel.weaponFactory.getInitializedWeapon(TopLevel.weaponFactory.POWER_BEAM_WEAPON, 0, this.ship, this.ship.weapon);
+	this.lastWeaponType = this.ship.weapon.getId();
+
+	this.execute(this.WEAPON_INIT, this);
 
 	ship.addHpDeminishedCallback(this, function(other) {
 		this.execute(this.HP_DOWN, this);
@@ -107,8 +133,8 @@ PlayerController.prototype.powerDownWeapon = function() {
 }
 
 PlayerController.prototype.increaseSpeed = function() {
-	if (this.speed < this.speedCap) {
-		this.speed += 10;
+	if (this.speedPowerUps < this.speedPowerUpCap) {
+		this.speed += this.speedPowerUpAmount;
 		this.speedPowerUps++;
 		this.execute(this.SPEED_UP, this);
 	}

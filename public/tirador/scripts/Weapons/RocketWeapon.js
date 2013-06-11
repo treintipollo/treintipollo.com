@@ -230,3 +230,14 @@ RocketWeapon.prototype.destroy = function() {
 
 	DestroyUtils.destroyAllProperties(this);
 }
+
+RocketWeapon.prototype.stop = function() {
+	this.destroyTargets();
+	
+	if(this.callbacks)
+		ArrowKeyHandler.removeCallbacks(this.callbacks);
+	
+	if(this.idleTimer) this.idleTimer.stop();	
+
+	this.callbacks = null;
+}
