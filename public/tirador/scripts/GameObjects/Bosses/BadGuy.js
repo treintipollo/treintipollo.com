@@ -606,11 +606,13 @@ End_2_BadGuy.prototype.fireRockets = function(){
 		
 		var rocket = TopLevel.container.add(this.rocketType[rocketTypeIndex], BadGuy.RocketArguments);
 
-		this.rocketTypeCount[this.rocketType[rocketTypeIndex]]++;
+		if(rocket) {
+			this.rocketTypeCount[this.rocketType[rocketTypeIndex]]++;
 
-		rocket.addOnRecicleCallback(this, function(){
-			this.rocketTypeCount[this.rocketType[rocketTypeIndex]]--;
-		});
+			rocket.addOnRecicleCallback(this, function(){
+				this.rocketTypeCount[this.rocketType[rocketTypeIndex]]--;
+			});
+		}
 
 	}, true).start();
 }
