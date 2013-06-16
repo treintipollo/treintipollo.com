@@ -328,7 +328,6 @@ Ship.prototype.onDamageReceived = function(other) {
 	TweenMax.to(this, 0.4, {x:this.x + vec.dir.x, y:this.y + vec.dir.y, ease:Power4.easeOut});
 	
 	TweenMax.to(this, 0.5, {rotation:360, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){
-		this.currentMotion.set(this.MOVE);
 		this.blockDamage = false;
 		this.rotation = 0;	
 	}});
