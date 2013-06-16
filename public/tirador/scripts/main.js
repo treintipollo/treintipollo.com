@@ -55,10 +55,7 @@ window.TopLevel = TopLevel;
 	
 //TODO: PowerShip
 	//Weapon
-		//Class stump
 		//Implementation details
-			//Better feedback when charging
-			//Better feedback when charged
 			//Implement disable weapon
 			//Implement enable weapon
 
@@ -68,7 +65,6 @@ window.TopLevel = TopLevel;
 			//Sequence after transformation and before the final fight.
 				// Badguy sets up armour
 			//Final Show Down!
-				//Can only be damaged by the Super Plasma Beam.
 				//Final attack for last piece of health.
 					//TODO: 1) Shoot power shot from below (Guy)
 					//TODO: 2) Summon mini bosses (Gal)

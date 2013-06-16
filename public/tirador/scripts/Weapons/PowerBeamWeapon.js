@@ -3,26 +3,41 @@ PowerBeamWeapon.inheritsFrom(Weapon);
 function PowerBeamWeapon(id, name, level, user) {
 	Weapon.apply(this, arguments);
 
-	this.shotCharge = new ShotCharge(this.user, 0, -40, 210, 330, 60);
-	this.shotCharge.off();
+	this.shotCharge_red = new ShotCharge(this.user, -25, -25, 0, 360, 70);
+	this.shotCharge_blue = new ShotCharge(this.user, 25, -25, 0, 360, 70);
 
 	this.chargeComplete = false;
+	this.chargeRed;
+	this.chargeBlue;
 
 	this.idleTimer = TimeOutFactory.getTimeOut(500, 1, this, function() {
-		this.shotCharge.on();
+		this.shotCharge_red.on();
+		this.shotCharge_blue.on();
 		this.chargeTimer.reset();
 	});
 
 	this.chargeTimer = TimeOutFactory.getTimeOut(2500, 1, this, function() {
-		this.shotCharge.off();
+		this.shotCharge_red.off();
+		this.shotCharge_blue.off();
 		this.chargeComplete = true;
+
+		this.chargeRed  = this.container.add("Double_Power_Shot_1", PowerBeamWeapon.BEAM_CHARGE_RED);
+		this.chargeBlue = this.container.add("Double_Power_Shot_1", PowerBeamWeapon.BEAM_CHARGE_BLUE);
+
+		this.chargeRed.addOnDestroyCallback(this, function(obj) {
+			this.chargeRed = null;
+		});
+
+		this.chargeBlue.addOnDestroyCallback(this, function(obj) {
+			this.chargeBlue = null;
+		});
 	});
 
 	this.beam_red = new BezierParticleBeam();
 	this.beam_blue = new BezierParticleBeam();
 
-	this.beamBurstShort_red = new ShotCharge(null, 0, 0, 0, 0, 70);
-	this.beamBurstShort_blue = new ShotCharge(null, 0, 0, 0, 0, 70);
+	this.beamBurstShort_red = new ShotCharge(null, 0, 0, 0, 0, 90);
+	this.beamBurstShort_blue = new ShotCharge(null, 0, 0, 0, 0, 90);
 
 	this.beamParticleSize = 3;
 	this.particleType = "StraightParticle";
@@ -50,33 +65,27 @@ function PowerBeamWeapon(id, name, level, user) {
 		this.maxParticleSpeed,
 		this.beamParticlesLife);
 
-	this.burstPos_red = {
-		x: 0,
-		y: 0
-	};
+	this.burstPos_red = { x: 0, y: 0 };
 
 	this.beamBurstShort_red.parent = this.burstPos_red;
 	this.beamBurstShort_red.init(
 		TopLevel.container,
-		15,
+		50,
 		"#F280A3",
 		this.beamParticleSize,
 		"BurstParticle",
-		this.beamParticlesInCycle);
+		this.beamParticlesInCycle/2);
 
-	this.burstPos_blue = {
-		x: 0,
-		y: 0
-	};
+	this.burstPos_blue = { x: 0, y: 0 };
 
 	this.beamBurstShort_blue.parent = this.burstPos_blue;
 	this.beamBurstShort_blue.init(
 		TopLevel.container,
-		15,
+		50,
 		"#80D0F2",
 		this.beamParticleSize,
 		"BurstParticle",
-		this.beamParticlesInCycle);
+		this.beamParticlesInCycle/2);
 
 	this.beam_red.off();
 	this.beam_blue.off();
@@ -88,12 +97,13 @@ function PowerBeamWeapon(id, name, level, user) {
 	this.beamColliders_blue = [];
 }
 
-PowerBeamWeapon.BEAM_POINTS = [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 } ];
-PowerBeamWeapon.COLLIDER_ARGUMENTS = [];
-PowerBeamWeapon.MIDDLE_SHOT = [null, null,  0, -30, 1000];
+PowerBeamWeapon.BEAM_POINTS = [ { x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 } ];
+PowerBeamWeapon.COLLIDER_ARGUMENTS = [ ];
+PowerBeamWeapon.MIDDLE_SHOT = [ null, null,  0, -30, 1000 ];
+PowerBeamWeapon.BEAM_CHARGE_RED  = [ null, null, 4, 550, 25, 10, -37, -35, "#F280A3",  1 ];
+PowerBeamWeapon.BEAM_CHARGE_BLUE = [ null, null, 4, 550, 25, 10, 37 , -35, "#80D0F2", -1 ];
 
 PowerBeamWeapon.prototype.getBezierPoints_red = function() {
-
 	PowerBeamWeapon.BEAM_POINTS[0].x = this.user.x - 30;
 	PowerBeamWeapon.BEAM_POINTS[0].y = this.user.y - 30;
 
@@ -110,7 +120,6 @@ PowerBeamWeapon.prototype.getBezierPoints_red = function() {
 }
 
 PowerBeamWeapon.prototype.getBezierPoints_blue = function() {
-
 	PowerBeamWeapon.BEAM_POINTS[0].x = this.user.x + 30;
 	PowerBeamWeapon.BEAM_POINTS[0].y = this.user.y - 30;
 
@@ -128,7 +137,9 @@ PowerBeamWeapon.prototype.getBezierPoints_blue = function() {
 
 PowerBeamWeapon.prototype.init = function(container) {
 	this.parent.init(container);
-	this.shotCharge.init(container);
+
+	this.shotCharge_red.init(container, 30, "#F280A3", 3.5);
+	this.shotCharge_blue.init(container, 30, "#80D0F2", 3.5);
 
 	var inst = this;
 	this.idleTimer.start();
@@ -138,21 +149,36 @@ PowerBeamWeapon.prototype.init = function(container) {
 	PowerBeamWeapon.MIDDLE_SHOT[0] = this.user;
 	PowerBeamWeapon.MIDDLE_SHOT[1] = this.container;
 
+	PowerBeamWeapon.BEAM_CHARGE_RED[0] = this.user;
+	PowerBeamWeapon.BEAM_CHARGE_RED[1] = this.container;
+
+	PowerBeamWeapon.BEAM_CHARGE_BLUE[0] = this.user;
+	PowerBeamWeapon.BEAM_CHARGE_BLUE[1] = this.container;
+	
+	var fireSingleShot = function() {
+		if (inst.shotAmount > 0) {
+			inst.shotAmount--;
+
+			var shot = inst.container.add("Big_Shot", PowerBeamWeapon.MIDDLE_SHOT);
+
+			shot.addOnDestroyCallback(inst, function(obj) {
+				inst.shotAmount++;
+			});
+
+			inst.idleTimer.reset();
+			inst.shotCharge_red.off();
+			inst.shotCharge_blue.off();
+			inst.chargeTimer.stop();
+
+			return true;
+		}
+
+		return false;
+	}
+
 	this.keyUpCallback = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_1, function() {
 		if (!inst.chargeComplete && !inst.isShootingBeam) {
-			if (inst.shotAmount > 0) {
-				inst.shotAmount--;
-
-				var shot = inst.container.add("Big_Shot", PowerBeamWeapon.MIDDLE_SHOT);
-
-				shot.addOnDestroyCallback(inst, function(obj) {
-					inst.shotAmount++;
-				});
-
-				inst.idleTimer.reset();
-				inst.shotCharge.off();
-				inst.chargeTimer.stop();
-
+			if(fireSingleShot()) {
 				return;
 			}
 		}
@@ -164,25 +190,30 @@ PowerBeamWeapon.prototype.init = function(container) {
 			inst.lastCollider_blue = null;
 			inst.isShootingBeam = true;
 
-			inst.shotCharge.off();
-			inst.chargeTimer.stop();
-			inst.idleTimer.stop();
-
 			inst.beam_red.onComplete = function() {
 				inst.idleTimer.reset();
+
 				inst.beam_red.off();
-				inst.beam_blue.off();
 				inst.beamBurstShort_red.off();
-				inst.beamBurstShort_blue.off();
 
 				inst.user.currentMotion.set(inst.user.IDLE_MOTION);
 				inst.user.blockControls = false;
-
 				inst.isShootingBeam = false;
 
 				for(var i=0; i<inst.beamColliders_red.length; i++) {
 					inst.beamColliders_red[i].alive = false;
-				}
+				}		
+			}
+
+			inst.beam_blue.onComplete = function() {
+				inst.idleTimer.reset();
+				
+				inst.beam_blue.off();
+				inst.beamBurstShort_blue.off();
+
+				inst.user.currentMotion.set(inst.user.IDLE_MOTION);
+				inst.user.blockControls = false;
+				inst.isShootingBeam = false;
 
 				for(i=0; i<inst.beamColliders_blue.length; i++) {
 					inst.beamColliders_blue[i].alive = false;	
@@ -241,19 +272,37 @@ PowerBeamWeapon.prototype.init = function(container) {
 				}
 			}
 
-			inst.user.currentMotion.set(inst.user.NONE_STOP_SHAKE_MOTION);
-			inst.user.blockControls = true;
+			inst.shotCharge_red.off();
+			inst.shotCharge_blue.off();
+			inst.chargeTimer.stop();
+			inst.idleTimer.stop();
 
-			inst.beamBurstShort_red.on((270 - 45) - 45, (270 - 45) + 45);
-			inst.beamBurstShort_blue.on((270 + 45) - 45, (270 + 45) + 45);
+			if(inst.chargeRed || inst.chargeBlue) {
+				inst.user.currentMotion.set(inst.user.NONE_STOP_SHAKE_MOTION);
+				inst.user.blockControls = true;
+			} else {
+				fireSingleShot();
+			}
 
-			inst.beam_red.on(function() {
-				return inst.getBezierPoints_red();
-			});
+			if(inst.chargeRed) {
+				inst.chargeRed.alive = false;
 
-			inst.beam_blue.on(function() {
-				return inst.getBezierPoints_blue();
-			});
+				inst.beamBurstShort_red.on((270 - 45) - 45, (270 - 45) + 45);			
+
+				inst.beam_red.on(function() {
+					return inst.getBezierPoints_red();
+				});
+			}
+			
+			if(inst.chargeBlue) {
+				inst.chargeBlue.alive = false;
+
+				inst.beamBurstShort_blue.on((270 + 45) - 45, (270 + 45) + 45);
+
+				inst.beam_blue.on(function() {
+					return inst.getBezierPoints_blue();
+				});
+			}
 
 			inst.chargeComplete = false;
 		}
@@ -264,8 +313,9 @@ PowerBeamWeapon.prototype.init = function(container) {
 }
 
 PowerBeamWeapon.prototype.update = function() {
-	if (this.shotCharge) {
-		this.shotCharge.update();
+	if (this.shotCharge_red) {
+		this.shotCharge_red.update();
+		this.shotCharge_blue.update();
 
 		this.beam_red.update();
 		this.beam_blue.update();
@@ -279,7 +329,9 @@ PowerBeamWeapon.prototype.update = function() {
 }
 
 PowerBeamWeapon.prototype.destroy = function() {
-	if (this.shotCharge) this.shotCharge.destroy();
+	if (this.shotCharge_red) this.shotCharge_red.destroy();
+	if (this.shotCharge_blue) this.shotCharge_blue.destroy();
+
 	if (this.callbacks) ArrowKeyHandler.removeCallbacks(this.callbacks);
 
 	if (this.idleTimer) this.idleTimer.stop();
@@ -299,7 +351,7 @@ PowerBeamWeapon.prototype.destroy = function() {
 // 	ArrowKeyHandler.removeKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_1, this.keyUpCallback);
 // 	this.callbacks.pop();
 
-// 	this.shotCharge.off();
+// 	this.shotCharge_red.off();
 
 // 	if (this.idleTimer) {
 // 		this.idleTimer.stop();
