@@ -62,9 +62,7 @@ ObjectsContainer.prototype.update = function(delta) {
 							if (this.collisionOpponent.alive && this.collisionOpponent.checkingCollisions) {
 
 								if (this.areColliding(object, this.collisionOpponent)) {
-									if (!object.checkingCollisions) {
-										break
-									};
+									if (!object.checkingCollisions) { break };
 
 									object.onCollide(this.collisionOpponent);
 									
@@ -72,9 +70,7 @@ ObjectsContainer.prototype.update = function(delta) {
 										object.executeOnCollideCallbacks(this.collisionOpponent);
 									}
 
-									if (!object.checkingCollisions) {
-										break;
-									}
+									if (!object.checkingCollisions) { break; }
 
 									this.collisionOpponent.onCollide(object);
 									

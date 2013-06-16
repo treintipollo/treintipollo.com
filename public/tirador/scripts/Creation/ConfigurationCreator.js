@@ -95,18 +95,10 @@ ConfigurationCreator.prototype.create = function() {
 
 	TopLevel.container.createTypeConfiguration("Splash", "Splash");
 
-	TopLevel.container.createTypeConfiguration("Small_Shot", "Shot").layer(1).collisionId("Shot").args({
-		big: false
-	});
-	TopLevel.container.createTypeConfiguration("Big_Shot", "Shot").layer(1).collisionId("Shot").args({
-		big: true
-	});
-	TopLevel.container.createTypeConfiguration("Clone_Small_Shot", "Shot").layer(1).collisionId("CloneShot").args({
-		big: false
-	});
-	TopLevel.container.createTypeConfiguration("Clone_Big_Shot", "Shot").layer(1).collisionId("CloneShot").args({
-		big: true
-	});
+	TopLevel.container.createTypeConfiguration("Small_Shot", "Shot").layer(1).collisionId("Shot").args({ big: false });
+	TopLevel.container.createTypeConfiguration("Big_Shot", "Shot").layer(1).collisionId("Shot").args({ big: true });
+	TopLevel.container.createTypeConfiguration("Clone_Small_Shot", "Shot").layer(1).collisionId("CloneShot").args({ big: false });
+	TopLevel.container.createTypeConfiguration("Clone_Big_Shot", "Shot").layer(1).collisionId("CloneShot").args({ big: true });
 
 	TopLevel.container.createTypeConfiguration("Single_Power_Shot_1", "PowerShot").collisionId("PowerShot");
 	TopLevel.container.createTypeConfiguration("Single_Power_Shot_2", "PowerShot").collisionId("PowerShot");

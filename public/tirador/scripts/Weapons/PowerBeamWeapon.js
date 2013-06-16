@@ -88,21 +88,9 @@ function PowerBeamWeapon(id, name, level, user) {
 	this.beamColliders_blue = [];
 }
 
-PowerBeamWeapon.BEAM_POINTS = [{
-		x: 0,
-		y: 0
-	}, {
-		x: 0,
-		y: 0
-	}, {
-		x: 0,
-		y: 0
-	}, {
-		x: 0,
-		y: 0
-	}
-];
+PowerBeamWeapon.BEAM_POINTS = [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 } ];
 PowerBeamWeapon.COLLIDER_ARGUMENTS = [];
+PowerBeamWeapon.MIDDLE_SHOT = [null, null,  0, -30, 1000];
 
 PowerBeamWeapon.prototype.getBezierPoints_red = function() {
 
@@ -145,8 +133,36 @@ PowerBeamWeapon.prototype.init = function(container) {
 	var inst = this;
 	this.idleTimer.start();
 
+	this.shotAmount = 3;
+	this.isShootingBeam = false;
+	PowerBeamWeapon.MIDDLE_SHOT[0] = this.user;
+	PowerBeamWeapon.MIDDLE_SHOT[1] = this.container;
+
 	this.keyUpCallback = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_1, function() {
+		if (!inst.chargeComplete && !inst.isShootingBeam) {
+			if (inst.shotAmount > 0) {
+				inst.shotAmount--;
+
+				var shot = inst.container.add("Big_Shot", PowerBeamWeapon.MIDDLE_SHOT);
+
+				shot.addOnDestroyCallback(inst, function(obj) {
+					inst.shotAmount++;
+				});
+
+				inst.idleTimer.reset();
+				inst.shotCharge.off();
+				inst.chargeTimer.stop();
+
+				return;
+			}
+		}
+
 		if (inst.chargeComplete) {
+			inst.beamColliders_red.length = 0;
+			inst.beamColliders_blue.length = 0;
+			inst.lastCollider_red = null;
+			inst.lastCollider_blue = null;
+			inst.isShootingBeam = true;
 
 			inst.shotCharge.off();
 			inst.chargeTimer.stop();
@@ -162,6 +178,8 @@ PowerBeamWeapon.prototype.init = function(container) {
 				inst.user.currentMotion.set(inst.user.IDLE_MOTION);
 				inst.user.blockControls = false;
 
+				inst.isShootingBeam = false;
+
 				for(var i=0; i<inst.beamColliders_red.length; i++) {
 					inst.beamColliders_red[i].alive = false;
 				}
@@ -170,11 +188,6 @@ PowerBeamWeapon.prototype.init = function(container) {
 					inst.beamColliders_blue[i].alive = false;	
 				}		
 			}
-
-			inst.beamColliders_red.length = 0;
-			inst.beamColliders_blue.length = 0;
-			inst.lastCollider_red = null;
-			inst.lastCollider_blue = null;
 
 			inst.beam_red.onStep = function(currentPos) {
 				var x = currentPos.x;
@@ -251,16 +264,18 @@ PowerBeamWeapon.prototype.init = function(container) {
 }
 
 PowerBeamWeapon.prototype.update = function() {
-	if (this.shotCharge) this.shotCharge.update();
+	if (this.shotCharge) {
+		this.shotCharge.update();
 
-	this.beam_red.update();
-	this.beam_blue.update();
+		this.beam_red.update();
+		this.beam_blue.update();
 
-	this.burstPos_red.x = this.user.x - 20;
-	this.burstPos_red.y = this.user.y - 20;
+		this.burstPos_red.x = this.user.x - 20;
+		this.burstPos_red.y = this.user.y - 20;
 
-	this.burstPos_blue.x = this.user.x + 20;
-	this.burstPos_blue.y = this.user.y - 20;
+		this.burstPos_blue.x = this.user.x + 20;
+		this.burstPos_blue.y = this.user.y - 20;
+	}
 }
 
 PowerBeamWeapon.prototype.destroy = function() {
@@ -269,14 +284,15 @@ PowerBeamWeapon.prototype.destroy = function() {
 
 	if (this.idleTimer) this.idleTimer.stop();
 	if (this.chargeTimer) this.chargeTimer.stop();
+	
+	if(this.beam_red) this.beam_red.destroy();
+	if(this.beam_blue) this.beam_blue.destroy();
+
+	if(this.beamBurstShort_red) this.beamBurstShort_red.destroy();
+	if(this.beamBurstShort_blue) this.beamBurstShort_blue.destroy();
 
 	DestroyUtils.destroyAllProperties(this);
 
-	this.beam_red.destroy();
-	this.beam_blue.destroy();
-
-	this.beamBurstShort_red.destroy();
-	this.beamBurstShort_blue.destroy();
 }
 
 // PowerBeamWeapon.prototype.stop = function() {

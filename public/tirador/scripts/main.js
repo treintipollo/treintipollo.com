@@ -57,7 +57,6 @@ window.TopLevel = TopLevel;
 	//Weapon
 		//Class stump
 		//Implementation details
-			//Single no charge shot
 			//Better feedback when charging
 			//Better feedback when charged
 			//Implement disable weapon
@@ -75,7 +74,6 @@ window.TopLevel = TopLevel;
 					//TODO: 2) Summon mini bosses (Gal)
 
 //TODO: Give End_2_Badguy a slightly different death animation than the one in ship, so it fits better with the ending sequence.
-//TODO: Null pointer in destroy() method of PowerBeamWeapon when Powership is destroyed. 
 
 //TODO: Ending sequence
 	//Credits Roll

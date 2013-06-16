@@ -16,6 +16,9 @@ Shot.prototype.init = function(pos, container, offSetX, offSetY, speed) {
 
 	this.user = pos;
 
+	this.x = pos.x;
+	this.y = pos.y;
+
 	this.moveSin = Math.sin((pos.rotation-90)*(Math.PI/180));
 	this.moveCos = Math.cos((pos.rotation-90)*(Math.PI/180));
 	
