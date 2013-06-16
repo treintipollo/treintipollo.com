@@ -54,13 +54,20 @@ var TopLevel = {
 window.TopLevel = TopLevel;
 	
 //TODO: Mini story sequence.	
-	//Ending.
-		//After the last Big Boss, he shows up again.
-			//Sequence after transformation and before the final fight.
-				// Badguy sets up armour.
-				// Bad guy death anim to fit in with the ending
-					//Disable player movement
-					//Tween to center position
+	//Final Fight.
+		// Badguy sets up armour.
+		// Bad guy death anim to fit in with the ending
+			//Disable player movement
+			//Tween to center position
+
+//TODO: Make different ship drawing.
+		//Male and Female symbols in the center of the ships
+		//Make male and female ship drawing swapable.
+		//Different Boss encounters for Male and Female game.
+
+//More work on the HUD
+	//Move things around
+	//Add life bar for BadGuy and Big Boss when they show up.
 
 //TODO: Ending sequence
 	//Credits Roll
@@ -70,15 +77,6 @@ window.TopLevel = TopLevel;
 	//THE END
 	//Thanks for playing.
 	//Hope to see you again... IN SPACE!
-
-//TODO: Make different ship drawing.
-//TODO: Make male and female ship drawing swapable.
-//TODO: Different Boss encounters for Male and Female game.
-
-//More work on the HUD
-	//Move things around
-	//Add life bar for BadGuy and Big Boss when they show up.
-
 
 //TODO: Use TimeOutFactory in ArrowKeyHandler.
 
@@ -114,7 +112,7 @@ window.TopLevel = TopLevel;
 			//Reduce amount of objects created to cache data.
 	//TODO: //I Could setup the GameObjects in a way in which I can specify if they need an update or not. 
 			//That could reduce method calls greatly, since a lot of GameObjects don't use update at all.
-			//Same could be done with drawing, as some GameObjects could only exist as data containers.
+			//Same could be done with draw
 
 $(function(){
 	//This is the main creation function, the game officially starts when this is called.

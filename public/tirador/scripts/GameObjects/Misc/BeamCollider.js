@@ -46,11 +46,11 @@ BeamCollider.prototype.destroy = function() {
 }
 
 BeamCollider.prototype.draw = function(context) {
-	context.strokeStyle = "#FF0000";
+	// context.strokeStyle = "#FF0000";
 
-	context.beginPath();
-	context.arc(0, 0, this.collider.r, 0, Math.PI*2);
-	context.closePath();
+	// context.beginPath();
+	// context.arc(0, 0, this.collider.r, 0, Math.PI*2);
+	// context.closePath();
 
-	context.stroke();
+	// context.stroke();
 }

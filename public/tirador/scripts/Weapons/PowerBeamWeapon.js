@@ -41,13 +41,13 @@ function PowerBeamWeapon(id, name, level, user) {
 
 	this.beamParticleSize = 3;
 	this.particleType = "StraightParticle";
-	this.beamParticlesInCycle = 20;
+	this.beamParticlesInCycle = 15;
 	this.maxParticleSpeed = 40;
 	this.beamParticlesLife = 40;
 
 	this.beam_red.init(
 		TopLevel.container,
-		1,
+		10,
 		"#F280A3",
 		this.beamParticleSize,
 		this.particleType,
@@ -57,7 +57,7 @@ function PowerBeamWeapon(id, name, level, user) {
 
 	this.beam_blue.init(
 		TopLevel.container,
-		1,
+		10,
 		"#80D0F2",
 		this.beamParticleSize,
 		this.particleType,
@@ -74,7 +74,7 @@ function PowerBeamWeapon(id, name, level, user) {
 		"#F280A3",
 		this.beamParticleSize,
 		"BurstParticle",
-		this.beamParticlesInCycle/2);
+		this.beamParticlesInCycle);
 
 	this.burstPos_blue = { x: 0, y: 0 };
 
@@ -85,7 +85,7 @@ function PowerBeamWeapon(id, name, level, user) {
 		"#80D0F2",
 		this.beamParticleSize,
 		"BurstParticle",
-		this.beamParticlesInCycle/2);
+		this.beamParticlesInCycle);
 
 	this.beam_red.off();
 	this.beam_blue.off();
