@@ -74,14 +74,6 @@ window.TopLevel = TopLevel;
 					//TODO: 1) Shoot power shot from below (Guy)
 					//TODO: 2) Summon mini bosses (Gal)
 
-//TODO: Badguy stops colliding with Power Beam colliders, possibly connected to
-	//BUG: Se rompe el laser del Boss y no colisiona mas hasta que chocas con otra cosa
-		//Intentar reproducir.
-		//Armar un escenario donde solo aparezca algun boss con laser.
-	//Armar el escenario para que sea mas rapido probar esto.
-		//Poner Powership de una (DONE!)
-		//Mandar al End_2_Badguy de una
-
 //TODO: Give End_2_Badguy a slightly different death animation than the one in ship, so it fits better with the ending sequence.
 //TODO: Null pointer in destroy() method of PowerBeamWeapon when Powership is destroyed. 
 
@@ -187,10 +179,13 @@ $(function(){
 		TopLevel.hudController.init(TopLevel.playerData);
 
 		//The reference to the player ship held in PlayerData
-		TopLevel.playerData.ship = TopLevel.playerShipFactory.firstShip(TopLevel.canvas.width/2 - 45, TopLevel.canvas.height + 50);
-		//TopLevel.playerData.ship = TopLevel.playerShipFactory.firstPowerShip(TopLevel.canvas.width/2, TopLevel.canvas.height - 100);
+		//TopLevel.playerData.ship = TopLevel.playerShipFactory.firstShip(TopLevel.canvas.width/2 - 45, TopLevel.canvas.height + 50);
+		TopLevel.playerData.ship = TopLevel.playerShipFactory.firstPowerShip(TopLevel.canvas.width/2, TopLevel.canvas.height - 100);
 		//Used to reset the game when needed.
 		TopLevel.setUpGame = setUpGame;
+
+		TopLevel.animationActors.ship = TopLevel.playerData.ship;
+		TopLevel.animationActors.getEnd_2_BadGuy("End_2_BadGuy");
 
 		//This is the game basic logic. It takes care of creating the baddies in the order specified.
 		setUpGame();

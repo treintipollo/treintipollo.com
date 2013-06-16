@@ -152,6 +152,7 @@ ConcreteBadGuy.prototype.init = function() {
 	this.rocketConfig 			  = this.tProto.rocketConfig;
 	this.update 			      = this.tProto.update;	
 	
+	this.onDamageBlocked 	      = this.tProto.onDamageBlocked;
 	this.onDamageReceived 	      = this.tProto.onDamageReceived;
 	this.onLastDamageLevelReached = this.tProto.onLastDamageLevelReached;
 	this.onAllDamageReceived      = this.tProto.onAllDamageReceived;
@@ -618,25 +619,7 @@ End_2_BadGuy.prototype.fireRockets = function(){
 }
 
 End_2_BadGuy.prototype.onDamageReceived = function(other) {
-	this.currentMotion.set(this.IDLE_MOTION);
-
-	this.blockDamage = true;
-
-	var vec = VectorUtils.getFullVectorInfo(this.x, this.y, other.x, other.y);
-
-	rA = Random.getRandomArbitary(-25, 25) * (Math.PI/180);
-
-	vec.dir.x = Math.cos(rA + vec.angle) * 80;
-	vec.dir.y = Math.sin(rA + vec.angle) * 80;
-
-	TweenMax.to(this, 0.4, {x:this.x + vec.dir.x, y:this.y + vec.dir.y, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){	
-		this.blockDamage = false;
-		this.currentMotion.set(this.MOVE);
-	}});
-	
-	TweenMax.to(this, 0.5, {rotation:360, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){
-		this.rotation = 0;	
-	}});
+	Ship.prototype.onDamageReceived.call(this, other);
 }
 
 End_2_BadGuy.prototype.onLastDamageLevelReached = function(other) {

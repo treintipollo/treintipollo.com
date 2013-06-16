@@ -20,33 +20,33 @@ function CutSceneController() {
 	transformY = 0;
 
 	this.getIntroPartner = function() {
-		this.ship = TopLevel.playerData.ship;
+		// this.ship = TopLevel.playerData.ship;
 
-		if (this.partner) return this.partner;
+		// if (this.partner) return this.partner;
 
-		this.partner = TopLevel.container.add("PartnerShip", [this.ship.x + 90, this.ship.y, TopLevel.container]);
-		this.partner.weapon = TopLevel.weaponFactory.getInitializedWeapon(TopLevel.weaponFactory.SHOT_WEAPON, 0, this.partner, this.partner.weapon);
+		// this.partner = TopLevel.container.add("PartnerShip", [this.ship.x + 90, this.ship.y, TopLevel.container]);
+		// this.partner.weapon = TopLevel.weaponFactory.getInitializedWeapon(TopLevel.weaponFactory.SHOT_WEAPON, 0, this.partner, this.partner.weapon);
 
-		this.partner.addCallback("onInitialPositionDelegate", this, function() {
+		// this.partner.addCallback("onInitialPositionDelegate", this, function() {
 
-			this.disablePlayerMovement();
+		// 	this.disablePlayerMovement();
 
-			this.shipInitX = this.ship.x;
-			this.shipInitY = this.ship.y;
+		// 	this.shipInitX = this.ship.x;
+		// 	this.shipInitY = this.ship.y;
 
-			this.partnerInitX = this.partner.x;
-			this.partnerInitY = this.partner.y;
+		// 	this.partnerInitX = this.partner.x;
+		// 	this.partnerInitY = this.partner.y;
 
-			this.transformX = this.ship.x + 45;
-			this.transformY = this.ship.y;
+		// 	this.transformX = this.ship.x + 45;
+		// 	this.transformY = this.ship.y;
 
-		});
+		// });
 
-		this.partner.addOnRecicleCallback(this, function() {
-			this.partner = null;
-		}, true);
+		// this.partner.addOnRecicleCallback(this, function() {
+		// 	this.partner = null;
+		// }, true);
 
-		return this.partner;
+		// return this.partner;
 	};
 
 	this.getIntroBadguy = function() {

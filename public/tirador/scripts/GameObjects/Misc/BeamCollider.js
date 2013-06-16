@@ -15,6 +15,8 @@ BeamCollider.prototype.init = function(x, y, radius, time, user) {
 
 	this.parent.init.call(this);
 
+	this.blockDamage = true;
+
 	this.x = x;
 	this.y = y;
 
