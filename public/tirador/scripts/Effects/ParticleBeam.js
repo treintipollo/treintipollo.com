@@ -3,7 +3,9 @@ ParticleBeam.OFF = 1;
 
 ParticleBeam.ParticleArguments = [];
 
-function ParticleBeam() {	
+function ParticleBeam() {
+	if (typeof TimeOutFactory === "undefined") { return; }
+
 	this.state 	   = -1;
 	this.lastState = -1;
 

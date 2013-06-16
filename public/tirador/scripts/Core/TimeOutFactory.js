@@ -57,7 +57,9 @@ $(function(){
 
 					this.id = setTimeout(function(){
 						if(to.isRunning && !to.isPaused){
-							to.callback.call(to.scope);
+							if(to.callback) {
+								to.callback.call(to.scope);
+							}
 						}else{
 							return;
 						}

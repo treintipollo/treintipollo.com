@@ -14,6 +14,9 @@ CollisionPairCreator.prototype.create = function() {
 	TopLevel.container.addCollisionPair("Shot", "Boss_1");
 	TopLevel.container.addCollisionPair("Shot", "TentacleSegment");
 
+	TopLevel.container.addCollisionPair("BeamCollider_PowerBeam", "BadGuy");
+	TopLevel.container.addCollisionPair("BeamCollider_PowerBeam", "Common_Baddy");
+
 	TopLevel.container.addCollisionPair("PowerShot", "BadGuy");
 	TopLevel.container.addCollisionPair("PowerShot", "Common_Baddy");
 	TopLevel.container.addCollisionPair("PowerShot", "Boss_1");

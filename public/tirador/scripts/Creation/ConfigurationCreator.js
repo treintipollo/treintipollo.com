@@ -186,6 +186,7 @@ ConfigurationCreator.prototype.create = function() {
 	TopLevel.container.createTypeConfiguration("SubBoss_3", "Boss_1").layer(1).collisionId("Boss_1");
 
 	TopLevel.container.createTypeConfiguration("BeamCollider", "BeamCollider").collisionId("BeamCollider");
+	TopLevel.container.createTypeConfiguration("BeamCollider_PowerBeam", "BeamCollider").collisionId("BeamCollider_PowerBeam");
 
 	//-------------------------------------------------------
 	//-------------------------------------------------------

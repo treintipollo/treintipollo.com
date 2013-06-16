@@ -114,6 +114,8 @@ AttributeCreator.prototype.create = function() {
 	TopLevel.attributesGetter.setAttributes("TentacleSegment_Collide", 1, 0, 5);
 
 	TopLevel.attributesGetter.setAttributes("BeamCollider", 1, 1, 1);
+	TopLevel.attributesGetter.setAttributes("BeamCollider_PowerBeam", 1, 1, 1);
+
 	TopLevel.attributesGetter.setAttributes("Fireball", 0, 0, 1);
 	TopLevel.attributesGetter.setAttributes("MultiShot", 0, 0, 5);
 

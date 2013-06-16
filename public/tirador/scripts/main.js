@@ -57,6 +57,11 @@ window.TopLevel = TopLevel;
 	//Weapon
 		//Class stump
 		//Implementation details
+			//Single no charge shot
+			//Better feedback when charging
+			//Better feedback when charged
+			//Implement disable weapon
+			//Implement enable weapon
 
 //TODO: Mini story sequence.	
 	//Ending.
@@ -68,6 +73,17 @@ window.TopLevel = TopLevel;
 				//Final attack for last piece of health.
 					//TODO: 1) Shoot power shot from below (Guy)
 					//TODO: 2) Summon mini bosses (Gal)
+
+//TODO: Badguy stops colliding with Power Beam colliders, possibly connected to
+	//BUG: Se rompe el laser del Boss y no colisiona mas hasta que chocas con otra cosa
+		//Intentar reproducir.
+		//Armar un escenario donde solo aparezca algun boss con laser.
+	//Armar el escenario para que sea mas rapido probar esto.
+		//Poner Powership de una (DONE!)
+		//Mandar al End_2_Badguy de una
+
+//TODO: Give End_2_Badguy a slightly different death animation than the one in ship, so it fits better with the ending sequence.
+//TODO: Null pointer in destroy() method of PowerBeamWeapon when Powership is destroyed. 
 
 //TODO: Ending sequence
 	//Credits Roll
@@ -86,20 +102,6 @@ window.TopLevel = TopLevel;
 	//Move things around
 	//Add life bar for BadGuy and Big Boss when they show up.
 
-//BUG: Se rompe el laser del Boss y no colisiona mas hasta que chocas con otra cosa
-	//Intentar reproducir.
-	//Armar un escenario donde solo aparezca algun boss con laser.
-
-//TODO: Optimizations
-	//TODO: Reduce memory Footprint.
-	//TODO: Optimize drawing method.
-			//Cache procedural drawing in memory. Then draw that image in place each frame, instead of redrawing proceduraly each frame.
-			//This will not be possible where procedural animations take place. Like the eye of the Boss or its tentacles. But things like Rockets and particles could be cached.
-			//Reduce object pool sizes.
-			//Reduce amount of objects created to cache data.
-	//TODO: //I Could setup the GameObjects in a way in which I can specify if they need an update or not. 
-			//That could reduce method calls greatly, since a lot of GameObjects don't use update at all.
-			//Same could be done with drawing, as some GameObjects could only exist as data containers.
 
 //TODO: Use TimeOutFactory in ArrowKeyHandler.
 
@@ -120,12 +122,22 @@ window.TopLevel = TopLevel;
 	   		//Make a slow and a fast version of each BadGuy type
 
 //Esto no es para este juego.
-	//Simplify GameObject, extend Delegate.
-	//Be able to configure hitArea.
-	//Get a better "inherit" method.
+	//TODO: Simplify GameObject, extend Delegate.
+	//TODO: Be able to configure hitArea.
+	//TODO: Get a better "inherit" method.
 	//TODO:Single Utility Object, so that the global scope has less litter.
 	//TODO: Hacer que el add del ObjectContainer te devuelva el objeto que va a usar, con todo configurado menos la inicializacion. 
 			//De ahi puedo llamar directamente al init de ese objeto con los parametros que yo quiera, sin andar creado arrays intermedios.
+//TODO: Optimizations
+	//TODO: Reduce memory Footprint.
+	//TODO: Optimize drawing method.
+			//Cache procedural drawing in memory. Then draw that image in place each frame, instead of redrawing proceduraly each frame.
+			//This will not be possible where procedural animations take place. Like the eye of the Boss or its tentacles. But things like Rockets and particles could be cached.
+			//Reduce object pool sizes.
+			//Reduce amount of objects created to cache data.
+	//TODO: //I Could setup the GameObjects in a way in which I can specify if they need an update or not. 
+			//That could reduce method calls greatly, since a lot of GameObjects don't use update at all.
+			//Same could be done with drawing, as some GameObjects could only exist as data containers.
 
 $(function(){
 	//This is the main creation function, the game officially starts when this is called.
@@ -176,6 +188,7 @@ $(function(){
 
 		//The reference to the player ship held in PlayerData
 		TopLevel.playerData.ship = TopLevel.playerShipFactory.firstShip(TopLevel.canvas.width/2 - 45, TopLevel.canvas.height + 50);
+		//TopLevel.playerData.ship = TopLevel.playerShipFactory.firstPowerShip(TopLevel.canvas.width/2, TopLevel.canvas.height - 100);
 		//Used to reset the game when needed.
 		TopLevel.setUpGame = setUpGame;
 

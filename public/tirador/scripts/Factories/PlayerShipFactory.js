@@ -34,6 +34,17 @@ function PlayerShipFactory() {
 		return ship;
 	};
 
+	this.firstPowerShip = function(x, y) {
+		this.firstPosX = x;
+		this.firstPosY = y;
+
+		this.setPowerShip(); 
+		var ship = this.createPlayerShip(x, y);
+		TopLevel.animationActors.getIntroPartner();
+
+		return ship;
+	};
+
 	this.createPlayerShipNoArgs = function() {
 		this.setCallbacksToShip(TopLevel.container.add(this.currentShipType, this.playerShipArguments));
 	};
