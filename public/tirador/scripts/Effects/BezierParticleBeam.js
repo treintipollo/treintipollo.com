@@ -55,3 +55,10 @@ BezierParticleBeam.prototype.on = function(bezierPoints)  {
 	this.particleTimer.start();
 	this.lastState = this.state;
 }
+
+BezierParticleBeam.prototype.destroy = function() {
+	TweenMax.killTweensOf(this);
+	TimeOutFactory.removeAllTimeOutsWithScope(this);
+	
+	DestroyUtils.destroyAllProperties(this);
+}

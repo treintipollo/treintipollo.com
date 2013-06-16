@@ -29,11 +29,11 @@ PlayerShipFactoryConfiguration.prototype.setUp = function() {
 		} },
 	]);
 
-	// TopLevel.playerShipFactory.addCallbacksToAction("addInitialPositionReachedCallback", [
-	// 	{scope:TopLevel.animationActors, callback:function(ship){ 
-	// 		this.showSplash();
-	// 	}}
-	// ]);
+	TopLevel.playerShipFactory.addCallbacksToAction("addInitialPositionReachedCallback", [
+		{scope:TopLevel.animationActors, callback:function(ship){ 
+			this.showSplash();
+		}}
+	]);
 
 	TopLevel.playerShipFactory.init(function(){
 		if(!TopLevel.playerData.hasLives()){

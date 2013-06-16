@@ -53,23 +53,14 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 	
-//TODO: PowerShip
-	//Weapon
-		//Implementation details
-			//Implement disable weapon
-			//Implement enable weapon
-
 //TODO: Mini story sequence.	
 	//Ending.
 		//After the last Big Boss, he shows up again.
 			//Sequence after transformation and before the final fight.
-				// Badguy sets up armour
-			//Final Show Down!
-				//Final attack for last piece of health.
-					//TODO: 1) Shoot power shot from below (Guy)
-					//TODO: 2) Summon mini bosses (Gal)
-
-//TODO: Give End_2_Badguy a slightly different death animation than the one in ship, so it fits better with the ending sequence.
+				// Badguy sets up armour.
+				// Bad guy death anim to fit in with the ending
+					//Disable player movement
+					//Tween to center position
 
 //TODO: Ending sequence
 	//Credits Roll
@@ -173,13 +164,13 @@ $(function(){
 		TopLevel.hudController.init(TopLevel.playerData);
 
 		//The reference to the player ship held in PlayerData
-		//TopLevel.playerData.ship = TopLevel.playerShipFactory.firstShip(TopLevel.canvas.width/2 - 45, TopLevel.canvas.height + 50);
-		TopLevel.playerData.ship = TopLevel.playerShipFactory.firstPowerShip(TopLevel.canvas.width/2, TopLevel.canvas.height - 100);
+		TopLevel.playerData.ship = TopLevel.playerShipFactory.firstShip(TopLevel.canvas.width/2 - 45, TopLevel.canvas.height + 50);
 		//Used to reset the game when needed.
 		TopLevel.setUpGame = setUpGame;
 
-		TopLevel.animationActors.ship = TopLevel.playerData.ship;
-		TopLevel.animationActors.getEnd_2_BadGuy("End_2_BadGuy");
+		//TopLevel.playerData.ship = TopLevel.playerShipFactory.firstPowerShip(TopLevel.canvas.width/2, TopLevel.canvas.height - 100);
+		//TopLevel.animationActors.ship = TopLevel.playerData.ship;
+		//TopLevel.animationActors.getEnd_2_BadGuy("End_2_BadGuy");
 
 		//This is the game basic logic. It takes care of creating the baddies in the order specified.
 		setUpGame();
