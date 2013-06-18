@@ -55,7 +55,16 @@ window.TopLevel = TopLevel;
 	
 //TODO: Mini story sequence.	
 	//Final Fight.
-		// Badguy sets up armour.
+		// Badguy setup for last battle.
+			//Start with low health
+			//Get health up
+			//Get speed up
+			//Get power up
+				//Armour pieces
+					//Interaction with End_2_Badguy
+
+		// Final attack
+
 		// Bad guy death anim to fit in with the ending
 			//Disable player movement
 			//Tween to center position
@@ -64,6 +73,9 @@ window.TopLevel = TopLevel;
 		//Male and Female symbols in the center of the ships
 		//Make male and female ship drawing swapable.
 		//Different Boss encounters for Male and Female game.
+
+//TODO: Scale to fit while keeping aspect ratio
+	//CSS tranformation
 
 //More work on the HUD
 	//Move things around
@@ -172,6 +184,10 @@ $(function(){
 
 		//This is the game basic logic. It takes care of creating the baddies in the order specified.
 		setUpGame();
+
+		// TopLevel.container.add("BadGuyArmourPiece_Right", [145, 445, 145, 445]);
+		// TopLevel.container.add("BadGuyArmourPiece_Left", [55, 445, 55, 445]);
+		// TopLevel.container.add("TestBadGuy", [100, 600, TopLevel.container]);
 	}
 
 	//TODO: Do something to pick this stuff up from a configuration Object when the game actually starts and not before.

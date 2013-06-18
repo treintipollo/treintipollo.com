@@ -1,4 +1,5 @@
 function Star() {}
+
 Star.inheritsFrom( GameObject );
 
 Star.prototype.init = function(x, y, speed) {

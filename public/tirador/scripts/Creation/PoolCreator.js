@@ -5,9 +5,13 @@ PoolCreator.prototype.create = function() {
 	//-------------------------------------------------------
 	TopLevel.container.createTypePool("Ship", Ship, 3);
 	TopLevel.container.createTypePool("PowerShip", PowerShip, 1);
+	
 	TopLevel.container.createTypePool("BadGuy", ConcreteBadGuy, 1);
+	TopLevel.container.createTypePool("BadGuyArmourPiece", BadGuyArmourPiece, 2);
+	
 	TopLevel.container.createTypePool("CloneShip", CloneShip, 10);
 	TopLevel.container.createTypePool("CargoShip", CargoShip, 1);
+
 
 	TopLevel.container.createTypePool("Star", Star, 40);
 	TopLevel.container.createTypePool("Shot", Shot, 70);

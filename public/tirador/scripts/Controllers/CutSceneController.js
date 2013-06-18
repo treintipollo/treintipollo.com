@@ -138,6 +138,18 @@ function CutSceneController() {
 		this.badguy = TopLevel.container.add(fightBadGuyType, [TopLevel.canvas.width / 2, -80, TopLevel.container, null, this.ship]);
 
 		this.badguy.addCallback("onInitialPositionDelegate", this, function() {
+
+			//Drop Health
+			//Drop Speed
+			//Drop Power
+			//Create armour pieces
+			//TopLevel.container.add("BadGuyArmourPiece_Right", [145, 445, 145, 445]);
+			//TopLevel.container.add("BadGuyArmourPiece_Left", [55, 445, 55, 445]);
+
+			//Start Badguy Attack
+
+			//Give control to player
+			this.enablePlayerMovement(this.ship);
 			this.ship.weapon.start();
 		}, true);
 
@@ -269,9 +281,6 @@ function CutSceneController() {
 					}
 
 					lastPosY = this.ship.y;
-				},
-				onComplete: function() {
-					this.enablePlayerMovement(this.ship);
 				}
 			});
 		});

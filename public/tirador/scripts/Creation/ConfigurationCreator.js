@@ -9,6 +9,10 @@ ConfigurationCreator.prototype.create = function() {
 
 	TopLevel.container.createTypeConfiguration("PowerShip", "PowerShip").collisionId("Ship");
 
+	TopLevel.container.createTypeConfiguration("TestBadGuy", "BadGuy").args({
+		tProto: BadGuy.prototype
+	});
+
 	TopLevel.container.createTypeConfiguration("IntroBadGuy", "BadGuy").collisionId("BadGuy").args({
 		tProto: IntroBadGuy.prototype
 	});
@@ -86,11 +90,20 @@ ConfigurationCreator.prototype.create = function() {
 	TopLevel.container.createTypeConfiguration("BadGuySmallAimedRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({
 		tProto: BadGuySmallAimedRocket.prototype
 	});
+
 	TopLevel.container.createTypeConfiguration("BadGuyLargeHomingRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({
 		tProto: BadGuyLargeHomingRocket.prototype
 	});
+
 	TopLevel.container.createTypeConfiguration("BadGuyClusterAimedRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({
 		tProto: BadGuyClusterAimedRocket.prototype
+	});
+
+	TopLevel.container.createTypeConfiguration("BadGuyArmourPiece_Right", "BadGuyArmourPiece").args({
+		drawing: BadGuyArmourPiece.rightSideDrawing
+	});
+	TopLevel.container.createTypeConfiguration("BadGuyArmourPiece_Left", "BadGuyArmourPiece").args({
+		drawing: BadGuyArmourPiece.leftSideDrawing
 	});
 
 	TopLevel.container.createTypeConfiguration("Splash", "Splash");
