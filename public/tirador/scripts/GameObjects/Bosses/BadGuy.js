@@ -156,7 +156,8 @@ ConcreteBadGuy.prototype.init = function() {
 	this.onDamageReceived 	      = this.tProto.onDamageReceived;
 	this.onLastDamageLevelReached = this.tProto.onLastDamageLevelReached;
 	this.onAllDamageReceived      = this.tProto.onAllDamageReceived;
-
+	this.onDamageRecovered        = this.tProto.onDamageRecovered;
+	
 	this.tProto.init.apply(this, arguments);
 }
 
@@ -532,18 +533,17 @@ End_2_BadGuy.prototype.createStateMachine = function() {
 	var moveMotion = this.currentMotion.get(this.MOVE);
 
 	startMotion.init = function() {
+		Ship.prototype.onLastDamageLevelReached.call(this);
+
+		this.executeCallbacks("onInitStartMotion", this);
+
 		this.blockDamage = true;
 
 		this.setAllExhaustState(Exhaust.FAST);
 
 		TweenMax.to(this, 3.5, {y:"+=350", onCompleteScope:this, onComplete:function(){
 		 	this.blockDamage = false;
-
 		 	this.executeCallbacks("onInitialPositionDelegate", this);
-
-		 	TimeOutFactory.getTimeOut(500, 1, this, function(){ 
-		 		this.currentMotion.set(this.MOVE);
-		 	}, true).start();
 		}});
 	}
 
@@ -572,6 +572,12 @@ End_2_BadGuy.prototype.createStateMachine = function() {
 			}});
 		},true).start();
 	}
+}
+
+End_2_BadGuy.prototype.startAttack = function() {
+	TimeOutFactory.getTimeOut(500, 1, this, function() {
+		this.currentMotion.set(this.MOVE);
+	}, true).start();
 }
 
 End_2_BadGuy.prototype.fireRockets = function(){
@@ -639,6 +645,10 @@ End_2_BadGuy.prototype.onDamageReceived = function(other) {
 		this.blockDamage = false;
 		this.rotation = 0;	
 	}});
+}
+
+End_2_BadGuy.prototype.onDamageRecovered = function() {
+	Ship.prototype.onDamageRecoveredOutOfLastLevel.call(this);
 }
 
 End_2_BadGuy.prototype.onLastDamageLevelReached = function(other) {

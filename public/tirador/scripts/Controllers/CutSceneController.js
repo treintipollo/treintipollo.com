@@ -137,20 +137,46 @@ function CutSceneController() {
 
 		this.badguy = TopLevel.container.add(fightBadGuyType, [TopLevel.canvas.width / 2, -80, TopLevel.container, null, this.ship]);
 
+		this.badguy.addCallback("onInitStartMotion", this, function() {
+			this.badguy.updateAttributesToLastLevel();
+		}, true);
+
 		this.badguy.addCallback("onInitialPositionDelegate", this, function() {
+			var x = this.badguy.x;
+			var y = this.badguy.y - 350;
+			var powerUp;
 
-			//Drop Health
-			//Drop Speed
-			//Drop Power
-			//Create armour pieces
-			//TopLevel.container.add("BadGuyArmourPiece_Right", [145, 445, 145, 445]);
-			//TopLevel.container.add("BadGuyArmourPiece_Left", [55, 445, 55, 445]);
+			var powerUp = TopLevel.container.add("BuyGuyHealthPowerUp", [x, y, false]);
+			powerUp.addOnCollideCallback(this, function(p) {
+				TopLevel.textFeedbackDisplayer.showFeedBack("health", this.badguy.x, this.badguy.y);
+				this.badguy.updateAttributesToMaxLevel();
 
-			//Start Badguy Attack
+				powerUp = TopLevel.container.add("BuyGuySpeedPowerUp", [x, y, false]);
+				powerUp.addOnCollideCallback(this, function(p) {
+					TopLevel.textFeedbackDisplayer.showFeedBack("speed", this.badguy.x, this.badguy.y);
 
-			//Give control to player
-			this.enablePlayerMovement(this.ship);
-			this.ship.weapon.start();
+					this.badguy.setAllExhaustState(Exhaust.POWER_UP);
+
+					TimeOutFactory.getTimeOut(2000, 1, this, function() {
+						this.badguy.setAllExhaustState(Exhaust.FAST);
+					}, true).start();
+
+					powerUp = TopLevel.container.add("BuyGuyWeaponPowerUp", [x, y, false]);
+					powerUp.addOnCollideCallback(this, function(p) {
+						TopLevel.textFeedbackDisplayer.showFeedBack("pUp", this.badguy.x, this.badguy.y);
+
+						//Spawn armour pieces
+						var pieceRight = TopLevel.container.add("BadGuyArmourPiece_Right", [this.badguy.x + 600, this.badguy.y - 5, this.badguy.x + 45, this.badguy.y - 5]);
+						var pieceLeft  = TopLevel.container.add("BadGuyArmourPiece_Left", [this.badguy.x - 600, this.badguy.y - 5, this.badguy.x - 45, this.badguy.y - 5]);
+
+						//pieceRight.addCallback("finishedIntro", this, function(){
+							//this.badguy.startAttack();
+							//this.enablePlayerMovement(this.ship);
+							//this.ship.weapon.start();
+						//}, true); 
+					}, true);
+				}, true);
+			}, true);
 		}, true);
 
 		this.badguy.addOnRecicleCallback(this, function() {

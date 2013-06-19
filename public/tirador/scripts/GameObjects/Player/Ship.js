@@ -51,6 +51,7 @@ Ship.prototype.getExhaustPoints = function(result, x, y, rotation, angle, r, sid
 	var divide  = 2;
 
 	if(type == Exhaust.REGULAR) { divide = 2; }
+	if(type == Exhaust.EXTRA)	{ divide = 0.7; }
 	if(type == Exhaust.UP)	    { divide = 1; }
 	if(type == Exhaust.DOWN)    { divide = 2.5; }
 

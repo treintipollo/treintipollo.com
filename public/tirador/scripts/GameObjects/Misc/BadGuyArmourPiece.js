@@ -28,7 +28,7 @@ BadGuyArmourPiece.prototype.init = function(startX, startY, endX, endY) {
 	this.x = startX;
 	this.y = startY;
 
-	TweenMax.to(this, 3, {x:endX, y:endY, onCompleteScope:this, onComplete:function(){
+	TweenMax.to(this, 2, {x:endX, y:endY, onCompleteScope:this, onComplete:function(){
 		this.executeCallbacks("finishedIntro");
 	}});
 }

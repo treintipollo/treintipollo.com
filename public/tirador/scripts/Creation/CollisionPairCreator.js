@@ -1,6 +1,8 @@
 function CollisionPairCreator() {}
 
 CollisionPairCreator.prototype.create = function() {
+	TopLevel.container.addCollisionPair("BadGuy", "BadGuyPowerUp");
+
 	TopLevel.container.addCollisionPair("Ship", "BadGuy");
 	TopLevel.container.addCollisionPair("Ship", "PowerUp");
 	TopLevel.container.addCollisionPair("Ship", "BeamCollider");

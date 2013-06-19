@@ -1,19 +1,20 @@
 Exhaust.NEUTRAL = 0;
 Exhaust.UP 		= 1;
 Exhaust.DOWN 	= 2;
-Exhaust.OFF 	= 3;
+Exhaust.EXTRA   = 3;
+Exhaust.OFF 	= 4;
 
-Exhaust.INIT    = "init";
-Exhaust.REGULAR = "neutral";
-Exhaust.FAST 	= "speedUp";
-Exhaust.SLOW 	= "slowDown";
-Exhaust.OFF 	= "off";
-Exhaust.UPDATE  = "update";
-Exhaust.FAIL    = "failing";
+Exhaust.INIT     = "init";
+Exhaust.REGULAR  = "neutral";
+Exhaust.FAST 	 = "speedUp";
+Exhaust.SLOW 	 = "slowDown";
+Exhaust.POWER_UP = "powerUp";
+Exhaust.OFF 	 = "off";
+Exhaust.UPDATE   = "update";
 
 function Exhaust(particleBezierPoints, parentContext) {
 	this.particleBezierPoints = particleBezierPoints;
-	this.colors = ["#F2A007", "#FF0000", "#A30808"];
+	this.colors = ["#F2A007", "#FF0000", "#A30808", "#333DCC"];
 
 	this.neutralTimer   = TimeOutFactory.getTimeOut(50, -1, this, function(){ this.createParticles(parentContext, this.state, 15.0); });
 	this.speedUpTimer   = TimeOutFactory.getTimeOut(40, -1, this, function(){ this.createParticles(parentContext, this.state, 15.0); });
@@ -37,7 +38,7 @@ Exhaust.prototype.init = function(container) {
 Exhaust.prototype.neutral  = function() { this.state = Exhaust.NEUTRAL; }
 Exhaust.prototype.speedUp  = function() { this.state = Exhaust.UP;      }
 Exhaust.prototype.slowDown = function() { this.state = Exhaust.DOWN;    }
-Exhaust.prototype.failing  = function() { this.state = Exhaust.FAILING; }
+Exhaust.prototype.powerUp  = function() { this.state = Exhaust.EXTRA;   }
 
 Exhaust.prototype.off = function() { 
 	this.clearAllIntervals();
@@ -52,8 +53,8 @@ Exhaust.prototype.update = function() {
 
 	if(this.state == Exhaust.NEUTRAL) { this.neutralTimer.start();   }
 	if(this.state == Exhaust.UP)	  { this.speedUpTimer.start();   }
+	if(this.state == Exhaust.EXTRA)	  { this.speedUpTimer.start();   }
 	if(this.state == Exhaust.DOWN)	  { this.speedDownTimer.start(); }
-	if(this.state == Exhaust.FAILING) { this.speedDownTimer.start(); }
 
 	this.lastState = this.state;
 }
@@ -80,11 +81,5 @@ Exhaust.prototype.createParticles = function(parentContext, state, life) {
 	Exhaust.ParticleArguments[4] = life;
 	Exhaust.ParticleArguments[5] = this.particleSide;
 
-	if(state == Exhaust.FAILING){
-		if(Math.random() > 0.5){
-			this.container.add("ExhaustParticle", Exhaust.ParticleArguments);	
-		}
-	}else{
-		this.container.add("ExhaustParticle", Exhaust.ParticleArguments);		
-	}
+	this.container.add("ExhaustParticle", Exhaust.ParticleArguments);
 }

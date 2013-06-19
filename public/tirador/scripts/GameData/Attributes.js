@@ -21,6 +21,15 @@ Attributes.prototype.removeAllCallbacks = function() {
 	this.destroyCallbacks("onHpDeminishedDelegate");
 }
 
+Attributes.prototype.updateAttributesToLastLevel = function() {
+	this.updateAttributesTo(TopLevel.attributesGetter.getFullAttributes(this.typeId).length-1);
+}
+
+Attributes.prototype.updateAttributesToMaxLevel = function() {
+	this.updateAttributesTo(0);
+	this.onDamageRecovered();
+}
+
 Attributes.prototype.updateAttributesTo = function(level) {
 	this.currentLevel = level;
 
