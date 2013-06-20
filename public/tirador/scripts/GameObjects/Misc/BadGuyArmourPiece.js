@@ -1,8 +1,25 @@
-BadGuyArmourPiece.inheritsFrom( Attributes );
+BadGuyArmourPieceRight.inheritsFrom( Attributes );
 
-function BadGuyArmourPiece() {}
+function BadGuyArmourPieceRight() {}
 
-BadGuyArmourPiece.rightSideDrawing = function(context) {
+BadGuyArmourPieceRight.prototype.afterCreate = function(){
+	this.points = [new SAT.Vector(-20,-20),
+				   new SAT.Vector(40,30),
+				   new SAT.Vector(-20,20)];
+
+	PolyCollider.prototype.create.call(this, this.points);
+}
+
+BadGuyArmourPieceRight.prototype.init = function(startX, startY, endX, endY) {
+	this.x = startX;
+	this.y = startY;
+
+	TweenMax.to(this, 2, {x:endX, y:endY, onCompleteScope:this, onComplete:function(){
+		this.executeCallbacks("finishedIntro");
+	}});
+}
+
+BadGuyArmourPieceRight.prototype.draw = function(context) { 	
 	DrawUtils.quadraticTriangle(
 		context,
 		0, 0, 
@@ -13,18 +30,19 @@ BadGuyArmourPiece.rightSideDrawing = function(context) {
 	);
 }
 
-BadGuyArmourPiece.leftSideDrawing = function(context) {
-	DrawUtils.quadraticTriangle(
-		context,
-		0, 0, 
-		20, -20, -20, 0,
-		-40, 30, 0, 10, 
-		20, 20, 20, 20,
-		null, "#FFFFFF", 1
-	);	
+BadGuyArmourPieceLeft.inheritsFrom( Attributes );
+
+function BadGuyArmourPieceLeft() {}
+
+BadGuyArmourPieceLeft.prototype.afterCreate = function(){
+	this.points = [new SAT.Vector(20,-20),
+				   new SAT.Vector(20,20),
+				   new SAT.Vector(-40,30)];
+
+	PolyCollider.prototype.create.call(this, this.points);
 }
 
-BadGuyArmourPiece.prototype.init = function(startX, startY, endX, endY) {
+BadGuyArmourPieceLeft.prototype.init = function(startX, startY, endX, endY) {
 	this.x = startX;
 	this.y = startY;
 
@@ -33,10 +51,13 @@ BadGuyArmourPiece.prototype.init = function(startX, startY, endX, endY) {
 	}});
 }
 
-BadGuyArmourPiece.prototype.draw = function(context) { 	
-	this.drawing(context);
-}
-
-BadGuyArmourPiece.prototype.onAllDamageReceived = function(other) {
-
+BadGuyArmourPieceLeft.prototype.draw = function(context) { 	
+	DrawUtils.quadraticTriangle(
+		context,
+		0, 0, 
+		20, -20, -20, 0,
+		-40, 30, 0, 10, 
+		20, 20, 20, 20,
+		null, "#FFFFFF", 1
+	);
 }

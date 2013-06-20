@@ -84,8 +84,8 @@ ConfigurationCreator.prototype.create = function() {
 	TopLevel.container.createTypeConfiguration("BadGuyLargeHomingRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto: BadGuyLargeHomingRocket.prototype });
 	TopLevel.container.createTypeConfiguration("BadGuyClusterAimedRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto: BadGuyClusterAimedRocket.prototype });
 
-	TopLevel.container.createTypeConfiguration("BadGuyArmourPiece_Right", "BadGuyArmourPiece").args({ drawing: BadGuyArmourPiece.rightSideDrawing });
-	TopLevel.container.createTypeConfiguration("BadGuyArmourPiece_Left", "BadGuyArmourPiece").args({ drawing: BadGuyArmourPiece.leftSideDrawing });
+	TopLevel.container.createTypeConfiguration("BadGuyArmourPiece_Right", "BadGuyArmourPieceRight").collisionId("Common_Baddy");
+	TopLevel.container.createTypeConfiguration("BadGuyArmourPiece_Left", "BadGuyArmourPieceLeft").collisionId("Common_Baddy");
 
 	TopLevel.container.createTypeConfiguration("Splash", "Splash");
 
@@ -112,13 +112,13 @@ ConfigurationCreator.prototype.create = function() {
 	TopLevel.container.createTypeConfiguration("ClusterHomingRocket", "ClusterHomingRocket").layer(1).collisionId("Rocket");
 	TopLevel.container.createTypeConfiguration("Debry", "Debry").layer(2).collisionId("Rocket");
 
-	TopLevel.container.createTypeConfiguration("ShotPowerUp", "ShotPowerUp").collisionId("PowerUp");
-	TopLevel.container.createTypeConfiguration("RocketPowerUp", "RocketPowerUp").collisionId("PowerUp");
-	TopLevel.container.createTypeConfiguration("WeaponPowerUp", "WeaponPowerUp").collisionId("PowerUp");
-	TopLevel.container.createTypeConfiguration("HPPowerUp", "HPPowerUp").collisionId("PowerUp");
-	TopLevel.container.createTypeConfiguration("SpeedPowerUp", "SpeedPowerUp").collisionId("PowerUp");
-	TopLevel.container.createTypeConfiguration("LivesPowerUp", "LivesPowerUp").collisionId("PowerUp");
-	TopLevel.container.createTypeConfiguration("MultiPowerUp", "MultiPowerUp").collisionId("PowerUp");
+	TopLevel.container.createTypeConfiguration("ShotPowerUp", "ShotPowerUp").collisionId("PowerUp").layer(-2);
+	TopLevel.container.createTypeConfiguration("RocketPowerUp", "RocketPowerUp").collisionId("PowerUp").layer(-2);
+	TopLevel.container.createTypeConfiguration("WeaponPowerUp", "WeaponPowerUp").collisionId("PowerUp").layer(-2);
+	TopLevel.container.createTypeConfiguration("HPPowerUp", "HPPowerUp").collisionId("PowerUp").layer(-2);
+	TopLevel.container.createTypeConfiguration("SpeedPowerUp", "SpeedPowerUp").collisionId("PowerUp").layer(-2);
+	TopLevel.container.createTypeConfiguration("LivesPowerUp", "LivesPowerUp").collisionId("PowerUp").layer(-2);
+	TopLevel.container.createTypeConfiguration("MultiPowerUp", "MultiPowerUp").collisionId("PowerUp").layer(-2);
 
 	TopLevel.container.createTypeConfiguration("BuyGuyWeaponPowerUp", "WeaponPowerUp").collisionId("BadGuyPowerUp");
 	TopLevel.container.createTypeConfiguration("BuyGuyHealthPowerUp", "HPPowerUp").collisionId("BadGuyPowerUp");

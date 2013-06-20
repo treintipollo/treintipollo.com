@@ -157,7 +157,7 @@ ConcreteBadGuy.prototype.init = function() {
 	this.onLastDamageLevelReached = this.tProto.onLastDamageLevelReached;
 	this.onAllDamageReceived      = this.tProto.onAllDamageReceived;
 	this.onDamageRecovered        = this.tProto.onDamageRecovered;
-	
+
 	this.tProto.init.apply(this, arguments);
 }
 
@@ -524,6 +524,20 @@ End_2_BadGuy.prototype.init = function(x, y, container, target, playerShip){
 	this.escaping   = false;
 
 	this.rocketTypeCount = {};
+
+	this.rightAnchor = {x:0, y:0};
+	this.leftAnchor = {x:0, y:0};
+
+	ConcreteBadGuy.prototype.startAttack     = function() {
+		TimeOutFactory.getTimeOut(500, 1, this, function() {
+			this.currentMotion.set(this.MOVE);
+		}, true).start();
+	};
+
+	ConcreteBadGuy.prototype.setArmourPieces = function(rightPiece, leftPiece) {
+		this.rightPiece = rightPiece;
+		this.leftPiece  = leftPiece;
+	};
 }
 
 End_2_BadGuy.prototype.createStateMachine = function() {
@@ -574,10 +588,30 @@ End_2_BadGuy.prototype.createStateMachine = function() {
 	}
 }
 
-End_2_BadGuy.prototype.startAttack = function() {
-	TimeOutFactory.getTimeOut(500, 1, this, function() {
-		this.currentMotion.set(this.MOVE);
-	}, true).start();
+End_2_BadGuy.prototype.update = function(delta){
+	BadGuy.prototype.update.call(this, delta);
+
+	var cosRight = Math.cos((this.rotation-5) * Math.PI/180);
+	var sinRight = Math.sin((this.rotation-5) * Math.PI/180);
+
+	var cosLeft = Math.cos((this.rotation+185) * Math.PI/180);
+	var sinLeft = Math.sin((this.rotation+185) * Math.PI/180);
+
+	this.rightAnchor.x = this.x + cosRight * 45;
+	this.rightAnchor.y = this.y + sinRight * 45;
+	
+	this.leftAnchor.x  = this.x + cosLeft * 45;
+	this.leftAnchor.y  = this.y + sinLeft * 45;
+	
+	if(this.rightPiece && this.leftPiece) {
+		this.rightPiece.x = this.rightAnchor.x;
+		this.rightPiece.y = this.rightAnchor.y;
+		this.leftPiece.x  = this.leftAnchor.x;
+		this.leftPiece.y  = this.leftAnchor.y;
+
+		this.rightPiece.rotation = this.rotation;
+		this.leftPiece.rotation = this.rotation;
+	}
 }
 
 End_2_BadGuy.prototype.fireRockets = function(){
@@ -628,7 +662,9 @@ End_2_BadGuy.prototype.onDamageReceived = function(other) {
 	this.currentMotion.set(this.IDLE_MOTION);
 
 	this.blockDamage = true;
-
+	this.rightPiece.checkingCollisions = false;
+	this.leftPiece.checkingCollisions = false;
+	
 	var vec = VectorUtils.getFullVectorInfo(this.x, this.y, other.x, other.y);
 
 	rA = Random.getRandomArbitary(-25, 25) * (Math.PI/180);
@@ -642,8 +678,11 @@ End_2_BadGuy.prototype.onDamageReceived = function(other) {
 
 	TweenMax.to(this, 0.5, {rotation:360, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){
 		this.currentMotion.set(this.MOVE);
+		this.rotation = 0;
+
 		this.blockDamage = false;
-		this.rotation = 0;	
+		this.rightPiece.checkingCollisions = true;
+		this.leftPiece.checkingCollisions = true;	
 	}});
 }
 

@@ -55,14 +55,6 @@ window.TopLevel = TopLevel;
 	
 //TODO: Mini story sequence.	
 	//Final Fight.
-		// Badguy setup for last battle.
-			//Start with low health
-			//Get health up
-			//Get speed up
-			//Get power up
-				//Armour pieces
-					//Interaction with End_2_Badguy
-
 		// Final attack
 
 		// Bad guy death anim to fit in with the ending
@@ -74,12 +66,12 @@ window.TopLevel = TopLevel;
 		//Make male and female ship drawing swapable.
 		//Different Boss encounters for Male and Female game.
 
-//TODO: Scale to fit while keeping aspect ratio
-	//CSS tranformation
-
 //More work on the HUD
 	//Move things around
 	//Add life bar for BadGuy and Big Boss when they show up.
+
+//TODO: Scale to fit while keeping aspect ratio
+	//CSS tranformation
 
 //TODO: Ending sequence
 	//Credits Roll
@@ -89,6 +81,8 @@ window.TopLevel = TopLevel;
 	//THE END
 	//Thanks for playing.
 	//Hope to see you again... IN SPACE!
+
+//BUG FIX: Crashing with the last Badguy can be troublesome
 
 //TODO: Use TimeOutFactory in ArrowKeyHandler.
 

@@ -346,12 +346,16 @@ PowerBeamWeapon.prototype.destroy = function() {
 	if(this.chargeRed) this.chargeRed.alive = false;
 	if(this.chargeBlue) this.chargeBlue.alive = false;
 
-	for(var i=0; i<inst.beamColliders_red.length; i++) {
-		inst.beamColliders_red[i].alive = false;
+	if(this.beamColliders_red) {
+		for(var i=0; i<this.beamColliders_red.length; i++) {
+			this.beamColliders_red[i].alive = false;
+		}
 	}
 
-	for(i=0; i<inst.beamColliders_blue.length; i++) {
-		inst.beamColliders_blue[i].alive = false;	
+	if(this.beamColliders_blue) {
+		for(i=0; i<this.beamColliders_blue.length; i++) {
+			this.beamColliders_blue[i].alive = false;	
+		}
 	}
 
 	DestroyUtils.destroyAllProperties(this);

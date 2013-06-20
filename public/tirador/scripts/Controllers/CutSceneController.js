@@ -144,39 +144,54 @@ function CutSceneController() {
 		this.badguy.addCallback("onInitialPositionDelegate", this, function() {
 			var x = this.badguy.x;
 			var y = this.badguy.y - 350;
-			var powerUp;
+			
+			var powerUps = [{
+					id: "BuyGuyHealthPowerUp",
+					callback: function(powerUp) {
+						TopLevel.textFeedbackDisplayer.showFeedBack("health", this.badguy.x, this.badguy.y);
+						this.badguy.updateAttributesToMaxLevel();
+					}
+				}, {
+					id: "BuyGuySpeedPowerUp",
+					callback: function(powerUp) {
+						TopLevel.textFeedbackDisplayer.showFeedBack("speed", this.badguy.x, this.badguy.y);
 
-			var powerUp = TopLevel.container.add("BuyGuyHealthPowerUp", [x, y, false]);
-			powerUp.addOnCollideCallback(this, function(p) {
-				TopLevel.textFeedbackDisplayer.showFeedBack("health", this.badguy.x, this.badguy.y);
-				this.badguy.updateAttributesToMaxLevel();
+						this.badguy.setAllExhaustState(Exhaust.POWER_UP);
 
-				powerUp = TopLevel.container.add("BuyGuySpeedPowerUp", [x, y, false]);
-				powerUp.addOnCollideCallback(this, function(p) {
-					TopLevel.textFeedbackDisplayer.showFeedBack("speed", this.badguy.x, this.badguy.y);
-
-					this.badguy.setAllExhaustState(Exhaust.POWER_UP);
-
-					TimeOutFactory.getTimeOut(2000, 1, this, function() {
-						this.badguy.setAllExhaustState(Exhaust.FAST);
-					}, true).start();
-
-					powerUp = TopLevel.container.add("BuyGuyWeaponPowerUp", [x, y, false]);
-					powerUp.addOnCollideCallback(this, function(p) {
+						TimeOutFactory.getTimeOut(2000, 1, this, function() {
+							this.badguy.setAllExhaustState(Exhaust.FAST);
+						}, true).start();
+					}
+				}, {
+					id: "BuyGuyWeaponPowerUp",
+					callback: function(powerUp) {
 						TopLevel.textFeedbackDisplayer.showFeedBack("pUp", this.badguy.x, this.badguy.y);
 
-						//Spawn armour pieces
-						var pieceRight = TopLevel.container.add("BadGuyArmourPiece_Right", [this.badguy.x + 600, this.badguy.y - 5, this.badguy.x + 45, this.badguy.y - 5]);
-						var pieceLeft  = TopLevel.container.add("BadGuyArmourPiece_Left", [this.badguy.x - 600, this.badguy.y - 5, this.badguy.x - 45, this.badguy.y - 5]);
+						var pieceRight = TopLevel.container.add("BadGuyArmourPiece_Right", [this.badguy.x + 600, this.badguy.y - 5, this.badguy.rightAnchor.x, this.badguy.rightAnchor.y]);
+						var pieceLeft = TopLevel.container.add("BadGuyArmourPiece_Left", [this.badguy.x - 600, this.badguy.y - 5, this.badguy.leftAnchor.x, this.badguy.leftAnchor.y]);
 
-						//pieceRight.addCallback("finishedIntro", this, function(){
-							//this.badguy.startAttack();
-							//this.enablePlayerMovement(this.ship);
-							//this.ship.weapon.start();
-						//}, true); 
-					}, true);
-				}, true);
-			}, true);
+						pieceRight.addCallback("finishedIntro", this, function() {
+
+							this.badguy.setArmourPieces(pieceRight, pieceLeft);
+							this.badguy.startAttack();
+
+							this.enablePlayerMovement(this.ship);
+							this.ship.weapon.start();
+
+						}, true);
+					}
+				}
+			];
+
+			var currentPowerUp = 0;
+
+			TimeOutFactory.getTimeOut(2000, 3, this, function() {
+				var powerUp = TopLevel.container.add(powerUps[currentPowerUp].id, [x, y, false]);
+				powerUp.addOnCollideCallback(this, powerUps[currentPowerUp].callback, true);
+
+				currentPowerUp++;
+			}, true).start();
+
 		}, true);
 
 		this.badguy.addOnRecicleCallback(this, function() {

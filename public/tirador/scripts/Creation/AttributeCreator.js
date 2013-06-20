@@ -31,6 +31,9 @@ AttributeCreator.prototype.create = function() {
 	TopLevel.attributesGetter.setAttributes("CloneShip", 10, 3, 10);
 	TopLevel.attributesGetter.setAttributes("CargoShip", 10, 1, 10);
 
+	TopLevel.attributesGetter.setAttributes("BadGuyArmourPiece_Right", 1, 0, 10);
+	TopLevel.attributesGetter.setAttributes("BadGuyArmourPiece_Left",  1, 0, 10);
+
 	TopLevel.attributesGetter.setAttributes("Small_Shot", 0, 0, 0.5);
 	TopLevel.attributesGetter.setAttributes("Big_Shot", 0, 0, 0.6);
 	TopLevel.attributesGetter.setAttributes("Clone_Small_Shot", 0, 0, 3);
