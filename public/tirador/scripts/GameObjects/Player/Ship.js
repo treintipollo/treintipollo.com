@@ -347,13 +347,7 @@ Ship.prototype.onAllDamageReceived = function(other) {
 	this.explosionArea.stop();
 	
 	if(TopLevel.playerData.lives <= 0){
-		this.explosionArea.init(
-			this, 
-			35, 
-			30, 
-			100, 
-			30, 
-			FuntionUtils.bindScope(this, function(){ 
+		this.explosionArea.init(this, 35, 30, 100, 30, FuntionUtils.bindScope(this, function(){ 
 				this.whiteFlash.on(FuntionUtils.bindScope(this, function(){ this.alive = false; }), null, this);
 			})
 		);

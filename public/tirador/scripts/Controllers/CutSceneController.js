@@ -195,8 +195,8 @@ function CutSceneController() {
 		}, true);
 
 		this.badguy.addOnRecicleCallback(this, function() {
-			this.badguy = null;
-		}, true);
+			this.badguy = null;			
+		};
 
 		return this.badguy;
 	};

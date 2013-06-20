@@ -150,7 +150,8 @@ ConcreteBadGuy.prototype.init = function() {
 	this.createStateMachine       = this.tProto.createStateMachine;	
 	this.fireRockets 			  = this.tProto.fireRockets;
 	this.rocketConfig 			  = this.tProto.rocketConfig;
-	this.update 			      = this.tProto.update;	
+	this.update 			      = this.tProto.update;
+	this.destroy 			      = this.tProto.destroy;	
 	
 	this.onDamageBlocked 	      = this.tProto.onDamageBlocked;
 	this.onDamageReceived 	      = this.tProto.onDamageReceived;
@@ -658,6 +659,13 @@ End_2_BadGuy.prototype.fireRockets = function(){
 	}, true).start();
 }
 
+End_2_BadGuy.prototype.destroy = function() {
+	Ship.prototype.destroy.call(this);
+
+	this.rightPiece.alive = false;
+	this.leftPiece.alive = false;
+}
+
 End_2_BadGuy.prototype.onDamageReceived = function(other) {
 	this.currentMotion.set(this.IDLE_MOTION);
 
@@ -698,5 +706,16 @@ End_2_BadGuy.prototype.onAllDamageReceived = function(other) {
 	TimeOutFactory.removeAllTimeOutsWithScope(this);
 	TweenMax.killTweensOf(this);
 
-	Ship.prototype.onAllDamageReceived.call(this, other);
+	this.blockControls 				   = true;
+	this.checkingCollisions 		   = false;
+	this.rightPiece.checkingCollisions = false;
+	this.leftPiece.checkingCollisions  = false;
+	
+	this.currentMotion.set(this.NONE_STOP_SHAKE_MOTION);
+	this.explosionArea.stop();
+	
+	this.explosionArea.init(this, 35, 30, 100, 30, FuntionUtils.bindScope(this, function(){ 
+			this.whiteFlash.on(FuntionUtils.bindScope(this, function(){ this.alive = false; }), null, this);
+		})
+	);
 }

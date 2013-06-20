@@ -55,11 +55,10 @@ window.TopLevel = TopLevel;
 	
 //TODO: Mini story sequence.	
 	//Final Fight.
-		// Final attack
-
 		// Bad guy death anim to fit in with the ending
-			//Disable player movement
-			//Tween to center position
+			//Disable player ship factory behaviour
+			//Destroy power ship
+			//Create Guy and Gal as stubs, just for the credit roll
 
 //TODO: Make different ship drawing.
 		//Male and Female symbols in the center of the ships
@@ -212,7 +211,7 @@ $(function(){
 
 		 //    {main:{id:"Boss_1_F", get:getMainBoss}, next:false, last:false, sub:{id:"Middle_3_BadGuy", get:getFightBadGuy}, intro:"warning", win:"complete", drop:"HPPowerUp"},
 
-		 	{main:{id:"End_2_BadGuy", intro:"ready", win:null, get:getEnd_2_BadGuy}, next:false, last:false, sub:{id:"End_1_BadGuy", intro:null, win:null, get:getEnd_1_BadGuy}, drop:null},
+		 	{main:{id:"End_2_BadGuy", intro:"ready", win:"victory", get:getEnd_2_BadGuy}, next:false, last:true, sub:{id:"End_1_BadGuy", intro:null, win:null, get:getEnd_1_BadGuy}, drop:null},
 
 		    //{main:{id:"End_1_BadGuy", get:getEnd_1_BadGuy}, next:false, last:true, sub:null, intro:"ready", win:null, drop:null}
 		    //{main:{id:"End_2_BadGuy", get:getEnd_2_BadGuy}, next:false, last:true, sub:null, intro:"ready", win:null, drop:null}
