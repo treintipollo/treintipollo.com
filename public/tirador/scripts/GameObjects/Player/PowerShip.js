@@ -63,18 +63,8 @@ PowerShip.prototype.setExhaustForwardState = function(state, args) {
 	}
 }
 
-PowerShip.prototype.gotoInitialState = function() {
-	if(ScreenUtils.isPastBottom(this.y, 0)){
-		this.currentMotion.set(this.START_MOTION);
-	}else{
-		this.setAllExhaustState(Exhaust.REGULAR);
-		this.currentMotion.set(this.IDLE_MOTION);
-	}
-}
-
 PowerShip.prototype.init = function(x, y, container){
-	Ship.prototype.init.call(this, x, y, container);
-	
+	Ship.prototype.init.call(this, x, y, container);	
 	this.collider.r = 40; 
 }
 

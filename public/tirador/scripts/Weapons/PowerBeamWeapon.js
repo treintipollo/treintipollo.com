@@ -370,6 +370,21 @@ PowerBeamWeapon.prototype.stop = function() {
 
 	if (this.idleTimer) this.idleTimer.stop();
 	if (this.chargeTimer) this.chargeTimer.stop();
+
+	if(this.chargeRed) this.chargeRed.alive = false;
+	if(this.chargeBlue) this.chargeBlue.alive = false;	
+
+	if(this.beamColliders_red) {
+		for(var i=0; i<this.beamColliders_red.length; i++) {
+			this.beamColliders_red[i].alive = false;
+		}
+	}
+
+	if(this.beamColliders_blue) {
+		for(i=0; i<this.beamColliders_blue.length; i++) {
+			this.beamColliders_blue[i].alive = false;	
+		}
+	}
 }
 
 PowerBeamWeapon.prototype.start = function() {

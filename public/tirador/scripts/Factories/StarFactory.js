@@ -23,16 +23,18 @@ StartFactory.prototype.start = function() {
 StartFactory.prototype.stop = function() {
 	this.speedDown();
 	this.starCreationTimer.stop();
+
+	console.log(this.starCreationTimer);
 }
 
 StartFactory.prototype.speedUp = function() {
 	this.starCreationTimer.resetNewDelayAndRepeateCount(this.creationTime * 0.2, -1);
 
 	for(var i=0; i<this.stars.length; i++){
-		this.stars[i].baseSpeed = 4;
+		this.stars[i].baseSpeed = 5;
 	}
 
-	this.baseSpeed = 4;
+	this.baseSpeed = 5;
 }
 
 StartFactory.prototype.speedDown = function() {

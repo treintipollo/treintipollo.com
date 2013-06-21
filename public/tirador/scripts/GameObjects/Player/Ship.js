@@ -203,7 +203,12 @@ Ship.prototype.addInitialPositionReachedCallback = function(scope, callback, rem
 Ship.prototype.addFirstShotCallback = function(scope, callback, removeOnComplete) { this.addCallback("firstShotDelegate", scope, callback, removeOnComplete); }
 
 Ship.prototype.gotoInitialState = function() {
-	this.currentMotion.set(this.START_MOTION);
+	if( ScreenUtils.isPastBottom(this.y, 0) || ScreenUtils.isPastTop(this.y, 0) ){
+		this.currentMotion.set(this.START_MOTION);
+	}else{
+		this.setAllExhaustState(Exhaust.REGULAR);
+		this.currentMotion.set(this.IDLE_MOTION);
+	}
 }
 
 Ship.prototype.draw = function(context) { 

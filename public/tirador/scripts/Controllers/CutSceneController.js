@@ -195,8 +195,51 @@ function CutSceneController() {
 		}, true);
 
 		this.badguy.addOnRecicleCallback(this, function() {
-			this.badguy = null;			
-		};
+			this.badguy = null;
+
+			var whiteFlash = new WhiteFlashContainer();
+
+			this.disablePlayerMovement();
+			this.ship.weapon.stop();
+
+			TopLevel.playerShipFactory.setStandardShip();
+
+			TopLevel.starFactory.speedDown();
+
+			TweenMax.to(this.ship, 4, {
+				x: this.transformX,
+				y: this.transformY,
+				ease: Linear.easeNone,
+				onCompleteScope: this,
+				onComplete: function() {
+					TimeOutFactory.getTimeOut(3000, 1, this, function() {
+
+						var onMid = FuntionUtils.bindScope(this, function() {
+							this.ship.x = this.shipInitX;
+							this.ship.y = this.shipInitY;
+							this.ship.alive = false;
+
+							TopLevel.playerShipFactory.addCallbacksToAction("addInitCallback", [{
+									scope: this,
+									callback: function(obj) {
+										this.ship = obj;
+										this.partner = this.getIntroPartner();
+
+										this.ship.weapon.stop();
+										this.partner.weapon.stop();
+
+										this.disablePlayerMovement();
+									},
+									removeOnComplete: true
+								}
+							]);
+						});
+						
+						whiteFlash.on(onMid, null, this.ship, 90);
+					}, true).start();
+				}
+			});
+		});
 
 		return this.badguy;
 	};

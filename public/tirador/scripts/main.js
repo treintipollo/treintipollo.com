@@ -24,6 +24,9 @@ var TopLevel = {
 	collisionPairs: null,
 
 	resetGame: function() {
+		TimeOutFactory.stopAllTimeOuts();
+		TweenMax.killAll();
+
 		this.rocketFactory.stop();
 		this.starFactory.stop();
 
@@ -53,13 +56,6 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 	
-//TODO: Mini story sequence.	
-	//Final Fight.
-		// Bad guy death anim to fit in with the ending
-			//Disable player ship factory behaviour
-			//Destroy power ship
-			//Create Guy and Gal as stubs, just for the credit roll
-
 //TODO: Make different ship drawing.
 		//Male and Female symbols in the center of the ships
 		//Make male and female ship drawing swapable.
@@ -69,9 +65,6 @@ window.TopLevel = TopLevel;
 	//Move things around
 	//Add life bar for BadGuy and Big Boss when they show up.
 
-//TODO: Scale to fit while keeping aspect ratio
-	//CSS tranformation
-
 //TODO: Ending sequence
 	//Credits Roll
 	//Main Actors Roll
@@ -80,6 +73,9 @@ window.TopLevel = TopLevel;
 	//THE END
 	//Thanks for playing.
 	//Hope to see you again... IN SPACE!
+
+//TODO: Scale to fit while keeping aspect ratio
+	//CSS tranformation
 
 //BUG FIX: Crashing with the last Badguy can be troublesome
 
@@ -102,12 +98,29 @@ window.TopLevel = TopLevel;
 	   		//Make a slow and a fast version of each BadGuy type
 
 //Esto no es para este juego.
-	//TODO: Simplify GameObject, extend Delegate.
-	//TODO: Be able to configure hitArea.
-	//TODO: Get a better "inherit" method.
-	//TODO:Single Utility Object, so that the global scope has less litter.
-	//TODO: Hacer que el add del ObjectContainer te devuelva el objeto que va a usar, con todo configurado menos la inicializacion. 
-			//De ahi puedo llamar directamente al init de ese objeto con los parametros que yo quiera, sin andar creado arrays intermedios.
+//TODO: Simplify GameObject, extend Delegate.
+
+//TODO: Nestable GameObjects 
+	//follow the tranformation of their respective parents
+	//A nested gameObject is drawn in the same layer as it's parent and top of it
+
+
+//TODO: Be able to configure hitArea.
+		//Multiple hit areas for a single GameObject
+		//Hit area should follow the tranformation of it's owner.
+
+//TODO: Get a better "inherit" method.
+		//One that supports _super properly.
+
+//TODO:Single Utility Object, so that the global scope has less litter.
+
+//TODO: Hacer que el add del ObjectContainer te devuelva el objeto que va a usar, con todo configurado menos la inicializacion. 
+		//De ahi puedo llamar directamente al init de ese objeto con los parametros que yo quiera, sin andar creado arrays intermedios.
+
+//TODO: TimeoutFactory tiene que poder destruir las referencias que devuelve de su metodo 'get'
+		//Probablemente hay que pasarle entre los parametros el nombre de la variable donde estoy guardando el timer.
+		//Con ese nombre y el scope puede hacer percha esa referencia.
+
 //TODO: Optimizations
 	//TODO: Reduce memory Footprint.
 	//TODO: Optimize drawing method.
