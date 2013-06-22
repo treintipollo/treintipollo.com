@@ -434,6 +434,7 @@ function CutSceneController() {
 
 			splash = TopLevel.container.add("Splash", [
 
+			//Splash enter complete
 			function() {
 
 				var playerMarker = TopLevel.textFeedbackDisplayer.showFeedBack("playerMarker", ship.x, ship.y + 50);
@@ -463,6 +464,8 @@ function CutSceneController() {
 				ship.addFirstShotCallback(TopLevel, function(ship) {
 					if (CutSceneController.hideSplash) {
 						
+						TopLevel.gameModeController.setUpGame(ship.gender);
+
 						TopLevel.animationActors.mainShipGender = ship.gender; 
 						TopLevel.animationActors.partnerGender  = TopLevel.animationActors.partner.gender;
 
@@ -480,34 +483,32 @@ function CutSceneController() {
 				});
 			},
 
+			//Splash exit complete
 			function() {
 				ship.destroyCallbacks("firstShotDelegate");
 
-				introSequence();
+				TimeOutFactory.getTimeOut(2000, 1, this, function() {
+					var badGuy = TopLevel.animationActors.getIntroBadguy();
+
+					badGuy.addCallback("tractorBeamComplete", this, function() {
+						TopLevel.animationActors.badGuyEscape();
+					}, true);
+
+					badGuy.addCallback("escapeComplete", this, function() {
+						TopLevel.gameModeController.startGame();
+					}, true);
+
+					badGuy.addCallback("onInitialPositionDelegate", this, function() {
+						badGuy.tractorBeam.on();
+					}, true);
+				}, true).start();
+
 			}]);
 
 			splash.enter();
 
 			TopLevel.animationActors.disablePlayerMovement();
 		}
-
-		var introSequence = function() {
-		TimeOutFactory.getTimeOut(2000, 1, this, function() {
-			var badGuy = TopLevel.animationActors.getIntroBadguy();
-
-			badGuy.addCallback("tractorBeamComplete", this, function(){
-				TopLevel.animationActors.badGuyEscape();
-			}, true);
-
-			badGuy.addCallback("escapeComplete", this, function(){
-				TopLevel.rocketFactory.start();
-			}, true);
-
-			badGuy.addCallback("onInitialPositionDelegate", this, function(){
-				badGuy.tractorBeam.on();
-			}, true);
-		}, true).start();
-	}
 	}
 
 	this.reset = function() {
