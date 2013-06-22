@@ -1,3 +1,6 @@
+Ship.FEMALE = 0;
+Ship.MALE = 1;
+
 Ship.inheritsFrom( Attributes );
 
 function Ship() {
@@ -16,6 +19,11 @@ function Ship() {
 
 	this.explosionArea = new ExplosionsArea();
 	this.whiteFlash    = new WhiteFlashContainer();
+
+	this.mars = new Image();
+  	this.mars.src = './assets/Mars.png';
+  	this.venus = new Image();
+  	this.venus.src = './assets/Venus.png';
 }
 
 Ship.prototype.getExhausts = function() {
@@ -216,6 +224,12 @@ Ship.prototype.draw = function(context) {
 	context.lineWidth 	= 1;
 	context.fillStyle   = "#000000";
 
+	context.beginPath();	
+	context.arc(40, -40, 40, Math.PI/2, Math.PI, false);
+	context.arc(-40, -40, 40, 0, Math.PI/2, false);
+	context.closePath();
+	context.stroke();
+
 	//30 grados	
 	context.beginPath();
 
@@ -243,6 +257,7 @@ Ship.prototype.draw = function(context) {
 	context.arc(0, 0, 20, 145*(Math.PI/180), 155*(Math.PI/180));
 	context.closePath();
 	
+	context.fill();
 	context.stroke();
 
 	context.beginPath();
@@ -252,11 +267,20 @@ Ship.prototype.draw = function(context) {
 	context.stroke();
 	context.fill();
 
-	context.beginPath();	
-	context.arc(40, -40, 40, Math.PI/2, Math.PI, false);
-	context.arc(-40, -40, 40, 0, Math.PI/2, false);
-	context.closePath();
-	context.stroke();
+	if(this.gender == Ship.FEMALE ) {
+		context.drawImage(this.venus, -15, -15, 30, 30);
+	}
+	if(this.gender == Ship.MALE ) {
+		context.drawImage(this.mars, -15.3, -15, 30, 30);	
+	}
+}
+
+Ship.prototype.swapSymbol = function(delta) {
+	if(this.gender == Ship.FEMALE ) {
+		this.gender = Ship.MALE;
+	}else{
+		this.gender = Ship.FEMALE;
+	}
 }
 
 Ship.prototype.update = function(delta) { 	

@@ -106,25 +106,13 @@ PowerShip.prototype.draw = function(context) {
 	context.closePath();
 
 	context.stroke();
-
-	context.beginPath();
-	context.arc(this.exhaustOffsetX, this.exhaustOffsetY, this.pieceSize, 0, Math.PI*2, false);
-	context.closePath();
-	context.stroke();
-	context.fill();
-
-	context.beginPath();
-	context.arc(-this.exhaustOffsetX, this.exhaustOffsetY, this.pieceSize, 0, Math.PI*2, false);
-	context.closePath();
-	context.stroke();
-	context.fill();
-
+	
 	context.beginPath();
 	context.arc(0, 0, this.pieceSize, 0, Math.PI*2, false);
 	context.closePath();
 	context.stroke();
 	context.fill();
-
+	
 	context.beginPath();	
 	
 	context.arc(-this.curveSize-this.curveOffset, -this.curveSize, 
@@ -150,4 +138,21 @@ PowerShip.prototype.draw = function(context) {
 	
 	context.closePath();
 	context.stroke();
+
+	context.beginPath();
+	context.arc(-this.exhaustOffsetX, this.exhaustOffsetY, this.pieceSize, 0, Math.PI*2, false);
+	context.closePath();
+	context.stroke();
+	context.fill();
+
+	context.beginPath();
+	context.arc(this.exhaustOffsetX, this.exhaustOffsetY, this.pieceSize, 0, Math.PI*2, false);
+	context.closePath();
+	context.stroke();
+	context.fill();
+	
+
+	context.drawImage(this.venus, this.exhaustOffsetX-15, this.exhaustOffsetY-15, 30, 30);
+	context.drawImage(this.mars, -this.exhaustOffsetX-15.3, this.exhaustOffsetY-15, 30, 30);	
+	
 }

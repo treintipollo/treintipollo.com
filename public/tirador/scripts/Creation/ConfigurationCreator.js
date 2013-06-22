@@ -3,8 +3,9 @@ function ConfigurationCreator() {}
 ConfigurationCreator.prototype.create = function() {
 	//Configurations
 	//Collidable GameObjects
-	TopLevel.container.createTypeConfiguration("Ship", "Ship").collisionId("Ship").saveOnReset();
-	TopLevel.container.createTypeConfiguration("PartnerShip", "Ship").collisionId("Ship");
+	TopLevel.container.createTypeConfiguration("Ship", "Ship").collisionId("Ship").saveOnReset().args({gender:Ship.MALE});
+	TopLevel.container.createTypeConfiguration("PartnerShip", "Ship").collisionId("Ship").args({gender:Ship.FEMALE});
+	
 	TopLevel.container.createTypeConfiguration("PowerShip", "PowerShip").collisionId("Ship");
 
 	TopLevel.container.createTypeConfiguration("TestBadGuy", "BadGuy").args({ tProto: BadGuy.prototype });

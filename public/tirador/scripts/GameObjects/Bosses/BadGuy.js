@@ -62,13 +62,6 @@ BadGuy.prototype.draw = function(context) {
 	context.stroke();
 
 	context.beginPath();
-	context.moveTo(0, 0);
-	context.arc(0, 0, 15, 0, Math.PI * 2, false);
-	context.closePath();
-	context.stroke();
-	context.fill();
-
-	context.beginPath();
 	context.moveTo(0, -40);
 	context.bezierCurveTo(20, 10, 40, -40, 40, 10);
 	context.moveTo(0, -40);
@@ -78,6 +71,20 @@ BadGuy.prototype.draw = function(context) {
 	context.moveTo(0, -40);
 	context.closePath();
 	context.stroke();
+
+	context.beginPath();
+	context.moveTo(0, 0);
+	context.arc(0, 0, 15, 0, Math.PI * 2, false);
+	context.closePath();
+	context.stroke();
+	context.fill();
+
+	if(this.gender == Ship.FEMALE ) {
+		context.drawImage(this.venus, -15, -15, 30, 30);
+	}
+	if(this.gender == Ship.MALE ) {
+		context.drawImage(this.mars, -15.3, -15, 30, 30);	
+	}
 }
 
 BadGuy.prototype.update = function(delta) { 	

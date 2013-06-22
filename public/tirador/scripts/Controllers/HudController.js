@@ -38,7 +38,36 @@ function HudController() {
 		}, 500);
 	},
 
+	this.hide = function(playerData) {
+		if(this.hiding) return;
+
+		this.showing = false;
+		this.hiding = true;
+
+		$("#weapon").stop(true).fadeTo(500, 0);
+		$("#lives").stop(true).fadeTo(500, 0);
+		$("#speed").stop(true).fadeTo(500, 0);
+		$("#level").stop(true).fadeTo(500, 0);
+		$(".hp").stop(true).fadeTo(500, 0);
+	},
+
+	this.show = function(playerData) {
+		if(this.showing) return;
+
+		this.showing = true;
+		this.hiding = false;
+
+		$("#weapon").stop(true).fadeTo(500, 1);
+		$("#lives").stop(true).fadeTo(500, 1);
+		$("#speed").stop(true).fadeTo(500, 1);
+		$("#level").stop(true).fadeTo(500, 1);
+		$(".hp").stop(true).fadeTo(500, 1);	
+	},
+
 	this.init = function(playerData) {
+		this.showing = true;
+		this.hiding = false;
+
 		playerData.add(playerData.INIT, this, function(playerData) {
 			this.updateWeapon(playerData);
 			this.updateLives(playerData);

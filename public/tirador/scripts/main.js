@@ -34,6 +34,7 @@ var TopLevel = {
 		this.container.removeAll();		
 
 		this.animationActors.reset();
+		this.playerShipFactory.reset();
 
 		this.setUpGame();
 	},
@@ -57,9 +58,7 @@ var TopLevel = {
 window.TopLevel = TopLevel;
 	
 //TODO: Make different ship drawing.
-		//Male and Female symbols in the center of the ships
-		//Make male and female ship drawing swapable.
-		//Different Boss encounters for Male and Female game.
+	//Different Boss encounters for Male and Female game.
 
 //More work on the HUD
 	//Move things around
@@ -78,6 +77,7 @@ window.TopLevel = TopLevel;
 	//CSS tranformation
 
 //BUG FIX: Crashing with the last Badguy can be troublesome
+//BUG FIX: Whe you die the HP that is left is not drained
 
 //TODO: Use TimeOutFactory in ArrowKeyHandler.
 

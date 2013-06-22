@@ -5,10 +5,11 @@ function PlayerShipFactory() {
 	this.firstPosX = 0;
 	this.firstPosY = 0;
 
+	this.mainShipGender;
 	this.currentShipType;
 
 	this.init = function(onShipRecreated) {
-		this.setStandardShip();
+		this.reset();
 
 		this.recreateTimer = TimeOutFactory.getTimeOut(0, 1, this, function() {
 			var allLivesLost = onShipRecreated();
@@ -40,8 +41,7 @@ function PlayerShipFactory() {
 
 		this.setPowerShip(); 
 		var ship = this.createPlayerShip(x, y);
-		TopLevel.animationActors.getIntroPartner();
-
+		
 		return ship;
 	};
 
@@ -60,6 +60,10 @@ function PlayerShipFactory() {
 		return ship;
 	};
 
+	this.setMainShipGender = function(gender) {
+		this.mainShipGender = gender;
+	};
+
 	this.setPowerShip = function() {
 		this.currentShipType = "PowerShip";
 	};
@@ -68,7 +72,14 @@ function PlayerShipFactory() {
 		this.currentShipType = "Ship";
 	};
 
+	this.reset = function() {
+		this.mainShipGender = Ship.MALE;
+		this.setStandardShip();
+	}
+
 	this.setCallbacksToShip = function(ship) {
+		ship.gender = this.mainShipGender;
+
 		ship.addOnDestroyCallback(this, function(obj) {
 			this.playerShipArguments[0] = obj.x;
 			this.playerShipArguments[1] = obj.y;

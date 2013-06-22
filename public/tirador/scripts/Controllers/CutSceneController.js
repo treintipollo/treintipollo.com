@@ -19,6 +19,10 @@ function CutSceneController() {
 	transformX = 0;
 	transformY = 0;
 
+	mainShipGender = null; 
+	partnerGender  = null;
+	badguyGender   = null;
+
 	this.getIntroPartner = function() {
 		this.ship = TopLevel.playerData.ship;
 
@@ -56,6 +60,9 @@ function CutSceneController() {
 
 		this.badguy = TopLevel.container.add("IntroBadGuy", [TopLevel.canvas.width / 2, TopLevel.canvas.height + 80, TopLevel.container, this.partner]);
 
+		this.badguyGender = Random.getRandomBetweenToValues(Ship.FEMALE, Ship.MALE);
+		this.badguy.gender = this.badguyGender;
+
 		this.badguy.addOnRecicleCallback(this, function() {
 			this.badguy = null;
 		}, true);
@@ -72,6 +79,10 @@ function CutSceneController() {
 
 		this.partner = TopLevel.container.add("PartnerShip", [-100, -100, TopLevel.container, Exhaust.OFF]);
 
+		if(this.partnerGender) {
+			this.partner.gender = this.partnerGender;	
+		}
+
 		this.partner.addCallback("onInitialPositionDelegate", this, function() {
 			this.partner.blockControls = true;
 			this.partner.checkingCollisions = false;
@@ -79,6 +90,8 @@ function CutSceneController() {
 		}, true);
 
 		this.badguy = TopLevel.container.add(fightBadguyType, [TopLevel.canvas.width / 2, -80, TopLevel.container, this.partner, this.ship]);
+
+		this.badguy.gender = this.badguyGender;
 
 		this.badguy.addCallback("onInitialPositionDelegate", this, function() {
 			this.badguyInitX = this.badguy.x;
@@ -206,6 +219,10 @@ function CutSceneController() {
 
 			TopLevel.starFactory.speedDown();
 
+			this.ship.setAllExhaustState(Exhaust.REGULAR);
+
+			TopLevel.hudController.hide();
+
 			TweenMax.to(this.ship, 4, {
 				x: this.transformX,
 				y: this.transformY,
@@ -218,6 +235,9 @@ function CutSceneController() {
 							this.ship.x = this.shipInitX;
 							this.ship.y = this.shipInitY;
 							this.ship.alive = false;
+
+							TopLevel.playerShipFactory.setMainShipGender(Ship.MALE);
+							this.partnerGender = null;
 
 							TopLevel.playerShipFactory.addCallbacksToAction("addInitCallback", [{
 									scope: this,
@@ -367,7 +387,7 @@ function CutSceneController() {
 					lastPosY = this.ship.y;
 				}
 			});
-		});
+		}, true);
 	}
 
 	this.badGuyEscape = function() {
@@ -432,6 +452,9 @@ function CutSceneController() {
 
 					TopLevel.animationActors.partner.x = shipX;
 					TopLevel.animationActors.partner.y = shipY;
+
+					ship.swapSymbol();
+					TopLevel.animationActors.partner.swapSymbol();
 				}
 
 				var leftCallback = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.LEFT, FuntionUtils.bindScope(this, swapShip));
@@ -439,6 +462,11 @@ function CutSceneController() {
 
 				ship.addFirstShotCallback(TopLevel, function(ship) {
 					if (CutSceneController.hideSplash) {
+						
+						TopLevel.animationActors.mainShipGender = ship.gender; 
+						TopLevel.animationActors.partnerGender  = TopLevel.animationActors.partner.gender;
+
+						TopLevel.playerShipFactory.setMainShipGender(TopLevel.animationActors.mainShipGender);
 
 						playerMarker.alive = false;
 
@@ -487,6 +515,9 @@ function CutSceneController() {
 		this.partner  = null;
 		this.badguy   = null;
 		this.bossArgs = null;
+
+		this.mainShipGender = null; 
+		this.partnerGender  = null;
 
 		CutSceneController.showSplash = true;
 		CutSceneController.hideSplash = true;

@@ -23,8 +23,6 @@ StartFactory.prototype.start = function() {
 StartFactory.prototype.stop = function() {
 	this.speedDown();
 	this.starCreationTimer.stop();
-
-	console.log(this.starCreationTimer);
 }
 
 StartFactory.prototype.speedUp = function() {
