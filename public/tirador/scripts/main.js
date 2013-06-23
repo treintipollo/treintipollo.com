@@ -57,15 +57,16 @@ window.TopLevel = TopLevel;
 	
 //TODO: Ending sequence
 	//Badguy shows up again like in the beginning
-	//Stop.
-	//THE END
-	//Thanks for playing.
-	//Hope to see you again... IN SPACE!
+		//THE END
+		//Thanks for playing.
+		//Hope to see you again... IN SPACE!
+		//Stop.
 
 //TODO: Scale to fit while keeping aspect ratio
 	//CSS tranformation
 
 //BUG FIX: Crashing with the last Badguy can be troublesome
+//BUG FIX: Null pointer when reaching the last boss for a second time.
 
 //TODO: Use TimeOutFactory in ArrowKeyHandler.
 
