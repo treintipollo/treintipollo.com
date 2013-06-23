@@ -11,22 +11,21 @@ function GameModeController() {
 	var getMiniBossLeft = FuntionUtils.bindScope(TopLevel.animationActors, TopLevel.animationActors.getMiniBossLeft);
 
 	var maleModeBossConfiguration = function() {
-		return [
-		// {
-		// 	sub: getBoss("Middle_1_BadGuy", null, null, getFightBadGuy),
-		// 	main: getBoss("Boss_1_C", "warning", "boom", getMainBoss),
-		// 	next: false,
-		// 	last: false,
-		// 	drop: "MultiWeaponPowerUp"
-		// },
+		return [{
+			sub: getBoss("Middle_1_BadGuy", null, null, getFightBadGuy),
+			main: getBoss("Boss_1_C", "warning", "boom", getMainBoss),
+			next: false,
+			last: false,
+			drop: "MultiWeaponPowerUp"
+		},
 
-		// {
-		// 	sub: getBoss("Middle_2_BadGuy", null, null, getFightBadGuy),
-		// 	main: getBoss("Boss_1_D", "warning", "boom", getMainBoss),
-		// 	next: false,
-		// 	last: false,
-		// 	drop: "LivesPowerUp"
-		// },
+		{
+			sub: getBoss("Middle_2_BadGuy", null, null, getFightBadGuy),
+			main: getBoss("Boss_1_D", "warning", "boom", getMainBoss),
+			next: false,
+			last: false,
+			drop: "LivesPowerUp"
+		},
 
 		{
 			sub: getBoss("Middle_3_BadGuy", null, null, getFightBadGuy),
@@ -34,6 +33,65 @@ function GameModeController() {
 			next: false,
 			last: false,
 			drop: "HPPowerUp"
+		},
+
+		{
+			sub: getBoss("End_1_BadGuy", null, null, getEnd_1_BadGuy),
+			main: getBoss("End_2_BadGuy", "ready", "victory", getEnd_2_BadGuy),
+			next: false,
+			last: true,
+			drop: null
+		}];
+	};
+
+	var femaleModeBossConfiguration = function() {
+		return [
+		{
+			sub: getBoss(null, null, null, null),
+			main: getBoss("SubBoss_2", "warning", "nice", getMiniBossRight),
+			next: true,
+			last: false,
+			drop: "MultiWeaponPowerUp"
+		},
+
+		{
+			sub: getBoss("Middle_1_BadGuy", null, null, getFightBadGuy),
+			main: getBoss("SubBoss_2", "warning", "nice", getMiniBossLeft),
+			next: false,
+			last: false,
+			drop: "MultiWeaponPowerUp"
+		},
+
+		{
+			sub: getBoss(null, null, null, null),
+			main: getBoss("SubBoss_1", "warning", "nice", getMiniBossRight),
+			next: true,
+			last: false,
+			drop: "HPPowerUp"
+		},
+
+		{
+			sub: getBoss(null, null, null, null),
+			main: getBoss("SubBoss_1", "warning", "nice", getMiniBossLeft),
+			next: true,
+			last: false,
+			drop: "HPPowerUp"
+		},
+
+		{
+			sub: getBoss("Middle_2_BadGuy", null, null, getFightBadGuy),
+			main: getBoss("SubBoss_3", "warning", "nice", getMiniBossCenter),
+			next: false,
+			last: false,
+			drop: "MultiWeaponPowerUp"
+		},
+
+		{
+			sub: getBoss("Middle_3_BadGuy", null, null, getFightBadGuy),
+			main: getBoss("Boss_1_D", "warning", "boom", getMainBoss),
+			next: false,
+			last: false,
+			drop: "MultiWeaponPowerUp"
 		},
 
 		{
@@ -201,18 +259,12 @@ function GameModeController() {
 	};
 
 	this.gameModes = [];
-	this.selectedGameMode;
 
-	this.gameModes.push(null);
+	this.gameModes.push(this.mainGameMode(femaleModeBossConfiguration, maleModeRocketConfiguration));
 	this.gameModes.push(this.mainGameMode(maleModeBossConfiguration, maleModeRocketConfiguration));
-	//this.gameModes.push(this.mainGameMode(femaleModeBossConfiguration, femaleModeRocketConfiguration));
-}
-
-GameModeController.prototype.setUpGame = function(gameId) {
-	this.gameModes[gameId].setUpGame();
-	this.selectedGameMode = gameId;
 }
 
 GameModeController.prototype.startGame = function() {
-	this.gameModes[this.selectedGameMode].start();
+	this.gameModes[TopLevel.animationActors.ship.gender].setUpGame();
+	this.gameModes[TopLevel.animationActors.ship.gender].start();
 }

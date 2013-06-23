@@ -54,10 +54,6 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 	
-//Different Boss encounters for Male and Female game.
-	//System (DONE!)
-	//Female mode data 
-
 //More work on the HUD
 	//Move things around
 	//Add life bar for BadGuy and Big Boss when they show up.
@@ -91,10 +87,7 @@ window.TopLevel = TopLevel;
 	   			//Homing rockets explosion size.
 	   		//Shot speed and amount.
 	   		//Charge shot charging speed.
-	   	//Tweek BadGuy speed
-	   		//Make move speed configurable.
-	   		//Make a slow and a fast version of each BadGuy type
-
+	   
 //Esto no es para este juego.
 //TODO: Simplify GameObject, extend Delegate.
 

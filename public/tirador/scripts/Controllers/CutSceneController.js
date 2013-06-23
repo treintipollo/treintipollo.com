@@ -463,9 +463,6 @@ function CutSceneController() {
 
 				ship.addFirstShotCallback(TopLevel, function(ship) {
 					if (CutSceneController.hideSplash) {
-						
-						TopLevel.gameModeController.setUpGame(ship.gender);
-
 						TopLevel.animationActors.mainShipGender = ship.gender; 
 						TopLevel.animationActors.partnerGender  = TopLevel.animationActors.partner.gender;
 

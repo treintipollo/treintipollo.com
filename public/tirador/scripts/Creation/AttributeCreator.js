@@ -76,9 +76,9 @@ AttributeCreator.prototype.create = function() {
 	TopLevel.attributesGetter.setAttributes("Boss_1_C", 10, 1, 10);
 	TopLevel.attributesGetter.setAttributes("Boss_1_C", 30, 1, 10);
 
-	TopLevel.attributesGetter.setAttributes("Boss_1_D", 40, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_D", 40, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_D", 40, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_D", 60, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_D", 60, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_D", 60, 1, 10);
 
 	TopLevel.attributesGetter.setAttributes("Boss_1_E", 20, 1, 10);
 	TopLevel.attributesGetter.setAttributes("Boss_1_E", 20, 1, 10);
@@ -87,8 +87,8 @@ AttributeCreator.prototype.create = function() {
 
 	TopLevel.attributesGetter.setAttributes("Boss_1_F", 30, 1, 10);
 	TopLevel.attributesGetter.setAttributes("Boss_1_F", 30, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_F", 20, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_F", 40, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_F", 30, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_F", 60, 1, 10);
 
 	TopLevel.attributesGetter.setAttributes("Boss_1_Helper_Beam_1", 20, 1, 10);
 	TopLevel.attributesGetter.setAttributes("Boss_1_Helper_Sniper_1", 20, 1, 10);
