@@ -32,10 +32,11 @@ function HudController() {
 		var hpPercentage = currentHp / totalHp;
 		var meterPercentage = totalWidth * hpPercentage;
 
-		domMeter.stop(true);
-		domMeter.animate({
-			width: meterPercentage
-		}, 500);
+		TweenMax.to(domMeter, 0.5, {
+			css: {
+				width: meterPercentage
+			}
+		});
 	},
 
 	this.hide = function(playerData) {

@@ -27,6 +27,7 @@ var TopLevel = {
 		TweenMax.killAll();
 
 		this.rocketFactory.stop();
+		this.starFactory.speedDown();
 
 		this.playerData.softReset();
 		this.container.removeAll();		

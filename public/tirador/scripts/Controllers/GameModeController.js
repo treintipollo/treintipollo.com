@@ -11,21 +11,22 @@ function GameModeController() {
 	var getMiniBossLeft = FuntionUtils.bindScope(TopLevel.animationActors, TopLevel.animationActors.getMiniBossLeft);
 
 	var maleModeBossConfiguration = function() {
-		return [{
-			sub: getBoss("Middle_1_BadGuy", null, null, getFightBadGuy),
-			main: getBoss("Boss_1_C", "warning", "boom", getMainBoss),
-			next: false,
-			last: false,
-			drop: "MultiWeaponPowerUp"
-		},
+		return [
+		// {
+		// 	sub: getBoss("Middle_1_BadGuy", null, null, getFightBadGuy),
+		// 	main: getBoss("Boss_1_C", "warning", "boom", getMainBoss),
+		// 	next: false,
+		// 	last: false,
+		// 	drop: "MultiWeaponPowerUp"
+		// },
 
-		{
-			sub: getBoss("Middle_2_BadGuy", null, null, getFightBadGuy),
-			main: getBoss("Boss_1_D", "warning", "boom", getMainBoss),
-			next: false,
-			last: false,
-			drop: "LivesPowerUp"
-		},
+		// {
+		// 	sub: getBoss("Middle_2_BadGuy", null, null, getFightBadGuy),
+		// 	main: getBoss("Boss_1_D", "warning", "boom", getMainBoss),
+		// 	next: false,
+		// 	last: false,
+		// 	drop: "LivesPowerUp"
+		// },
 
 		{
 			sub: getBoss("Middle_3_BadGuy", null, null, getFightBadGuy),
