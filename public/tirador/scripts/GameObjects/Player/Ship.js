@@ -136,6 +136,8 @@ Ship.prototype.init = function(x, y, container, exhaustState){
 		this.setAllExhaustState(this.startExhaustState);
 	}
 	
+debugger;
+
 	this.createStateMachine();
 	this.gotoInitialState();
 }

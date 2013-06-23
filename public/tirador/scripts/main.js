@@ -1,6 +1,7 @@
 var TopLevel = {
 	canvas: null,
 	context: null,
+	game: null,
 	container:null,
 
 	attributesGetter: null,
@@ -54,13 +55,7 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 	
-//More work on the HUD
-	//Move things around
-	//Add life bar for BadGuy and Big Boss when they show up.
-
 //TODO: Ending sequence
-	//Credits Roll
-	//Main Actors Roll
 	//Badguy shows up again like in the beginning
 	//Stop.
 	//THE END
@@ -71,7 +66,6 @@ window.TopLevel = TopLevel;
 	//CSS tranformation
 
 //BUG FIX: Crashing with the last Badguy can be troublesome
-//BUG FIX: Whe you die the HP that is left is not drained
 
 //TODO: Use TimeOutFactory in ArrowKeyHandler.
 
@@ -179,5 +173,5 @@ $(function(){
 	}
 
 	//Game creation starts here.
-	new GameSetUp(creation);
+	TopLevel.game = new GameSetUp(creation);
 });

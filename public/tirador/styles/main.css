@@ -48,13 +48,7 @@
 	display: block;
 	height: 100%;
 	
-	background-image: -webkit-gradient(
-	  linear,
-	  left bottom,
-	  left top,
-	  color-stop(0, rgb(43,194,83)),
-	  color-stop(1, rgb(84,240,84))
-	 );
+	background-image: -webkit-linear-gradient(left, #2BC253, #2BC253); 
 
 	position: relative;
 	overflow: hidden;

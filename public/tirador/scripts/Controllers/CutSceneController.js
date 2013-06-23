@@ -249,6 +249,8 @@ function CutSceneController() {
 										this.partner.weapon.stop();
 
 										this.disablePlayerMovement();
+
+										this.endSequence();
 									},
 									removeOnComplete: true
 								}
@@ -429,6 +431,8 @@ function CutSceneController() {
 		var ship = this.ship;
 		var splash;
 
+		var self = this;
+
 		if (CutSceneController.showSplash) {
 			CutSceneController.showSplash = false;
 
@@ -483,29 +487,42 @@ function CutSceneController() {
 			//Splash exit complete
 			function() {
 				ship.destroyCallbacks("firstShotDelegate");
-
-				TimeOutFactory.getTimeOut(2000, 1, this, function() {
-					var badGuy = TopLevel.animationActors.getIntroBadguy();
-
-					badGuy.addCallback("tractorBeamComplete", this, function() {
-						TopLevel.animationActors.badGuyEscape();
-					}, true);
-
-					badGuy.addCallback("escapeComplete", this, function() {
-						TopLevel.gameModeController.startGame();
-					}, true);
-
-					badGuy.addCallback("onInitialPositionDelegate", this, function() {
-						badGuy.tractorBeam.on();
-					}, true);
-				}, true).start();
-
+				self.introSequence();
 			}]);
 
 			splash.enter();
 
 			TopLevel.animationActors.disablePlayerMovement();
 		}
+	}
+
+	this.introSequence = function() {
+		TimeOutFactory.getTimeOut(2000, 1, this, function() {
+			var badGuy = TopLevel.animationActors.getIntroBadguy();
+
+			badGuy.addCallback("tractorBeamComplete", this, function() {
+				TopLevel.animationActors.badGuyEscape();
+			}, true);
+
+			badGuy.addCallback("escapeComplete", this, function() {
+				TopLevel.gameModeController.startGame();
+			}, true);
+
+			badGuy.addCallback("onInitialPositionDelegate", this, function() {
+				badGuy.tractorBeam.on();
+			}, true);
+		}, true).start();
+	}
+
+	this.endSequence = function() {
+		TimeOutFactory.getTimeOut(2000, 1, this, function() {
+			var badGuy = TopLevel.animationActors.getIntroBadguy();
+
+			badGuy.addCallback("onInitialPositionDelegate", this, function() {
+				TopLevel.game.pause();
+			}, true);
+
+		}, true).start();
 	}
 
 	this.reset = function() {

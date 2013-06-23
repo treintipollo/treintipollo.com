@@ -1,6 +1,7 @@
 $(function() {
   var ArrowKeyHandler = {
     _pressed: {},
+    _pause: false,
 
     LEFT: 37,
     UP: 38,
@@ -19,19 +20,16 @@ $(function() {
     X: 88,
     C: 67,
 
+    P: 80,
+    O: 79,
+    I: 73,
+
     NUM_0: 48,
     NUM_1: 49,
     NUM_2: 50,
     NUM_3: 51,
     NUM_4: 52,
     NUM_5: 53,
-
-    GAME_LEFT: -1,
-    GAME_RIGHT: -1,
-    GAME_UP: -1,
-    GAME_DOWN: -1,
-    GAME_BUTTON_1: -1,
-    GAME_BUTTON_2: -1,
 
     init: function() {
       this.GAME_LEFT = this.LEFT;
@@ -40,7 +38,11 @@ $(function() {
       this.GAME_DOWN = this.DOWN;
       this.GAME_BUTTON_1 = this.A;
       this.GAME_BUTTON_2 = this.S;
+      this.GAME_BUTTON_PAUSE = this.P;
     },
+
+    pause: function() { this._pause = true; },
+    resume: function() { this._pause = false; },
 
     keyUpListeners: {},
     keyDownTimeOutListeners: {},
@@ -168,9 +170,19 @@ $(function() {
   window.ArrowKeyHandler = ArrowKeyHandler;
 
   window.addEventListener('keyup', function(event) {
+
+    if(event.keyCode == ArrowKeyHandler.GAME_BUTTON_PAUSE) {
+      ArrowKeyHandler.onKeyup(event);
+      return;
+    }
+
+    if(ArrowKeyHandler._pause) return;
+
     ArrowKeyHandler.onKeyup(event);
   }, false);
+
   window.addEventListener('keydown', function(event) {
+    if(ArrowKeyHandler._pause) return;
     ArrowKeyHandler.onKeydown(event);
   }, false);
 

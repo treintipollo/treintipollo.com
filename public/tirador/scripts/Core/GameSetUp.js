@@ -16,7 +16,7 @@ GameSetUp.prototype.createMainGame = function() {
 
 	var mainGameCreation = FuntionUtils.bindScope(self, function() {
 		this.initialized = true;
-		this.mainGameSetUp();	
+		this.mainGameSetUp();
 	});
 
 
@@ -32,6 +32,8 @@ GameSetUp.prototype.createMainGame = function() {
 
 			self.tweensTimeLine = TimelineLite.exportRoot();
 			self.tweensTimeLine.pause();
+
+			ArrowKeyHandler.pause();
 
 			window.cancelAnimationFrame(frameRequest);
 		}
@@ -50,6 +52,8 @@ GameSetUp.prototype.createMainGame = function() {
 				TimeOutFactory.resumeAllTimeOuts();
 
 				if (self.tweensTimeLine) self.tweensTimeLine.resume();
+
+				ArrowKeyHandler.resume();
 
 				frameRequest = window.requestAnimationFrame(mainLoop);
 			}
@@ -96,4 +100,16 @@ GameSetUp.prototype.createMainGame = function() {
 
 		frameRequest = window.requestAnimationFrame(mainLoop);
 	}
+}
+
+GameSetUp.prototype.pause = function() {
+	var evt = document.createEvent("UIEvents");
+	evt.initUIEvent("blur", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	window.dispatchEvent(evt);
+}
+
+GameSetUp.prototype.resume = function() {
+	var evt = document.createEvent("UIEvents");
+	evt.initUIEvent("focus", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	window.dispatchEvent(evt);
 }

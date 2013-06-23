@@ -174,7 +174,7 @@ ObjectsContainer.prototype.add = function(name, args) {
 	return pooledObject;
 }
 
-ObjectsContainer.prototype.removeAll = function() {
+ObjectsContainer.prototype.removeAll = function(rmAll) {
 	var configuration;
 
 	for (var i = 0; i < this.mainObjects.length; i++) {
@@ -186,7 +186,7 @@ ObjectsContainer.prototype.removeAll = function() {
 
 				configuration = this.configurations[object.typeId];
 
-				if (!configuration.doNotDestroy) {
+				if (!configuration.doNotDestroy || rmAll) {
 					object.destroyCallbacks("onRecicleDelegate");
 					object.setDestroyMode(GameObject.NO_CALLBACKS);
 
