@@ -125,6 +125,7 @@ AttributeCreator.prototype.create = function() {
 	TopLevel.attributesGetter.setAttributes("BadGuySmallAimedRocket", 0, 0, 3);
 	TopLevel.attributesGetter.setAttributes("BadGuyLargeHomingRocket", 0, 0, 5);
 	TopLevel.attributesGetter.setAttributes("BadGuyClusterAimedRocket", 0, 0, 3);
+	TopLevel.attributesGetter.setAttributes("LastBadGuyLargeHomingRocket", 10, 1, 2);
 
 	TopLevel.attributesGetter.setAttributes("Small_EnemyRocket_1", 0, 0, 3);
 	TopLevel.attributesGetter.setAttributes("Small_EnemyRocket_2", 0, 0, 3);

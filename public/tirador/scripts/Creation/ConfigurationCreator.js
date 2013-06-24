@@ -69,7 +69,7 @@ ConfigurationCreator.prototype.create = function() {
 
 	TopLevel.container.createTypeConfiguration("End_2_BadGuy", "BadGuy").collisionId("BadGuy").args({
 		tProto: End_2_BadGuy.prototype,
-		rocketType: ["BadGuySmallAimedRocket","BadGuyLargeHomingRocket","BadGuyClusterAimedRocket"],
+		rocketType: ["BadGuySmallAimedRocket","LastBadGuyLargeHomingRocket","BadGuyClusterAimedRocket"],
 		rocketTimeOut: [100,200,150],
 		rocketAmount: [15,5,8],
 		rocketRadius: [100,100,100],
@@ -84,6 +84,7 @@ ConfigurationCreator.prototype.create = function() {
 	TopLevel.container.createTypeConfiguration("BadGuySmallAimedRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto: BadGuySmallAimedRocket.prototype });
 	TopLevel.container.createTypeConfiguration("BadGuyLargeHomingRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto: BadGuyLargeHomingRocket.prototype });
 	TopLevel.container.createTypeConfiguration("BadGuyClusterAimedRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto: BadGuyClusterAimedRocket.prototype });
+	TopLevel.container.createTypeConfiguration("LastBadGuyLargeHomingRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({ tProto: BadGuyLargeHomingRocket.prototype });
 
 	TopLevel.container.createTypeConfiguration("BadGuyArmourPiece_Right", "BadGuyArmourPieceRight").collisionId("Common_Baddy");
 	TopLevel.container.createTypeConfiguration("BadGuyArmourPiece_Left", "BadGuyArmourPieceLeft").collisionId("Common_Baddy");
