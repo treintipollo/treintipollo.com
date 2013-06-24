@@ -150,9 +150,7 @@ function CutSceneController() {
 
 		this.badguy = TopLevel.container.add(fightBadGuyType, [TopLevel.canvas.width / 2, -80, TopLevel.container, null, this.ship]);
 
-		this.badguy.addCallback("onInitStartMotion", this, function() {
-			this.badguy.updateAttributesToLastLevel();
-		}, true);
+		this.badguy.updateAttributesToLastLevel();	
 
 		this.badguy.addCallback("onInitialPositionDelegate", this, function() {
 			var x = this.badguy.x;

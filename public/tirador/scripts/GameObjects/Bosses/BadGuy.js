@@ -671,6 +671,9 @@ End_2_BadGuy.prototype.destroy = function() {
 
 	this.rightPiece.alive = false;
 	this.leftPiece.alive = false;
+
+	this.rightPiece = null;
+	this.leftPiece = null;
 }
 
 End_2_BadGuy.prototype.onDamageReceived = function(other) {

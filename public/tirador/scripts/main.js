@@ -55,12 +55,16 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 	
+//TODO: Added Homing rockets with more HP to the last Badguy
+//TODO: Fix the Cluster Rockets of the Badguy
+
 //TODO: Ending sequence
 	//Badguy shows up again like in the beginning
 		//THE END
 		//Thanks for playing.
 		//Hope to see you again... IN SPACE!
-		//Stop.
+		//Stop. (DONE!)
+		//Wait and reset
 
 //TODO: Scale to fit while keeping aspect ratio
 	//CSS tranformation
