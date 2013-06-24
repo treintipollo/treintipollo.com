@@ -6,6 +6,8 @@ function GameSetUp(mainGameSetUp) {
 	this.lastUpdate = Date.now();
 	this.mainGameSetUp = mainGameSetUp;
 
+	this.manualHardPause = false;
+
 	this.createMainGame();
 }
 
@@ -40,6 +42,12 @@ GameSetUp.prototype.createMainGame = function() {
 	}
 
 	var onFocus = function(event) {
+		//A pause made manually can only be undone manually
+		if(self.manualHardPause) {
+			return;
+		}
+
+
 		//In the case the game is not already created when the document gains focus for the first time, it is created here.
 		if (!self.initialized) {
 			mainGameCreation();
@@ -102,14 +110,26 @@ GameSetUp.prototype.createMainGame = function() {
 	}
 }
 
-GameSetUp.prototype.pause = function() {
+GameSetUp.prototype.softPause = function() {
+
+}
+
+GameSetUp.prototype.softResume = function() {
+
+}
+
+GameSetUp.prototype.hardPause = function() {
+	this.manualHardPause = true;
+
 	var evt = document.createEvent("UIEvents");
-	evt.initUIEvent("blur", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	evt.initUIEvent("blur", true, true, window, 1);
 	window.dispatchEvent(evt);
 }
 
-GameSetUp.prototype.resume = function() {
+GameSetUp.prototype.hardResume = function() {
+	this.manualHardPause = false;
+
 	var evt = document.createEvent("UIEvents");
-	evt.initUIEvent("focus", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	evt.initUIEvent("focus", true, true, window, 1);
 	window.dispatchEvent(evt);
 }

@@ -35,6 +35,7 @@ PoolCreator.prototype.create = function() {
 	TopLevel.container.createTypePool("WhiteFlash", WhiteFlash, 2);
 
 	TopLevel.container.createTypePool("Splash", Splash, 1);
+	TopLevel.container.createTypePool("EndingMessage", EndingMessage, 1);
 
 	TopLevel.container.createTypePool("PowerShot", PowerShot, 2);
 	TopLevel.container.createTypePool("PowerShotSine", PowerShotSine, 2);

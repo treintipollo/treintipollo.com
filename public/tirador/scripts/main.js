@@ -55,24 +55,23 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 	
-//TODO: Added Homing rockets with more HP to the last Badguy
-//TODO: Fix the Cluster Rockets of the Badguy
-
 //TODO: Ending sequence
 	//Badguy shows up again like in the beginning
-		//THE END
-		//Thanks for playing.
-		//Hope to see you again... IN SPACE!
-		//Stop. (DONE!)
+		//Light Pause
 		//Wait and reset
+
+//TODO: Fix the Cluster Rockets of the Badguy
+//TODO: Matar todos los rockets del boos apenas muere
+		//Implementar un metodo que destruya todas las cosas de un tipo especifico
+//TODO: Cambiar como se oculta/muestra el hud
+//TODO: Marcar si la pausa fue manual o no, para que no se vaya si volves a tener el foco por alguna otra razon.
+//TODO: Implementar una pausa 'light' en la que ciertos objetos si puedan vivir
+		//Agregar la opcion a la configuracion de los objetos.
+
+//BUG FIX: Crashing with the last Badguy can be troublesome
 
 //TODO: Scale to fit while keeping aspect ratio
 	//CSS tranformation
-
-//BUG FIX: Crashing with the last Badguy can be troublesome
-//BUG FIX: Null pointer when reaching the last boss for a second time.
-
-//TODO: Use TimeOutFactory in ArrowKeyHandler.
 
 //TODO: Tweek base damages and damage multipliers. Everything.
 	   //Tweek powerup show up ratio.

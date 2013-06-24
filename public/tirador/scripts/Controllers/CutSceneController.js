@@ -435,7 +435,7 @@ function CutSceneController() {
 			CutSceneController.showSplash = false;
 
 			splash = TopLevel.container.add("Splash", [
-
+			
 			//Splash enter complete
 			function() {
 
@@ -515,9 +515,19 @@ function CutSceneController() {
 	this.endSequence = function() {
 		TimeOutFactory.getTimeOut(2000, 1, this, function() {
 			var badGuy = TopLevel.animationActors.getIntroBadguy();
+			var endMessage;
 
 			badGuy.addCallback("onInitialPositionDelegate", this, function() {
-				TopLevel.game.pause();
+
+				endMessage = TopLevel.container.add("EndingMessage", [
+					function() {
+						TopLevel.game.hardPause();
+					}
+				]);
+
+				endMessage.enter();
+				badGuy.tractorBeam.on();
+				
 			}, true);
 
 		}, true).start();

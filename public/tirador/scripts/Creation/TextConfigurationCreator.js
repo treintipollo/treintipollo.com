@@ -239,6 +239,42 @@ TextConfigurationCreator.prototype.create = function() {
 		baseline: "middle"
 	});
 
+	TopLevel.container.createTypeConfiguration("end", "Text").args({
+		tProto: GameText.prototype,
+		text: "THE END",
+		font: "Russo One",
+		size: 60,
+		fill: "#FFFFFF",
+		stroke: "#777777",
+		lineWidth: 3,
+		align: "center",
+		baseline: "middle"
+	});
+
+	TopLevel.container.createTypeConfiguration("thanks", "Text").args({
+		tProto: GameText.prototype,
+		text: "Thanks for playing",
+		font: "Russo One",
+		size: 20,
+		fill: "#FFFFFF",
+		stroke: "#777777",
+		lineWidth: 1,
+		align: "center",
+		baseline: "middle"
+	});
+
+	TopLevel.container.createTypeConfiguration("hope", "Text").args({
+		tProto: GameText.prototype,
+		text: "Hope to see you again...",
+		font: "Russo One",
+		size: 20,
+		fill: "#FFFFFF",
+		stroke: "#777777",
+		lineWidth: 1,
+		align: "center",
+		baseline: "middle"
+	});
+
 	TopLevel.container.createTypeConfiguration("controls_1", "Text").args({
 		tProto: GameText.prototype,
 		text: 'Press "A" to Shoot',
