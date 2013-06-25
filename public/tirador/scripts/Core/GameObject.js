@@ -6,12 +6,14 @@ function GameObject() {
 	this.rotation = 0;
 	this.scaleX   = 1;
 	this.scaleY   = 1;
+	this.alpha    = 1;
 
 	this.alive = true;
 	this.typeId;
 	this.collisionId;
 	this.poolId;
 	this.checkingCollisions;
+	this.activeOnSoftPause;
 
 	this.destroyMode = GameObject.EXECUTE_CALLBACKS;
 
@@ -124,8 +126,14 @@ GameObject.prototype.transformAndDraw = function(context) {
 		context.translate(-this.centerX, -this.centerY);
 	}	
 
-	this.draw(context);
-
+	if(this.alpha >= 1){
+		this.draw(context);
+	}
+	else if(this.alpha > 0 && this.alpha < 1) {
+		context.globalAlpha = this.alpha;
+		this.draw(context);
+	}
+	
 	//Restauro la matriz de transformacion del canvas para que se vea todo bien
 	context.restore();
 }

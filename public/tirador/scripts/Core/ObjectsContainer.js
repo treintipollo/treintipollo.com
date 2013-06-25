@@ -35,7 +35,7 @@ ObjectsContainer.prototype.draw = function() {
 	}
 }
 
-ObjectsContainer.prototype.update = function(delta) {
+ObjectsContainer.prototype.update = function(delta, updateConfiguredOnly) {
 	var i, j, k, a, m;
 
 	for (i = 0; i < this.mainObjects.length; i++) {
@@ -46,6 +46,9 @@ ObjectsContainer.prototype.update = function(delta) {
 				var object = a[j];
 
 				if (object.alive) {
+
+					if(updateConfiguredOnly && !object.activeOnSoftPause) continue;
+
 					object.update(delta);
 
 					if (!object.checkingCollisions) continue;
@@ -117,6 +120,7 @@ ObjectsContainer.prototype.add = function(name, args) {
 	var initCall = configuration.initCall;
 	var hardArguments = configuration.hardArguments;
 
+
 	//Create drawing layer if it doesn't exist
 	if (this.mainObjects[layer] == null) {
 		this.mainObjects[layer] = [];
@@ -135,6 +139,8 @@ ObjectsContainer.prototype.add = function(name, args) {
 	pooledObject.collisionId = collisionType;
 	//This sets if the object will check for collisions or not
 	pooledObject.checkingCollisions = (collisionType != "");
+	//This sets if the object should keep updating during a soft pause.
+	pooledObject.activeOnSoftPause = configuration.activeOnSoftPause;
 
 	//Add it to its rendering layer. To the end or the beggining of the list, depending of the configuration
 	this.mainObjects[layer][addMode](pooledObject);
@@ -290,6 +296,7 @@ ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type) {
 		initCall: "apply",
 		hardArguments: null,
 		doNotDestroy: false,
+		activeOnSoftPause: false,
 
 		collisionId: function(cType) {
 			this.collisionType = cType;
@@ -314,8 +321,11 @@ ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type) {
 		layer: function(offset) {
 			this.l += offset;
 			return this;
+		},
+		activeSoftPause: function() {
+			this.activeOnSoftPause = true;
+			return this;
 		}
-
 	};
 
 	this.configurations[typeAlias] = configuration;

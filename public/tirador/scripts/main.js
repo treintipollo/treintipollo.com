@@ -57,21 +57,22 @@ window.TopLevel = TopLevel;
 	
 //TODO: Ending sequence
 	//Badguy shows up again like in the beginning
-		//Light Pause
 		//Wait and reset
 
 //TODO: Fix the Cluster Rockets of the Badguy
-//TODO: Matar todos los rockets del boos apenas muere
+	//Tienen que tomar el angulo de salida cuando van a salir disparados, ahora esta tomando el angulo
+	//que hay entre Badguy y player apenas es creado.
+
+//TODO: Matar todos los rockets del boss apenas muere
 		//Implementar un metodo que destruya todas las cosas de un tipo especifico
-//TODO: Cambiar como se oculta/muestra el hud
-//TODO: Marcar si la pausa fue manual o no, para que no se vaya si volves a tener el foco por alguna otra razon.
-//TODO: Implementar una pausa 'light' en la que ciertos objetos si puedan vivir
-		//Agregar la opcion a la configuracion de los objetos.
 
 //BUG FIX: Crashing with the last Badguy can be troublesome
 
 //TODO: Scale to fit while keeping aspect ratio
 	//CSS tranformation
+
+//TODO: Buscar algo de musica y efectos de sonido
+	//Ver si encuentro packs de sonidos de SNES o algo por el estilo.
 
 //TODO: Tweek base damages and damage multipliers. Everything.
 	   //Tweek powerup show up ratio.
@@ -178,4 +179,9 @@ $(function(){
 
 	//Game creation starts here.
 	TopLevel.game = new GameSetUp(creation);
+
+	//ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_2, function(){
+	 	//TopLevel.container.add('FadeToBlack').start();	
+	 	//TopLevel.game.softPause();
+	//});
 });

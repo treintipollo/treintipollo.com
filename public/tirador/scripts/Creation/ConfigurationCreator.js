@@ -92,6 +92,8 @@ ConfigurationCreator.prototype.create = function() {
 	TopLevel.container.createTypeConfiguration("Splash", "Splash");
 	TopLevel.container.createTypeConfiguration("EndingMessage", "EndingMessage");
 
+	TopLevel.container.createTypeConfiguration("FadeToBlack", "FadeToBlack").layer(-2);
+
 	TopLevel.container.createTypeConfiguration("Small_Shot", "Shot").layer(1).collisionId("Shot").args({ big: false });
 	TopLevel.container.createTypeConfiguration("Big_Shot", "Shot").layer(1).collisionId("Shot").args({ big: true });
 	TopLevel.container.createTypeConfiguration("Clone_Small_Shot", "Shot").layer(1).collisionId("CloneShot").args({ big: false });

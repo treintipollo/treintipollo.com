@@ -32,37 +32,39 @@ function HudController() {
 		var hpPercentage = currentHp / totalHp;
 		var meterPercentage = totalWidth * hpPercentage;
 
-		TweenMax.to(domMeter, 0.5, {
-			css: {
-				width: meterPercentage
-			}
-		});
+		TweenMax.to(domMeter, 0.5, { css: { width: meterPercentage } });
 	},
 
-	this.hide = function(playerData) {
+	this.hide = function(time, delay) {
 		if(this.hiding) return;
+
+		if(!time) time = 0.5;
+		if(!delay) delay = 0;
 
 		this.showing = false;
 		this.hiding = true;
 
-		$("#weapon").stop(true).fadeTo(500, 0);
-		$("#lives").stop(true).fadeTo(500, 0);
-		$("#speed").stop(true).fadeTo(500, 0);
-		$("#level").stop(true).fadeTo(500, 0);
-		$(".hp").stop(true).fadeTo(500, 0);
+		TweenMax.to($("#weapon"), time, { css: { autoAlpha: 0 }, delay:delay });
+		TweenMax.to($("#lives"), time, { css: { autoAlpha: 0 }, delay:delay });
+		TweenMax.to($("#speed"), time, { css: { autoAlpha: 0 }, delay:delay });
+		TweenMax.to($("#level"), time, { css: { autoAlpha: 0 }, delay:delay });
+		TweenMax.to($(".hp"), time, { css: { autoAlpha: 0 }, delay:delay });
 	},
 
-	this.show = function(playerData) {
+	this.show = function(time, delay) {
 		if(this.showing) return;
+
+		if(!time) time = 0.5;
+		if(!delay) delay = 0;
 
 		this.showing = true;
 		this.hiding = false;
 
-		$("#weapon").stop(true).fadeTo(500, 1);
-		$("#lives").stop(true).fadeTo(500, 1);
-		$("#speed").stop(true).fadeTo(500, 1);
-		$("#level").stop(true).fadeTo(500, 1);
-		$(".hp").stop(true).fadeTo(500, 1);	
+		TweenMax.to($("#weapon"), time, { css: { autoAlpha: 1 }, delay:delay });
+		TweenMax.to($("#lives"), time, { css: { autoAlpha: 1 }, delay:delay });
+		TweenMax.to($("#speed"), time, { css: { autoAlpha: 1 }, delay:delay });
+		TweenMax.to($("#level"), time, { css: { autoAlpha: 1 }, delay:delay });
+		TweenMax.to($(".hp"), time, { css: { autoAlpha: 1 }, delay:delay });
 	},
 
 	this.init = function(playerData) {

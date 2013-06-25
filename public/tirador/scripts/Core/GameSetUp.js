@@ -8,6 +8,9 @@ function GameSetUp(mainGameSetUp) {
 
 	this.manualHardPause = false;
 
+	this.manualSoftPause = false;
+	this.wasInSoftPause = false;
+
 	this.createMainGame();
 }
 
@@ -37,21 +40,21 @@ GameSetUp.prototype.createMainGame = function() {
 
 			ArrowKeyHandler.pause();
 
-			window.cancelAnimationFrame(frameRequest);
+			if(!self.manualSoftPause) {
+				window.cancelAnimationFrame(frameRequest);
+			}
 		}
 	}
 
 	var onFocus = function(event) {
 		//A pause made manually can only be undone manually
-		if(self.manualHardPause) {
+		if(self.manualHardPause || self.manualSoftPause) {
 			return;
 		}
-
 
 		//In the case the game is not already created when the document gains focus for the first time, it is created here.
 		if (!self.initialized) {
 			mainGameCreation();
-
 		} else {
 			if (self.focus) {
 				self.blur = true;
@@ -63,7 +66,12 @@ GameSetUp.prototype.createMainGame = function() {
 
 				ArrowKeyHandler.resume();
 
-				frameRequest = window.requestAnimationFrame(mainLoop);
+				if(!self.wasInSoftPause) {
+					frameRequest = window.requestAnimationFrame(mainLoop);
+				}else{
+					self.wasInSoftPause = true;
+				}
+
 			}
 		}
 	}
@@ -80,7 +88,8 @@ GameSetUp.prototype.createMainGame = function() {
 			self.lastUpdate = now;
 
 			if (dt < 30) {
-				TopLevel.container.update(dt / 1000);
+				TopLevel.container.update(dt / 1000, self.manualSoftPause);
+
 				TopLevel.container.draw();
 			}
 
@@ -111,25 +120,29 @@ GameSetUp.prototype.createMainGame = function() {
 }
 
 GameSetUp.prototype.softPause = function() {
-
+	this.manualSoftPause = true;
+	this.wasInSoftPause = true;
+	this.dispatchUIEvent('blur');
 }
 
 GameSetUp.prototype.softResume = function() {
-
+	this.manualSoftPause = false;
+	this.dispatchUIEvent('focus');
 }
 
 GameSetUp.prototype.hardPause = function() {
 	this.manualHardPause = true;
-
-	var evt = document.createEvent("UIEvents");
-	evt.initUIEvent("blur", true, true, window, 1);
-	window.dispatchEvent(evt);
+	this.dispatchUIEvent('blur');
 }
 
 GameSetUp.prototype.hardResume = function() {
 	this.manualHardPause = false;
+	this.dispatchUIEvent('focus');
+}
 
+GameSetUp.prototype.dispatchUIEvent = function(event) {
 	var evt = document.createEvent("UIEvents");
-	evt.initUIEvent("focus", true, true, window, 1);
+	evt.initUIEvent(event, true, true, window, 1);
 	window.dispatchEvent(evt);
 }
+
