@@ -12,7 +12,7 @@ WhiteFlash.prototype.init = function(onMidPoint, onComplete, scaleToX, scaleToY,
 
 	this.blockFill    = false;
 	this.drawGradient = true;
-	this.alpha        = 0;
+	this.fakeAlpha        = 0;
 
 	this.rotation = rotation ? rotation : 0;
 
@@ -21,13 +21,13 @@ WhiteFlash.prototype.init = function(onMidPoint, onComplete, scaleToX, scaleToY,
 
 	TweenMax.to(this, 1, {scaleX:scaleToX, scaleY:scaleToY, ease:Back.easeIn.config(1), onCompleteScope:this, onComplete:function(){
 		this.blockFill = true;		
-		TweenMax.to(this, 0.3, {alpha:1, onCompleteScope:this, onComplete:function(){
+		TweenMax.to(this, 0.3, {fakeAlpha:1, onCompleteScope:this, onComplete:function(){
 			this.drawGradient = false;
 
 			if(onMidPoint)
 				onMidPoint();
 
-			TweenMax.to(this, 1, {alpha:0, ease:Linear.ease, onCompleteScope:this, onComplete:function(){
+			TweenMax.to(this, 1, {fakeAlpha:0, ease:Linear.ease, onCompleteScope:this, onComplete:function(){
 				this.alive = false;
 
 				if(onComplete)
@@ -49,7 +49,7 @@ WhiteFlash.prototype.draw = function(context) {
 	}
 
 	if(this.blockFill){
-		context.fillStyle = "rgba(255, 255, 255," + this.alpha.toString() + ")";		
+		context.fillStyle = "rgba(255, 255, 255," + this.fakeAlpha.toString() + ")";		
 		
 		context.beginPath();
 		context.fillRect(-this.x*3, 0, TopLevel.canvas.width*3, 1);	

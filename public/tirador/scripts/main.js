@@ -57,7 +57,10 @@ window.TopLevel = TopLevel;
 	
 //TODO: Ending sequence
 	//Badguy shows up again like in the beginning
-		//Wait and reset
+		//Different end boss for male and female
+			//male = armour
+			//female = mini bosses
+		//Wait and reset (DONE!)
 
 //TODO: Fix the Cluster Rockets of the Badguy
 	//Tienen que tomar el angulo de salida cuando van a salir disparados, ahora esta tomando el angulo
@@ -180,8 +183,11 @@ $(function(){
 	//Game creation starts here.
 	TopLevel.game = new GameSetUp(creation);
 
-	//ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_2, function(){
+	//var whiteFlash = new WhiteFlashContainer();
+
+	ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_2, function(){
 	 	//TopLevel.container.add('FadeToBlack').start();	
 	 	//TopLevel.game.softPause();
-	//});
+	 	//whiteFlash.on(null, null, {x:TopLevel.canvas.width/2, y:TopLevel.canvas.height/2});
+	});
 });

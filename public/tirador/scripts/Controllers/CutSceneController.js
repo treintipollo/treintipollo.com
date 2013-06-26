@@ -521,13 +521,23 @@ function CutSceneController() {
 
 				endMessage = TopLevel.container.add("EndingMessage", [
 					function() {
-						TopLevel.game.hardPause();
+						TopLevel.game.softPause();
+
+						TopLevel.container.add('FadeToBlack').start(
+							function() {
+								TopLevel.container.removeAll(true);
+								TopLevel.game.softResume();
+							}, function() {
+								TopLevel.resetGame();
+								TopLevel.playerData.ship = TopLevel.playerShipFactory.firstShip(TopLevel.canvas.width/2 - 45, TopLevel.canvas.height + 50);
+							}
+						);
 					}
 				]);
 
 				endMessage.enter();
 				badGuy.tractorBeam.on();
-				
+
 			}, true);
 
 		}, true).start();

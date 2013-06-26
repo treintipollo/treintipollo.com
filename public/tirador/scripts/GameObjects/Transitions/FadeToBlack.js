@@ -9,21 +9,25 @@ FadeToBlack.prototype.init = function() {
 }
 
 FadeToBlack.prototype.start = function(onFadeInComplete, onFadeOutComplete) {
-	TopLevel.hudController.hide(2, 0.5);
+	var mainDelay = 7;
+	var fadeTime = 4;
 
-	TweenMax.to(this, 2, {
+	TopLevel.hudController.hide(fadeTime, mainDelay);
+
+	TweenMax.to(this, fadeTime, {
 		alpha: 1,
-		delay: 0.5,
+		delay: mainDelay,
 		onCompleteScope: this,
 		onComplete: function() {
-			if (onFadeInComplete)
+			if (onFadeInComplete) {
 				onFadeInComplete();
+			}
 
-			TopLevel.hudController.show(2, 0.5);
+			TopLevel.hudController.show(fadeTime, mainDelay);
 
-			TweenMax.to(this, 2, {
+			TweenMax.to(this, fadeTime, {
 				alpha: 0,
-				delay: 0.5,
+				delay: mainDelay,
 				onCompleteScope: this,
 				onComplete: function() {
 					if (onFadeOutComplete) {
