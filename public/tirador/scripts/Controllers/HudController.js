@@ -108,5 +108,13 @@ function HudController() {
 		playerData.add(playerData.STAGE_UP, this, function(playerData) {
 			this.updateStage(playerData);
 		});
+		playerData.add(playerData.SOFT_RESET, this, function(playerData) {
+			$("#weapon").text("Shot x 1");
+			$("#lives").text("Lives x 1");
+			$("#speed").text("Speed x 1");
+			$("#level").text((" - " + 1 + " - ").toString());
+	
+			TweenMax.to($(".hp>span"), 0.1, { css: { width: $(".hp").width() } });	
+		});
 	}
 }

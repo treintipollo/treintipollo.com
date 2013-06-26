@@ -60,19 +60,14 @@ window.TopLevel = TopLevel;
 		//Different end boss for male and female
 			//male = armour
 			//female = mini bosses
-		//Wait and reset (DONE!)
-
-//TODO: Fix the Cluster Rockets of the Badguy
-	//Tienen que tomar el angulo de salida cuando van a salir disparados, ahora esta tomando el angulo
-	//que hay entre Badguy y player apenas es creado.
-
-//TODO: Matar todos los rockets del boss apenas muere
-		//Implementar un metodo que destruya todas las cosas de un tipo especifico
 
 //BUG FIX: Crashing with the last Badguy can be troublesome
 
 //TODO: Scale to fit while keeping aspect ratio
 	//CSS tranformation
+
+//TODO: Going off screen limits decreases life very slowly
+		//Handle the case in which life decreases past an attribute level
 
 //TODO: Buscar algo de musica y efectos de sonido
 	//Ver si encuentro packs de sonidos de SNES o algo por el estilo.
@@ -83,12 +78,12 @@ window.TopLevel = TopLevel;
 	   //Tweek Bosses themselves.
 	   //Tweek power up bonuses.
 	   //Tweek weapons
-	   		//Rocket Amount
-	   		//Homing Amount (locked and unlocked)
-	   			//Implement that difference.
+	   		//Rocket
+	   			//Sacarle la limitacion de cantidad.
+	   			//Poder tirar mas al mismo tiempo (cada vez que apretas la tecla)
+	   		//Homing
 	   			//Homing rockets explosion size.
-	   		//Shot speed and amount.
-	   		//Charge shot charging speed.
+	   			//Homing rockets drawing
 	   
 //Esto no es para este juego.
 //TODO: Simplify GameObject, extend Delegate.

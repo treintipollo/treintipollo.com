@@ -180,40 +180,46 @@ ObjectsContainer.prototype.add = function(name, args) {
 	return pooledObject;
 }
 
-ObjectsContainer.prototype.removeAll = function(rmAll) {
-	var configuration;
+ObjectsContainer.prototype.removeAll = function(rmAll, propName, propValue) {
+	var removeObject = function(object, collection, index) {
+		object.destroyCallbacks("onRecicleDelegate");
+		object.setDestroyMode(GameObject.NO_CALLBACKS);
+
+		if (object.checkingCollisions) {
+			this.collisionId = object.getCollisionId();
+
+			var indexes = this.toCollideCache[this.collisionId];
+
+			if (indexes != null && indexes.length > 0) {
+				for (m = indexes.length - 1; m >= 0; m--) {
+					this.collisionLists[indexes[m]].splice(this.collisionLists[indexes[m]].indexOf(object), 1);
+				}
+			}
+		}
+
+		object.clearGameObject();
+
+		this.objectPools[object.poolId].push(object);
+
+		collection.splice(index, 1);
+		object = null;
+	}
 
 	for (var i = 0; i < this.mainObjects.length; i++) {
 		var a = this.mainObjects[i];
 
 		if (a != null) {
 			for (var j = a.length - 1; j >= 0; j--) {
-				var object = a[j];
+				var o = a[j];
 
-				configuration = this.configurations[object.typeId];
+				if(o[propName] == propValue){
+					removeObject.call(this, o, a, j);
+					continue;
+				}
 
-				if (!configuration.doNotDestroy || rmAll) {
-					object.destroyCallbacks("onRecicleDelegate");
-					object.setDestroyMode(GameObject.NO_CALLBACKS);
-
-					if (object.checkingCollisions) {
-						this.collisionId = object.getCollisionId();
-
-						var indexes = this.toCollideCache[this.collisionId];
-
-						if (indexes != null && indexes.length > 0) {
-							for (m = indexes.length - 1; m >= 0; m--) {
-								this.collisionLists[indexes[m]].splice(this.collisionLists[indexes[m]].indexOf(object), 1);
-							}
-						}
-					}
-
-					object.clearGameObject();
-
-					this.objectPools[object.poolId].push(object);
-
-					a.splice(j, 1);
-					object = null;
+				if (!this.configurations[o.typeId] || rmAll) {
+					removeObject.call(this, o, a, j);
+					continue;
 				}
 			}
 		}

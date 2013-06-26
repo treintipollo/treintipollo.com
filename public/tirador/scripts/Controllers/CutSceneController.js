@@ -205,6 +205,10 @@ function CutSceneController() {
 
 		}, true);
 
+		this.badguy.addAllDamageReceivedCallback(this, function() {
+			TopLevel.container.removeAll(false, "poolId", "BadGuyRocket");
+		}, true);
+
 		this.badguy.addOnRecicleCallback(this, function() {
 			this.badguy = null;
 
@@ -526,9 +530,9 @@ function CutSceneController() {
 						TopLevel.container.add('FadeToBlack').start(
 							function() {
 								TopLevel.container.removeAll(true);
+								TopLevel.resetGame();
 								TopLevel.game.softResume();
 							}, function() {
-								TopLevel.resetGame();
 								TopLevel.playerData.ship = TopLevel.playerShipFactory.firstShip(TopLevel.canvas.width/2 - 45, TopLevel.canvas.height + 50);
 							}
 						);
