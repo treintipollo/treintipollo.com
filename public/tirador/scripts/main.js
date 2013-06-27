@@ -55,19 +55,12 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 	
-//TODO: Ending sequence
-	//Badguy shows up again like in the beginning
-		//Different end boss for male and female
-			//male = armour
-			//female = mini bosses
-
-//BUG FIX: Crashing with the last Badguy can be troublesome
-
-//TODO: Scale to fit while keeping aspect ratio
-	//CSS tranformation
-
 //TODO: Going off screen limits decreases life very slowly
 		//Handle the case in which life decreases past an attribute level
+
+//TODO: Different end boss for male and female
+		//male = armour
+		//female = mini bosses
 
 //TODO: Buscar algo de musica y efectos de sonido
 	//Ver si encuentro packs de sonidos de SNES o algo por el estilo.
@@ -180,9 +173,9 @@ $(function(){
 
 	//var whiteFlash = new WhiteFlashContainer();
 
-	ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_2, function(){
+	//ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_2, function(){
 	 	//TopLevel.container.add('FadeToBlack').start();	
 	 	//TopLevel.game.softPause();
 	 	//whiteFlash.on(null, null, {x:TopLevel.canvas.width/2, y:TopLevel.canvas.height/2});
-	});
+	//});
 });

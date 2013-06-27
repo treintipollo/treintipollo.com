@@ -40,7 +40,7 @@ GameSetUp.prototype.createMainGame = function() {
 
 			ArrowKeyHandler.pause();
 
-			if(!self.manualSoftPause) {
+			if (!self.manualSoftPause) {
 				window.cancelAnimationFrame(frameRequest);
 			}
 		}
@@ -48,7 +48,7 @@ GameSetUp.prototype.createMainGame = function() {
 
 	var onFocus = function(event) {
 		//A pause made manually can only be undone manually
-		if(self.manualHardPause || self.manualSoftPause) {
+		if (self.manualHardPause || self.manualSoftPause) {
 			return;
 		}
 
@@ -66,9 +66,9 @@ GameSetUp.prototype.createMainGame = function() {
 
 				ArrowKeyHandler.resume();
 
-				if(!self.wasInSoftPause) {
+				if (!self.wasInSoftPause) {
 					frameRequest = window.requestAnimationFrame(mainLoop);
-				}else{
+				} else {
 					self.wasInSoftPause = true;
 				}
 
@@ -76,6 +76,7 @@ GameSetUp.prototype.createMainGame = function() {
 		}
 	}
 
+	window.addEventListener('load', scaleToFitWithAspectRatio, false);
 	$(window).on("blur", onBlur);
 	$(window).on("focus", onFocus);
 
@@ -146,3 +147,32 @@ GameSetUp.prototype.dispatchUIEvent = function(event) {
 	window.dispatchEvent(evt);
 }
 
+function scaleToFitWithAspectRatio() {
+
+	var mainContainer = document.querySelector('#main');
+	var canvas = document.querySelector('#game');
+
+	window.addEventListener('resize', function() {
+		resize(mainContainer, canvas);
+	}, false);
+
+	resize(mainContainer, canvas);
+
+	function resize(container, canvas) {
+		var scale = { x: 1, y: 1 };
+
+		scale.x = (window.innerWidth-5) / canvas.width;
+		scale.y = (window.innerHeight-5) / canvas.height;
+
+		if (scale.x < scale.y) {
+			scale = scale.x + ', ' + scale.x;
+		} else {
+			scale = scale.y + ', ' + scale.y;
+		}
+
+		container.style.webkitTransform = 'scale(' + scale + ')';
+		container.style.mozTransform = 'scale(' + scale + ')';
+		container.style.msTransform = 'scale(' + scale + ')';
+		container.style.msTransform = 'scale(' + scale + ')';
+	}
+}
