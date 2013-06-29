@@ -212,12 +212,12 @@ ObjectsContainer.prototype.removeAll = function(rmAll, propName, propValue) {
 			for (var j = a.length - 1; j >= 0; j--) {
 				var o = a[j];
 
-				if(o[propName] == propValue){
+				if( (propName && propValue) && (o[propName] == propValue) ){
 					removeObject.call(this, o, a, j);
 					continue;
 				}
 
-				if (!this.configurations[o.typeId] || rmAll) {
+				if (!this.configurations[o.typeId].doNotDestroy || rmAll) {
 					removeObject.call(this, o, a, j);
 					continue;
 				}

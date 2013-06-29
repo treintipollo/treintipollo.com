@@ -282,7 +282,7 @@ TextConfigurationCreator.prototype.create = function() {
 		size: 30,
 		fill: "#FFFFFF",
 		stroke: "#FF0000",
-		lineWidth: 2,
+		lineWidth: 1,
 		align: "center",
 		baseline: "middle"
 	});
@@ -295,7 +295,7 @@ TextConfigurationCreator.prototype.create = function() {
 		size: 30,
 		fill: "#FFFFFF",
 		stroke: "#FF0000",
-		lineWidth: 2,
+		lineWidth: 1,
 		align: "center",
 		baseline: "middle"
 	});

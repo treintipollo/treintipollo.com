@@ -44,6 +44,9 @@ PlayerController.prototype.init = function(ship) {
 	ship.addDamageReceivedCallback(this, function(other) {
 		this.execute(this.HP_DOWN, this);
 	});
+	ship.addAllDamageReceivedCallback(this, function(other) {
+		this.execute(this.HP_DOWN, this);
+	});
 
 	this.execute(this.INIT, this);
 }
@@ -69,7 +72,7 @@ PlayerController.prototype.powerInit = function(ship) {
 	ship.addDamageReceivedCallback(this, function(other) {
 		this.execute(this.HP_DOWN, this);
 	});
-	ship.onAllDamageReceived(this, function(other) {
+	ship.addAllDamageReceivedCallback(this, function(other) {
 		this.execute(this.HP_DOWN, this);
 	});
 

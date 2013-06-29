@@ -56,27 +56,21 @@ var TopLevel = {
 window.TopLevel = TopLevel;
 	
 //TODO: Different end boss for male and female
-		//male = armour (DONE!)
 		//female = mini bosses
 			//Create a couple of mini bosses that follow the boss around like the armour pieces
 			//When the boss dies, they just blow up in place. No fancy death animation.
 
+//Tweek weapons
+		//Rocket
+			//Sacarle la limitacion de cantidad.
+			//Poder tirar mas al mismo tiempo (cada vez que apretas la tecla)
+		//Homing
+			//Homing rockets explosion size.
+			//Homing rockets drawing
+
 //TODO: Buscar algo de musica y efectos de sonido
 	//Ver si encuentro packs de sonidos de SNES o algo por el estilo.
 
-//TODO: Tweek base damages and damage multipliers. Everything.
-	   //Tweek powerup show up ratio.
-	   //Tweek boss attacks.
-	   //Tweek Bosses themselves.
-	   //Tweek power up bonuses.
-	   //Tweek weapons
-	   		//Rocket
-	   			//Sacarle la limitacion de cantidad.
-	   			//Poder tirar mas al mismo tiempo (cada vez que apretas la tecla)
-	   		//Homing
-	   			//Homing rockets explosion size.
-	   			//Homing rockets drawing
-	   
 //Esto no es para este juego.
 //TODO: Simplify GameObject, extend Delegate.
 

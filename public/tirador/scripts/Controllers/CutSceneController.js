@@ -182,7 +182,6 @@ function CutSceneController() {
 						var pieceLeft = TopLevel.container.add("BadGuyArmourPiece_Left", [this.badguy.x - 600, this.badguy.y - 5, this.badguy.leftAnchor.x, this.badguy.leftAnchor.y]);
 
 						pieceRight.addCallback("finishedIntro", this, function() {
-
 							this.badguy.setArmourPieces(pieceRight, pieceLeft);
 							this.badguy.startAttack();
 

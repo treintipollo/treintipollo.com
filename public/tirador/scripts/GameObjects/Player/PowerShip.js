@@ -65,7 +65,7 @@ PowerShip.prototype.setExhaustForwardState = function(state, args) {
 
 PowerShip.prototype.init = function(x, y, container){
 	Ship.prototype.init.call(this, x, y, container);	
-	this.collider.r = 40; 
+	this.collider.r = 30; 
 }
 
 PowerShip.prototype.draw = function(context) { 

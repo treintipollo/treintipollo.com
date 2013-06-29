@@ -219,6 +219,7 @@ Ship.prototype.gotoInitialState = function() {
 	if( ScreenUtils.isPastBottom(this.y, 0) || ScreenUtils.isPastTop(this.y, 0) ){
 		this.currentMotion.set(this.START_MOTION);
 	}else{
+		this.checkBounds = true;
 		this.setAllExhaustState(Exhaust.REGULAR);
 		this.currentMotion.set(this.IDLE_MOTION);
 	}
@@ -381,7 +382,7 @@ Ship.prototype.onAllDamageReceived = function(other) {
 	this.checkBounds        = false;
 	this.blockControls 		= true;
 	this.checkingCollisions = false;
-	
+
 	this.currentMotion.set(this.NONE_STOP_SHAKE_MOTION);
 	this.explosionArea.stop();
 	
