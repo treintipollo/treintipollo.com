@@ -92,6 +92,13 @@ Rocket.prototype.onAllDamageReceived = function(other) {
 	this.alive = false;
 }
 
+Rocket.microInitConfig = function() {
+	this.mainDimentionX = 4;
+	this.mainDimentionY = this.mainDimentionX*2;
+	this.centerX  = this.mainDimentionX/2;
+	this.centerY  = this.mainDimentionY/2;	
+}
+
 Rocket.smallInitConfig = function() {
 	this.mainDimentionX = 7.5;
 	this.mainDimentionY = this.mainDimentionX*2;
@@ -171,6 +178,16 @@ Rocket.clusterDrawing = function(context) {
 	context.closePath();
 
 	context.stroke();
+}
+
+Rocket.microExplosion = function() {
+	Rocket.ExplosionArguments[0] = this.x + this.centerX;
+	Rocket.ExplosionArguments[1] = this.y + this.centerY;
+	Rocket.ExplosionArguments[2] = this.rotation+90;
+	Rocket.ExplosionArguments[3] = 15;
+	Rocket.ExplosionArguments[4] = 70;
+	
+	this.container.add("Explosion_Damage", Rocket.ExplosionArguments);
 }
 
 Rocket.smallExplosion = function() {
@@ -381,6 +398,21 @@ ClusterSwarmRocket.prototype.destroy = function() {
 
 //Homing Rockets
 //------------------------------------------------------------
+
+function MicroHomingRocket() {
+	HomingRocket.call(this);
+	Rocket.microInitConfig.call(this);
+}
+
+MicroHomingRocket.inheritsFrom( HomingRocket );
+
+MicroHomingRocket.prototype.init    = function()        { HomingRocket.prototype.init.apply(this, arguments); }
+MicroHomingRocket.prototype.draw    = function(context) { Rocket.smallDrawing.call(this, context);           }
+
+MicroHomingRocket.prototype.destroy = function() { 
+	HomingRocket.prototype.destroy.call(this);
+	Rocket.microExplosion.call(this);	                
+}
 
 function SmallHomingRocket() {
 	HomingRocket.call(this);

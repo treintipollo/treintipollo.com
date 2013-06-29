@@ -112,9 +112,11 @@ ConfigurationCreator.prototype.create = function() {
 	TopLevel.container.createTypeConfiguration("SmallSwarmRocket", "SmallSwarmRocket").layer(1).collisionId("Rocket");
 	TopLevel.container.createTypeConfiguration("LargeSwarmRocket", "LargeSwarmRocket").layer(1).collisionId("Rocket");
 	TopLevel.container.createTypeConfiguration("ClusterSwarmRocket", "ClusterSwarmRocket").layer(1).collisionId("Rocket");
+
+	TopLevel.container.createTypeConfiguration("MicroHomingRocket", "MicroHomingRocket").layer(1).collisionId("Rocket");
 	TopLevel.container.createTypeConfiguration("SmallHomingRocket", "SmallHomingRocket").layer(1).collisionId("Rocket");
 	TopLevel.container.createTypeConfiguration("LargeHomingRocket", "LargeHomingRocket").layer(1).collisionId("Rocket");
-	TopLevel.container.createTypeConfiguration("ClusterHomingRocket", "ClusterHomingRocket").layer(1).collisionId("Rocket");
+
 	TopLevel.container.createTypeConfiguration("Debry", "Debry").layer(2).collisionId("Rocket");
 
 	TopLevel.container.createTypeConfiguration("ShotPowerUp", "ShotPowerUp").collisionId("PowerUp").layer(-2);

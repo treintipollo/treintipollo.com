@@ -50,16 +50,9 @@ var TopLevel = {
 			return TopLevel.container.add(name, this.textArgs);
 		}
 	},
-
-
 };
 window.TopLevel = TopLevel;
 	
-//Tweek weapons
-		//Homing
-			//Homing rockets explosion size. Smaller.
-			//Homing rockets drawing (Smaller)
-
 //TODO: Buscar algo de musica y efectos de sonido
 	//Ver si encuentro packs de sonidos de SNES o algo por el estilo.
 

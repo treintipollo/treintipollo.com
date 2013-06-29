@@ -25,16 +25,16 @@ function HomingRocketWeapon(id, name, level, user, hasInstructions) {
 							8, 16, 8, 
 							8, 16, 8, 16];
 
-	this.rocketTypes  = ["SmallHomingRocket",
-						 "LargeHomingRocket",
+	this.rocketTypes  = ["MicroHomingRocket",
+						 "SmallHomingRocket",
 
+						 "MicroHomingRocket",
+						 "MicroHomingRocket",
 						 "SmallHomingRocket",
-						 "SmallHomingRocket",
-						 "LargeHomingRocket",
 
+						 "MicroHomingRocket",
 						 "SmallHomingRocket",
 						 "SmallHomingRocket",
-						 "LargeHomingRocket",
 						 "LargeHomingRocket"];
 
 	var addDeployPosition = function(radius, angle) {

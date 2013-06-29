@@ -55,9 +55,9 @@ AttributeCreator.prototype.create = function() {
 	TopLevel.attributesGetter.setAttributes("LargeSwarmRocket", 0, 0, 0.9);
 	TopLevel.attributesGetter.setAttributes("ClusterSwarmRocket", 0, 0, 0.5);
 
-	TopLevel.attributesGetter.setAttributes("SmallHomingRocket", 0, 0, 0.8);
-	TopLevel.attributesGetter.setAttributes("LargeHomingRocket", 0, 0, 0.9);
-	TopLevel.attributesGetter.setAttributes("ClusterHomingRocket", 0, 0, 0.5);
+	TopLevel.attributesGetter.setAttributes("MicroHomingRocket", 0, 0, 0.2);
+	TopLevel.attributesGetter.setAttributes("SmallHomingRocket", 0, 0, 0.5);
+	TopLevel.attributesGetter.setAttributes("LargeHomingRocket", 0, 0, 0.5);
 
 	TopLevel.attributesGetter.setAttributes("Explosion_Damage", 50, 1, 0.1);
 	TopLevel.attributesGetter.setAttributes("Explosion_Effect", 0, 0, 0);

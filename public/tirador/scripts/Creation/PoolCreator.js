@@ -59,9 +59,9 @@ PoolCreator.prototype.create = function() {
 	TopLevel.container.createTypePool("LargeSwarmRocket", LargeSwarmRocket, 30);
 	TopLevel.container.createTypePool("ClusterSwarmRocket", ClusterSwarmRocket, 30);
 
+	TopLevel.container.createTypePool("MicroHomingRocket", MicroHomingRocket, 30);
 	TopLevel.container.createTypePool("SmallHomingRocket", SmallHomingRocket, 30);
 	TopLevel.container.createTypePool("LargeHomingRocket", LargeHomingRocket, 30);
-	TopLevel.container.createTypePool("ClusterHomingRocket", ClusterHomingRocket, 30);
 
 	TopLevel.container.createTypePool("BadGuyRocket", BadGuyRocket, 15);
 
