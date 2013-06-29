@@ -69,6 +69,9 @@ PlayerController.prototype.powerInit = function(ship) {
 	ship.addDamageReceivedCallback(this, function(other) {
 		this.execute(this.HP_DOWN, this);
 	});
+	ship.onAllDamageReceived(this, function(other) {
+		this.execute(this.HP_DOWN, this);
+	});
 
 	this.execute(this.INIT, this);
 }

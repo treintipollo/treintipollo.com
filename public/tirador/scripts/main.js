@@ -55,12 +55,11 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 	
-//TODO: Going off screen limits decreases life very slowly
-		//Handle the case in which life decreases past an attribute level
-
 //TODO: Different end boss for male and female
-		//male = armour
+		//male = armour (DONE!)
 		//female = mini bosses
+			//Create a couple of mini bosses that follow the boss around like the armour pieces
+			//When the boss dies, they just blow up in place. No fancy death animation.
 
 //TODO: Buscar algo de musica y efectos de sonido
 	//Ver si encuentro packs de sonidos de SNES o algo por el estilo.

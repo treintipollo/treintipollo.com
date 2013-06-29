@@ -205,6 +205,11 @@ Ship.prototype.createStateMachine = function() {
 	this.IDLE_MOTION 			= this.currentMotion.add(null, idle, null);
 	this.NONE_STOP_SHAKE_MOTION = this.currentMotion.add(slowAllDown, shake, null);
 	this.START_MOTION 			= this.currentMotion.add(gotoInitPosition, idle, null);
+
+	this.checkBounds = false;
+	this.addCallback("onInitialPositionDelegate", this, function(){
+		this.checkBounds = true;
+	}, true);
 }
 
 Ship.prototype.addInitialPositionReachedCallback = function(scope, callback, removeOnComplete) { this.addCallback("onInitialPositionDelegate", scope, callback, removeOnComplete); }
@@ -285,6 +290,10 @@ Ship.prototype.swapSymbol = function(delta) {
 
 Ship.prototype.update = function(delta) { 	
 	this.currentMotion.update();
+
+	if(!ScreenUtils.isInScreenBounds(this, 10, 10) && this.checkBounds) {
+		this.depleteHP(0.01);
+	}
 
 	if(!this.blockControls){
 		this.exhaustIdleState();
@@ -369,6 +378,7 @@ Ship.prototype.onLastDamageLevelReached = function(other) {
 }
 
 Ship.prototype.onAllDamageReceived = function(other) {
+	this.checkBounds        = false;
 	this.blockControls 		= true;
 	this.checkingCollisions = false;
 	

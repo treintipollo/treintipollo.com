@@ -83,6 +83,25 @@ Attributes.prototype.recoverHP = function(amount) {
 	this.onDamageRecovered();
 }
 
+Attributes.prototype.depleteHP = function(amount) {	
+	this.currentHp -= amount;
+	
+	if(this.currentHp > 0){
+		this.onHPDiminished();
+		this.executeCallbacks("onHpDeminishedDelegate");
+	}else{
+		if(this.increaseLevel()){
+			if(this.currentLevel == TopLevel.attributesGetter.getFullAttributes(this.typeId).length-1){
+				this.onLastDamageLevelReached();
+			}
+		}else{
+			this.blockDamage = true;
+			this.onAllDamageReceived();			
+			this.executeCallbacks("onAllDamageReceivedDelegate");
+		}		
+	}
+}
+
 Attributes.prototype.getTotalHp = function() {
 	var fullAttributes = TopLevel.attributesGetter.getFullAttributes(this.typeId);
 	var totalHp = 0;

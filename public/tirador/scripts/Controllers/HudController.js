@@ -20,7 +20,7 @@ function HudController() {
 		$("#level").text((" - " + stage + " - ").toString());
 	},
 
-	this.updateHP = function(playerData) {
+	this.updateHPPlus = function(playerData, onComplete) {
 		var totalHp = playerData.ship.getTotalHp();
 		var currentHp = playerData.ship.getCurrentHp();
 
@@ -32,7 +32,19 @@ function HudController() {
 		var hpPercentage = currentHp / totalHp;
 		var meterPercentage = totalWidth * hpPercentage;
 
-		TweenMax.to(domMeter, 0.5, { css: { width: meterPercentage } });
+		TweenMax.to(domMeter, 0.5, { css: { width: meterPercentage }, onComplete:onComplete });
+
+		domMeter.get(0).style.background = "#2BC253"; 
+
+		return domMeter.get(0);
+	},
+
+	this.updateHPMinus = function(playerData) {
+		var hpBar = this.updateHPPlus(playerData, function(){
+			hpBar.style.background = "#2BC253"; 
+		});
+
+		hpBar.style.background = "#ff3300";
 	},
 
 	this.hide = function(time, delay) {
@@ -76,7 +88,7 @@ function HudController() {
 			this.updateLives(playerData);
 			this.updateSpeed(playerData);
 			this.updateStage(playerData);
-			this.updateHP(playerData);
+			this.updateHPPlus(playerData);
 		});
 		playerData.add(playerData.WEAPON_INIT, this, function(playerData) {
 			this.updateWeapon(playerData);
@@ -97,13 +109,13 @@ function HudController() {
 			this.updateLives(playerData);
 		});
 		playerData.add(playerData.LIVES_DOWN, this, function(playerData) {
-			this.updateHP(playerData);
+			this.updateHPPlus(playerData);
 		});
 		playerData.add(playerData.HP_UP, this, function(playerData) {
-			this.updateHP(playerData);
+			this.updateHPPlus(playerData);
 		});
 		playerData.add(playerData.HP_DOWN, this, function(playerData) {
-			this.updateHP(playerData);
+			this.updateHPMinus(playerData);
 		});
 		playerData.add(playerData.STAGE_UP, this, function(playerData) {
 			this.updateStage(playerData);

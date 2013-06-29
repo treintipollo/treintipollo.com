@@ -47,9 +47,7 @@
 .hp > span {
 	display: block;
 	height: 100%;
-	
-	background-image: -webkit-linear-gradient(left, #2BC253, #2BC253); 
-
+	background: #2BC253;
 	position: relative;
 	overflow: hidden;
 }

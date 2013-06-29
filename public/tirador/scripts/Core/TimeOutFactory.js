@@ -15,6 +15,7 @@ $(function(){
 				initRepeatCount:repeatCount,
 				onComplete:null,
 
+				repeates:0,
 				id:-1,
 				startTime:-1,
 				pauseTime:-1,
@@ -58,7 +59,8 @@ $(function(){
 					this.id = setTimeout(function(){
 						if(to.isRunning && !to.isPaused){
 							if(to.callback) {
-								to.callback.call(to.scope);
+								to.callback.call(to.scope, to.repeates);
+								to.repeates++;
 							}
 						}else{
 							return;
@@ -86,6 +88,8 @@ $(function(){
 						}
 
 					}, actualDelay);
+
+					return this;
 				},
 
 				stop: function(){
@@ -95,6 +99,7 @@ $(function(){
 					this.isPaused     = false;
 					this.repeateCount = this.initRepeatCount;
 					this.resumeDelay  = -1;
+					this.repeates     = 0;
 				},
 
 				reset: function(){
