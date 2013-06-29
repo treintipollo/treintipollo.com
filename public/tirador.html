@@ -1,7 +1,7 @@
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
 	<meta charset="utf-8">
-	<title>Space Shooting Game Prototype</title>
+	<title>Space Shooting Game</title>
 
 	<link href='http://fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="tirador/styles/main.css" />
@@ -26,58 +26,110 @@
 		</div>	
 	</div>
 
-	<script src="tirador/libs/jquery-1.8.3.min.js"></script>
-	<script src="tirador/libs/TweenMax.js"></script>
-	<script src="tirador/libs/TimelineLite.min.js"></script>
-	<script src="tirador/libs/BezierPlugin.min.js"></script>
-	<script src="tirador/libs/ColorPropsPlugin.min.js"></script>
-	<script src="tirador/libs/ShortRotationPlugin.js"></script>
-	<script src="tirador/libs/SAT.js"></script>
+	<!-- Externals -->
+		<!-- Jquery -->
+		<script src="tirador/libs/jquery-1.8.3.min.js"></script>
+		
+		<!-- GSAP -->
+		<script src="tirador/libs/TweenMax.js"></script>
+		<script src="tirador/libs/TimelineLite.min.js"></script>
+		<script src="tirador/libs/BezierPlugin.min.js"></script>
+		<script src="tirador/libs/ColorPropsPlugin.min.js"></script>
+		<script src="tirador/libs/ShortRotationPlugin.js"></script>
+		
+		<!-- Collision detection -->
+		<script src="tirador/libs/SAT.js"></script>
+	<!-- Externals -->
 
+	<!-- Core -->
+	<script src="tirador/scripts/Core/TimeOutFactory.js"></script>
+	<script src="tirador/scripts/Core/CoreUtils.js"></script>	
 	<script src="tirador/scripts/Core/GameObject.js"></script>
 	<script src="tirador/scripts/Core/ObjectsContainer.js"></script>
-	<script src="tirador/scripts/Core/TimeOutFactory.js"></script>
 	<script src="tirador/scripts/Core/StateMachine.js"></script>
-	<script src="tirador/scripts/Core/CoreUtils.js"></script>
+	<script src="tirador/scripts/Core/GameSetUp.js"></script>
 	
+	<!-- Utilities -->
 	<script src="tirador/scripts/Utilities/MiscMethodsUtils.js"></script>
 	<script src="tirador/scripts/Utilities/GameObjectsUtils.js"></script>
 	
 	<script src="tirador/scripts/Input/ArrowKeyHandler.js"></script>
 
+	<!-- Weapons -->
 	<script src="tirador/scripts/Weapons/Weapon.js"></script>
 	<script src="tirador/scripts/Weapons/ShotWeapon.js"></script>
 	<script src="tirador/scripts/Weapons/RocketWeapon.js"></script>
 	<script src="tirador/scripts/Weapons/HomingRocketWeapon.js"></script>
+	<script src="tirador/scripts/Weapons/PowerBeamWeapon.js"></script>
 
 	<script src="tirador/scripts/GameData/Attributes.js"></script>
-	<script src="tirador/scripts/GameData/Boss_1_ConfigurationGetter.js"></script>
+	<script src="tirador/scripts/GameData/AttributesGetter.js"></script>
 
-	<script src="tirador/scripts/GameObjects/Scenario/Star.js"></script>
-	
+	<!-- Player Ship -->
 	<script src="tirador/scripts/GameObjects/Player/Ship.js"></script>
+	<script src="tirador/scripts/GameObjects/Player/PowerShip.js"></script>
 	<script src="tirador/scripts/GameObjects/Player/Rocket.js"></script>
 	<script src="tirador/scripts/GameObjects/Player/Shot.js"></script>
 	<script src="tirador/scripts/GameObjects/Player/PowerShot.js"></script>
 	<script src="tirador/scripts/GameObjects/Player/Target.js"></script>
 	
+	<!-- PowerUps -->
 	<script src="tirador/scripts/GameObjects/PowerUps/PowerUps.js"></script>
 
+	<!-- Text -->
 	<script src="tirador/scripts/GameObjects/Text/GameText.js"></script>
 	<script src="tirador/scripts/GameObjects/Text/Splash.js"></script>
+	<script src="tirador/scripts/GameObjects/Text/EndingMessage.js"></script>
 
+	<!-- Transitions -->
+	<script src="tirador/scripts/GameObjects/Transitions/FadeToBlack.js"></script>
+
+	<!-- Misc -->
+	<script src="tirador/scripts/GameObjects/Scenario/Star.js"></script>
 	<script src="tirador/scripts/GameObjects/Misc/Debry.js"></script>
 	<script src="tirador/scripts/GameObjects/Misc/Explosion.js"></script>
+	<script src="tirador/scripts/GameObjects/Misc/BeamCollider.js"></script>
+	<script src="tirador/scripts/GameObjects/Misc/BadGuyArmourPiece.js"></script>
 
+	<!-- Enemies -->
 	<script src="tirador/scripts/GameObjects/Enemies/BadGuyRockets.js"></script>
 	<script src="tirador/scripts/GameObjects/Enemies/EnemyRocket.js"></script>
 	<script src="tirador/scripts/GameObjects/Enemies/Fireball.js"></script>
 	<script src="tirador/scripts/GameObjects/Enemies/CloneShip.js"></script>
 	<script src="tirador/scripts/GameObjects/Enemies/CargoShip.js"></script>
 	
+	<!-- Bosses -->
 	<script src="tirador/scripts/GameObjects/Bosses/BadGuy.js"></script>
 	<script src="tirador/scripts/GameObjects/Bosses/Boss_1.js"></script>
 
+	<!-- Factories -->
+	<script src="tirador/scripts/Factories/EnemyRocketFactory.js"></script>
+	<script src="tirador/scripts/Factories/StarFactory.js"></script>
+	<script src="tirador/scripts/Factories/PlayerShipFactory.js"></script>
+	<script src="tirador/scripts/Factories/PowerUpFactory.js"></script>
+	<script src="tirador/scripts/Factories/WeaponFactory.js"></script>
+
+	<!-- Controllers -->
+	<script src="tirador/scripts/Controllers/HudController.js"></script>
+	<script src="tirador/scripts/Controllers/PlayerController.js"></script>
+	<script src="tirador/scripts/Controllers/CutSceneController.js"></script>
+	<script src="tirador/scripts/Controllers/GameModeController.js"></script>
+
+	<!-- Creators -->
+	<script src="tirador/scripts/Creation/PoolCreator.js"></script>
+	<script src="tirador/scripts/Creation/ConfigurationCreator.js"></script>
+	<script src="tirador/scripts/Creation/TextConfigurationCreator.js"></script>
+	<script src="tirador/scripts/Creation/CollisionPairCreator.js"></script>
+	<script src="tirador/scripts/Creation/AttributeCreator.js"></script>
+
+	<!-- Configurators -->
+	<script src="tirador/scripts/Configuration/PlayerShipFactoryConfiguration.js"></script>
+	<script src="tirador/scripts/Configuration/PowerUpConfiguration.js"></script>
+	
+	<!-- Boss Configuration -->
+	<script src="tirador/scripts/GameData/Boss_1_ConfigurationGetter.js"></script>
+
+	<!-- Effects -->
 	<script src="tirador/scripts/Effects/Exhaust.js"></script>
 	<script src="tirador/scripts/Effects/ParticleBeam.js"></script>
 	<script src="tirador/scripts/Effects/ShotCharge.js"></script>
@@ -88,7 +140,9 @@
 	<script src="tirador/scripts/Effects/WhiteFlash.js"></script>
 	<script src="tirador/scripts/Effects/MultiGun.js"></script>
 	<script src="tirador/scripts/Effects/TractorBeam.js"></script>
+	<script src="tirador/scripts/Effects/BezierParticleBeam.js"></script>
 
+	<!-- Application entry point -->
 	<script src="tirador/scripts/main.js"></script>
 </body>
 </html>
