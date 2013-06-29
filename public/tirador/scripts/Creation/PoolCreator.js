@@ -55,13 +55,13 @@ PoolCreator.prototype.create = function() {
 
 	//This looks like a place where I can reduce the pool size, significantly. From 120 to 20 Objects. A Wooping 84%!
 	//I would need to have a base Rocket, which receives the prototypes for Small, Large and Cluster for drawing aswell as Swarm and Homing for behaviour.
-	TopLevel.container.createTypePool("SmallSwarmRocket", SmallSwarmRocket, 20);
-	TopLevel.container.createTypePool("LargeSwarmRocket", LargeSwarmRocket, 20);
-	TopLevel.container.createTypePool("ClusterSwarmRocket", ClusterSwarmRocket, 20);
+	TopLevel.container.createTypePool("SmallSwarmRocket", SmallSwarmRocket, 30);
+	TopLevel.container.createTypePool("LargeSwarmRocket", LargeSwarmRocket, 30);
+	TopLevel.container.createTypePool("ClusterSwarmRocket", ClusterSwarmRocket, 30);
 
-	TopLevel.container.createTypePool("SmallHomingRocket", SmallHomingRocket, 20);
-	TopLevel.container.createTypePool("LargeHomingRocket", LargeHomingRocket, 20);
-	TopLevel.container.createTypePool("ClusterHomingRocket", ClusterHomingRocket, 20);
+	TopLevel.container.createTypePool("SmallHomingRocket", SmallHomingRocket, 30);
+	TopLevel.container.createTypePool("LargeHomingRocket", LargeHomingRocket, 30);
+	TopLevel.container.createTypePool("ClusterHomingRocket", ClusterHomingRocket, 30);
 
 	TopLevel.container.createTypePool("BadGuyRocket", BadGuyRocket, 15);
 

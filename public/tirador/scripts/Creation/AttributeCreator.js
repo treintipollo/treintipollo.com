@@ -88,7 +88,7 @@ AttributeCreator.prototype.create = function() {
 	TopLevel.attributesGetter.setAttributes("Boss_1_F", 30, 1, 10);
 	TopLevel.attributesGetter.setAttributes("Boss_1_F", 30, 1, 10);
 	TopLevel.attributesGetter.setAttributes("Boss_1_F", 30, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_F", 60, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_F", 100, 1, 10);
 
 	TopLevel.attributesGetter.setAttributes("Boss_1_Helper_Beam_1", 20, 1, 10);
 	TopLevel.attributesGetter.setAttributes("Boss_1_Helper_Sniper_1", 20, 1, 10);

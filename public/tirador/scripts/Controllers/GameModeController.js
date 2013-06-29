@@ -89,7 +89,7 @@ function GameModeController() {
 
 		{
 			sub: getBoss("Middle_3_BadGuy", null, null, getFightBadGuy),
-			main: getBoss("Boss_1_D", "warning", "boom", getMainBoss),
+			main: getBoss("Boss_1_E", "warning", "boom", getMainBoss),
 			next: false,
 			last: false,
 			drop: "MultiWeaponPowerUp"

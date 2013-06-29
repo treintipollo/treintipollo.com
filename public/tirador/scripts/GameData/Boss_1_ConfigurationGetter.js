@@ -393,7 +393,7 @@ $(function(){
 	},
 
 	//Parameters for clone generator attack, and clone formations
-	cloneAttackProps_1:{cloneWaveDelay:2000,
+	cloneAttackProps_1:{cloneWaveDelay:1000,
 						cloneWaveAmount:5,
 
 						cloneWaves:
@@ -1003,7 +1003,7 @@ $(function(){
 					   {eyeTypes:[this.ids.CLONE_EYE],  
 					   deathMotion:this.ids.DEATH_1_MOTION,
 					   cycleMode:this.ids.RANDOM_EYE_CYCLE, 
-					   blinkTime:5000,
+					   blinkTime:2000,
 					   recoverFromKnockTime:4,
 					   tentacleMotion:this.ids.TENTACLE_OSCILATION_MOTION,
 					   tentacleOscillationTime:5,

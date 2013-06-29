@@ -36,10 +36,10 @@ function RocketWeapon(id, name, level, user, hasInstructions) {
 		[ [7, 11, 13], [2, 10, 14] ]
 	];
 
-	this.voleyAmounts    = [16, 16, 
-							20, 20, 
-							8, 8, 
-							8, 8, 8];
+	this.voleyAmounts    = [24, 24, 
+							24, 24, 
+							24, 24, 
+							24, 24, 24];
 
 	this.rocketTypes  = ["SmallSwarmRocket",
 						 "LargeSwarmRocket",
@@ -75,66 +75,36 @@ RocketWeapon.prototype.init = function(container) {
 
 	var inst = this;
 
-	var currentTarget = 0;
-	
-	var nextTargetAvailable = function() {
-		if(inst.targets.length == 0){ 
-			return false;
-		}
-		if(inst.targets.length == 1){
-			currentTarget = 0;
-			return true;
-		}
-
-		currentTarget++;
-		
-		if(currentTarget > inst.targets.length-1){
-			currentTarget = 0;	
-		}
-
-		var target = inst.targets[currentTarget];
-
-		if(!target) {
-			return nextTargetAvailable();			
-		}
-	}
-
 	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_1, function(){
 
 		if(!ScreenUtils.isInScreenBoundsXY(inst.user.x, inst.user.y, 10, 10)){
 			return;
 		}
 
-		if(nextTargetAvailable() == false){
-			return;
-		}
+		for(var i=0; i<inst.targets.length; i++){
+			var t = inst.targets[i];
 
-		var t = inst.targets[currentTarget];
+			if(!t) continue;
 
-		var xOffset = Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1);
-		var yOffset = Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1);
+			var xOffset = Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(1, -1);
+			var yOffset = Random.getRandomArbitary(-75, 75)*Random.getRandomBetweenToValues(-1, 1);
 
-		RocketWeapon.RocketArguments[0]   = inst.user.x;
-		RocketWeapon.RocketArguments[1]   = inst.user.y;
-		RocketWeapon.RocketArguments[2].x = inst.user.x + xOffset;
-		RocketWeapon.RocketArguments[2].y = inst.user.y + yOffset;
-		RocketWeapon.RocketArguments[3]   = t.t;
-		RocketWeapon.RocketArguments[4]   = inst.container;
-		RocketWeapon.RocketArguments[5]   = 0;
-		RocketWeapon.RocketArguments[6]   = inst.rocketSpecificArguments[inst.level][0];
+			RocketWeapon.RocketArguments[0]   = inst.user.x;
+			RocketWeapon.RocketArguments[1]   = inst.user.y;
+			RocketWeapon.RocketArguments[2].x = inst.user.x + xOffset;
+			RocketWeapon.RocketArguments[2].y = inst.user.y + yOffset;
+			RocketWeapon.RocketArguments[3]   = t.t;
+			RocketWeapon.RocketArguments[4]   = inst.container;
+			RocketWeapon.RocketArguments[5]   = 0;
+			RocketWeapon.RocketArguments[6]   = inst.rocketSpecificArguments[inst.level][0];
 
-		var r = inst.container.add(inst.rocketTypes[inst.level], RocketWeapon.RocketArguments);
+			var r = inst.container.add(inst.rocketTypes[inst.level], RocketWeapon.RocketArguments);
 
-		if(r){
-			t.rocketLimit--;
-
-			if(t.rocketLimit < 0){
-				t.t.disable();
+			if(r){
+				inst.idleTimer.reset();
 			}
-
 		}
 
-		inst.idleTimer.reset();
 	});
 
 	this.callbacks.push(c);
