@@ -205,7 +205,7 @@ function CutSceneController() {
 		}, true);
 
 		this.badguy.addAllDamageReceivedCallback(this, function() {
-			TopLevel.container.removeAll(false, "poolId", "BadGuyRocket");
+			TopLevel.container.requestRemoveAll(false, "poolId", "BadGuyRocket");
 		}, true);
 
 		this.badguy.addOnRecicleCallback(this, function() {

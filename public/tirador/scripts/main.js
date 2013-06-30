@@ -53,6 +53,11 @@ var TopLevel = {
 };
 window.TopLevel = TopLevel;
 	
+//TODO: Optimize drawing method.
+		//Cache procedural drawing in memory. Then draw that image in place each frame, instead of redrawing proceduraly each frame.
+		//This will not be possible where procedural animations take place. Like the eye of the Boss or its tentacles. But things like Rockets and particles could be cached.
+		//Reduce object pool sizes.
+		
 //TODO: Buscar algo de musica y efectos de sonido
 	//Ver si encuentro packs de sonidos de SNES o algo por el estilo.
 
@@ -82,10 +87,6 @@ window.TopLevel = TopLevel;
 
 //TODO: Optimizations
 	//TODO: Reduce memory Footprint.
-	//TODO: Optimize drawing method.
-			//Cache procedural drawing in memory. Then draw that image in place each frame, instead of redrawing proceduraly each frame.
-			//This will not be possible where procedural animations take place. Like the eye of the Boss or its tentacles. But things like Rockets and particles could be cached.
-			//Reduce object pool sizes.
 			//Reduce amount of objects created to cache data.
 	//TODO: //I Could setup the GameObjects in a way in which I can specify if they need an update or not. 
 			//That could reduce method calls greatly, since a lot of GameObjects don't use update at all.

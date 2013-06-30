@@ -13,6 +13,8 @@ function ObjectsContainer(drawContext) {
 	this.objectPools = {};
 	this.configurations = {};
 
+	this.removeAllArguments = null;
+
 	return this;
 }
 
@@ -108,6 +110,11 @@ ObjectsContainer.prototype.update = function(delta, updateConfiguredOnly) {
 			}
 		}
 	}
+
+	if(this.removeAllArguments){
+		debugger;
+		this.removeAll.apply(this, this.removeAllArguments);
+	}
 }
 
 ObjectsContainer.prototype.add = function(name, args) {
@@ -180,7 +187,13 @@ ObjectsContainer.prototype.add = function(name, args) {
 	return pooledObject;
 }
 
+ObjectsContainer.prototype.requestRemoveAll = function(rmAll, propName, propValue) {
+	this.removeAllArguments = [ rmAll, propName, propValue ];
+}
+
 ObjectsContainer.prototype.removeAll = function(rmAll, propName, propValue) {
+	this.removeAllArguments = null
+
 	var removeObject = function(object, collection, index) {
 		object.destroyCallbacks("onRecicleDelegate");
 		object.setDestroyMode(GameObject.NO_CALLBACKS);
@@ -212,14 +225,14 @@ ObjectsContainer.prototype.removeAll = function(rmAll, propName, propValue) {
 			for (var j = a.length - 1; j >= 0; j--) {
 				var o = a[j];
 
-				if( (propName && propValue) && (o[propName] == propValue) ){
-					removeObject.call(this, o, a, j);
-					continue;
-				}
-
-				if (!this.configurations[o.typeId].doNotDestroy || rmAll) {
-					removeObject.call(this, o, a, j);
-					continue;
+				if(propName && propValue) {
+					if( (propName && propValue) && (o[propName] == propValue) ){
+						removeObject.call(this, o, a, j);
+					}
+				}else {
+					if (!this.configurations[o.typeId].doNotDestroy || rmAll) {
+						removeObject.call(this, o, a, j);
+					}
 				}
 			}
 		}
