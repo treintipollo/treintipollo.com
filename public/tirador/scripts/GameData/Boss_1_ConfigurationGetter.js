@@ -393,7 +393,7 @@ $(function(){
 	},
 
 	//Parameters for clone generator attack, and clone formations
-	cloneAttackProps_1:{cloneWaveDelay:1000,
+	cloneAttackProps_1:{cloneWaveDelay:3000,
 						cloneWaveAmount:5,
 
 						cloneWaves:
