@@ -168,6 +168,9 @@ ObjectsContainer.prototype.add = function(name, args) {
 	//Removing any callbacks from previous encarnations of this GameObject
 	pooledObject.removeAllCallbacks();
 
+	//Sets all callbacks registered with the configuration object
+	configuration.setCallbacks(pooledObject);
+
 	//Initialize it with given arguments. Arguments are passes as a single object or a list depending on configuration. Look up APPLY and CALL
 	pooledObject.init[initCall](pooledObject, args);
 
@@ -316,6 +319,7 @@ ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type) {
 		hardArguments: null,
 		doNotDestroy: false,
 		activeOnSoftPause: false,
+		callbacks: null,
 
 		collisionId: function(cType) {
 			this.collisionType = cType;
@@ -344,6 +348,25 @@ ObjectsContainer.prototype.createTypeConfiguration = function(typeAlias, type) {
 		activeSoftPause: function() {
 			this.activeOnSoftPause = true;
 			return this;
+		},
+		addCallback: function(name, scope, callback) {
+			if(!this.callbacks){
+				this.callbacks = [];
+			}
+
+			this.callbacks.push({name:name, scope:scope, callback:callback});
+
+			return this;
+
+		},
+		setCallbacks: function(object) {
+			if(!object || !this.callbacks) return;
+
+			for(var i=0; i<this.callbacks.length; i++) {
+				var co = this.callbacks[i];
+
+				object.addCallback(co.name, co.scope, co.callback, false, true);
+			}
 		}
 	};
 

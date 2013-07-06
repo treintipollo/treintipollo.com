@@ -17,6 +17,8 @@ function GameObject() {
 
 	this.destroyMode = GameObject.EXECUTE_CALLBACKS;
 
+	this.delegatesToCleanUp;
+
 	this.doTranslation = true;
 	this.doRotation    = true;
 	this.doScaling     = true;
@@ -40,10 +42,18 @@ GameObject.prototype.destroyWithOutCallBacks = function(){
 	this.destroyMode = GameObject.NO_CALLBACKS;
 }
 
-GameObject.prototype.addCallback = function(delegateName, scope, callback, removeOnExecute) {
+GameObject.prototype.addCallback = function(delegateName, scope, callback, removeOnExecute, cleanUp) {
 	if(!this[delegateName]){ this[delegateName] = []; }
 
 	var r = removeOnExecute ? true : false;
+
+	if(cleanUp) {
+		if(!this.delegatesToCleanUp){
+			this.delegatesToCleanUp = [];
+		}
+
+		this.delegatesToCleanUp.push(delegateName);
+	}
 
 	this[delegateName].push({scope:scope, callback:callback, removeOnExecute:r});
 }
@@ -101,6 +111,12 @@ GameObject.prototype.removeAllCallbacks = function() {
 	this.destroyCallbacks("onCollideDelegate");
 	this.destroyCallbacks("onInitDelegate"   );
 	this.destroyCallbacks("onRecicleDelegate");
+
+	if(this.delegatesToCleanUp) {
+		while(this.delegatesToCleanUp.length > 0) {
+			this.destroyCallbacks(this.delegatesToCleanUp.pop());
+		}
+	}
 }
 
 GameObject.prototype.transformAndDraw = function(context) {

@@ -134,6 +134,7 @@ ShotWeapon.prototype.init = function(container) {
 		}
 
 		inst.user.executeCallbacks("firstShotDelegate", inst.user);
+		inst.user.executeCallbacks("shot");
 	});
 
 	this.callbacks.push(this.keyUpCallback);
