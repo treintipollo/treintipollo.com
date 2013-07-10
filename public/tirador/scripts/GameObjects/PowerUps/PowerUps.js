@@ -53,6 +53,8 @@ PowerUp.prototype.destroy = function() {
 
 PowerUp.prototype.onCollide = function(other){
 	this.alive = false;
+
+	this.executeCallbacks("pickUp"); 
 }
 
 function ShotPowerUp() {}

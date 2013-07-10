@@ -261,6 +261,8 @@ Boss_1.prototype.init = function(x, y, target) {
 	}
 
 	var tremble = function(x, y){
+		this.executeCallbacks("hit");
+
 		this.trembleTimer.start();
 	}
 
@@ -861,7 +863,7 @@ function Boss_1_Weapon_Twin_Beam(user, target, onStart, onComplete) {
 	this.beam1.init(TopLevel.container, user, target, user.config.twinBeam1Props);
 
 	this.beam2 = new StraightBeam(user.config.beamProps);
-	this.beam2.init(TopLevel.container, user, target, user.config.twinBeam2Props);
+	this.beam2.init(TopLevel.container, user, target, user.config.twinBeam2Props, false);
 
 	this.beam1.onStart    = onStart;
 	this.beam1.onComplete = onComplete;

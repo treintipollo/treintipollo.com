@@ -32,10 +32,17 @@ function StraightBeam(beamProperties) {
 
 StraightBeam.ColliderArguments = [null, null, null, null, null];
 
-StraightBeam.prototype.init = function(container, origin, target, beamProperties) {
+StraightBeam.prototype.init = function(container, origin, target, beamProperties, dispatchEvents) {
 	this.container  = container;
 	this.origin     = origin;
 	this.target     = target;
+
+	if(dispatchEvents == false) {
+		this.dispatchEvents = false;
+	}
+	else {
+		this.dispatchEvents = true;
+	}
 
 	this.size        = beamProperties[0];
 	this.pieces      = beamProperties[1];
@@ -82,7 +89,11 @@ StraightBeam.prototype.fire = function(fireAngle) {
 	
 	this.shootTimer.start();
 		
-	this.shootTimer.callback = function(){
+	this.shootTimer.callback = function() {
+		if(this.dispatchEvents) {
+			this.origin.executeCallbacks("laser");
+		}
+
 		var start = null;
 		var end = null;
 
@@ -144,6 +155,10 @@ StraightBeam.prototype.disable = function() {
 	}
 
 	this.collider.length = 0;
+
+	if(this.dispatchEvents) {
+		this.origin.executeCallbacks("stopLaser");
+	}
 }
 
 StraightBeam.prototype.forceDisable = function() {

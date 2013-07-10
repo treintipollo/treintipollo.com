@@ -173,6 +173,6 @@ function scaleToFitWithAspectRatio() {
 		container.style.webkitTransform = 'scale(' + scale + ')';
 		container.style.mozTransform = 'scale(' + scale + ')';
 		container.style.msTransform = 'scale(' + scale + ')';
-		container.style.msTransform = 'scale(' + scale + ')';
+		container.style.oTransform = 'scale(' + scale + ')';
 	}
 }

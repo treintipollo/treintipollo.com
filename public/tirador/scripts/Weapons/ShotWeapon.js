@@ -115,13 +115,17 @@ ShotWeapon.prototype.init = function(container) {
 	this.keyUpCallback = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_1, function(){
 		if(inst.powerShotVoley != null){
 			inst.powerShotVoley.release();
+
+			inst.user.executeCallbacks("shot");
 		}else{
 			if(inst.currentVoleyCount < inst.voleyAmounts[inst.level]){
 				inst.currentVoleyCount++;				
 
 				new ShotVoley(inst.shotTypes[inst.level], inst.shotLevels[inst.level], inst.user, inst.container, function(){
 					inst.currentVoleyCount--;
-				});	
+				});
+
+				inst.user.executeCallbacks("shot");
 			}
 		}
 
@@ -134,7 +138,6 @@ ShotWeapon.prototype.init = function(container) {
 		}
 
 		inst.user.executeCallbacks("firstShotDelegate", inst.user);
-		inst.user.executeCallbacks("shot");
 	});
 
 	this.callbacks.push(this.keyUpCallback);
