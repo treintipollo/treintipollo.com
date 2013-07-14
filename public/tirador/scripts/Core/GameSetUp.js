@@ -11,10 +11,40 @@ function GameSetUp(mainGameSetUp) {
 	this.manualSoftPause = false;
 	this.wasInSoftPause = false;
 
-	this.createMainGame();
+	window.addEventListener('load', function() {
+		var mainContainer = document.querySelector('#main');
+		var canvas = document.querySelector('#game');
+
+		window.addEventListener('resize', function() {
+			resize(mainContainer, canvas);
+		}, false);
+
+		resize(mainContainer, canvas);
+
+		function resize(container, canvas) {
+			var scale = {
+				x: 1,
+				y: 1
+			};
+
+			scale.x = (window.innerWidth - 5) / canvas.width;
+			scale.y = (window.innerHeight - 5) / canvas.height;
+
+			if (scale.x < scale.y) {
+				scale = scale.x + ', ' + scale.x;
+			} else {
+				scale = scale.y + ', ' + scale.y;
+			}
+
+			container.style.webkitTransform = 'scale(' + scale + ')';
+			container.style.mozTransform = 'scale(' + scale + ')';
+			container.style.msTransform = 'scale(' + scale + ')';
+			container.style.oTransform = 'scale(' + scale + ')';
+		}
+	}, false);
 }
 
-GameSetUp.prototype.createMainGame = function() {
+GameSetUp.prototype.setUp = function() {
 	var frameRequest, mainLoop;
 
 	var self = this;
@@ -23,7 +53,6 @@ GameSetUp.prototype.createMainGame = function() {
 		this.initialized = true;
 		this.mainGameSetUp();
 	});
-
 
 	//Setting up the onBlur and onFocus events.
 	//If the game is not initialized because it has no focus, these will be created anyway.
@@ -80,7 +109,7 @@ GameSetUp.prototype.createMainGame = function() {
 		}
 	}
 
-	window.addEventListener('load', scaleToFitWithAspectRatio, false);
+
 	$(window).on("blur", onBlur);
 	$(window).on("focus", onFocus);
 
@@ -149,38 +178,4 @@ GameSetUp.prototype.dispatchUIEvent = function(event) {
 	var evt = document.createEvent("UIEvents");
 	evt.initUIEvent(event, true, true, window, 1);
 	window.dispatchEvent(evt);
-}
-
-function scaleToFitWithAspectRatio() {
-
-	console.log("BLABLABLA");
-
-	var mainContainer = document.querySelector('#main');
-	var canvas = document.querySelector('#game');
-
-	window.addEventListener('resize', function() {
-		resize(mainContainer, canvas);
-	}, false);
-
-	resize(mainContainer, canvas);
-
-	function resize(container, canvas) {
-		console.log("RESIZE");
-
-		var scale = { x: 1, y: 1 };
-
-		scale.x = (window.innerWidth-5) / canvas.width;
-		scale.y = (window.innerHeight-5) / canvas.height;
-
-		if (scale.x < scale.y) {
-			scale = scale.x + ', ' + scale.x;
-		} else {
-			scale = scale.y + ', ' + scale.y;
-		}
-
-		container.style.webkitTransform = 'scale(' + scale + ')';
-		container.style.mozTransform = 'scale(' + scale + ')';
-		container.style.msTransform = 'scale(' + scale + ')';
-		container.style.oTransform = 'scale(' + scale + ')';
-	}
 }

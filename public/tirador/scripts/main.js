@@ -148,11 +148,11 @@ $(function() {
 	}
 
 	SoundPlayer.createChannels(5);
-
 	SoundPlayer.add("Shot", "assets/shot.wav");
 	
+	TopLevel.game = new GameSetUp(creation);
+
 	SoundPlayer.loadAll(function() {
-		//Game creation starts here.
-		TopLevel.game = new GameSetUp(creation);
+		TopLevel.game.setUp();
 	});
 });
