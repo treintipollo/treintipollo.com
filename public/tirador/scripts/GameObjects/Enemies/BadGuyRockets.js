@@ -46,6 +46,11 @@ BadGuyRocket.prototype.moveToDeployPosition = function() {
 BadGuyRocket.prototype.checkDeathCondition = function() {}
 BadGuyRocket.prototype.unlockedUpdate      = function() {}
 
+BadGuyRocket.prototype.onAllDamageReceived = function(other) {
+	this.alive = false;
+	this.executeCallbacks("destroyed");
+}
+
 //-----------------------------------------------//
 //-----------------------------------------------//
 //-----------------------------------------------//
@@ -150,6 +155,7 @@ BadGuyClusterAimedRocket.prototype.draw = function(context) {
 BadGuyClusterAimedRocket.prototype.destroy = function() {
 	HomingRocket.prototype.destroy.call(this);
 	Rocket.clusterExplosion.call(this);
+	this.executeCallbacks("destroyed");
 }
 
 BadGuyClusterAimedRocket.prototype.checkDeathCondition = function() {
@@ -176,8 +182,3 @@ BadGuyClusterAimedRocket.prototype.update = function(delta) {
 BadGuyClusterAimedRocket.prototype.unlockedUpdate = function() {
 	this.rotation += 30;
 }
-
-//-----------------------------------------------//
-//-----------------------------------------------//
-//-----------------------------------------------//
-//-----------------------------------------------//

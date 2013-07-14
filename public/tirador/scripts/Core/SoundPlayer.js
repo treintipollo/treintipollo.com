@@ -47,10 +47,17 @@ $(function() {
 	}
 
 	var setUpChannel = function (id) {
-		if (this.pooledChannels.length == 0) return;
+		if (this.pooledChannels.length == 0) {
+			return;
+		}
+
+		var audio = this.audioTags[id];
+
+		if(!audio) {
+			return
+		}
 
 		var channel = this.pooledChannels.pop();
-		var audio = this.audioTags[id];
 
 		this.activeChannels.push(channel);
 

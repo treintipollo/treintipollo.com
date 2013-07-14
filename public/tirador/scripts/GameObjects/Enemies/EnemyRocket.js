@@ -128,6 +128,8 @@ EnemyRocket.prototype.destroy = function() {
 	Rocket.ExplosionArguments[4] = this.mainDimentionY*3;
 
 	this.container.add("Explosion_Effect", Rocket.ExplosionArguments);
+
+	this.executeCallbacks("destroyed");
 }
 
 EnemyRocket.prototype.update = function(delta) {

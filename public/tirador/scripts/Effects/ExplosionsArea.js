@@ -35,5 +35,7 @@ ExplosionsArea.prototype.createExplosion = function() {
 	ExplosionsArea.ParticleArguments[3] = Random.getRandomInt(this.sizeRange/2, this.sizeRange);
 	ExplosionsArea.ParticleArguments[4] = ExplosionsArea.ParticleArguments[3] + ExplosionsArea.ParticleArguments[3]*0.7;
 
+	this.origin.executeCallbacks("explosion");
+
 	TopLevel.container.add("Explosion_Effect", ExplosionsArea.ParticleArguments, 0);
 }
