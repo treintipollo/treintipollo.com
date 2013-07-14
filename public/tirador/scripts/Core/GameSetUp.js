@@ -153,6 +153,8 @@ GameSetUp.prototype.dispatchUIEvent = function(event) {
 
 function scaleToFitWithAspectRatio() {
 
+	console.log("BLABLABLA");
+
 	var mainContainer = document.querySelector('#main');
 	var canvas = document.querySelector('#game');
 
@@ -163,6 +165,8 @@ function scaleToFitWithAspectRatio() {
 	resize(mainContainer, canvas);
 
 	function resize(container, canvas) {
+		console.log("RESIZE");
+
 		var scale = { x: 1, y: 1 };
 
 		scale.x = (window.innerWidth-5) / canvas.width;
@@ -177,6 +181,6 @@ function scaleToFitWithAspectRatio() {
 		container.style.webkitTransform = 'scale(' + scale + ')';
 		container.style.mozTransform = 'scale(' + scale + ')';
 		container.style.msTransform = 'scale(' + scale + ')';
-		//container.style.oTransform = 'scale(' + scale + ')';
+		container.style.oTransform = 'scale(' + scale + ')';
 	}
 }
