@@ -55,21 +55,20 @@ $(function() {
 
 		var channel = this.pooledChannels.pop();
 
-		this.activeChannels.push(channel);
-
-		channel.id = id;
-
-		channel.src = audio.src;
-		channel.time = audio.duration;
-
-		channel.load();
-
 		var onMD = function() {
 			this.removeEventListener('loadedmetadata', onMD);			
 			onMetadata(this);			
 		}
 
 		channel.addEventListener('loadedmetadata', onMD);
+
+		channel.id = id;
+		channel.src = audio.src;
+		channel.time = audio.duration;
+
+		channel.load();
+
+		this.activeChannels.push(channel);
 	}
 
 	soundPlayer.playSingle = function(id) {
