@@ -40,6 +40,8 @@ GameSetUp.prototype.createMainGame = function() {
 
 			ArrowKeyHandler.pause();
 
+			SoundPlayer.pauseAll();
+
 			if (!self.manualSoftPause) {
 				window.cancelAnimationFrame(frameRequest);
 			}
@@ -65,6 +67,8 @@ GameSetUp.prototype.createMainGame = function() {
 				if (self.tweensTimeLine) self.tweensTimeLine.resume();
 
 				ArrowKeyHandler.resume();
+
+				SoundPlayer.resumeAll();
 
 				if (!self.wasInSoftPause) {
 					frameRequest = window.requestAnimationFrame(mainLoop);

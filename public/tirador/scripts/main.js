@@ -153,20 +153,31 @@ $(function() {
 	SoundPlayer.add("BossHit", "assets/bossHit.wav");
 	SoundPlayer.add("PowerUp", "assets/powerUp.wav");
 	SoundPlayer.add("Laser", "assets/laser.wav");
-	
 	SoundPlayer.add("Loop", "assets/loop-01.wav");
 
 	SoundPlayer.loadAll(function() {
 		//Game creation starts here.
 		TopLevel.game = new GameSetUp(creation);
 		
-		ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_2, function() {
-			SoundPlayer.play("Loop", true);
-		});
+		// ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.S, function() {
+		// 	SoundPlayer.playLoop("Loop");
+		// });
 
-		ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.D, function() {
-			SoundPlayer.stop("Loop");
-		});
+		// ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.X, function() {
+		// 	SoundPlayer.playSingle("Loop");
+		// });
+
+		// ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.D, function() {
+		// 	SoundPlayer.stop("Loop");
+		// });
+
+		// ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.Z, function() {
+		// 	SoundPlayer.pause("Loop");
+		// });
+
+		// ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.C, function() {
+		// 	SoundPlayer.resume("Loop");
+		// });
 	});
 
 });

@@ -25,6 +25,10 @@ function StraightBeam(beamProperties) {
 
 	this.burstTimer = TimeOutFactory.getTimeOut(0, 1, this, function(){ 
 		this.forceDisable();
+		
+		if(this.dispatchEvents) {
+			this.origin.executeCallbacks("stopLaser");
+		}
 	});
 
 	this.shootTimer = TimeOutFactory.getTimeOut(0, 1, this, null);
@@ -37,12 +41,8 @@ StraightBeam.prototype.init = function(container, origin, target, beamProperties
 	this.origin     = origin;
 	this.target     = target;
 
-	if(dispatchEvents == false) {
-		this.dispatchEvents = false;
-	}
-	else {
-		this.dispatchEvents = true;
-	}
+	if(dispatchEvents == false) { this.dispatchEvents = false; }
+	else { this.dispatchEvents = true; }
 
 	this.size        = beamProperties[0];
 	this.pieces      = beamProperties[1];
@@ -155,10 +155,6 @@ StraightBeam.prototype.disable = function() {
 	}
 
 	this.collider.length = 0;
-
-	if(this.dispatchEvents) {
-		this.origin.executeCallbacks("stopLaser");
-	}
 }
 
 StraightBeam.prototype.forceDisable = function() {
