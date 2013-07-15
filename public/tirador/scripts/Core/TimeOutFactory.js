@@ -6,12 +6,6 @@ $(function() {
 		getTimeOut: function(delay, repeatCount, scope, callback, removeOnComplete) {
 			var self = this;
 
-			var softReset = function() {
-				this.isRunning = false;
-				this._delay = this.initDelay;
-				this.start();
-			};
-
 			var timeOutObject = {
 				callback: callback,
 				scope: scope,
@@ -71,12 +65,16 @@ $(function() {
 						}
 
 						if (to.repeateCount < 0) {
-							softReset.call(to);
+							to.isRunning = false;
+							to._delay = to.initDelay;
+							to.start();
 						} else {
 							to.repeateCount--;
 
 							if (to.repeateCount > 0) {
-								softReset.call(to);
+								to.isRunning = false;
+								to._delay = to.initDelay;
+								to.start();
 							} else {
 								to.stop();
 

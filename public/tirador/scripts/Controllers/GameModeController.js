@@ -14,6 +14,22 @@ function GameModeController() {
 		return [
 		{
 			sub: getBoss("Middle_1_BadGuy", null, null, getFightBadGuy),
+			main: getBoss("Boss_1_A", "warning", "boom", getMainBoss),
+			next: false,
+			last: false,
+			drop: "MultiWeaponPowerUp"
+		},
+
+		{
+			sub: getBoss("Middle_2_BadGuy", null, null, getFightBadGuy),
+			main: getBoss("Boss_1_B", "warning", "boom", getMainBoss),
+			next: false,
+			last: false,
+			drop: "MultiWeaponPowerUp"
+		},
+
+		{
+			sub: getBoss("Middle_1_BadGuy", null, null, getFightBadGuy),
 			main: getBoss("Boss_1_C", "warning", "boom", getMainBoss),
 			next: false,
 			last: false,
@@ -47,6 +63,22 @@ function GameModeController() {
 
 	var femaleModeBossConfiguration = function() {
 		return [
+		{
+			sub: getBoss("Middle_1_BadGuy", null, null, getFightBadGuy),
+			main: getBoss("Boss_1_A", "warning", "boom", getMainBoss),
+			next: false,
+			last: false,
+			drop: "MultiWeaponPowerUp"
+		},
+
+		{
+			sub: getBoss("Middle_3_BadGuy", null, null, getFightBadGuy),
+			main: getBoss("Boss_1_B", "warning", "boom", getMainBoss),
+			next: false,
+			last: false,
+			drop: "MultiWeaponPowerUp"
+		},
+
 		{
 			sub: getBoss(null, null, null, null),
 			main: getBoss("SubBoss_2", "warning", "nice", getMiniBossRight),

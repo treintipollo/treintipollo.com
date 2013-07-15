@@ -872,7 +872,7 @@ $(function(){
 			cloneEyeProps  :this.cloneEyeProps_1,
     		
     		//Level and abilities
-    		abilities:[{eyeTypes:[this.ids.ROUND_EYE, this.ids.SNAKE_EYE, this.ids.INSECT_EYE], 
+    		abilities:[{eyeTypes:[this.ids.ROUND_EYE], 
 					   deathMotion:this.ids.DEATH_1_MOTION, 
 					   cycleMode:this.ids.RANDOM_EYE_CYCLE, 
 					   blinkTime:2000,
@@ -881,7 +881,7 @@ $(function(){
 					   tentacleOscillationTime:20,
 					   tentacleOscillationMin:-20,
 					   tentacleOscillationmax:20,
-					   generateTentacles:true},
+					   generateTentacles:false},
 						  
 					   {eyeTypes:[this.ids.ROUND_EYE, this.ids.SNAKE_EYE, this.ids.INSECT_EYE],  
 					   deathMotion:this.ids.DEATH_1_MOTION, 
