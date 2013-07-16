@@ -92,7 +92,7 @@ MultiShot.prototype.init = function(user, target, spots, color, radius, formatio
 	this.speed 		   = speed;
 	this.rotationSpeed = rotationSpeed;
 
-	this.particles.init(TopLevel.container, 1, this.color, 2, "BurstParticle", 3, 10, 70, 0);
+	this.particles.init(TopLevel.container, 10, this.color, 2, "BurstParticle", 1, 10, 70, 0);
 	
 	this.particles.on();
 

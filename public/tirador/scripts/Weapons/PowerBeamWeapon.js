@@ -41,7 +41,7 @@ function PowerBeamWeapon(id, name, level, user) {
 
 	this.beamParticleSize = 3;
 	this.particleType = "StraightParticle";
-	this.beamParticlesInCycle = 15;
+	this.beamParticlesInCycle = 10;
 	this.maxParticleSpeed = 40;
 	this.beamParticlesLife = 40;
 
