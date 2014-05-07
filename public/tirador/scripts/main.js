@@ -108,12 +108,7 @@ $(function() {
 		TopLevel.starFactory.start();
 	}
 
-	SoundPlayer.createChannels(5);
-	SoundPlayer.add("Shot", "assets/shot.wav");
-	
 	TopLevel.game = new GameSetUp(creation);
 
-	SoundPlayer.loadAll(function() {
-		TopLevel.game.setUp();
-	});
+	TopLevel.game.setUp();
 });
