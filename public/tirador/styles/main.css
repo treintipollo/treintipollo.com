@@ -1,3 +1,7 @@
+body {
+	background: #222;
+}
+
 #main {
 	position: fixed;
 	
