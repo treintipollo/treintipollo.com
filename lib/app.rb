@@ -28,6 +28,10 @@ class App < Sinatra::Base
     erb :index
   end
 
+  get '/space-maze/:scene-store/:scene-hash' do
+    redirect to('/public/spacemaze/index.html?url=' + params['scene-hash'] + '@' + params['scene-store'])
+  end
+
   get '/games/:game' do
     @game = params['game']
     erb :game
