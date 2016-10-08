@@ -25,17 +25,10 @@ class App < Sinatra::Base
   end
 
   get '/' do
-    puts 'LALALA'
-
     erb :index
   end
 
   get '/space-maze/:scenestore/:scenehash' do
-    # puts params['scenestore']
-    # puts params['scenehash'] + '@' + params['scenestore']
-
-    puts '/spacemaze/index.html?url=' + params['scenehash'] + '@' + params['scenestore']
-
     redirect '/spacemaze/index.html?url=' + params['scenehash'] + '@' + params['scenestore']
   end
 
