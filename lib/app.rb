@@ -1,6 +1,8 @@
 Bundler.require *[:default, ENV['RACK_ENV']].compact
 
 class App < Sinatra::Base
+  use Letsencrypt::Middleware
+  
   set :root,      File.dirname(__FILE__) + '/..'
   set :sprockets, Sprockets::Environment.new(root)
 
@@ -28,8 +30,8 @@ class App < Sinatra::Base
     erb :index
   end
 
-  get '/space-maze/:scenestore/:scenehash' do
-    redirect '/spacemaze/index.html?url=' + params['scenehash'] + '@' + params['scenestore']
+  get '/space-maze/:sceneurl' do
+    redirect '/spacemaze/index.html?url=' + params['sceneurl']
   end
 
   get '/games/:game' do

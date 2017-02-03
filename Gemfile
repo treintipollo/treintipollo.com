@@ -5,6 +5,12 @@ gem 'erubis'
 gem 'rack-rewrite'
 gem 'sinatra',           require: 'sinatra/base'
 gem 'sprockets'
+gem 'rake'
+
+# Until the new API calls are generally available, you must manually specify my fork
+# of the Heroku API gem:
+gem 'platform-api', github: 'jalada/platform-api', branch: 'master'
+gem 'letsencrypt-rails-heroku', '~> 0.3.0'
 
 group :development do
   gem 'heroku'
