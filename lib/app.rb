@@ -1,5 +1,3 @@
-Bundler.require *[:default, ENV['RACK_ENV']].compact
-
 class App < Sinatra::Base
   use Letsencrypt::Middleware
   
