@@ -1,5 +1,7 @@
 source 'http://rubygems.org'
 
+ruby "2.4.0"
+
 gem 'coffee-script'
 gem 'erubis'
 gem 'rack-rewrite'
