@@ -14,11 +14,6 @@ gem 'rake'
 gem 'platform-api', github: 'jalada/platform-api', branch: 'master'
 gem 'letsencrypt-rails-heroku', '~> 0.3.0'
 
-group :development do
-  gem 'heroku'
-  gem 'shotgun'
-end
-
 group :production do
   gem 'unicorn'
   gem 'yui-compressor',  require: 'yui/compressor'

@@ -1,6 +1,14 @@
+require 'sinatra'
+require 'bundler'
+require 'letsencrypt-rails-heroku'
+
+Bundler.require *[:default, ENV['RACK_ENV']].compact
+
 class App < Sinatra::Base
+
+  Letsencrypt.configure
   use Letsencrypt::Middleware
-  
+
   set :root,      File.dirname(__FILE__) + '/..'
   set :sprockets, Sprockets::Environment.new(root)
 

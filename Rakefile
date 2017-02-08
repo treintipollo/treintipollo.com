@@ -1,4 +1,5 @@
 require 'bundler'
+require 'letsencrypt-rails-heroku'
 Bundler.require *[:default, ENV['RACK_ENV']].compact
 
 Letsencrypt.configure
