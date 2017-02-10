@@ -16,6 +16,7 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.4)
+    dotenv (2.2.0)
     erubis (2.7.0)
     excon (0.55.0)
     execjs (2.7.0)
@@ -59,6 +60,7 @@ PLATFORMS
 
 DEPENDENCIES
   coffee-script
+  dotenv
   erubis
   letsencrypt-rails-heroku (~> 0.3.0)
   platform-api!
