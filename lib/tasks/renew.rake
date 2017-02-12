@@ -10,8 +10,6 @@ require 'platform-api'
 desc "This task renews the SSL certificate"
 
 task :renew_ssl do
-	puts ENV["HEROKU_TOKEN"]
-
 	heroku = PlatformAPI.connect_oauth ENV["HEROKU_TOKEN"]
 	heroku_app = ENV["HEROKU_APP"]
 
@@ -23,15 +21,11 @@ task :renew_ssl do
 		month_difference = (expiry_date.year * 12 + expiry_date.month) - (now.year * 12 + now.month)
 
 		if (month_difference <= 1)
-			puts 'update certs'
-			# Rake::Task['letsencrypt:renew'].invoke
+			Rake::Task['letsencrypt:renew'].invoke
 		else
-			puts 'certs are up to date'
 		end
 
 	else
-		puts 'request certs'
-
-		# Rake::Task['letsencrypt:renew'].invoke
+		Rake::Task['letsencrypt:renew'].invoke
 	end
 end

@@ -8,3 +8,5 @@ spec = Gem::Specification.find_by_name 'letsencrypt-rails-heroku'
 
 load "#{spec.gem_dir}/lib/tasks/letsencrypt.rake"
 load "lib/tasks/renew.rake"
+
+load "test/test.rake"
