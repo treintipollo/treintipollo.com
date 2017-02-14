@@ -36,13 +36,14 @@ class App < Sinatra::Base
     erb :index
   end
 
-  get '/space-maze/:sceneurl' do
-    redirect '/spacemaze/index.html?url=' + params['sceneurl']
-  end
-
   get '/games/:game' do
     @game = params['game']
     erb :game
+  end
+
+  get '/spacemaze/fb/share/:dbid' do
+    @dbid = params['dbid']
+    erb :spacemazefbshare
   end
 
   not_found do
