@@ -41,7 +41,7 @@ class App < Sinatra::Base
     erb :game
   end
 
-  get '/spacemaze/fb/share/:dbid' do
+  get '/spacemazefbshare/:dbid' do
     @dbid = params['dbid']
     erb :spacemazefbshare
   end
