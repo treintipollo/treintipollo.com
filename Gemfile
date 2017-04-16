@@ -9,6 +9,7 @@ gem 'sinatra',           require: 'sinatra/base'
 gem 'sprockets'
 gem 'rake'
 gem 'dotenv'
+gem 'rack-ssl-enforcer'
 
 # Until the new API calls are generally available, you must manually specify my fork
 # of the Heroku API gem:
