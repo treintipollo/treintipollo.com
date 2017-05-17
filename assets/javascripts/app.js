@@ -1,18 +1,30 @@
 $(function() {
-  var $pollos = $('.pollos');
+	var $pollos = $('.pollosCenter');
 
-  for (var i = 0; i < 30; i++) {
-    $('<img class="pollo" alt="pollo" src="/assets/pollo.png">')
-      .hide()
-      .appendTo($pollos)
-      .delay(i * 150)
-      .fadeIn(150);
-  }
+	var amount = 30;
+	var speed = 120;
 
-  $('.title')
-    .delay(4500)
-    .prependTo($('body'))
-    .animate({
-      'margin-top': '+60px'
-    }, 600, 'easeOutBounce');
+	for (var i = 0; i < amount; i++) {
+		var d = $('<div></div>').appendTo($pollos);
+
+		$('<img class="pollo" alt="pollo" src="/assets/pollo.png">')
+			.hide()
+			.appendTo(d)
+			.delay(i * speed)
+			.fadeIn(speed);
+	}
+
+	$('.title')
+		.delay(amount * speed)
+		.animate({
+			'margin-top': '30px'
+		},
+		600,
+		'easeOutBounce',
+		function() {
+			$('.games')
+				.animate({
+					'opacity': '1'
+				}, 600, 'swing');
+		});
 });

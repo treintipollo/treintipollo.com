@@ -1,0 +1,13 @@
+<script type="text/javascript">
+	var helpTab = document.querySelector(".help-tab > div");
+	var allHelp = document.querySelector(".help");
+
+	helpTab.addEventListener("click", function(event) {
+		if (allHelp.hasAttribute("showing")) {
+			allHelp.removeAttribute("showing");
+		}
+		else {
+			allHelp.setAttribute("showing", "");
+		}
+	});
+</script>

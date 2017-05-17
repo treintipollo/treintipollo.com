@@ -1,45 +1,83 @@
 @import url(//fonts.googleapis.com/css?family=Press+Start+2P);
 
 body {
-  background: #222;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 21;
-  line-height: 2;
+	background: #222;
+	font-family: 'Press Start 2P', cursive;
+	font-size: 21;
+	line-height: 2;
 }
 
 a {
-  color: #ccc;
+	color: #ccc;
 }
 
 .container {
-  margin: 0 auto;
-  max-width: 630px;
+	display: flex;
+	flex-direction: column;
+
+	position: absolute;
+
+	top: 0px;
+	left: 0px;
+
+	width: 100%;
+	height: 100%;
 }
 
 .title {
-  margin-top: -45px;
-  margin-bottom: 30px;
-  background: #000;
-  color: #fff;
-  font-size: 72px;
-  line-height: 1.5;
-  text-align: center;
-  text-shadow: 5px 5px 10px #333;
-  -webkit-transform: rotate(-3deg);
-     -moz-transform: rotate(-3deg);
-      -ms-transform: rotate(-3deg);
-       -o-transform: rotate(-3deg);
-          transform: rotate(-3deg);
+	margin: 0px;
+	margin-bottom: 30px;
+	margin-top: -120px;
+
+	width: 100%;
+
+	background: #000;
+	color: #fff;
+	font-size: 72px;
+	line-height: 1.5;
+	text-align: center;
+	text-shadow: 5px 5px 10px #333;
+}
+
+.pollosContainer {
+	display: flex;
+	flex: 1;
+}
+
+.pollosLeft {
+	flex: 1;
+}
+
+.pollosCenter {
+	display: grid;
+
+	justify-items: center;
+	align-items: center;
+
+	grid-template-columns: repeat(6, calc(100% / 6));
+	grid-template-rows: repeat(5, calc(100% / 5));
+
+	flex: 3;
+}
+
+.pollosRight {
+	flex: 1;
 }
 
 .pollo {
-  padding-top: 10px;
-  padding-right: 5px;
-  height: 58px;
-  width: 120px;
+	width: 100%;
 }
 
 .games {
-  list-style-type: none;
-  text-align: center;
+	flex: none;
+
+	list-style-type: none;
+	text-align: center;
+
+	opacity: 0;
+}
+
+span {
+	font-size: 10px;
+	color: #a76916;
 }

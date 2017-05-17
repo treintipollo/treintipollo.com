@@ -1,14 +1,11 @@
-require 'sinatra'
 require 'bundler'
-require 'letsencrypt-rails-heroku'
-require 'rack/ssl-enforcer'
 
 Bundler.require *[:default, ENV['RACK_ENV']].compact
 
 class App < Sinatra::Base
 
-  Letsencrypt.configure
-  use Letsencrypt::Middleware
+  Letsencrypt.configure if production?
+  use Letsencrypt::Middleware if production?
   use Rack::SslEnforcer if production?
 
   set :root,      File.dirname(__FILE__) + '/..'
@@ -38,9 +35,14 @@ class App < Sinatra::Base
     erb :index
   end
 
-  get '/games/:game' do
+  get '/flash/:game' do
     @game = params['game']
-    erb :game
+    erb :flashgame
+  end
+
+  get '/html5/:game' do
+    @game = params['game']
+    erb :html5game
   end
 
   get '/spacemazefbshare/:dbid' do
