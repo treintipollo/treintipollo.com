@@ -10,4 +10,61 @@
 			allHelp.setAttribute("showing", "");
 		}
 	});
+
+	var fb = document.querySelector(".fb");
+
+	var isFbInitialized = false;
+
+	fb.addEventListener("click", function(event) {
+		event.preventDefault();
+
+		if (isFbInitialized) {
+			FB.ui({
+				method: 'share',
+				href: window.top.location.href
+			});
+		} else {
+			var fbAppId = window.top.location.hostname === "localhost" ? "678625568980303" : '1910504332510208';
+
+			window.fbAsyncInit = function() {
+				FB.init({
+					appId : fbAppId,
+					xfbml : true,
+					version : 'v2.8'
+				});
+				
+				FB.ui({
+					method: 'share',
+					href: window.top.location.href
+				});
+
+				isFbInitialized = true;
+			};
+
+			(function(d, s, id){
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) {return;}
+				js = d.createElement(s); js.id = id;
+				js.src = "//connect.facebook.net/en_US/sdk.js";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
+		}
+	});
+
+	var tw = document.querySelector(".tw");
+
+	tw.addEventListener("click", function(event) {
+		event.preventDefault();
+
+		function popupwindow(url, title, w, h) {
+			var y = window.outerHeight / 2 + window.screenY - ( h / 2)
+			var x = window.outerWidth / 2 + window.screenX - ( w / 2)
+			return window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=' + w + ', height=' + h + ', top=' + y + ', left=' + x);
+		}
+
+		var url = "https://twitter.com/intent/tweet?url=" + encodeURIComponent(window.top.location.href);
+
+		popupwindow(url, "Share on Twitter", 800, 450);
+	});
+
 </script>
