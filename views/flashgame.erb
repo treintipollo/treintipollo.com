@@ -3,6 +3,17 @@
 	<head>
 		<meta charset="utf-8">
 
+		<link rel="apple-touch-icon" sizes="180x180" href="<%= asset_path 'apple-touch-icon.png' %>">
+		<link rel="icon" type="image/png" sizes="32x32" href="<%= asset_path 'favicon-32x32.png' %>">
+		<link rel="icon" type="image/png" sizes="16x16" href="<%= asset_path 'favicon-16x16.png' %>">
+		<link rel="manifest" href="<%= asset_path 'manifest.json' %>">
+		<link rel="mask-icon" href="<%= asset_path 'safari-pinned-tab.svg' %>" color="#da532c">
+		<link rel="shortcut icon" href="<%= asset_path 'favicon.ico' %>">
+		<meta name="apple-mobile-web-app-title" content="Treintipollo">
+		<meta name="application-name" content="Treintipollo">
+		<meta name="msapplication-config" content="<%= asset_path 'browserconfig.xml' %>">
+		<meta name="theme-color" content="#da532c">
+
 		<%= erb "og/#{@game}".to_sym %>
 		<%= erb "head/#{@game}".to_sym %>
 
@@ -15,6 +26,7 @@
 		<style>
 			body {
 				background: #222;
+				overflow: hidden;
 			}
 			.container {
 				margin: 0 auto;
