@@ -1,15 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<title>Treintipollo</title>
 
+		<!-- Basic meta tags -->
+		<meta name="application-name" content="Treintipollo">
+		<meta name="author" content="Diego Marquez">
+		<meta name="description" content="An outstanding website in the field of excellence.">
+		<meta name="keywords" content="games,code,web technology,diego marquez">
+		<meta name="creator" content="Diego Marquez">
+		<meta name="publisher" content="Treintipollo">
+
+		<!-- Open Graph -->
 		<meta property="og:image" content="<%= asset_path 'og-image.jpg' %>">
 		<meta property="og:image:height" content="320">
 		<meta property="og:image:width" content="611">
-		<meta property="og:description" content="Most excellent website">
+		<meta property="og:description" content="An outstanding website in the field of excellence.">
 		<meta property="og:title" content="Treintipollo">
 		<meta property="og:url" content="https://www.treintipollo.com">
 
+		<!-- Icons -->
 		<link rel="apple-touch-icon" sizes="180x180" href="<%= asset_path 'apple-touch-icon.png' %>">
 		<link rel="icon" type="image/png" sizes="32x32" href="<%= asset_path 'favicon-32x32.png' %>">
 		<link rel="icon" type="image/png" sizes="16x16" href="<%= asset_path 'favicon-16x16.png' %>">
@@ -17,13 +27,17 @@
 		<link rel="mask-icon" href="<%= asset_path 'safari-pinned-tab.svg' %>" color="#da532c">
 		<link rel="shortcut icon" href="<%= asset_path 'favicon.ico' %>">
 		<meta name="apple-mobile-web-app-title" content="Treintipollo">
-		<meta name="application-name" content="Treintipollo">
 		<meta name="msapplication-config" content="<%= asset_path 'browserconfig.xml' %>">
 		<meta name="theme-color" content="#da532c">
 
+		<!-- Style -->
 		<link rel="stylesheet" href="<%= asset_path 'screen.css' %>" type="text/css">
+		
+		<!-- Jquery -->
 		<script src="//code.jquery.com/jquery.min.js" type="text/javascript"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js" type="text/javascript"></script>
+		
+		<!-- Application -->
 		<script src="<%= asset_path 'app.js' %>" type="text/javascript"></script>
 	</head>
 	<body>
