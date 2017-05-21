@@ -28,11 +28,13 @@
 		<%= erb "help/help-html".to_sym, :locals => { :game => @game } %>
 		
 		<div class="container">
-			<object width="800" height="600">
-				<param name="movie" value="<%= @game %>.swf">
-				<embed src="<%= @game %>.swf" width="800" height="600">
-				</embed>
-			</object>
+			<div id="game">
+				<object width="800" height="600">
+					<param name="movie" value="<%= @game %>.swf">
+					<embed src="<%= @game %>.swf" width="800" height="600">
+					</embed>
+				</object>
+			</div>
 		</div>
 
 		<%= erb "help/help-js".to_sym %>
