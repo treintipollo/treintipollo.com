@@ -22,19 +22,27 @@ module Rack
 end
 
 use Rack::DeflaterWithExclusions, :exclude => proc { |env|
-  env['PATH_INFO'] == '/flash'
+	if env['PATH_INFO'].match(/\/flash\/(.*?)$/)
+		next true
+	end
+	
+	if env['PATH_INFO'].match(/(\.png)$/)
+		next true
+	end
+
+	next false
 }
 
 use Rack::Rewrite do
-  r301 %r{.*}, "http://#{DOMAIN}$&", :if => Proc.new { |rack_env|
-    rack_env['SERVER_NAME'] != DOMAIN && ENV['RACK_ENV'] == 'production'
-  }
+	r301 %r{.*}, "http://#{DOMAIN}$&", :if => Proc.new { |rack_env|
+		rack_env['SERVER_NAME'] != DOMAIN && ENV['RACK_ENV'] == 'production'
+	}
 end
 
 map '/assets' do
-  run App.sprockets
+	run App.sprockets
 end
 
 map '/' do
-  run App
+	run App
 end
