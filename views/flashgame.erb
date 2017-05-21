@@ -6,12 +6,6 @@
 		<%= erb "og/#{@game}".to_sym %>
 		<%= erb "head/#{@game}".to_sym %>
 
-		<script type="text/javascript" src="<%= asset_path 'swfobject.js' %>"></script>
-
-		<script type="text/javascript">
-			swfobject.registerObject("game", "9.0.0");
-		</script>
-
 		<style>
 			body {
 				background: #222;
@@ -34,15 +28,10 @@
 		<%= erb "help/help-html".to_sym, :locals => { :game => @game } %>
 		
 		<div class="container">
-			<object type="application/x-shockwave-flash" data="<%= @game %>.swf" width="800" height="600">
-				<param name="wmode" value="direct">
-				<param name="allowscriptaccess" value="never">
-				<param name="allowfullscreen" value="true">
-				<param name="allowfullscreeninteractive" value="true">				
-
-				<a href="//www.adobe.com/go/getflashplayer">
-					<img src="//www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get AdobeFlash player">
-				</a>
+			<object width="800" height="600">
+				<param name="movie" value="<%= @game %>.swf">
+				<embed src="<%= @game %>.swf" width="800" height="600">
+				</embed>
 			</object>
 		</div>
 
