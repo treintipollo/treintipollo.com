@@ -34,20 +34,19 @@
 		<%= erb "help/help-html".to_sym, :locals => { :game => @game } %>
 		
 		<div class="container">
-			<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="800" height="600" id="game">
-				<param name="movie" value="<%= @game %>.swf">
-				<!--[if !IE]>-->
-				<object type="application/x-shockwave-flash" data="<%= @game %>.swf" width="800" height="600">
-					<!--<![endif]-->
-					<a href="//www.adobe.com/go/getflashplayer">
-						<img src="//www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player">
-					</a>
-					<!--[if !IE]>-->
-				</object>
-			<!--<![endif]-->
+			<object type="application/x-shockwave-flash" data="<%= @game %>.swf" width="800" height="600">
+				<param name="wmode" value="direct">
+				<param name="allowscriptaccess" value="never">
+				<param name="allowfullscreen" value="true">
+				<param name="allowfullscreeninteractive" value="true">				
+
+				<a href="//www.adobe.com/go/getflashplayer">
+					<img src="//www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get AdobeFlash player">
+				</a>
 			</object>
 		</div>
 
 		<%= erb "help/help-js".to_sym %>
 	</body>
 </html>
+
