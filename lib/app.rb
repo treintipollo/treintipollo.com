@@ -45,8 +45,8 @@ class App < Sinatra::Base
     erb :html5game
   end
 
-  get '/spacemazefbshare/:dbid' do
-    @dbid = params['dbid']
+  get '/spacemazefbshare/:dbsurl' do
+    @dbsurl = params['dbsurl']
     erb :spacemazefbshare
   end
 
