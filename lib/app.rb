@@ -4,6 +4,8 @@ Bundler.require *[:default, ENV['RACK_ENV']].compact
 
 class App < Sinatra::Base
 
+  set :protection, :except=>:path_traversal
+
   Letsencrypt.configure if production?
   use Letsencrypt::Middleware if production?
   use Rack::SslEnforcer if production?
