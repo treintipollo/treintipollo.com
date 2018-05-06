@@ -27,4 +27,9 @@ $(function() {
 					'opacity': '1'
 				}, 600, 'swing');
 		});
+
+	document.addEventListener("click", (e) => {
+		$('<img class="pollo" alt="pollo" src="/assets/pollo.png">').stop();
+		$('.title').stop();
+	});
 });
