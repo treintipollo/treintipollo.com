@@ -1,12 +1,17 @@
 <div class="help-wrapper">
 	<div class="help">
 		<div class="help-tab">
-			<div>
+			<div class="more">
 				MORE
 			</div>
 		</div>
-		<div class="help-main">
-			<%= erb "help/#{game}".to_sym %>
+		<div class="help-main-wrap">
+			<div class="game-cover-wrap">
+				<%= erb "help/images/#{game}".to_sym %>
+			</div>
+			<div class="help-main">
+				<%= erb "help/descriptions/#{game}".to_sym %>
+			</div>
 			<div class="links">
 				<div class="link">
 					<a href="/" title="Treintipollo">

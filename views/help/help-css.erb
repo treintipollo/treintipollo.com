@@ -12,7 +12,7 @@
 		z-index: 999;
 		pointer-events: none;
 
-		transform: translateX(400px);
+		transform: translateX(600px);
 		transition: transform 0.3s ease;
 	}
 
@@ -31,7 +31,7 @@
 		top: 0px;
 		right: 0px;
 
-		width: 450px;
+		width: 650px;
 		height: 100%;
 
 		color: white;
@@ -58,7 +58,7 @@
 		clip-path: polygon(0 0, 100% 0, 100% calc(100px + 20px), 0 calc(75px + 20px));
 	}
 
-	.help-tab > div {
+	.more {
 		font-size: 19px;
 		width: 1em;
 		word-break: break-all;
@@ -71,13 +71,28 @@
 		cursor: pointer;
 	}
 
+	.help-main-wrap {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.game-cover-wrap {
+		flex: none;
+		width: 600px;
+	}
+
+	.game-cover {
+		width: 600px;
+		height: auto;
+	}
+
 	.help-main {
 		flex: 1;
 
 		display: flex;
 		flex-direction: column;
 
-		height: 100%;
+		overflow: auto;
 	}
 
 	.game-attribute {
@@ -115,19 +130,16 @@
 		padding-top: 10px;
 		padding-left: 10px;
 		margin: 2px;
-
-		overflow: auto;
 	}
 
 	.links {
+		position: absolute;
 		display: flex;
 		flex: none;
-
 		font-size: 18px;
 		text-align: right;
-
-		padding: 5px;
-		margin: 2px;
+		padding-left: 5px;
+		padding-top: 5px;
 	}
 
 	.link {
@@ -135,6 +147,7 @@
 		align-items: center;
 		justify-content: center;
 		flex: 1;
+		padding-right: 5px;
 	}
 
 	.link a {
@@ -142,9 +155,9 @@
 	}
 
 	.link img {
-		width: 50%;
+		width: 50px;
 
-		border-radius: 10px;
+		border-radius: 5px;
 
 	}
 </style>
