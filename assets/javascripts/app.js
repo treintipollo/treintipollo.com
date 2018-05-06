@@ -28,7 +28,7 @@ $(function() {
 				}, 600, 'swing');
 		});
 
-	document.addEventListener("click", (e) => {
+	document.addEventListener("click", function(e) {
 		$('<img class="pollo" alt="pollo" src="/assets/pollo.png">').stop();
 		$('.title').stop();
 	});
