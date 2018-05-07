@@ -52,7 +52,7 @@ class App < Sinatra::Base
     erb :spacemazefbshare
   end
 
-  get %r{\/spacemazeassets\/.{8}-.{4}-.{4}-.{4}-.{12}\/(?<path>(?:\w+\/)+)(?<filename>\w+)\.(?<extension>\w+)} do | path, filename, extension|
+  get %r{\/spacemazeassets\/.{8}-.{4}-.{4}-.{4}-.{12}\/(?<path>(?:\w+\/)+)(?<filename>\w+)\.(?<extension>\w+)} do |path, filename, extension|
     filepath = "#{path}#{filename}.#{extension}"
 
     "#{settings.public_folder}/html5/spacemaze/#{filepath}"
@@ -60,11 +60,11 @@ class App < Sinatra::Base
     # send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
   end
 
-  get  'test' do
+  get  '/test' do
     "Hello"
   end
 
-  get  %r{test2\/\d+} do |digits|
+  get  %r{test2\/(?<digits>\d+)} do |digits|
     digits
   end
 
