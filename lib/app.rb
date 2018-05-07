@@ -52,8 +52,8 @@ class App < Sinatra::Base
     erb :spacemazefbshare
   end
 
-  get /\/spacemazeassets\/.{8}-.{4}-.{4}-.{4}-.{12}\/(?<path>(?:\w+\/)+)(?<filename>\w+)\.(?<extension>\w+)/ do
-    filepath = "#{params['path']}#{params['filename']}.#{params['extension']}"
+  get %r{\/spacemazeassets\/.{8}-.{4}-.{4}-.{4}-.{12}\/(?<path>(?:\w+\/)+)(?<filename>\w+)\.(?<extension>\w+)} do | path, filename, extension|
+    filepath = "#{path}#{filename}.#{extension}"
     send_file "public/html5/spacemaze/#{filepath}"
   end
 
