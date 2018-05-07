@@ -56,7 +56,7 @@ class App < Sinatra::Base
 		send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
 	end
 
-	get	%r{\/test3\/(?<cachebust>.{8}\-.{4}\-.{4}\-.{4}\-.{12})\/(?<filepath>.*?)} do |cachebust, filepath|
+	get	%r{\/test3\/(?<cachebust>\d+)\/(?<filepath>.*?)} do |cachebust, filepath|
 		send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
 	end
 
