@@ -11,9 +11,7 @@ gem 'rake'
 gem 'dotenv'
 gem 'rack-ssl-enforcer'
 
-# Until the new API calls are generally available, you must manually specify my fork
-# of the Heroku API gem:
-gem 'platform-api', github: 'jalada/platform-api', branch: 'master'
+gem 'platform-api'
 gem 'letsencrypt-rails-heroku', '~> 0.3.0'
 
 group :production do
