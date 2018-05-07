@@ -52,25 +52,25 @@ class App < Sinatra::Base
     erb :spacemazefbshare
   end
 
-  get %r{\/spacemazeassets\/.{8}-.{4}-.{4}-.{4}-.{12}\/(?<path>(?:\w+\/)+)(?<filename>\w+)\.(?<extension>\w+)} do |path, filename, extension|
-    filepath = "#{path}#{filename}.#{extension}"
+  # get %r{\/spacemazeassets\/.{8}-.{4}-.{4}-.{4}-.{12}\/(?<path>(?:\w+\/)+)(?<filename>\w+)\.(?<extension>\w+)} do |path, filename, extension|
+  #   filepath = "#{path}#{filename}.#{extension}"
 
-    "#{settings.public_folder}/html5/spacemaze/#{filepath}"
+  #   "#{settings.public_folder}/html5/spacemaze/#{filepath}"
 
-    # send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
-  end
+  #   # send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
+  # end
 
-  get %r{\/spacemazeassets2\/.{8}-.{4}-.{4}-.{4}-.{12}\/((?:\w+\/)+)(?\w+)\.(?\w+)} do
-    path = params[:captures][0]
-    filename = params[:captures][1]
-    extension = params[:captures][2]
+  # get %r{\/spacemazeassets2\/.{8}-.{4}-.{4}-.{4}-.{12}\/((?:\w+\/)+)(?\w+)\.(?\w+)} do
+  #   path = params[:captures][0]
+  #   filename = params[:captures][1]
+  #   extension = params[:captures][2]
 
-    filepath = "#{path}#{filename}.#{extension}"
+  #   filepath = "#{path}#{filename}.#{extension}"
 
-    "#{settings.public_folder}/html5/spacemaze/#{filepath}"
+  #   "#{settings.public_folder}/html5/spacemaze/#{filepath}"
 
-    # send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
-  end
+  #   # send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
+  # end
 
   get  '/test' do
     "Hello"
