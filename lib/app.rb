@@ -12,6 +12,7 @@ class App < Sinatra::Base
 
   set :root,      File.dirname(__FILE__) + '/..'
   set :sprockets, Sprockets::Environment.new(root)
+  set :public_folder, 'public'
 
   [
     [root, 'assets', 'images'],
@@ -54,7 +55,10 @@ class App < Sinatra::Base
 
   get %r{\/spacemazeassets\/.{8}-.{4}-.{4}-.{4}-.{12}\/(?<path>(?:\w+\/)+)(?<filename>\w+)\.(?<extension>\w+)} do | path, filename, extension|
     filepath = "#{path}#{filename}.#{extension}"
-    send_file "public/html5/spacemaze/#{filepath}"
+
+    puts "#{settings.public_folder}/html5/spacemaze/#{filepath}"
+
+    send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
   end
 
   not_found do
