@@ -60,6 +60,18 @@ class App < Sinatra::Base
     # send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
   end
 
+  get %r{\/spacemazeassets2\/.{8}-.{4}-.{4}-.{4}-.{12}\/((?:\w+\/)+)(?\w+)\.(?\w+)} do
+    path = params[:captures][0]
+    filename = params[:captures][1]
+    extension = params[:captures][2]
+
+    filepath = "#{path}#{filename}.#{extension}"
+
+    "#{settings.public_folder}/html5/spacemaze/#{filepath}"
+
+    # send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
+  end
+
   get  '/test' do
     "Hello"
   end
