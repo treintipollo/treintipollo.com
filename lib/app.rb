@@ -60,7 +60,7 @@ class App < Sinatra::Base
 		File.read(File.join(settings.public_folder, "html5/spacemaze/#{filepath}"))
 	end
 
-	get	'test4/:cachebust' do
+	get	'/test4/:cachebust' do
 		send_file File.join(settings.public_folder, "html5/spacemaze/styles/css/all_styles.css")
 	end
 
