@@ -53,11 +53,11 @@ class App < Sinatra::Base
 	end
 
 	get	%r{\/spacemazeassets\/(?<cachebust>.{8}\-.{4}\-.{4}\-.{4}\-.{12})\/(?<filepath>.*?)} do |cachebust, filepath|
-		send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
+		File.read(File.join(settings.public_folder, "html5/spacemaze/#{filepath}"))
 	end
 
 	get	%r{\/test3\/(?<cachebust>\d+)\/(?<filepath>.*?)} do |cachebust, filepath|
-		send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
+		File.read(File.join(settings.public_folder, "html5/spacemaze/#{filepath}"))
 	end
 
 	not_found do
