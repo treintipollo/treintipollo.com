@@ -64,7 +64,7 @@ class App < Sinatra::Base
     "Hello"
   end
 
-  get  %r{test\/\d+} do |digits|
+  get  %r{test2\/\d+} do |digits|
     digits
   end
 
