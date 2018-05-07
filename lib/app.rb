@@ -52,14 +52,6 @@ class App < Sinatra::Base
 		erb :spacemazefbshare
 	end
 
-	get	'/spacemazestyles/:cachebust' do
-		send_file File.join(settings.public_folder, "html5/spacemaze/styles/css/all_styles.css")
-	end
-
-	get	'/spacemazesource/:cachebust' do
-		send_file File.join(settings.public_folder, "html5/spacemaze/packaged.js")
-	end
-
 	not_found do
 		redirect '/'
 	end
