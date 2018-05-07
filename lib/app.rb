@@ -80,7 +80,7 @@ class App < Sinatra::Base
     digits
   end
 
-  get  %r{\/test3\/(?<cachebust>.{8}\-.{4}\-.{4}\-.{4}\-.{12})\/(?<filename>.*?)} do |cachebust, filename|
+  get  %r{\/test3\/(?<cachebust>.{8}\-.{4}\-.{4}\-.{4}\-.{12})\/(?<filepath>.*?)} do |cachebust, filepath|
     send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
   end
 
