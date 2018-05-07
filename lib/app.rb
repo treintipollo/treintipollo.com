@@ -52,16 +52,12 @@ class App < Sinatra::Base
 		erb :spacemazefbshare
 	end
 
-	get	%r{\/spacemazeassets\/(?<cachebust>.{8}\-.{4}\-.{4}\-.{4}\-.{12})\/(?<filepath>.*?)} do |cachebust, filepath|
-		File.read(File.join(settings.public_folder, "html5/spacemaze/#{filepath}"))
-	end
-
-	get	%r{\/test3\/(?<cachebust>\d+)\/(?<filepath>.*?)} do |cachebust, filepath|
-		File.read(File.join(settings.public_folder, "html5/spacemaze/#{filepath}"))
-	end
-
-	get	'/test4/:cachebust' do
+	get	'/spacemazestyles/:cachebust' do
 		send_file File.join(settings.public_folder, "html5/spacemaze/styles/css/all_styles.css")
+	end
+
+	get	'/spacemazesource/:cachebust' do
+		send_file File.join(settings.public_folder, "html5/spacemaze/packaged.js")
 	end
 
 	not_found do
