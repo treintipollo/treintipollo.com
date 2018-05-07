@@ -60,6 +60,14 @@ class App < Sinatra::Base
     # send_file "#{settings.public_folder}/html5/spacemaze/#{filepath}"
   end
 
+  get  'test' do
+    "Hello"
+  end
+
+  get  %r{test\/\d+} do |digits|
+    digits
+  end
+
   not_found do
     redirect '/'
   end
