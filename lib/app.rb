@@ -61,7 +61,7 @@ class App < Sinatra::Base
 	end
 
 	get	'test4/:cachebust' do
-		send_file File.join(settings.public_folder, "html5/spacemaze/styles/css/all_styles")
+		send_file File.join(settings.public_folder, "html5/spacemaze/styles/css/all_styles.css")
 	end
 
 	not_found do
