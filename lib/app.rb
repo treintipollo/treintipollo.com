@@ -80,8 +80,12 @@ class App < Sinatra::Base
     digits
   end
 
-  get  %r{\/test3\/.{8}-.{4}-.{4}-.{4}-.{12}\/(?<filename>.*?)} do |filename|
+  get  %r{\/test3\/[.{8}-.{4}-.{4}-.{4}-.{12}]\/(?<filename>.*?)} do |filename|
     "#{settings.public_folder}/html5/spacemaze/#{filename}"
+  end
+
+  get  %r{\/test4} do |filename|
+    "#{settings.public_folder}/html5/spacemaze/"
   end
 
   not_found do
