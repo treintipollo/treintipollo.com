@@ -6,8 +6,14 @@
 			</div>
 		</div>
 		<div class="help-main-wrap">
-			<div class="game-cover-wrap">
-				<%= erb "help/images/#{game}".to_sym %>
+			<div title="View high quality image" class="game-cover-wrap">
+				<script>
+					function visit() {
+						window.location = "<%= asset_path "#{game}-tw-share.jpg" %>"
+					}
+				</script>
+
+				<img src="<%= asset_path "#{game}-help.jpg" %>" class="game-cover" onclick="visit()"></img>
 			</div>
 			<div class="help-main">
 				<%= erb "help/descriptions/#{game}".to_sym %>
