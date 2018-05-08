@@ -22,9 +22,9 @@
 		var top = window.outerWidth / 2 + window.screenX - ( w / 2);
 
 		var url = encodeURIComponent('https://www.treintipollo.com/spacemazefbshare/' + encodeURIComponent(window.top.location.href));
-		var opts = 'status=1' + ',width=' + width + ',height=' + height + ',top=' + top + ',left=' + left;
+		var opts = 'status=1' + ',width=' + w + ',height=' + h + ',top=' + top + ',left=' + left;
 
-		window.open(
+		var win = window.open(
 			"https://www.facebook.com/sharer/sharer.php?u="+url,
 			"facebook-share-dialog",
 			opts
