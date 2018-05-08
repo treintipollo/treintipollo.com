@@ -21,12 +21,12 @@
 		var left = window.outerHeight / 2 + window.screenY - ( h / 2);
 		var top = window.outerWidth / 2 + window.screenX - ( w / 2);
 
-		var url = encodeURIComponent('https://www.treintipollo.com/spacemazefbshare/' + encodeURIComponent(window.top.location.href));
-		var opts = 'status=1' + ',width=' + w + ',height=' + h + ',top=' + top + ',left=' + left;
+		var url = encodeURIComponent(window.top.location.href);
+		var opts = 'resizable=no, status=1' + ',width=' + w + ',height=' + h + ',top=' + top + ',left=' + left;
 
 		var win = window.open(
 			"https://www.facebook.com/sharer/sharer.php?u="+url,
-			"facebook-share-dialog",
+			"Share on Facebook",
 			opts
 		);
 	});
