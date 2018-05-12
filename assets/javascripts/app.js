@@ -28,8 +28,12 @@ $(function() {
 				}, 600, 'swing');
 		});
 
-	document.addEventListener("click", function(e) {
+	var onClick = function(e) {
+		document.removeEventListener("click", onClick);
+
 		$('<img class="pollo" alt="pollo" src="/assets/pollo.png">').stop();
 		$('.title').stop();
-	});
+	}
+
+	document.addEventListener("click", onClick);
 });
