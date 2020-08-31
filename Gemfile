@@ -10,8 +10,5 @@ gem 'sprockets'
 gem 'rake'
 gem 'dotenv'
 gem 'rack-ssl-enforcer'
-
-group :production do
-  gem 'unicorn'
-  gem 'yui-compressor',  require: 'yui/compressor'
-end
+gem 'unicorn'
+gem 'yui-compressor',  require: 'yui/compressor'

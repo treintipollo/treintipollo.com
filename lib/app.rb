@@ -20,10 +20,10 @@ class App < Sinatra::Base
 		[root, 'vendor', 'assets', 'stylesheets']
 	].each { |p| sprockets.append_path(File.join *p) }
 
-	# configure :production do
-	# 	sprockets.css_compressor = YUI::CssCompressor.new
-	# 	sprockets.js_compressor = YUI::JavaScriptCompressor.new munge: true
-	# end
+	configure :production do
+		sprockets.css_compressor = YUI::CssCompressor.new
+		sprockets.js_compressor = YUI::JavaScriptCompressor.new munge: true
+	end
 
 	helpers do
 		def asset_path(source)
