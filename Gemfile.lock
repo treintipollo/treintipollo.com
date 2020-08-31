@@ -32,7 +32,6 @@ GEM
     unicorn (5.6.0)
       kgio (~> 2.6)
       raindrops (~> 0.7)
-    yui-compressor (0.12.0)
 
 PLATFORMS
   ruby
@@ -47,7 +46,6 @@ DEPENDENCIES
   sinatra
   sprockets
   unicorn
-  yui-compressor
 
 RUBY VERSION
    ruby 2.7.1p83
