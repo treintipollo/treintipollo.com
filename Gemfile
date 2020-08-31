@@ -6,9 +6,12 @@ gem 'coffee-script'
 gem 'erubis'
 gem 'rack-rewrite'
 gem 'sinatra',           require: 'sinatra/base'
-gem 'sprockets'
+gem 'sprockets', '3.7.1'
 gem 'rake'
 gem 'dotenv'
 gem 'rack-ssl-enforcer'
-gem 'unicorn'
-gem 'yui-compressor',  require: 'yui/compressor'
+
+group :production do
+  gem 'unicorn'
+  gem 'yui-compressor',  require: 'yui/compressor'
+end
