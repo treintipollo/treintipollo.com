@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby "2.4.0"
+ruby "2.7.1"
 
 gem 'coffee-script'
 gem 'erubis'
@@ -10,9 +10,6 @@ gem 'sprockets'
 gem 'rake'
 gem 'dotenv'
 gem 'rack-ssl-enforcer'
-
-gem 'platform-api'
-gem 'letsencrypt-rails-heroku', '~> 0.3.0'
 
 group :production do
   gem 'unicorn'

@@ -6,8 +6,6 @@ class App < Sinatra::Base
 
 	set :protection, :except=>:path_traversal
 
-	Letsencrypt.configure if production?
-	use Letsencrypt::Middleware if production?
 	use Rack::SslEnforcer if production?
 
 	set :root, File.dirname(__FILE__) + '/..'
