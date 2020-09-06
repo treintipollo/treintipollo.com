@@ -4,9 +4,9 @@
 
 	window.addEventListener("message", (e) =>
 	{
-		if (!e.origin.startsWidth("https://www.treintipollo-chat-service.herokuapp.com"))
+		if (!e.origin.startsWith("https://www.treintipollo-chat-service.herokuapp.com"))
 			return;
-		
+
 		if (e.data.data === "location.query")
 			return void e.source.postMessage({ id: e.data.id, data: location.search }, e.origin);
 	});
