@@ -32,7 +32,7 @@
 	<body>
 		<%= erb "help/help-html".to_sym, :locals => { :game => @game } %>
 
-		<iframe id="game" src="<%= @game %>/index.html"></iframe>
+		<%= erb "iframe/#{@game}".to_sym %>
 
 		<%= erb "help/help-js".to_sym %>
 
