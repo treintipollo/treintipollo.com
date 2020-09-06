@@ -7,8 +7,19 @@
 		if (!e.origin.startsWith("https://treintipollo-chat-service.herokuapp.com"))
 			return;
 
-		if (e.data.data === "location.query")
-			return void e.source.postMessage({ id: e.data.id, data: location.search }, e.origin);
+		switch(e.data.data.type)
+		{
+			case "location.search":
+			{
+				return void e.source.postMessage({ id: e.data.id, data: location.search }, e.origin);
+			}
+			case "document.title":
+			{
+				document.title = e.data.data.data;
+
+				return void e.source.postMessage({ id: e.data.id }, e.origin);
+			}
+		}
 	});
 
 </script>
