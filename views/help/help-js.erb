@@ -8,6 +8,18 @@
 		}
 		else {
 			allHelp.setAttribute("showing", "");
+			allHelp.removeAttribute("hide");
+		}
+	});
+
+	var iframe = document.querySelector("#game");
+
+	allHelp.addEventListener("transitionend", function(event) {
+		if (allHelp.hasAttribute("showing")) {
+			iframe.blur();
+		}
+		else {
+			iframe.focus();
 		}
 	});
 
