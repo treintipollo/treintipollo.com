@@ -4,7 +4,7 @@
 
 	window.addEventListener("message", (e) =>
 	{
-		if (!e.origin.startsWith("https://www.treintipollo-chat-service.herokuapp.com"))
+		if (!e.origin.startsWith("https://treintipollo-chat-service.herokuapp.com"))
 			return;
 
 		if (e.data.data === "location.query")
