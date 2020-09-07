@@ -3,12 +3,13 @@
 body {
 	background: #222;
 	font-family: 'Press Start 2P', cursive;
-	font-size: 21;
+	font-size: 21px;
 	line-height: 2;
 }
 
 a {
 	color: #ccc;
+	font-size: x-large;
 }
 
 .container {
@@ -33,7 +34,7 @@ a {
 
 	background: #000;
 	color: #fff;
-	font-size: 72px;
+	font-size: 75px;
 	line-height: 1.5;
 	text-align: center;
 	text-shadow: 5px 5px 10px #333;
@@ -78,6 +79,6 @@ a {
 }
 
 span {
-	font-size: 10px;
+	font-size: x-large;
 	color: #a76916;
 }
