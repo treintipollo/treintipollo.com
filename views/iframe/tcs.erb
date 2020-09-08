@@ -2,6 +2,10 @@
 
 <script type="text/javascript">
 
+	window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+
+	db = null;
+
 	window.addEventListener("message", (e) =>
 	{
 		if (!e.origin.startsWith("https://treintipollo-chat-service.herokuapp.com"))
@@ -18,6 +22,107 @@
 				document.title = e.data.data.data;
 
 				return void e.source.postMessage({ id: e.data.id }, e.origin);
+			}
+			case "indexDB.open":
+			{
+				const data = e.data.data.data;
+
+				const dbName = data.dbName;
+				const osName = data.osName;
+				const keyPath = data.keyPath;
+				const defaultEntry = data.defaultEntry;
+				const version = data.version;
+
+				const request = window.indexedDB.open(dbName, version);
+
+				request.onsuccess = (event) => {
+					db = request.result;
+
+					e.source.postMessage({ id: e.data.id, data: null, resolve: true }, e.origin);
+				};
+
+				request.onupgradeneeded = (event) => {
+					db = event.target.result;
+					const objStore = db.createObjectStore(osName, { keyPath: keyPath });
+
+					if (defaultEntry)
+						objStore.add(defaultEntry)
+				};
+
+				request.onerror = (event) => {
+					e.source.postMessage({ id: e.data.id, data: null, reject: true }, e.origin);
+				};
+
+				break;
+			}
+			case "indexDB.add":
+			{
+				const d = e.data.data.data;
+
+				const osName = d.osName;
+				const mode = d.mode;
+				const data = d.data;
+
+				const request = db.transaction([osName], mode).objectStore(osName).add(data);
+
+				request.onsuccess = (event) => {
+					e.source.postMessage({ id: e.data.id, data: null, resolve: true }, e.origin);
+				};
+
+				request.onerror = (event) => {
+					e.source.postMessage({ id: e.data.id, data: null, reject: true }, e.origin);
+				};
+
+				break;
+			}
+			case "indexDB.get":
+			{
+				const d = e.data.data.data;
+
+				const osName = d.osName;
+				const osId = d.osId;
+
+				const request = db.transaction([osName]).objectStore(osName).get(osId);
+
+				request.onsuccess = (event) => {
+					e.source.postMessage({ id: e.data.id, data: request.result, resolve: true }, e.origin);
+				};
+
+				request.onerror = (event) => {
+					e.source.postMessage({ id: e.data.id, data: null, reject: true }, e.origin);
+				};
+
+				break;
+			}
+			case "indexDB.put":
+			{
+				const d = e.data.data.data;
+
+				const osName = d.osName;
+				const osId = d.osId;
+				const mode = d.mode;
+				const data = d.data
+
+				const objStore = db.transaction([osName], mode).objectStore(osName);
+				const getRequest = objStore.get(osId);
+
+				getRequest.onsuccess = (event) => {
+					const putRequest = objStore.put(data);
+
+					getRequest.onsuccess = (event) => {
+						e.source.postMessage({ id: e.data.id, data: null, resolve: true }, e.origin);
+					};
+					
+					getRequest.onerror = (event) => {
+						e.source.postMessage({ id: e.data.id, data: null, reject: true }, e.origin);
+					};
+				};
+
+				getRequest.onerror = (event) => {
+					e.source.postMessage({ id: e.data.id, data: null, reject: true }, e.origin);
+				};
+
+				break;
 			}
 		}
 	});
