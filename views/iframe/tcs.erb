@@ -25,13 +25,13 @@
 			}
 			case "indexDB.open":
 			{
-				const data = e.data.data.data;
+				const d = e.data.data.data;
 
-				const dbName = data.dbName;
-				const osName = data.osName;
-				const keyPath = data.keyPath;
-				const defaultEntry = data.defaultEntry;
-				const version = data.version;
+				const dbName = d.dbName;
+				const osName = d.osName;
+				const keyPath = d.keyPath;
+				const defaultEntry = d.defaultEntry;
+				const version = d.version;
 
 				const request = window.indexedDB.open(dbName, version);
 
@@ -60,7 +60,7 @@
 			{
 				const d = e.data.data.data;
 
-				const dbName = data.dbName;
+				const dbName = d.dbName;
 				const osName = d.osName;
 				const mode = d.mode;
 				const data = d.data;
@@ -83,7 +83,7 @@
 			{
 				const d = e.data.data.data;
 
-				const dbName = data.dbName;
+				const dbName = d.dbName;
 				const osName = d.osName;
 				const osId = d.osId;
 
@@ -105,7 +105,7 @@
 			{
 				const d = e.data.data.data;
 
-				const dbName = data.dbName;
+				const dbName = d.dbName;
 				const osName = d.osName;
 				const osId = d.osId;
 				const mode = d.mode;
