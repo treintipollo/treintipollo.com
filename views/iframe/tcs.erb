@@ -4,7 +4,7 @@
 
 	window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 
-	db = null;
+	const dataBases = new Map();
 
 	window.addEventListener("message", (e) =>
 	{
@@ -36,13 +36,14 @@
 				const request = window.indexedDB.open(dbName, version);
 
 				request.onsuccess = (event) => {
-					db = request.result;
+					dataBases.set(dbName, request.result);
 
 					e.source.postMessage({ id: e.data.id, data: null, resolve: true }, e.origin);
 				};
 
 				request.onupgradeneeded = (event) => {
-					db = event.target.result;
+					dataBases.set(dbName, event.target.result);
+
 					const objStore = db.createObjectStore(osName, { keyPath: keyPath });
 
 					if (defaultEntry)
@@ -59,9 +60,12 @@
 			{
 				const d = e.data.data.data;
 
+				const dbName = data.dbName;
 				const osName = d.osName;
 				const mode = d.mode;
 				const data = d.data;
+
+				const db = dataBases.get(dbName);
 
 				const request = db.transaction([osName], mode).objectStore(osName).add(data);
 
@@ -79,8 +83,11 @@
 			{
 				const d = e.data.data.data;
 
+				const dbName = data.dbName;
 				const osName = d.osName;
 				const osId = d.osId;
+
+				const db = dataBases.get(dbName);
 
 				const request = db.transaction([osName]).objectStore(osName).get(osId);
 
@@ -98,10 +105,13 @@
 			{
 				const d = e.data.data.data;
 
+				const dbName = data.dbName;
 				const osName = d.osName;
 				const osId = d.osId;
 				const mode = d.mode;
-				const data = d.data
+				const data = d.data;
+
+				const db = dataBases.get(dbName);
 
 				const objStore = db.transaction([osName], mode).objectStore(osName);
 				const getRequest = objStore.get(osId);
