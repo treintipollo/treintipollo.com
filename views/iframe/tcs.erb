@@ -121,11 +121,11 @@
 				getRequest.onsuccess = (event) => {
 					const putRequest = objStore.put(data);
 
-					getRequest.onsuccess = (event) => {
+					putRequest.onsuccess = (event) => {
 						e.source.postMessage({ id: e.data.id, data: null, resolve: true }, e.origin);
 					};
 					
-					getRequest.onerror = (event) => {
+					putRequest.onerror = (event) => {
 						e.source.postMessage({ id: e.data.id, data: null, reject: true }, e.origin);
 					};
 				};
