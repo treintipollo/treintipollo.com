@@ -42,7 +42,9 @@
 				};
 
 				request.onupgradeneeded = (event) => {
-					dataBases.set(dbName, event.target.result);
+					const db = event.target.result;
+
+					dataBases.set(dbName, db);
 
 					const objStore = db.createObjectStore(osName, { keyPath: keyPath });
 
