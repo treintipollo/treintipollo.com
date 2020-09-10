@@ -17,6 +17,10 @@
 			{
 				return void e.source.postMessage({ id: e.data.id, data: location.search }, e.origin);
 			}
+			case "location.pathname":
+			{
+				return void e.source.postMessage({ id: e.data.id, data: location.pathname }, e.origin);
+			}
 			case "document.title":
 			{
 				document.title = e.data.data.data;
