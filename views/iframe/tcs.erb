@@ -23,6 +23,10 @@
 
 				return void e.source.postMessage({ id: e.data.id }, e.origin);
 			}
+			case "history.replaceState":
+			{
+				return void history.replaceState(null, null, e.data.data.data);
+			}
 			case "indexDB.open":
 			{
 				const d = e.data.data.data;
