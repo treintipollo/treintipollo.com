@@ -242,15 +242,14 @@
 		canvasWrapper.appendChild(loadingForeground);
 		canvasWrapper.appendChild(loadingText);
 
-		const scriptsLength = await GetAllResourcesSize(loadData["scripts"]);
-		const soundsLength = await GetAllResourcesSize(loadData["sounds"]);
-		let receivedLength = 0;
+		const totalResources = loadData["scripts"].length + loadData["sounds"].length;
+		let totalReceived = 0;
 
-		const allResources = await GetAllResources(loadData, (chunckAmount) =>
+		const allResources = await GetAllResources(loadData, () =>
 		{
-			receivedLength += chunckAmount;
+			totalReceived++;
 
-			let percent = (receivedLength / (scriptsLength + soundsLength));
+			let percent = (totalReceived / totalResources);
 			
 			if (percent >= 1)
 				percent = 1;
@@ -275,6 +274,7 @@
 				loadingMidground.style.opacity = 0;
 				loadingForeground.style.opacity = 0;
 				loadingText.style.opacity = 0;
+
 			}
 		});
 
@@ -305,27 +305,6 @@
 
 		for (const sound of allSounds)
 			window.SoundBuffers.set(sound.url, sound.sound);
-	}
-
-	async function GetAllResourcesSize(urls)
-	{
-		let ret = 0;
-
-		for (const url of urls)
-		{
-			const size = await GetResourceSize(url.path);
-
-			ret += Number(size);
-		}
-
-		return ret;
-	}
-
-	async function GetResourceSize(url)
-	{
-		const response = await fetch(url, { method: "HEAD" });
-		
-		return response.headers.get("content-length");
 	}
 
 	function GetAllResources(resources, progressCallback)
@@ -365,8 +344,6 @@
 						sound: result.buffer
 					};
 				}
-
-				
 			}
 
 			return {
@@ -376,73 +353,31 @@
 		});
 	}
 
-	async function GetScript(url, chunkReadCallback, index)
+	async function GetScript(url, scriptReadCallback, index)
 	{
 		const response = await fetch(url, { method: "GET" });
+		const scriptText = await response.text();
 
-		const reader = response.body.getReader();
-
-		const chunks = [];
-		const readAmount = await ReadChunk(reader, chunks, 0, chunkReadCallback)
-
-		let chunksAll = new Uint8Array(readAmount);
-		let position = 0;
-		
-		for (let chunk of chunks)
-		{
-			chunksAll.set(chunk, position);
-			position += chunk.length;
-		}
+		scriptReadCallback();
 
 		return {
 			type: "script",
 			index: index,
-			text: new TextDecoder("utf-8").decode(chunksAll)
+			text: scriptText
 		}
 	}
 
-	async function GetSound(url, chunkReadCallback, index)
+	async function GetSound(url, soundReadCallback, index)
 	{
 		const response = await fetch(url, { method: "GET" });
+		const buffer = await response.arrayBuffer();
 
-		const reader = response.body.getReader();
-
-		const chunks = [];
-		const readAmount = await ReadChunk(reader, chunks, 0, chunkReadCallback)
-
-		let chunksAll = new Uint8Array(readAmount);
-		let position = 0;
-		
-		for (let chunk of chunks)
-		{
-			chunksAll.set(chunk, position);
-			position += chunk.length;
-		}
+		soundReadCallback();
 
 		return {
 			type: "sound",
 			index: index,
-			buffer: chunksAll.buffer
+			buffer: buffer
 		}
-	}
-
-	async function ReadChunk(reader, chunksResult, readAmount, chunckReadCallback)
-	{
-		const chunck = await reader.read();
-
-		// Exit when done
-		if (chunck.done)
-			return readAmount;
-
-		// Push the chunck into a result array
-		chunksResult.push(chunck.value);
-
-		// Notify the outside that a chunk has been read
-		chunckReadCallback(chunck.value.length);
-
-		readAmount += chunck.value.length;
-
-		// Read another chunk
-		return await ReadChunk(reader, chunksResult, readAmount, chunckReadCallback);
 	}
 })();

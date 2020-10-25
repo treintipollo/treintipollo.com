@@ -2,11 +2,6 @@
 
 {
  	// Upload it to Treintipollo
- 		// Set the headers so SharedArrayBuffer works
- 		// Set the headers in Treintipollo so all pages get them and check if firefox changes
- 		// the boolean it needs to change
- 		// This should work on i frames more than anything
- 		
 
  	// Some sound files are messed up
 		// Contact Nicole and ask her to do some cool music
