@@ -22,27 +22,27 @@
 			LevelSelect.SetInitParams(3, 4);
 			ChainCounter.ResetGlobalScore();
 
-			ChainCounter._globalScore = 10000000;
+			// ChainCounter._globalScore = 10000000;
 
-			LevelSelect.Cleared(0, 0);
-			LevelSelect.Cleared(0, 1);
-			LevelSelect.Cleared(0, 2);
-			LevelSelect.Cleared(0, 3);
+			// LevelSelect.Cleared(0, 0);
+			// LevelSelect.Cleared(0, 1);
+			// LevelSelect.Cleared(0, 2);
+			// LevelSelect.Cleared(0, 3);
 
-			LevelSelect.Cleared(1, 0);
-			LevelSelect.Cleared(1, 1);
-			LevelSelect.Cleared(1, 2);
-			LevelSelect.Cleared(1, 3);
+			// LevelSelect.Cleared(1, 0);
+			// LevelSelect.Cleared(1, 1);
+			// LevelSelect.Cleared(1, 2);
+			// LevelSelect.Cleared(1, 3);
 
-			LevelSelect.Cleared(2, 0);
-			LevelSelect.Cleared(2, 1);
-			LevelSelect.Cleared(2, 2);
-			LevelSelect.Cleared(2, 3);
+			// LevelSelect.Cleared(2, 0);
+			// LevelSelect.Cleared(2, 1);
+			// LevelSelect.Cleared(2, 2);
+			// LevelSelect.Cleared(2, 3);
 
-			LevelSelect.Cleared(3, 0);
-			LevelSelect.Cleared(3, 1);
-			LevelSelect.Cleared(3, 2);
-			LevelSelect.Cleared(3, 3);
+			// LevelSelect.Cleared(3, 0);
+			// LevelSelect.Cleared(3, 1);
+			// LevelSelect.Cleared(3, 2);
+			// LevelSelect.Cleared(3, 3);
 			
 			this._pointer = new CustomPointer(this._stage);
 			this._screen = new SplashManager(this._stage);
