@@ -1,5 +1,14 @@
 <style>
-	@import url(//fonts.googleapis.com/css?family=Press+Start+2P);
+	@font-face {
+		font-family: "Press Start 2P";
+		src:
+			url("../../assets/PressStart2P-Regular.ttf") format("truetype"),
+			url("../../assets/PressStart2P-Regular.woff2") format("woff2"),
+			url("../../assets/PressStart2P-Regular.woff") format("woff");
+		
+		font-weight: normal;
+		font-style: normal;
+	}
 
 	.help-wrapper {
 		position: fixed;
@@ -25,7 +34,7 @@
 		flex-direction: row;
 		pointer-events: all;
 
-		font-family: 'Press Start 2P', cursive;
+		font-family: "Press Start 2P", cursive;
 
 		position: absolute;
 		top: 0px;

@@ -1,0 +1,120 @@
+@font-face
+{
+    font-family: "Digital-7";
+    src:
+    	url("../assets/digital-7.ttf") format("truetype"),
+    	url("../assets/digital-7-webfont.woff") format("woff"),
+    	url("../assets/digital-7-webfont.woff2") format("woff2");
+    
+    font-weight: normal;
+    font-style: normal;
+}
+
+body
+{
+	--canvas-width: 0px;
+	--canvas-height: 0px;
+
+	font-family: "Digital-7";
+	
+	margin: 0;
+	padding: 0;
+
+	background: black;
+	overflow: hidden;
+
+	width: 100%;
+	height: 100%;
+}
+
+#canvas-wrapper
+{
+	position: absolute;
+
+	width: 100%;
+	height: 100%;
+}
+
+#canvas
+{
+	width: 100%;
+	height: 100%;
+
+	cursor: none;
+	pointer-events: all;
+}
+
+#particle-canvas
+{
+	position: absolute;
+    
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+    
+    cursor: none;
+    pointer-events: none;
+}
+
+.loader
+{
+	position: absolute;
+	
+	border-width: 5px;
+	border-style: solid;
+	z-index: 999;
+	transition: opacity 0.5s;
+}
+
+.loader.back
+{
+	border-color: transparent;
+	background: black;
+
+	width: calc(var(--canvas-width) / 2);
+	height: 50px;
+	left: calc(var(--canvas-width) / 2);
+	top: calc(var(--canvas-height) / 2);
+
+	transform: translate(-50%, -100%);
+}
+
+.loader.middle
+{
+	border-color: transparent;
+	background: red;
+
+	width: 0px;
+	height: 50px;
+	left: calc((var(--canvas-width) / 2) - (var(--canvas-width) / 4) - 5px);
+	top: calc(var(--canvas-height) / 2);
+
+	transform: translate(0%, -100%);
+}
+
+.loader.front
+{
+	border-color: white;
+
+	width: calc(var(--canvas-width) / 2);
+	height: 50px;
+	left: calc(var(--canvas-width) / 2);
+	top: calc(var(--canvas-height) / 2);
+
+	transform: translate(-50%, -100%);
+}
+
+.loader.text
+{
+	border: 0px solid transparent;
+
+	font: 55px Digital-7;
+	color: red;
+
+	left: calc(var(--canvas-width) / 2);
+	top: calc(var(--canvas-height) / 2);
+	
+	transform: translate(-50%, 0%);
+}

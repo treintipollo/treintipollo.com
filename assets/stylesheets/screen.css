@@ -1,8 +1,17 @@
-@import url(//fonts.googleapis.com/css?family=Press+Start+2P);
+@font-face {
+	font-family: "Press Start 2P";
+	src:
+		url("PressStart2P-Regular.ttf") format("truetype"),
+		url("PressStart2P-Regular.woff2") format("woff2"),
+		url("PressStart2P-Regular.woff") format("woff");
+	
+	font-weight: normal;
+	font-style: normal;
+}
 
 body {
 	background: #222;
-	font-family: 'Press Start 2P', cursive;
+	font-family: "Press Start 2P", cursive;
 	font-size: 21px;
 	line-height: 2;
 }
