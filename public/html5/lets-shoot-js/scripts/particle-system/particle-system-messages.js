@@ -22,8 +22,8 @@
 		sharedStopView = new Uint8Array(sharedStop);
 	}
 
-	const c = document.createElement("canvas");
-	const hasTransferToOffscreen = typeof c.transferControlToOffscreen === "function";
+	let c = document.createElement("canvas");
+	let hasTransferToOffscreen = typeof c.transferControlToOffscreen === "function";
 	c = null;
 
 	class ParticleSystemMessages
