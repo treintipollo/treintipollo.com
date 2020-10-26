@@ -1,8 +1,6 @@
 "use strict"
 
 {
- 	// Upload it to Treintipollo
-
  	// Some sound files are messed up
 		// Contact Nicole and ask her to do some cool music
 			// Main game music x3
@@ -12,6 +10,8 @@
 			// Make robots will be there loop properly
 			// Make Dryll loop properly
 	
+	// Update tretintipollo with the concurrency check
+
  	// Game Improvements
  		// Do not give points for baddies spawned by a boss
 
@@ -72,12 +72,12 @@
  				// Cheaper upgrades
 
  	// After finishing the port
-		// Use WEBGL to draw rectangles, should be mus faster
+		// Use WEBGL to draw rectangles on the particle system, should be must faster
 		// Make a separate project with the particle system
+			// Make it flexible so it is easy to add particles, systems and use cases
 		// Make some UI and upload it as a separate project to Treintipollo
 
 	// Hold the port until Flash is not available anymore
-
 
 	let _click = false;
 

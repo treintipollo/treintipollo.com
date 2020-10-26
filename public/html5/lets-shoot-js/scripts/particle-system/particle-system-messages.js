@@ -8,14 +8,15 @@
 	let baseWorkerPath = "scripts/particle-system/particle-worker.js";
 	let absoluteWorkerPath = "";
 	let isolated = true;
+	let concurrency = navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 0;
 
 	absoluteWorkerPath = `${window.location.origin}/html5/lets-shoot-js/worker/${baseWorkerPath}`;
 	isolated = !!window.crossOriginIsolated;
 
-	if (window.Worker && isolated)
+	if (window.Worker && isolated && concurrency > 1)
 		worker = new Worker(absoluteWorkerPath);
 
-	if (window.SharedArrayBuffer && isolated)
+	if (window.SharedArrayBuffer && isolated && concurrency > 1)
 	{
 		sharedStop = new SharedArrayBuffer(Uint8Array.BYTES_PER_ELEMENT);
 		sharedStopView = new Uint8Array(sharedStop);
@@ -23,6 +24,7 @@
 
 	const c = document.createElement("canvas");
 	const hasTransferToOffscreen = typeof c.transferControlToOffscreen === "function";
+	c = null;
 
 	class ParticleSystemMessages
 	{
