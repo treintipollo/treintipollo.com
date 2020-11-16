@@ -232,4 +232,58 @@
 	{
 		return window[name];
 	}
+
+	createjs.StageGL.prototype._fetchWebGLContext = function (canvas, options)
+	{
+		let gl;
+
+		try
+		{
+			gl = canvas.getContext("webgl2", options);
+		}
+		catch (e)
+		{
+			// don't do anything in catch, null check will handle it
+		}
+
+		if (!gl)
+		{
+			try
+			{
+				gl = canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options);
+			}
+			catch (e)
+			{
+				// don't do anything in catch, null check will handle it
+			}
+		}
+
+		if (!gl)
+		{
+			const msg = "Could not initialize WebGL";
+			
+			console.error? console.error(msg) : console.log(msg);
+		}
+		else
+		{
+			gl.viewportWidth = canvas.width;
+			gl.viewportHeight = canvas.height;
+		}
+
+		return gl;
+	};
+
+	createjs.StageGL.isWebGLActive = function (context)
+	{
+		if (context)
+		{
+			if (context instanceof WebGLRenderingContext && typeof WebGLRenderingContext !== "undefined")
+				return true;
+
+			if (context instanceof WebGL2RenderingContext && typeof WebGL2RenderingContext !== "undefined")
+				return true;
+		}
+
+		return false;
+	};
 }

@@ -117,4 +117,7 @@ body
 	top: calc(var(--canvas-height) / 2);
 	
 	transform: translate(-50%, 0%);
+
+	text-align: center;
+	white-space: nowrap;
 }

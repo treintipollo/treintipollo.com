@@ -1,19 +1,53 @@
 (async function()
 {
-	if (!window.OffscreenCanvas)
-	{
-		window.OffscreenCanvas = function(width, height)
-		{
-			const canvas = document.createElement("canvas");
-
-			canvas.width = width;
-			canvas.height = height;
-
-			return canvas;
-		}
-	}
-
 	const supportFail = [];
+
+	if (!window.OffscreenCanvas)
+		supportFail.push("Offscreen canvas");
+
+	let c = document.createElement("canvas");
+
+	if (typeof c.transferControlToOffscreen !== "function")
+		supportFail.push("Transfer to offscreen canvas");
+
+	c = null;
+
+	const checkFroWebGL = () =>
+	{
+		let gl;
+
+		const canvas = document.createElement("canvas");
+
+		const options = {
+			"failIfMajorPerformanceCaveat": true
+		};
+
+		try
+		{
+			gl = canvas.getContext("webgl2", options);
+		}
+		catch (e)
+		{
+
+		}
+
+		if (!gl)
+		{
+			try
+			{
+				gl = canvas.getContext("webgl", options) || canvas.getContext("experimental-webgl", options);
+			}
+			catch (e)
+			{
+				
+			}
+		}
+
+		return !!gl;
+	};
+
+	if (!checkFroWebGL())
+		supportFail.push("WebGL");
 
 	if (!window.fetch)
 		supportFail.push("Fetch API");
@@ -274,7 +308,6 @@
 				loadingMidground.style.opacity = 0;
 				loadingForeground.style.opacity = 0;
 				loadingText.style.opacity = 0;
-
 			}
 		});
 
