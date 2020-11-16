@@ -138,19 +138,116 @@ function GameModeController() {
 
 	var maleModeRocketConfiguration = function() {
 		//First Set
-		TopLevel.rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 25, -50, 200, 350, 800, 5, false, "SpeedPowerUp");
-		TopLevel.rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height + 50, -50, -70, 600, 10, false, "HPPowerUp");
-		TopLevel.rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3", 25, -50, 200, 350, 800, 5, true, "WeaponPowerUp,MultiWeaponPowerUp");
+		TopLevel.rocketFactory.addWave(
+			"Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3",
+			25, // rockets in wave
+			-50, 200, 350, 800,
+			5, // rockets to power up
+			false,
+			"SpeedPowerUp,WeaponPowerUp,SpeedPowerUp,WeaponPowerUp"
+		);
+		
+		TopLevel.rocketFactory.addWave(
+			"CargoShip",
+			1,
+			TopLevel.canvas.height + 50, -50, -70, 600,
+			10,
+			false,
+			"HPPowerUp"
+		);
+
+		TopLevel.rocketFactory.addWave(
+			"Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3",
+			10, // rockets in wave
+			-50, 200, 350, 800,
+			3, // rockets to power up
+			false,
+			"WeaponPowerUp"
+		);
+		
+		TopLevel.rocketFactory.addWave(
+			"Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_1,Small_EnemyRocket_2,Small_EnemyRocket_3",
+			25,
+			-50, 200, 350, 800,
+			5,
+			true,
+			"WeaponPowerUp,WeaponPowerUp,MultiWeaponPowerUp"
+		);
 
 		//Second Set
-		TopLevel.rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3", 30, -50, 100, 500, 600, 10, false, "MultiWeaponPowerUp,SpeedPowerUp");
-		TopLevel.rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height + 50, -90, -100, 600, 10, false, "HPPowerUp");
-		TopLevel.rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3", 30, -50, 100, 500, 600, 10, true, "WeaponPowerUp");
+		
+		TopLevel.rocketFactory.addWave(
+			"Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3",
+			30,
+			-50, 100, 500, 600,
+			7,
+			false,
+			"MultiWeaponPowerUp,SpeedPowerUp,WeaponPowerUp"
+		);
+		
+		TopLevel.rocketFactory.addWave(
+			"CargoShip",
+			1,
+			TopLevel.canvas.height + 50, -90, -100, 600,
+			7,
+			false,
+			"HPPowerUp"
+		);
+
+		TopLevel.rocketFactory.addWave(
+			"Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3",
+			5,
+			-50, 100, 500, 600,
+			3,
+			false,
+			"WeaponPowerUp"
+		);
+		
+		TopLevel.rocketFactory.addWave(
+			"Small_EnemyRocket_1,Small_EnemyRocket_3,Mid_EnemyRocket_1,Mid_EnemyRocket_2,Mid_EnemyRocket_3",
+			30,
+			-50, 100, 500, 600,
+			7,
+			true,
+			"WeaponPowerUp"
+		);
 
 		//Third Set
-		TopLevel.rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 100, 200, 500, 10, false, "MultiWeaponPowerUp");
-		TopLevel.rocketFactory.addWave("CargoShip", 1, TopLevel.canvas.height + 50, -200, -250, 600, 10, false, "HPPowerUp");
-		TopLevel.rocketFactory.addWave("Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3", 30, -50, 100, 500, 500, 10, true, "WeaponPowerUp,SpeedPowerUp");
+		TopLevel.rocketFactory.addWave(
+			"Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3",
+			30,
+			-50, 100, 200, 500,
+			7,
+			false,
+			"MultiWeaponPowerUp"
+		);
+		
+		TopLevel.rocketFactory.addWave(
+			"CargoShip",
+			1,
+			TopLevel.canvas.height + 50, -200, -250, 600,
+			10,
+			false,
+			"HPPowerUp"
+		);
+
+		TopLevel.rocketFactory.addWave(
+			"Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3",
+			5,
+			-50, 100, 200, 500,
+			3,
+			false,
+			"WeaponPowerUp"
+		);
+		
+		TopLevel.rocketFactory.addWave(
+			"Small_EnemyRocket_1,Small_EnemyRocket_2,Large_EnemyRocket_1,Large_EnemyRocket_2,Large_EnemyRocket_3",
+			30,
+			-50, 100, 500, 500,
+			7,
+			true,
+			"WeaponPowerUp,SpeedPowerUp"
+		);
 	};
 
 	var getBoss = function(id, intro, win, getFunc) {

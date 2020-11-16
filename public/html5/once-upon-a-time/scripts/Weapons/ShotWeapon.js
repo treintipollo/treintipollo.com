@@ -105,10 +105,10 @@ function ShotWeapon(id, name, level, user, hasInstructions, usePowerShot, shotTy
 ShotWeapon.prototype.init = function(container) {
 	this.parent.init(container);
 	this.shotCharge.init(container);
-
+	
 	var inst = this;
 
-	if(this.usePowerShot){		
+	if(this.usePowerShot){
 		this.idleTimer.start();
 	}
 

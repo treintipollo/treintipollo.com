@@ -135,6 +135,9 @@ Attributes.prototype.onLastDamageLevelReached 		 = function(other) {}
 Attributes.prototype.onAllDamageReceived      		 = function(other) {}
 
 Attributes.prototype.onCollide = function(other) {
+
+	debugger;
+
 	var fullAttributes = TopLevel.attributesGetter.getFullAttributes(other.typeId);
 
 	if(!fullAttributes){

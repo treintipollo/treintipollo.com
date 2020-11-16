@@ -112,7 +112,6 @@ ObjectsContainer.prototype.update = function(delta, updateConfiguredOnly) {
 	}
 
 	if(this.removeAllArguments){
-		debugger;
 		this.removeAll.apply(this, this.removeAllArguments);
 	}
 }

@@ -1,6 +1,47 @@
+function CacheCanvas(store, color, width, height) {
+	var canvas = document.createElement("canvas");
+
+	canvas.width = width * 2;
+	canvas.height = height * 2;
+
+	var ctx = canvas.getContext("2d");
+
+	ctx.strokeStyle = color;
+
+	ctx.beginPath();
+	ctx.rect(0.5, 0.5, Math.floor(width), Math.floor(height));
+	ctx.closePath();
+
+	ctx.stroke();
+	
+	store.set(String(color) + String(width) + String(height), canvas);
+}
+
+function HasCacheCanvas(store, color, width, height)
+{
+	return store.has(String(color) + String(width) + String(height));
+}
+
+function GetCacheCanvas(store, color, width, height)
+{
+	return store.get(String(color) + String(width) + String(height));
+}
+
+function DrawParticle(context, store, color, width, height)
+{
+	if (!HasCacheCanvas(store, color, width, height))
+		CacheCanvas(store, color, width, height);
+
+	var cnvs = GetCacheCanvas(store, color, width, height);
+
+	context.drawImage(cnvs, -width / 2, -height / 2);
+}
+
 function ExhaustParticle() {}
 
 ExhaustParticle.inheritsFrom( GameObject );
+
+ExhaustParticle.canvases = new Map();
 
 ExhaustParticle.prototype.init = function(type, parentContext, bezierPoints, color, life, side) {
 	this.parentContext = parentContext;
@@ -18,17 +59,11 @@ ExhaustParticle.prototype.init = function(type, parentContext, bezierPoints, col
 	this.y = pos.y;
 }
 
-ExhaustParticle.prototype.draw = function(context) { 
-	context.strokeStyle = this.color;
-
-	context.beginPath();
-	context.rect(-2.5/2, -2.5/2, 2.5, 2.5);
-	context.closePath();
-
-	context.stroke();
+ExhaustParticle.prototype.draw = function(context) {
+	DrawParticle(context, ExhaustParticle.canvases, this.color, 2.5, 2.5);
 }
 
-ExhaustParticle.prototype.update = function(delta) { 	
+ExhaustParticle.prototype.update = function(delta) {
 	this.life += this.step * (delta * 50);
 
 	this.alive = this.parentContext.alive;
@@ -38,13 +73,15 @@ ExhaustParticle.prototype.update = function(delta) {
 	}else{
 		var pos = BezierCurve.getPoint(this.life, this.bezierPoints.call(this.parentContext, this.side, this.type));
 		this.x = pos.x;
-		this.y = pos.y;	
+		this.y = pos.y;
 	}
 }
 
 function TractorBeamParticle() {}
 
 TractorBeamParticle.inheritsFrom( GameObject );
+
+TractorBeamParticle.canvases = new Map();
 
 TractorBeamParticle.prototype.init = function(parentContext, bezierPoints, color, life, side) {
 	this.parentContext = parentContext;
@@ -62,13 +99,7 @@ TractorBeamParticle.prototype.init = function(parentContext, bezierPoints, color
 }
 
 TractorBeamParticle.prototype.draw = function(context) { 
-	context.strokeStyle = this.color;
-
-	context.beginPath();
-	context.rect(-2.5/2, -2.5/2, 2.5, 2.5);
-	context.closePath();
-
-	context.stroke();
+	DrawParticle(context, TractorBeamParticle.canvases, this.color, 2.5, 2.5);
 }
 
 TractorBeamParticle.prototype.update = function(delta) { 	
@@ -82,13 +113,15 @@ TractorBeamParticle.prototype.update = function(delta) {
 		var pos = BezierCurve.getPoint(this.life, this.bezierPoints.call(this.parentContext, this.side));
 
 		this.x = pos.x;
-		this.y = pos.y;	
+		this.y = pos.y;
 	}
 }
 
 function ShotChargeParticle() {}
 
 ShotChargeParticle.inheritsFrom( GameObject );
+
+ShotChargeParticle.canvases = new Map();
 
 ShotChargeParticle.prototype.init = function(parent, xOffset, yOffset, radius, startAngle, endAngle, color, size, minSpeed, maxSpeed) { 
     this.parent  = parent;
@@ -111,17 +144,11 @@ ShotChargeParticle.prototype.init = function(parent, xOffset, yOffset, radius, s
 	this.y = this.yOffset + this.parent.y + this.dirY * this.radius;
 }
 
-ShotChargeParticle.prototype.draw = function(context) { 
-	context.strokeStyle = this.color;
-
-	context.beginPath();
-	context.rect(-this.pSize/2, -this.pSize/2, this.pSize, this.pSize);
-	context.closePath();
-
-	context.stroke();
+ShotChargeParticle.prototype.draw = function(context) {
+	DrawParticle(context, ShotChargeParticle.canvases, this.color, this.pSize, this.pSize);
 }
 
-ShotChargeParticle.prototype.update = function(delta) { 	
+ShotChargeParticle.prototype.update = function(delta) {
 	this.radius -= this.speed * delta;
 
 	if(this.radius <= 0){
@@ -135,6 +162,8 @@ ShotChargeParticle.prototype.update = function(delta) {
 function BurstParticle() {}
 
 BurstParticle.inheritsFrom( GameObject );
+
+BurstParticle.canvases = new Map();
 
 BurstParticle.prototype.init = function(parent, xOffset, yOffset, radius, startAngle, endAngle, color, size, minSpeed, maxSpeed) { 
 	this.radius  = Random.getRandomArbitary(radius/2, radius);
@@ -156,21 +185,15 @@ BurstParticle.prototype.init = function(parent, xOffset, yOffset, radius, startA
 	this.y = this.yOffset + parent.y;
 }
 
-BurstParticle.prototype.draw = function(context) { 
-	context.strokeStyle = this.color;
-
-	context.beginPath();
-	context.rect(-this.pSize/2, -this.pSize/2, this.pSize, this.pSize);
-	context.closePath();
-
-	context.stroke();
+BurstParticle.prototype.draw = function(context) {
+	DrawParticle(context, BurstParticle.canvases, this.color, this.pSize, this.pSize);
 }
 
-BurstParticle.prototype.update = function(delta) { 	
+BurstParticle.prototype.update = function(delta) {
 	this.radius -= this.speed * delta;
 
-	if(this.radius <= 0){
-		this.alive = false;	
+	if(this.radius <= 0) {
+		this.alive = false;
 	}else{
 		this.x += this.dirX * this.speed * delta;
 		this.y += this.dirY * this.speed * delta;
@@ -187,10 +210,10 @@ BurstParticleRadius.prototype.init = function(parent, xOffset, yOffset, radius, 
 	var a = Random.getRandomArbitary(0, 360) * (Math.PI/180);
 	angle *= (Math.PI/180);
 
-	this.x = this.xOffset + parent.x + Math.cos(a)*spawnRadius;	
+	this.x = this.xOffset + parent.x + Math.cos(a)*spawnRadius;
 	this.y = this.yOffset + parent.y + Math.sin(a)*spawnRadius;
 
-	a = Math.atan2((this.yOffset + parent.y + Math.sin(angle)*radius) - this.y, 
+	a = Math.atan2((this.yOffset + parent.y + Math.sin(angle)*radius) - this.y,
 				   (this.xOffset + parent.x + Math.cos(angle)*radius) - this.x);
 
 	this.dirX = Math.cos(a);
@@ -201,7 +224,9 @@ function RadialParticle() {}
 
 RadialParticle.inheritsFrom( GameObject );
 
-RadialParticle.prototype.init = function(user, color, radius, life, startAngle, endAngle) { 
+RadialParticle.canvases = new Map();
+
+RadialParticle.prototype.init = function(user, color, radius, life, startAngle, endAngle) {
 	this.user   = user;
 	this.radius = radius;
 	this.color  = color;
@@ -216,27 +241,23 @@ RadialParticle.prototype.init = function(user, color, radius, life, startAngle, 
 	this.y = this.user.y + this.dirY * this.radius;
 }
 
-RadialParticle.prototype.draw = function(context) { 
-	context.strokeStyle = this.color;
-
-	context.beginPath();
-	context.rect(-2.5/2, -2.5/2, 2.5, 2.5);
-	context.closePath();
-
-	context.stroke();
+RadialParticle.prototype.draw = function(context) {
+	DrawParticle(context, RadialParticle.canvases, this.color, 2.5, 2.5);
 }
 
-RadialParticle.prototype.update = function(delta) { 	
+RadialParticle.prototype.update = function(delta) {
 	this.life -= delta * 100;
 
 	if(this.life < 0){
-		this.alive = false;	
+		this.alive = false;
 	}
 }
 
 function StraightParticle() {}
 
 StraightParticle.inheritsFrom( GameObject );
+
+StraightParticle.canvases = new Map();
 
 StraightParticle.prototype.init = function(x, y, angle, color, size, maxSpeed, life) { 
 	this.x     = x;
@@ -252,21 +273,15 @@ StraightParticle.prototype.init = function(x, y, angle, color, size, maxSpeed, l
 	this.dirY = Math.sin(angle) * this.side;
 }
 
-StraightParticle.prototype.draw = function(context) { 
-	context.strokeStyle = this.color;
-
-	context.beginPath();
-	context.rect(-this.size/2, -this.size/2, this.size, this.size);
-	context.closePath();
-
-	context.stroke();
+StraightParticle.prototype.draw = function(context) {
+	DrawParticle(context, StraightParticle.canvases, this.color, this.size, this.size);
 }
 
-StraightParticle.prototype.update = function(delta) { 	
+StraightParticle.prototype.update = function(delta) {
 	this.life -= delta * 100;
 
 	if(this.life < 0){
-		this.alive = false;	
+		this.alive = false;
 	}else{
 		this.x += this.dirX * this.speed * delta;
 		this.y += this.dirY * this.speed * delta;

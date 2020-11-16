@@ -4534,7 +4534,7 @@
 					_id = null;
 				},
 				_tick = function(manual) {
-					_self.time = (_getTime() - _startTime) / 1000;
+					_self.time = ((_getTime() - _self.stopDelta) - _startTime) / 1000;
 					if (!_fps || _self.time >= _nextTime || (manual === true)) {
 						_self.frame++;
 						_nextTime = (_self.time > _nextTime) ? _self.time + _gap - (_self.time - _nextTime) : _self.time + _gap - 0.001;
@@ -4550,8 +4550,24 @@
 
 			EventDispatcher.call(_self);
 			this.time = this.frame = 0;
+			this.stopTime = 0;
+			this.stopDelta = 0;
+			
 			this.tick = function() {
 				_tick(true);
+			};
+
+			this.resumeTick = function() {
+				if (_id == null) {
+					_self.stopDelta += _getTime() - _self.stopTime;
+					
+					_self.fps(fps);
+				}
+			};
+
+			this.stopTick = function() {
+				_self.stopTime = _getTime();
+				_cancelReq();
 			};
 
 			this.fps = function(value) {
@@ -4574,6 +4590,7 @@
 				_useRAF = value;
 				_self.fps(_fps);
 			};
+
 			_self.fps(fps);
 
 			//a bug in iOS 6 Safari occasionally prevents the requestAnimationFrame from working initially, so we use a 1-second timeout that automatically falls back to setTimeout() if it senses this condition.

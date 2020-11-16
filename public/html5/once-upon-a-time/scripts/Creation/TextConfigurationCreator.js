@@ -277,7 +277,7 @@ TextConfigurationCreator.prototype.create = function() {
 
 	TopLevel.container.createTypeConfiguration("controls_1", "Text").args({
 		tProto: GameText.prototype,
-		text: 'Press "A" to Shoot',
+		text: 'Press "A" or "S" to shoot',
 		font: "Russo One",
 		size: 30,
 		fill: "#FFFFFF",
@@ -290,7 +290,7 @@ TextConfigurationCreator.prototype.create = function() {
 
 	TopLevel.container.createTypeConfiguration("controls_2", "Text").args({
 		tProto: GameText.prototype,
-		text: 'Press "← ↑ → ↓" to Move',
+		text: 'Press arrow keys to move',
 		font: "Russo One",
 		size: 30,
 		fill: "#FFFFFF",

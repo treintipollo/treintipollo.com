@@ -11,11 +11,11 @@ function GameSetUp(mainGameSetUp) {
 	this.manualSoftPause = false;
 	this.wasInSoftPause = false;
 
-	window.addEventListener('load', function() {
-		var mainContainer = document.querySelector('#main');
-		var canvas = document.querySelector('#game');
+	window.addEventListener("load", function() {
+		var mainContainer = document.querySelector("#main");
+		var canvas = document.querySelector("#game");
 
-		window.addEventListener('resize', function() {
+		window.addEventListener("resize", function() {
 			resize(mainContainer, canvas);
 		}, false);
 
@@ -31,21 +31,53 @@ function GameSetUp(mainGameSetUp) {
 			scale.y = (window.innerHeight - 5) / canvas.height;
 
 			if (scale.x < scale.y) {
-				scale = scale.x + ', ' + scale.x;
+				scale = scale.x + ", " + scale.x;
 			} else {
-				scale = scale.y + ', ' + scale.y;
+				scale = scale.y + ", " + scale.y;
 			}
 
-			container.style.webkitTransform = 'scale(' + scale + ')';
-			container.style.mozTransform = 'scale(' + scale + ')';
-			container.style.msTransform = 'scale(' + scale + ')';
-			container.style.oTransform = 'scale(' + scale + ')';
+			container.style.webkitTransform = "scale(" + scale + ")";
+			container.style.mozTransform = "scale(" + scale + ")";
+			container.style.msTransform = "scale(" + scale + ")";
+			container.style.oTransform = "scale(" + scale + ")";
 		}
 	}, false);
+
+	if (document.readyState === "complete") {
+		var mainContainer = document.querySelector("#main");
+		var canvas = document.querySelector("#game");
+
+		window.addEventListener("resize", function() {
+			resize(mainContainer, canvas);
+		}, false);
+
+		resize(mainContainer, canvas);
+
+		function resize(container, canvas) {
+			var scale = {
+				x: 1,
+				y: 1
+			};
+
+			scale.x = (window.innerWidth - 5) / canvas.width;
+			scale.y = (window.innerHeight - 5) / canvas.height;
+
+			if (scale.x < scale.y) {
+				scale = scale.x + ", " + scale.x;
+			} else {
+				scale = scale.y + ", " + scale.y;
+			}
+
+			container.style.webkitTransform = "scale(" + scale + ")";
+			container.style.mozTransform = "scale(" + scale + ")";
+			container.style.msTransform = "scale(" + scale + ")";
+			container.style.oTransform = "scale(" + scale + ")";
+		}
+	}
 }
 
 GameSetUp.prototype.setUp = function() {
-	var frameRequest, mainLoop;
+	var frameRequest, mainLoop, mainLoopWrap;
 
 	var self = this;
 
@@ -56,7 +88,7 @@ GameSetUp.prototype.setUp = function() {
 
 	//Setting up the onBlur and onFocus events.
 	//If the game is not initialized because it has no focus, these will be created anyway.
-	//Once the document gains fucos, it will create the game, if it hasn't so already.
+	//Once the document gains fucos, it will create the game, if it hasn"t so already.
 	var onBlur = function(event) {
 		if (self.blur) {
 			self.blur = false;
@@ -64,8 +96,7 @@ GameSetUp.prototype.setUp = function() {
 
 			TimeOutFactory.pauseAllTimeOuts();
 
-			self.tweensTimeLine = TimelineLite.exportRoot();
-			self.tweensTimeLine.pause();
+			TweenLite.ticker.stopTick();
 
 			ArrowKeyHandler.pause();
 
@@ -93,13 +124,17 @@ GameSetUp.prototype.setUp = function() {
 
 				TimeOutFactory.resumeAllTimeOuts();
 
-				if (self.tweensTimeLine) self.tweensTimeLine.resume();
+				TweenLite.ticker.resumeTick();
 
 				ArrowKeyHandler.resume();
 
 				SoundPlayer.resumeAll();
 
 				if (!self.wasInSoftPause) {
+					lastTime = NaN;
+					tickTimeTotal = 0;
+					lastTickTime = NaN;
+
 					frameRequest = window.requestAnimationFrame(mainLoop);
 				} else {
 					self.wasInSoftPause = true;
@@ -108,33 +143,55 @@ GameSetUp.prototype.setUp = function() {
 			}
 		}
 	}
-
-
+	
 	$(window).on("blur", onBlur);
 	$(window).on("focus", onFocus);
 
 	if (document.hasFocus()) {
 		mainGameCreation();
 
-		mainLoop = function() {
-			var now = Date.now();
-			var dt = now - self.lastUpdate;
-			self.lastUpdate = now;
+		var lastTime = NaN;
+		var tickTime = 1000 / 60;
+		var tickTimeTotal = 0;
+		var lastTickTime = NaN;
 
-			if (dt < 30) {
-				TopLevel.container.update(dt / 1000, self.manualSoftPause);
+		mainLoop = function(time)
+		{
+			frameRequest = window.requestAnimationFrame(mainLoop);
+
+			if (!lastTime)
+				lastTime = time;
+
+			tickTimeTotal += time - lastTime;
+
+			if (tickTimeTotal >= tickTime)
+			{
+				if (lastTickTime)
+				{
+					TopLevel.container.update((time - lastTickTime) / 1000, self.manualSoftPause);
+				}
+				else
+				{
+					TopLevel.container.update(tickTimeTotal / 1000, self.manualSoftPause);
+				}
+
+				lastTickTime = time;
 
 				TopLevel.container.draw();
-			}
 
-			frameRequest = window.requestAnimationFrame(mainLoop);
+				tickTimeTotal -= tickTime;
+
+				self.lastUpdate = time;
+			}
+			
+			lastTime = time;
 		}
 
-		var vendors = ['ms', 'moz', 'webkit', 'o'];
+		var vendors = ["ms", "moz", "webkit", "o"];
 
 		for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-			window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-			window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+			window.requestAnimationFrame = window[vendors[x] + "RequestAnimationFrame"];
+			window.cancelAnimationFrame = window[vendors[x] + "CancelAnimationFrame"] || window[vendors[x] + "CancelRequestAnimationFrame"];
 		}
 
 		if (!window.requestAnimationFrame) {
@@ -156,22 +213,22 @@ GameSetUp.prototype.setUp = function() {
 GameSetUp.prototype.softPause = function() {
 	this.manualSoftPause = true;
 	this.wasInSoftPause = true;
-	this.dispatchUIEvent('blur');
+	this.dispatchUIEvent("blur");
 }
 
 GameSetUp.prototype.softResume = function() {
 	this.manualSoftPause = false;
-	this.dispatchUIEvent('focus');
+	this.dispatchUIEvent("focus");
 }
 
 GameSetUp.prototype.hardPause = function() {
 	this.manualHardPause = true;
-	this.dispatchUIEvent('blur');
+	this.dispatchUIEvent("blur");
 }
 
 GameSetUp.prototype.hardResume = function() {
 	this.manualHardPause = false;
-	this.dispatchUIEvent('focus');
+	this.dispatchUIEvent("focus");
 }
 
 GameSetUp.prototype.dispatchUIEvent = function(event) {

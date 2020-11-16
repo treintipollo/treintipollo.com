@@ -7,17 +7,26 @@ PowerUpConfiguration.prototype.setUp = function() {
 	]);
 
 	TopLevel.powerUpFactory.addPowerUpTypes("RocketPowerUp", [
-		{scope:TopLevel.playerData			 , callback:function(powerUp){ this.setWeapon(TopLevel.weaponFactory.ROCKET_WEAPON); } },
+		{scope:TopLevel.playerData			 , callback:function(powerUp) {
+			this.setSecondaryWeapon(TopLevel.weaponFactory.ROCKET_WEAPON);
+			this.secondaryWeaponAmmo("large");
+		}},
 		{scope:TopLevel.textFeedbackDisplayer, callback:function(powerUp){ this.showFeedBack("rockets", TopLevel.playerData.ship.x, TopLevel.playerData.ship.y ); } }
 	]); 
 
 	TopLevel.powerUpFactory.addPowerUpTypes("HomingRocketPowerUp", [
-		{scope:TopLevel.playerData			 , callback:function(powerUp){ this.setWeapon(TopLevel.weaponFactory.HOMING_ROCKET_WEAPON); } },
+		{scope:TopLevel.playerData			 , callback:function(powerUp) {
+			this.setSecondaryWeapon(TopLevel.weaponFactory.HOMING_ROCKET_WEAPON);
+			this.secondaryWeaponAmmo("large");
+		}},
 		{scope:TopLevel.textFeedbackDisplayer, callback:function(powerUp){ this.showFeedBack("homing", TopLevel.playerData.ship.x, TopLevel.playerData.ship.y ); } }
 	]);
 	
 	TopLevel.powerUpFactory.addPowerUpTypes("WeaponPowerUp", [
-		{scope:TopLevel.playerData			 , callback:function(powerUp){ this.powerUpWeapon(); } },
+		{scope:TopLevel.playerData			 , callback:function(powerUp) {
+			this.powerUpWeapon("small");
+			this.secondaryWeaponAmmo("small");
+		}},
 		{scope:TopLevel.textFeedbackDisplayer, callback:function(powerUp){ this.showFeedBack("pUp", TopLevel.playerData.ship.x, TopLevel.playerData.ship.y ); } }
 	]);
 
@@ -37,15 +46,23 @@ PowerUpConfiguration.prototype.setUp = function() {
 	]);
 
 	//This implementation of multi purpose powerups almost defeats of the purpose of the previous callback structure. Almost :P
-	TopLevel.powerUpFactory.addMultiPowerUpType("MultiWeaponPowerUp", "MultiPowerUp", 
-		[{id:"ShotPowerUp"  , pro:ShotPowerUp.prototype}, 
+	TopLevel.powerUpFactory.addMultiPowerUpType("MultiWeaponPowerUp", "MultiPowerUp",
+		[{id:"ShotPowerUp"  , pro:ShotPowerUp.prototype},
 		 {id:"RocketPowerUp", pro:RocketPowerUp.prototype},
-		 {id:"HomingPowerUp", pro:HomingRocketPowerUp.prototype}], 
+		 {id:"HomingPowerUp", pro:HomingRocketPowerUp.prototype}],
 
-		[{scope:TopLevel.playerData, callback:function(powerUp){ 
-			if(powerUp.id == "ShotPowerUp"){ this.setWeapon(TopLevel.weaponFactory.SHOT_WEAPON); }
-			if(powerUp.id == "RocketPowerUp"){ this.setWeapon(TopLevel.weaponFactory.ROCKET_WEAPON); }
-			if(powerUp.id == "HomingPowerUp"){ this.setWeapon(TopLevel.weaponFactory.HOMING_ROCKET_WEAPON); }
+		[{scope:TopLevel.playerData, callback:function(powerUp) {
+			if(powerUp.id == "ShotPowerUp") {
+				this.setWeapon(TopLevel.weaponFactory.SHOT_WEAPON);
+			}
+			if(powerUp.id == "RocketPowerUp") {
+				this.setSecondaryWeapon(TopLevel.weaponFactory.ROCKET_WEAPON);
+				this.secondaryWeaponAmmo("large");
+			}
+			if(powerUp.id == "HomingPowerUp") {
+				this.setSecondaryWeapon(TopLevel.weaponFactory.HOMING_ROCKET_WEAPON);
+				this.secondaryWeaponAmmo("large");
+			}
 		} },
 		{scope:TopLevel.textFeedbackDisplayer, callback:function(powerUp){  
 			if(powerUp.id == "ShotPowerUp"){ this.showFeedBack("shot", TopLevel.playerData.ship.x, TopLevel.playerData.ship.y ); }

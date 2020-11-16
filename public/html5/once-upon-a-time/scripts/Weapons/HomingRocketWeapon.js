@@ -57,6 +57,20 @@ function HomingRocketWeapon(id, name, level, user, hasInstructions) {
 	this.idleTimer = TimeOutFactory.getTimeOut(2000, 1, this, function(){
 		this.createTargets();		
 	});
+
+	this.amount = 20;
+}
+
+HomingRocketWeapon.prototype.increaseAmmo = function(amount) {
+	RocketWeapon.prototype.increaseAmmo.call(this, amount);
+}
+
+HomingRocketWeapon.prototype.getAmmo = function() {
+	return RocketWeapon.prototype.getAmmo.call(this);
+}
+
+HomingRocketWeapon.prototype.setAmmo = function(amount) {
+	RocketWeapon.prototype.setAmmo.call(this, amount);
 }
 
 HomingRocketWeapon.prototype.init = function(container) {
@@ -69,38 +83,49 @@ HomingRocketWeapon.prototype.init = function(container) {
 	var currentTarget = 0;
 	
 	var nextTargetAvailable = function() {
-		if(inst.targets.length == 0){ 
-			return false;
-		}
-		if(inst.targets.length == 1){
-			currentTarget = 0;
-			return true;
-		}
-
-		currentTarget++;
 		
-		if(currentTarget > inst.targets.length-1){
-			currentTarget = 0;	
-		}
+		for (var i = container.mainObjects.length - 1; i >= 0; i--) {
+			var a = container.mainObjects[i];
 
-		var target = inst.targets[currentTarget];
+			if (a != null) {
+				for (var j = 0; j < a.length; j++) {
+					var object = a[j];
 
-		if(!target) {
-			return nextTargetAvailable();			
+					if (object.alive && object instanceof EnemyRocket) {
+						return object;
+					}
+					else if (object.alive && object instanceof CloneShip) {
+						return object;
+					}
+					else if (object.alive && object instanceof CargoShip) {
+						return object;
+					}
+					else if (object.alive && object instanceof BadGuy) {
+						return object;
+					}
+					else if (object.alive && object instanceof Boss_1) {
+						return object;
+					}
+				}
+			}
 		}
 	}
 
-	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_1, function(){
+	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_2, function(){
 
 		if(!ScreenUtils.isInScreenBoundsXY(inst.user.x, inst.user.y)){
 			return;
 		}
 
-		if(nextTargetAvailable() == false){
-			return;
-		}
+		const t = nextTargetAvailable();
 
-		var t = inst.targets[currentTarget];
+		if (!t)
+			return;
+
+		if (inst.amount <= 0)
+			return;
+
+		inst.amount--;
 
 		var xOffset = Math.cos(inst.deployPosition[inst.currentDeplayIndex].radianRotation) * inst.deployPosition[inst.currentDeplayIndex].radius;
 		var yOffset = Math.sin(inst.deployPosition[inst.currentDeplayIndex].radianRotation) * inst.deployPosition[inst.currentDeplayIndex].radius;
@@ -109,47 +134,23 @@ HomingRocketWeapon.prototype.init = function(container) {
 		RocketWeapon.RocketArguments[1]   = inst.user.y;
 		RocketWeapon.RocketArguments[2].x = inst.user.x + xOffset;
 		RocketWeapon.RocketArguments[2].y = inst.user.y + yOffset;
-		RocketWeapon.RocketArguments[3]   = t.t;
+		RocketWeapon.RocketArguments[3]   = t;
 		RocketWeapon.RocketArguments[4]   = inst.container;
 		RocketWeapon.RocketArguments[5]   = inst.deployPosition[inst.currentDeplayIndex].degreeRotation;
 		
 		var r = inst.container.add(inst.rocketTypes[inst.level], RocketWeapon.RocketArguments);
 
-		if(r){
+		if(r) {
 			inst.currentDeplayIndex++;
 
 			if(inst.currentDeplayIndex >= inst.deployPosition.length){
 				inst.currentDeplayIndex = 0;
 			}
-
-			if(!t.t.isLocked()){
-				t.rocketLimit--;
-			}
-
-			if(t.rocketLimit < 0){
-				t.t.disable();
-			}
-
 		}
+
+		TopLevel.playerData.execute("rocket", TopLevel.playerData);
 
 		inst.idleTimer.reset();
-	});
-
-	this.callbacks.push(c);
-
-	c = ArrowKeyHandler.addKeyUpCallback(ArrowKeyHandler.GAME_BUTTON_2, function(){
-		inst.crossHairMode++;
-
-		if(inst.crossHairMode > inst.crossHairAmount[inst.level].length-1){
-			inst.crossHairMode = 0;
-		}
-
-		for(var i=0; i<inst.targets.length; i++){	
-			var targetOffset = RocketWeapon.tGrid[inst.crossHairAmount[inst.level][inst.crossHairMode][i]];
-			
-			inst.targets[i].t.setOffSet.apply(inst.targets[i].t, targetOffset);
-		}
-
 	});
 
 	this.callbacks.push(c);

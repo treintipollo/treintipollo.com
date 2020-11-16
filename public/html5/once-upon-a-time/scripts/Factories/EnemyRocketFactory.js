@@ -81,7 +81,7 @@ EnemyRocketFactory.prototype.createEnemyRocket = function() {
 
 	rocket.addOnDestroyCallback(this, function(obj){
 		wave.rocketsToPowerUp--;
-	
+		
 		if(wave.rocketsToPowerUp <= 0){
 			TopLevel.powerUpFactory.create(obj.x, obj.y, wave.powerUpsInWave[Random.getRandomInt(0, wave.powerUpsInWave.length-1)], 1, false);
 			wave.rocketsToPowerUp = wave.rocketsToPowerUpInit;

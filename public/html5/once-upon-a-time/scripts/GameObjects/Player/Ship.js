@@ -322,9 +322,11 @@ Ship.prototype.update = function(delta) {
 
 	this.setAllExhaustState(Exhaust.UPDATE);
 
-	if(this.weapon) {
+	if(this.weapon)
 		this.weapon.update();
-	}
+
+	if(this.secondaryWeapon)
+		this.secondaryWeapon.update();
 }
 
 Ship.prototype.destroy = function(){	
@@ -337,6 +339,9 @@ Ship.prototype.destroy = function(){
 
 	if(this.weapon)
 		this.weapon.destroy();
+
+	if(this.secondaryWeapon)
+		this.secondaryWeapon.destroy();
 
 	this.currentMotion.destroy();
 }
@@ -356,10 +361,15 @@ Ship.prototype.onDamageReceived = function(other) {
 
 	//This is bullshit, that's what it is.
 	var rA = 0;	
-	if(other.typeId != "IntroBadGuy"){
+	if(other.typeId != "IntroBadGuy") {
 		rA = Random.getRandomArbitary(-25, 25) * (Math.PI/180);
-	}else{
-		this.weapon.stop();
+	}else {
+		
+		if (this.weapon)
+			this.weapon.stop();
+
+		if(this.secondaryWeapon)
+			this.secondaryWeapon.stop();
 	}
 
 	vec.dir.x = Math.cos(rA + vec.angle) * 80;
@@ -369,7 +379,7 @@ Ship.prototype.onDamageReceived = function(other) {
 	
 	TweenMax.to(this, 0.5, {rotation:360, ease:Power4.easeOut, onCompleteScope:this, onComplete:function(){
 		this.blockDamage = false;
-		this.rotation = 0;	
+		this.rotation = 0;
 	}});
 }
 

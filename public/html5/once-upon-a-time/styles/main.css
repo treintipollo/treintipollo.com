@@ -1,5 +1,9 @@
 body {
 	background: #222;
+
+	margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 #main {
@@ -21,6 +25,7 @@ body {
 .hudText {
 	color: #ffffff;
 	font-family: 'Russo One', sans-serif;
+	font-size: 0.8em;
 }
 
 #lives {
@@ -29,18 +34,25 @@ body {
 	left: 10px;
 }
 
+#next-shot-level {
+	position: absolute;
+	top: 40px;
+	left: 10px;
+}
+
 #level {
 	position: absolute;
 	text-align: center;
 	top: 10px;
 	width: 100%;
+	display: none;
 }
 
 .hp { 
 	position: absolute;
-	top: 30px;
+	top: 25px;
 	left: 10px;
-	height: 20px;
+	height: 7px;
 	background: #555;
 
 	width: 150px;
@@ -50,10 +62,34 @@ body {
 
 .hp > span {
 	display: block;
-	height: 100%;
-	background: #2BC253;
-	position: relative;
-	overflow: hidden;
+    height: calc(100% + 1px);
+    background: #2BC253;
+    position: relative;
+    overflow: hidden;
+
+    position: absolute;
+    top: -1;
+}
+
+.shot-xp {
+	position: absolute;
+	top: 55px;
+	left: 10px;
+	height: 7px;
+	background: #555;
+
+	width: 150px;
+
+	border: 2px solid #fff;
+}
+
+.shot-xp > span {
+	display: block;
+    height: calc(100% + 1px);
+    width: 0%;
+    background: #c2532b;
+    position: relative;
+    overflow: hidden;
 }
 
 #weapon {
@@ -64,13 +100,31 @@ body {
 	text-align: right;
 }
 
-#speed {
+#secondaryWeapon {
 	position: absolute;
-	top: 30px;
+	top: 32px;
 	right: 10px;
 	width: 100%;
 	text-align: right;
 }
+
+#speed {
+	position: absolute;
+	top: 54px;
+	right: 10px;
+	width: 100%;
+	text-align: right;
+}
+
+#rockets {
+	position: absolute;
+	left: 10px;
+	bottom: 10px;
+	
+	color: transparent;
+  	text-shadow: 0 0 0 white;
+}
+
 
 #game {
 	background: #000000;
@@ -87,4 +141,19 @@ h1 {
 
 @font-face {
 	font-family: 'Russo One', sans-serif;
+}
+
+div.loader {
+	font-family: 'Russo One', sans-serif;
+	font-size: xxx-large;
+	background: black;
+	color: white;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 999;
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }

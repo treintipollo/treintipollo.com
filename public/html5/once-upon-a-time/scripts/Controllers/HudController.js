@@ -2,7 +2,32 @@ function HudController() {
 	this.updateWeapon = function(playerData) {
 		var name = playerData.ship.weapon.getName();
 		var level = playerData.ship.weapon.getLevel() + 1;
-		$("#weapon").text((name + " x " + level).toString());
+		$("#weapon").text((name + " lv. " + level).toString());
+
+		var amountToNextLevel = playerData.ship.weapon.getAmountToNextLevel();
+		var domNext = $(".shot-xp");
+		var domMeter = $(".shot-xp>span");
+		var totalWidth = domNext.width();
+		var meterPercentage = totalWidth * amountToNextLevel;
+		
+		TweenMax.to(domMeter, 0.5, { css: { width: meterPercentage } });
+	},
+
+	this.updateSecondaryWeapon = function(playerData) {
+		if (playerData.ship.secondaryWeapon)
+		{
+			var name = playerData.ship.secondaryWeapon.getName();
+			var level = playerData.ship.secondaryWeapon.getLevel() + 1;
+			var ammo = playerData.ship.secondaryWeapon.getAmmo();
+
+			$("#secondaryWeapon").text((name + " lv. " + level).toString());
+			$("#rockets").text(("🚀" + " x " + ammo).toString());
+		}
+		else
+		{
+			$("#secondaryWeapon").text("");
+			$("#rockets").text("");
+		}
 	},
 
 	this.updateLives = function(playerData) {
@@ -12,7 +37,7 @@ function HudController() {
 
 	this.updateSpeed = function(playerData) {
 		var speed = playerData.speedPowerUps + 1;
-		$("#speed").text("Speed x " + speed.toString());
+		$("#speed").text("Speed lv. " + speed.toString());
 	},
 
 	this.updateStage = function(playerData) {
@@ -60,7 +85,11 @@ function HudController() {
 		TweenMax.to($("#lives"), time, { css: { autoAlpha: 0 }, delay:delay });
 		TweenMax.to($("#speed"), time, { css: { autoAlpha: 0 }, delay:delay });
 		TweenMax.to($("#level"), time, { css: { autoAlpha: 0 }, delay:delay });
+		TweenMax.to($("#next-shot-level"), time, { css: { autoAlpha: 0 }, delay:delay });
+		TweenMax.to($("#secondaryWeapon"), time, { css: { autoAlpha: 0 }, delay:delay });
+		TweenMax.to($("#rockets"), time, { css: { autoAlpha: 0 }, delay:delay });
 		TweenMax.to($(".hp"), time, { css: { autoAlpha: 0 }, delay:delay });
+		TweenMax.to($(".shot-xp"), time, { css: { autoAlpha: 0 }, delay:delay });
 	},
 
 	this.show = function(time, delay) {
@@ -76,7 +105,11 @@ function HudController() {
 		TweenMax.to($("#lives"), time, { css: { autoAlpha: 1 }, delay:delay });
 		TweenMax.to($("#speed"), time, { css: { autoAlpha: 1 }, delay:delay });
 		TweenMax.to($("#level"), time, { css: { autoAlpha: 1 }, delay:delay });
+		TweenMax.to($("#next-shot-level"), time, { css: { autoAlpha: 1 }, delay:delay });
+		TweenMax.to($("#secondaryWeapon"), time, { css: { autoAlpha: 1 }, delay:delay });
+		TweenMax.to($("#rockets"), time, { css: { autoAlpha: 1 }, delay:delay });
 		TweenMax.to($(".hp"), time, { css: { autoAlpha: 1 }, delay:delay });
+		TweenMax.to($(".shot-xp"), time, { css: { autoAlpha: 1 }, delay:delay });
 	},
 
 	this.init = function(playerData) {
@@ -96,11 +129,22 @@ function HudController() {
 		playerData.add(playerData.WEAPON_SET, this, function(playerData) {
 			this.updateWeapon(playerData);
 		});
+		playerData.add(playerData.SECONDARY_WEAPON_INIT, this, function(playerData) {
+			this.updateSecondaryWeapon(playerData);
+		});
+		playerData.add(playerData.SECONDARY_WEAPON_SET, this, function(playerData) {
+			this.updateSecondaryWeapon(playerData);
+		});
+		playerData.add(playerData.SECONDARY_AMMO, this, function(playerData) {
+			this.updateSecondaryWeapon(playerData);
+		});
 		playerData.add(playerData.WEAPON_POWER_UP, this, function(playerData) {
 			this.updateWeapon(playerData);
+			this.updateSecondaryWeapon(playerData);
 		});
 		playerData.add(playerData.WEAPON_POWER_DOWN, this, function(playerData) {
 			this.updateWeapon(playerData);
+			this.updateSecondaryWeapon(playerData);
 		});
 		playerData.add(playerData.SPEED_UP, this, function(playerData) {
 			this.updateSpeed(playerData);
@@ -121,12 +165,18 @@ function HudController() {
 			this.updateStage(playerData);
 		});
 		playerData.add(playerData.SOFT_RESET, this, function(playerData) {
-			$("#weapon").text("Shot x 1");
+			$("#weapon").text("Shot lv. 1");
 			$("#lives").text("Lives x 1");
-			$("#speed").text("Speed x 1");
+			$("#speed").text("Speed lv. 1");
 			$("#level").text((" - " + 1 + " - ").toString());
-	
-			TweenMax.to($(".hp>span"), 0.1, { css: { width: $(".hp").width() } });	
+			$("#secondaryWeapon").text("Rockets lv. 1");
+			$("#rockets").text("🚀 x 20");
+		
+			TweenMax.to($(".hp>span"), 0.1, { css: { width: $(".hp").width() } });
+			TweenMax.to($(".shot-xp>span"), 0.1, { css: { width: 0 } });
+		});
+		playerData.add("rocket", this, function(playerData) {
+			this.updateSecondaryWeapon(playerData);
 		});
 	}
 }

@@ -14,10 +14,15 @@ function PlayerController() {
 	this.HP_DOWN = "decreaseHp";
 	this.LIVES_DOWN = "decreaseLives";
 	this.STAGE_UP = "increaseStage";
+	
+	this.SECONDARY_WEAPON_INIT = "secondaryWeaponInitialized";
+	this.SECONDARY_WEAPON_SET = "secondaryWeaponSet";
+	this.SECONDARY_AMMO = "secondaryAmmo";
 
 	this.ship = null;
 
 	this.lastWeaponType = 0;
+	this.lastSecondaryWeaponType = 1;
 	this.speedPowerUps = 0;
 	this.speed = 0;
 	this.lives = 1;
@@ -26,7 +31,7 @@ function PlayerController() {
 	this.livesReset         = 1;
 	this.speedReset         = 125;
 	this.speedPowerUpCap    = 8;
-	this.speedPowerUpAmount = 5;
+	this.speedPowerUpAmount = 15;
 	this.weaponDivider      = 4;
 	this.speedDivider       = 4;
 }
@@ -57,7 +62,11 @@ PlayerController.prototype.powerInit = function(ship) {
 	this.speed = this.speedReset + (this.speedPowerUpCap * this.speedPowerUpAmount);
 	this.speedPowerUps = this.speedPowerUpCap;
 
-	if (this.ship.weapon) this.ship.weapon.destroy();
+	if (this.ship.weapon)
+		this.ship.weapon.destroy();
+
+	if (this.ship.secondaryWeapon)
+		this.ship.secondaryWeapon.destroy();
 
 	this.execute(this.RESET, this);
 
@@ -65,6 +74,7 @@ PlayerController.prototype.powerInit = function(ship) {
 	this.lastWeaponType = this.ship.weapon.getId();
 
 	this.execute(this.WEAPON_INIT, this);
+	this.execute(this.SECONDARY_WEAPON_INIT, this);
 
 	ship.addHpDeminishedCallback(this, function(other) {
 		this.execute(this.HP_DOWN, this);
@@ -94,9 +104,14 @@ PlayerController.prototype.softReset = function() {
 	this.lives = this.livesReset;
 	this.gameStage = 0;
 
-	if (this.ship.weapon) this.ship.weapon.destroy();
+	if (this.ship.weapon)
+		this.ship.weapon.destroy();
+
+	if (this.ship.secondaryWeapon)
+		this.ship.secondaryWeapon.destroy();
 
 	this.lastWeaponType = 0;
+	this.lastSecondaryWeaponType = 1;
 
 	this.execute(this.SOFT_RESET, this);
 }
@@ -105,7 +120,11 @@ PlayerController.prototype.reset = function() {
 	this.speed = this.speedReset;
 	this.speedPowerUps = 0;
 
-	if (this.ship.weapon) this.ship.weapon.destroy();
+	if (this.ship.secondaryWeapon)
+		this.ship.secondaryWeapon.destroy();
+
+	if (this.ship.secondaryWeapon)
+		this.ship.secondaryWeapon.destroy();
 
 	this.execute(this.RESET, this);
 }
@@ -114,12 +133,16 @@ PlayerController.prototype.initWeapon = function() {
 	this.ship.weapon = TopLevel.weaponFactory.getInitializedWeapon(this.lastWeaponType, 0, this.ship, this.ship.weapon);
 	this.lastWeaponType = this.ship.weapon.getId();
 
+	this.ship.secondaryWeapon = TopLevel.weaponFactory.getInitializedWeapon(this.lastSecondaryWeaponType, 0, this.ship, this.ship.secondaryWeapon);
+	this.lastSecondaryWeaponType = this.ship.secondaryWeapon.getId();
+
 	this.execute(this.WEAPON_INIT, this);
+	this.execute(this.SECONDARY_WEAPON_INIT, this);
 }
 
 PlayerController.prototype.setWeapon = function(weaponId) {
 	if (this.lastWeaponType == weaponId) {
-		this.powerUpWeapon();
+		this.powerUpWeapon("large");
 	} else {
 		this.ship.weapon = TopLevel.weaponFactory.getInitializedWeapon(weaponId, this.ship.weapon.getLevel(), this.ship, this.ship.weapon);
 		this.lastWeaponType = this.ship.weapon.getId();
@@ -128,13 +151,58 @@ PlayerController.prototype.setWeapon = function(weaponId) {
 	}
 }
 
-PlayerController.prototype.powerUpWeapon = function() {
-	this.ship.weapon.powerUp();
+PlayerController.prototype.setSecondaryWeapon = function(weaponId) {
+	if (this.lastSecondaryWeaponType == weaponId) {
+		this.powerUpSecondaryWeapon("large");
+	}
+	else
+	{
+		var ammo = 0;
+
+		if (this.ship.secondaryWeapon)
+			ammo = this.ship.secondaryWeapon.getAmmo();
+
+		this.ship.secondaryWeapon = TopLevel.weaponFactory.getInitializedWeapon(weaponId, this.ship.secondaryWeapon.getLevel(), this.ship, this.ship.secondaryWeapon);
+		
+		if (ammo)
+			this.ship.secondaryWeapon.setAmmo(ammo);
+
+		this.lastSecondaryWeaponType = this.ship.secondaryWeapon.getId();
+
+		this.execute(this.SECONDARY_WEAPON_SET, this);
+	}
+}
+
+PlayerController.prototype.powerUpWeapon = function(amount) {
+	this.ship.weapon.powerUp(amount);
+
 	this.execute(this.WEAPON_POWER_UP, this);
+}
+
+PlayerController.prototype.powerUpSecondaryWeapon = function(amount) {
+	if (this.ship.secondaryWeapon) {
+		this.ship.secondaryWeapon.powerUp(amount);
+
+		this.execute(this.WEAPON_POWER_UP, this);
+	}
+}
+
+PlayerController.prototype.secondaryWeaponAmmo = function(amount) {
+	if (amount == "large")
+		this.ship.secondaryWeapon.increaseAmmo(20);
+
+	if (amount == "small")
+		this.ship.secondaryWeapon.increaseAmmo(5);
+
+	this.execute(this.SECONDARY_AMMO, this);
 }
 
 PlayerController.prototype.powerDownWeapon = function() {
 	this.ship.weapon.powerDown();
+
+	if (this.ship.secondaryWeapon)
+		this.ship.secondaryWeapon.powerDown();
+
 	this.execute(this.WEAPON_POWER_DOWN, this);
 }
 

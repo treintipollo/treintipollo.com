@@ -28,30 +28,30 @@ Target.prototype.disable = function() {
 }
 
 Target.prototype.draw = function(context) {
-	context.strokeStyle = this.color;
+	// context.strokeStyle = this.color;
 
-	for(var i=0; i<4; i++){
-		var a = (45 * (i+1)) + (45*i);
+	// for(var i=0; i<4; i++){
+	// 	var a = (45 * (i+1)) + (45*i);
 
-		var x = Math.cos(a*(Math.PI/180)) * 20;
-		var y = Math.sin(a*(Math.PI/180)) * 20;
+	// 	var x = Math.cos(a*(Math.PI/180)) * 20;
+	// 	var y = Math.sin(a*(Math.PI/180)) * 20;
 
-		context.beginPath();
+	// 	context.beginPath();
 		
-		context.moveTo(x, y);
-		context.arc(0, 0, 30, (a-7.5)*(Math.PI/180), (a+7.5)*(Math.PI/180));
-		context.closePath();	
+	// 	context.moveTo(x, y);
+	// 	context.arc(0, 0, 30, (a-7.5)*(Math.PI/180), (a+7.5)*(Math.PI/180));
+	// 	context.closePath();	
 
-		context.stroke();
-	}
+	// 	context.stroke();
+	// }
 
-	context.strokeStyle = this.color;
+	// context.strokeStyle = this.color;
 
-	context.beginPath();
-	context.arc(0, 0, 7, 0, Math.PI*2, true);
-	context.closePath();
+	// context.beginPath();
+	// context.arc(0, 0, 7, 0, Math.PI*2, true);
+	// context.closePath();
 
-	context.stroke();
+	// context.stroke();
 }
 
 Target.prototype.update  = function(delta) {
@@ -100,30 +100,30 @@ HomingTarget.prototype.disable = function() {
 }
 
 HomingTarget.prototype.draw = function(context) {
-	context.strokeStyle = this.color;
+	// context.strokeStyle = this.color;
 
-	for(var i=0; i<6; i++){
-		var a = (90/(6/2) * (i+1)) + (90/(6/2)*i);
+	// for(var i=0; i<6; i++){
+	// 	var a = (90/(6/2) * (i+1)) + (90/(6/2)*i);
 
-		var x = Math.cos(a*(Math.PI/180)) * 20;
-		var y = Math.sin(a*(Math.PI/180)) * 20;
+	// 	var x = Math.cos(a*(Math.PI/180)) * 20;
+	// 	var y = Math.sin(a*(Math.PI/180)) * 20;
 
-		context.beginPath();
+	// 	context.beginPath();
 		
-		context.moveTo(x, y);
-		context.arc(0, 0, 30, (a-7.5)*(Math.PI/180), (a+7.5)*(Math.PI/180));
-		context.closePath();	
+	// 	context.moveTo(x, y);
+	// 	context.arc(0, 0, 30, (a-7.5)*(Math.PI/180), (a+7.5)*(Math.PI/180));
+	// 	context.closePath();	
 
-		context.stroke();
-	}
+	// 	context.stroke();
+	// }
 
-	context.strokeStyle = this.color;
+	// context.strokeStyle = this.color;
 
-	context.beginPath();
-	context.rect(-3.5, -3.5, 7, 7);
-	context.closePath();
+	// context.beginPath();
+	// context.rect(-3.5, -3.5, 7, 7);
+	// context.closePath();
 
-	context.stroke();
+	// context.stroke();
 }
 
 HomingTarget.prototype.update  = function(delta) {

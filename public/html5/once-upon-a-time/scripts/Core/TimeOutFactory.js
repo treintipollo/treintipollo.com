@@ -1,7 +1,7 @@
 $(function() {
 	var TimeOutFactory = {
 
-		scopeTimeOuts: {},
+		scopeTimeOuts: new Map(),
 
 		getTimeOut: function(delay, repeatCount, scope, callback, removeOnComplete) {
 			var self = this;
@@ -136,15 +136,15 @@ $(function() {
 
 				remove: function() {
 					this.stop();
-					self.scopeTimeOuts[this.scope].splice(self.scopeTimeOuts[this.scope].indexOf(this), 1);
+					self.scopeTimeOuts.get(this.scope).splice(self.scopeTimeOuts.get(this.scope).indexOf(this), 1);
 				}
 			};
 
-			if (!this.scopeTimeOuts[scope]) {
-				this.scopeTimeOuts[scope] = [];
+			if (!this.scopeTimeOuts.has(scope)) {
+				this.scopeTimeOuts.set(scope, []);
 			}
 
-			this.scopeTimeOuts[scope].push(timeOutObject);
+			this.scopeTimeOuts.get(scope).push(timeOutObject);
 
 			Object.defineProperty(timeOutObject, "delay", {
 				get: function() {
@@ -160,51 +160,45 @@ $(function() {
 		},
 
 		stopAllTimeOuts: function() {
-			for (var k in this.scopeTimeOuts) {
-				for (var i = 0; i < this.scopeTimeOuts[k].length; i++) {
-					this.scopeTimeOuts[k][i].stop();
+			for (const [scope, timeouts] of this.scopeTimeOuts.entries()) {
+				for (var i = 0; i < timeouts.length; i++) {
+					timeouts[i].stop();
 				}
 			}
 		},
 
 		pauseAllTimeOuts: function() {
-			for (var k in this.scopeTimeOuts) {
-				for (var i = 0; i < this.scopeTimeOuts[k].length; i++) {
-					this.scopeTimeOuts[k][i].pause();
+			for (const [scope, timeouts] of this.scopeTimeOuts.entries()) {
+				for (var i = 0; i < timeouts.length; i++) {
+					timeouts[i].pause();
 				}
 			}
 		},
 
 		resumeAllTimeOuts: function() {
-			for (var k in this.scopeTimeOuts) {
-				for (var i = 0; i < this.scopeTimeOuts[k].length; i++) {
-					this.scopeTimeOuts[k][i].resume();
+			for (const [scope, timeouts] of this.scopeTimeOuts.entries()) {
+				for (var i = 0; i < timeouts.length; i++) {
+					timeouts[i].resume();
 				}
 			}
 		},
 
 		removeAllTimeOuts: function() {
-			for (var k in this.scopeTimeOuts) {
-				for (var i = this.scopeTimeOuts[k].length - 1; i >= 0; i--) {
-					this.scopeTimeOuts[k][i].remove();
+			for (const [scope, timeouts] of this.scopeTimeOuts.entries()) {
+				for (var i = 0; i < timeouts.length; i++) {
+					timeouts[i].remove();
 				}
 			}
 		},
 
 		stopAllTimeOutsWithScope: function(scope) {
-			for (var i = 0; i < this.scopeTimeOuts[scope].length; i++) {
-				if (this.scopeTimeOuts[scope][i].scope === scope) {
-					this.scopeTimeOuts[scope][i].stop();
-				}
-			}
+			for (const timeouts of this.scopeTimeOuts.get(scope))
+				timeouts.stop();
 		},
 
 		removeAllTimeOutsWithScope: function(scope) {
-			for (var i = this.scopeTimeOuts[scope].length - 1; i >= 0; i--) {
-				if (this.scopeTimeOuts[scope][i].scope === scope) {
-					this.scopeTimeOuts[scope][i].remove();
-				}
-			}
+			for (const timeouts of this.scopeTimeOuts.get(scope))
+				timeouts.remove();
 		}
 	}
 

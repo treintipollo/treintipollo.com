@@ -3,10 +3,12 @@
 	<meta charset="utf-8">
 	<title>Space Shooting Game</title>
 
-	<link href='//fonts.googleapis.com/css?family=Russo+One' rel='stylesheet' type='text/css'>
+	<link href="//fonts.googleapis.com/css?family=Russo+One" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="styles/main.css" />
 </head>
 <body>
+	<div class="loader">Loading... 0%</div>
+
 	<div id="main">
 		<canvas id="game" width="450" height="700">
 			Sorry, your web browser does not support Canvas content.
@@ -16,133 +18,22 @@
 			<div id="lives"  class="hudText">Lives x 1</div>
 			<div id="level"  class="hudText">2-2</div>
 			<div id="weapon" class="hudText">Shot x 3</div>
+			<div id="secondaryWeapon" class="hudText">Rockets x 3</div>
+			<div id="next-shot-level"  class="hudText">Next</div>
 
 			<div class="hp">
 				<span style="width:100%"></span>
 			</div>
+			<div class="shot-xp">
+				<span></span>
+			</div>
 
 			<div id="speed"  class="hudText">Speed x 3</div>
-		</div>	
+
+			<div id="rockets" class="hudText">🚀 x 10</div>
+		</div>
 	</div>
 
-	<!-- Externals -->
-		<!-- Jquery -->
-		<script src="libs/jquery-1.8.3.min.js"></script>
-		
-		<!-- GSAP -->
-		<script src="libs/TweenMax.js"></script>
-		<script src="libs/TimelineLite.min.js"></script>
-		<script src="libs/BezierPlugin.min.js"></script>
-		<script src="libs/ColorPropsPlugin.min.js"></script>
-		<script src="libs/ShortRotationPlugin.js"></script>
-		
-		<!-- Collision detection -->
-		<script src="libs/SAT.js"></script>
-	<!-- Externals -->
-
-	<!-- Core -->
-	<script src="scripts/Core/TimeOutFactory.js"></script>
-	<script src="scripts/Core/CoreUtils.js"></script>	
-	<script src="scripts/Core/GameObject.js"></script>
-	<script src="scripts/Core/ObjectsContainer.js"></script>
-	<script src="scripts/Core/StateMachine.js"></script>
-	<script src="scripts/Core/GameSetUp.js"></script>
-	<script src="scripts/Core/ArrowKeyHandler.js"></script>
-	<script src="scripts/Core/SoundPlayer.js"></script>
-
-	<!-- Utilities -->
-	<script src="scripts/Utilities/MiscMethodsUtils.js"></script>
-	<script src="scripts/Utilities/GameObjectsUtils.js"></script>
-	
-
-	<!-- Weapons -->
-	<script src="scripts/Weapons/Weapon.js"></script>
-	<script src="scripts/Weapons/ShotWeapon.js"></script>
-	<script src="scripts/Weapons/RocketWeapon.js"></script>
-	<script src="scripts/Weapons/HomingRocketWeapon.js"></script>
-	<script src="scripts/Weapons/PowerBeamWeapon.js"></script>
-
-	<script src="scripts/GameData/Attributes.js"></script>
-	<script src="scripts/GameData/AttributesGetter.js"></script>
-
-	<!-- Player Ship -->
-	<script src="scripts/GameObjects/Player/Ship.js"></script>
-	<script src="scripts/GameObjects/Player/PowerShip.js"></script>
-	<script src="scripts/GameObjects/Player/Rocket.js"></script>
-	<script src="scripts/GameObjects/Player/Shot.js"></script>
-	<script src="scripts/GameObjects/Player/PowerShot.js"></script>
-	<script src="scripts/GameObjects/Player/Target.js"></script>
-	
-	<!-- PowerUps -->
-	<script src="scripts/GameObjects/PowerUps/PowerUps.js"></script>
-
-	<!-- Text -->
-	<script src="scripts/GameObjects/Text/GameText.js"></script>
-	<script src="scripts/GameObjects/Text/Splash.js"></script>
-	<script src="scripts/GameObjects/Text/EndingMessage.js"></script>
-
-	<!-- Transitions -->
-	<script src="scripts/GameObjects/Transitions/FadeToBlack.js"></script>
-
-	<!-- Misc -->
-	<script src="scripts/GameObjects/Scenario/Star.js"></script>
-	<script src="scripts/GameObjects/Misc/Debry.js"></script>
-	<script src="scripts/GameObjects/Misc/Explosion.js"></script>
-	<script src="scripts/GameObjects/Misc/BeamCollider.js"></script>
-	<script src="scripts/GameObjects/Misc/BadGuyArmourPiece.js"></script>
-
-	<!-- Enemies -->
-	<script src="scripts/GameObjects/Enemies/BadGuyRockets.js"></script>
-	<script src="scripts/GameObjects/Enemies/EnemyRocket.js"></script>
-	<script src="scripts/GameObjects/Enemies/Fireball.js"></script>
-	<script src="scripts/GameObjects/Enemies/CloneShip.js"></script>
-	<script src="scripts/GameObjects/Enemies/CargoShip.js"></script>
-	
-	<!-- Bosses -->
-	<script src="scripts/GameObjects/Bosses/BadGuy.js"></script>
-	<script src="scripts/GameObjects/Bosses/Boss_1.js"></script>
-
-	<!-- Factories -->
-	<script src="scripts/Factories/EnemyRocketFactory.js"></script>
-	<script src="scripts/Factories/StarFactory.js"></script>
-	<script src="scripts/Factories/PlayerShipFactory.js"></script>
-	<script src="scripts/Factories/PowerUpFactory.js"></script>
-	<script src="scripts/Factories/WeaponFactory.js"></script>
-
-	<!-- Controllers -->
-	<script src="scripts/Controllers/HudController.js"></script>
-	<script src="scripts/Controllers/PlayerController.js"></script>
-	<script src="scripts/Controllers/CutSceneController.js"></script>
-	<script src="scripts/Controllers/GameModeController.js"></script>
-
-	<!-- Creators -->
-	<script src="scripts/Creation/PoolCreator.js"></script>
-	<script src="scripts/Creation/ConfigurationCreator.js"></script>
-	<script src="scripts/Creation/TextConfigurationCreator.js"></script>
-	<script src="scripts/Creation/CollisionPairCreator.js"></script>
-	<script src="scripts/Creation/AttributeCreator.js"></script>
-
-	<!-- Configurators -->
-	<script src="scripts/Configuration/PlayerShipFactoryConfiguration.js"></script>
-	<script src="scripts/Configuration/PowerUpConfiguration.js"></script>
-	
-	<!-- Boss Configuration -->
-	<script src="scripts/GameData/Boss_1_ConfigurationGetter.js"></script>
-
-	<!-- Effects -->
-	<script src="scripts/Effects/Exhaust.js"></script>
-	<script src="scripts/Effects/ParticleBeam.js"></script>
-	<script src="scripts/Effects/ShotCharge.js"></script>
-	<script src="scripts/Effects/StraightBeam.js"></script>
-	<script src="scripts/Effects/Particles.js"></script>
-	<script src="scripts/Effects/ExplosionsArea.js"></script>
-	<script src="scripts/Effects/BloodStream.js"></script>
-	<script src="scripts/Effects/WhiteFlash.js"></script>
-	<script src="scripts/Effects/MultiGun.js"></script>
-	<script src="scripts/Effects/TractorBeam.js"></script>
-	<script src="scripts/Effects/BezierParticleBeam.js"></script>
-
-	<!-- Application entry point -->
-	<script src="scripts/main.js"></script>
+	<script src="scripts/loader.js"></script>
 </body>
 </html>

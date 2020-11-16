@@ -55,39 +55,44 @@ AttributeCreator.prototype.create = function() {
 	TopLevel.attributesGetter.setAttributes("LargeSwarmRocket", 0, 0, 0.9);
 	TopLevel.attributesGetter.setAttributes("ClusterSwarmRocket", 0, 0, 0.5);
 
-	TopLevel.attributesGetter.setAttributes("MicroHomingRocket", 0, 0, 0.2);
-	TopLevel.attributesGetter.setAttributes("SmallHomingRocket", 0, 0, 0.5);
-	TopLevel.attributesGetter.setAttributes("LargeHomingRocket", 0, 0, 0.5);
+	TopLevel.attributesGetter.setAttributes("MicroHomingRocket", 0, 0, 3);
+	TopLevel.attributesGetter.setAttributes("SmallHomingRocket", 0, 0, 3);
+	TopLevel.attributesGetter.setAttributes("LargeHomingRocket", 0, 0, 3);
 
 	TopLevel.attributesGetter.setAttributes("Explosion_Damage", 50, 1, 0.1);
 	TopLevel.attributesGetter.setAttributes("Explosion_Effect", 0, 0, 0);
 	TopLevel.attributesGetter.setAttributes("Debry", 0, 0, 0.4);
 
-	TopLevel.attributesGetter.setAttributes("Boss_1_A", 25, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_A", 25, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_A", 25, 1, 10);
+	// hp, total HP
+	// damageReceived, damage on hit
+	// damageDealtMultiplier, multiplier appliued to the other object
+	// additionalProperties
 
-	TopLevel.attributesGetter.setAttributes("Boss_1_B", 30, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_B", 30, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_B", 30, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_A", 30, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_A", 30, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_A", 30, 1, 10);
+
+	TopLevel.attributesGetter.setAttributes("Boss_1_B", 40, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_B", 40, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_B", 40, 1, 10);
 
 	TopLevel.attributesGetter.setAttributes("Boss_1_C", 30, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_C", 30, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_C", 10, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_C", 30, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_C", 50, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_C", 20, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_C", 50, 1, 10);
 
 	TopLevel.attributesGetter.setAttributes("Boss_1_D", 60, 1, 10);
 	TopLevel.attributesGetter.setAttributes("Boss_1_D", 60, 1, 10);
 	TopLevel.attributesGetter.setAttributes("Boss_1_D", 60, 1, 10);
 
-	TopLevel.attributesGetter.setAttributes("Boss_1_E", 20, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_E", 20, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_E", 30, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_E", 50, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_E", 40, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_E", 40, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_E", 100, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_E", 250, 1, 10);
 
-	TopLevel.attributesGetter.setAttributes("Boss_1_F", 30, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_F", 30, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Boss_1_F", 30, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_F", 50, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_F", 50, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Boss_1_F", 100, 1, 10);
 	TopLevel.attributesGetter.setAttributes("Boss_1_F", 100, 1, 10);
 
 	TopLevel.attributesGetter.setAttributes("Boss_1_Helper_Beam_1", 20, 1, 10);
@@ -127,15 +132,20 @@ AttributeCreator.prototype.create = function() {
 	TopLevel.attributesGetter.setAttributes("BadGuyClusterAimedRocket", 0, 0, 3);
 	TopLevel.attributesGetter.setAttributes("LastBadGuyLargeHomingRocket", 10, 1, 2);
 
+	// hp, total HP
+	// damageReceived, damage on hit
+	// damageDealtMultiplier, multiplier appliued to the other object
+	// additionalProperties
+
 	TopLevel.attributesGetter.setAttributes("Small_EnemyRocket_1", 0, 0, 3);
 	TopLevel.attributesGetter.setAttributes("Small_EnemyRocket_2", 0, 0, 3);
-	TopLevel.attributesGetter.setAttributes("Small_EnemyRocket_3", 2, 2, 3);
+	TopLevel.attributesGetter.setAttributes("Small_EnemyRocket_3", 1, 2, 3);
 
-	TopLevel.attributesGetter.setAttributes("Mid_EnemyRocket_1", 2, 1, 5);
-	TopLevel.attributesGetter.setAttributes("Mid_EnemyRocket_2", 2, 1, 5);
-	TopLevel.attributesGetter.setAttributes("Mid_EnemyRocket_3", 3, 1, 5);
+	TopLevel.attributesGetter.setAttributes("Mid_EnemyRocket_1", 1, 1, 5);
+	TopLevel.attributesGetter.setAttributes("Mid_EnemyRocket_2", 1, 1, 5);
+	TopLevel.attributesGetter.setAttributes("Mid_EnemyRocket_3", 2, 1, 5);
 
-	TopLevel.attributesGetter.setAttributes("Large_EnemyRocket_1", 4, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Large_EnemyRocket_2", 4, 1, 10);
-	TopLevel.attributesGetter.setAttributes("Large_EnemyRocket_3", 5, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Large_EnemyRocket_1", 2, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Large_EnemyRocket_2", 2, 1, 10);
+	TopLevel.attributesGetter.setAttributes("Large_EnemyRocket_3", 2, 1, 10);
 };

@@ -30,6 +30,7 @@ function CutSceneController() {
 
 		this.partner = TopLevel.container.add("PartnerShip", [this.ship.x + 90, this.ship.y, TopLevel.container]);
 		this.partner.weapon = TopLevel.weaponFactory.getInitializedWeapon(TopLevel.weaponFactory.SHOT_WEAPON, 0, this.partner, this.partner.weapon);
+		this.partner.secondaryWeapon = TopLevel.weaponFactory.getInitializedWeapon(TopLevel.weaponFactory.ROCKET_WEAPON, 0, this.partner, this.partner.secondaryWeapon);
 
 		this.partner.addCallback("onInitialPositionDelegate", this, function() {
 
@@ -120,6 +121,9 @@ function CutSceneController() {
 			this.ship.blockDamage = true;
 			this.ship.weapon.stop();
 
+			if (this.ship.secondaryWeapon)
+				this.ship.secondaryWeapon.stop();
+
 			TimeOutFactory.getTimeOut(500, 1, this, function() {
 				this.ship.setAllExhaustState(Exhaust.REGULAR);
 				this.partner.setAllExhaustState(Exhaust.REGULAR);
@@ -188,6 +192,9 @@ function CutSceneController() {
 							this.enablePlayerMovement(this.ship);
 							this.ship.weapon.start();
 
+							if (this.ship.secondaryWeapon)
+								this.ship.secondaryWeapon.start();
+
 						}, true);
 					}
 				}
@@ -215,6 +222,9 @@ function CutSceneController() {
 
 			this.disablePlayerMovement();
 			this.ship.weapon.stop();
+
+			if (this.ship.secondaryWeapon)
+				this.ship.secondaryWeapon.stop();
 
 			TopLevel.playerShipFactory.setStandardShip();
 
@@ -247,7 +257,14 @@ function CutSceneController() {
 										this.partner = this.getIntroPartner();
 
 										this.ship.weapon.stop();
+
+										if (this.ship.secondaryWeapon)
+											this.ship.secondaryWeapon.stop();
+
 										this.partner.weapon.stop();
+
+										if (this.partner.secondaryWeapon)
+											this.partner.secondaryWeapon.stop();
 
 										this.disablePlayerMovement();
 
@@ -341,6 +358,10 @@ function CutSceneController() {
 						 		callback: function(obj) {
 						 			this.ship = obj;
 						 			this.ship.weapon.stop();
+
+						 			if (this.ship.secondaryWeapon)
+										this.ship.secondaryWeapon.stop();
+
 						 			this.badguyEscapeAndPersue(this.ship);
 						 		},
 						 		removeOnComplete: true
@@ -401,8 +422,14 @@ function CutSceneController() {
 		this.partner.rotation = 10;
 		this.partner.weapon.stop();
 
+		if (this.partner.secondaryWeapon)
+			this.partner.secondaryWeapon.stop();
+
 		this.ship.blockControls = false;
 		this.ship.weapon.start();
+
+		if (this.ship.secondaryWeapon)
+			this.ship.secondaryWeapon.start();
 
 		this.badguy.fireRockets();
 		this.badguy.escape();
