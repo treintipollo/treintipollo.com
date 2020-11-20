@@ -21,7 +21,7 @@
 			this._screen.SetTextProps("Digital-7", 85, 0xff00ff00, 0x00000000, 10);
 			this._screen.SetUnderlineProps(0x440000ff, 0xbb0000ff, 10, 10);
 			this._screen.SetTextMovement(0.05 ,true, 5, 0.1);
-			this._screen.AddText(this._stage.stageWidth / 2, 60, "SOUND TEST", true, true);
+			this._screen.AddText(this._stage.stageWidth / 2, 60, "SOUND TEST", false, true);
 			
 			this._buttonManager.SetText("Digital-7", 80, 0xff00ff00, 0xff880000);
 			this._buttonManager.SetAnim(1, 5, 0.05, 10, 20);

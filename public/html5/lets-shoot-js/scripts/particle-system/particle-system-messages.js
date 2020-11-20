@@ -5,32 +5,31 @@
 	let sharedStop = null;
 	let sharedStopView = null;
 
-	let baseWorkerPath = "particle-system/particle-worker.js";
 	let isolated = true;
 	let concurrency = navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 0;
-	let path;
-
+	
 	if (window.location.origin === "http://localhost:8000")
 	{
 		// Local development
-		path = "http://localhost:8000/scripts/";
 		isolated = true;
 	}
 	else if (window.location.origin === "http://localhost:3000")
 	{
 		// Local development in Treintipollo
-		path = "http://localhost:3000/html5/lets-shoot-js/scripts/";
 		isolated = true;
 	}
 	else
 	{
 		// Live
-		path = "http://treintipollo.com/html5/lets-shoot-js/scripts/";
 		isolated = !!window.crossOriginIsolated;
 	}
 
 	if (window.Worker && isolated && concurrency > 1)
-		worker = new Worker(`${path}${baseWorkerPath}`);
+	{
+		const workerUrl = window.BlobUrls.get("scripts/particle-system/particle-worker.js");
+
+		worker = new Worker(workerUrl);
+	}
 
 	if (window.SharedArrayBuffer && isolated && concurrency > 1)
 	{

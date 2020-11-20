@@ -251,6 +251,10 @@
 				{ path: "assets/Explosion.mp3" },
 				{ path: "assets/Complete.mp3" },
 				{ path: "assets/Laugh.mp3" }
+			],
+
+			"blobs": [
+				{ path: "scripts/particle-system/particle-worker.js" }
 			]
 		}
 
@@ -278,7 +282,7 @@
 		canvasWrapper.appendChild(loadingForeground);
 		canvasWrapper.appendChild(loadingText);
 
-		const totalResources = loadData["scripts"].length + loadData["sounds"].length;
+		const totalResources = loadData["scripts"].length + loadData["sounds"].length + loadData["blobs"].length;
 		let totalReceived = 0;
 
 		const allResources = await GetAllResources(loadData, () =>
@@ -313,6 +317,7 @@
 			}
 		});
 
+		LoadBlobs(allResources["blobs"]);
 		LoadSounds(allResources["sounds"]);
 		LoadScripts(allResources["scripts"]);
 	}
@@ -342,13 +347,23 @@
 			window.SoundBuffers.set(sound.url, sound.sound);
 	}
 
+	function LoadBlobs(allBlobs)
+	{
+		window.BlobUrls = new Map();
+
+		for (const blob of allBlobs)
+			window.BlobUrls.set(blob.url, blob.blobUrl);
+	}
+
 	function GetAllResources(resources, progressCallback)
 	{
 		const scripts = resources["scripts"];
 		const sounds = resources["sounds"];
+		const blobs = resources["blobs"];
 
 		const scriptRet = new Array(scripts.length);
 		const soundRet = new Array(sounds.length);
+		const blobRet = new Array(blobs.length);
 
 		const p = [];
 
@@ -357,6 +372,9 @@
 
 		for (let i = 0; i < sounds.length; i++)
 			p.push(GetSound(sounds[i].path, progressCallback, i));
+
+		for (let i = 0; i < blobs.length; i++)
+			p.push(GetBlob(blobs[i].path, progressCallback, i));
 
 		return Promise.all(p).then((results) =>
 		{
@@ -379,11 +397,21 @@
 						sound: result.buffer
 					};
 				}
+
+				if (result.type === "blob")
+				{
+					blobRet[result.index] = {
+						url: blobs[result.index].path,
+						index: result.index,
+						blobUrl: result.url
+					};
+				}
 			}
 
 			return {
 				"scripts": scriptRet,
-				"sounds": soundRet
+				"sounds": soundRet,
+				"blobs": blobRet
 			};
 		});
 	}
@@ -419,4 +447,21 @@
 			buffer: buffer
 		}
 	}
+
+	async function GetBlob(url, blobReadCallback, index)
+	{
+		const cacheBust = document.body.getAttribute("data-cache-bust");
+
+		const response = await fetch(`${url}?b=${cacheBust}`, { method: "GET" });
+		const blob = await response.blob();
+
+		blobReadCallback();
+
+		return {
+			type: "blob",
+			index: index,
+			url: URL.createObjectURL(blob)
+		}
+	}
+
 })();
