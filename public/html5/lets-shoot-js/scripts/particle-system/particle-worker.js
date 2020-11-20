@@ -1,21 +1,39 @@
 "use strict";
 
 {
-	importScripts("./particle-system-manager.js");
-	importScripts("./particle-manager.js");
+	let path;
+
+	if (self.location.origin === "http://localhost:8000")
+	{
+		// Local development
+		path = "http://localhost:8000/scripts/";
+	}
+	else if (self.location.origin === "http://localhost:3000")
+	{
+		// Local development in Treintipollo
+		path = "http://localhost:3000/html5/lets-shoot-js/scripts/";
+	}
+	else
+	{
+		// Live
+		path = "http://treintipollo.com/html5/lets-shoot-js/scripts/";
+	}
+
+	importScripts(`${path}particle-system/particle-system-manager.js`);
+	importScripts(`${path}particle-system/particle-manager.js`);
 	
-	importScripts("./system.js");
-	importScripts("./circle-area-system.js");
-	importScripts("./min-radius-system.js");
+	importScripts(`${path}particle-system/system.js`);
+	importScripts(`${path}particle-system/circle-area-system.js`);
+	importScripts(`${path}particle-system/min-radius-system.js`);
 
-	importScripts("./particle.js");
-	importScripts("./radial-particle.js");
-	importScripts("./fireworks-particle.js");
-	importScripts("./junction-particle.js");
-	importScripts("./spiral-junction-particle.js");
+	importScripts(`${path}particle-system/particle.js`);
+	importScripts(`${path}particle-system/radial-particle.js`);
+	importScripts(`${path}particle-system/fireworks-particle.js`);
+	importScripts(`${path}particle-system/junction-particle.js`);
+	importScripts(`${path}particle-system/spiral-junction-particle.js`);
 
-	importScripts("../utils/shared-point.js");
-	importScripts("../utils/number-utils.js");
+	importScripts(`${path}utils/shared-point.js`);
+	importScripts(`${path}utils/number-utils.js`);
 
 	class Point
 	{
