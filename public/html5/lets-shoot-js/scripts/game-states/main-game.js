@@ -65,7 +65,18 @@
 		
 		Run()
 		{
-			SoundManager.Play(Sounds.MAIN_BGM);
+			if (LevelSelect._difficulty === 2)
+			{
+				SoundManager.Play(Sounds.MAIN_BGM_1);
+			}
+			else if (LevelSelect._difficulty === 1)
+			{
+				SoundManager.Play(Sounds.MAIN_BGM_2);
+			}
+			else if (LevelSelect._difficulty === 0)
+			{
+				SoundManager.Play(Sounds.MAIN_BGM_3);
+			}
 			
 			let _currOption;
 			
@@ -365,8 +376,10 @@
 		
 		Completed()
 		{
-			SoundManager.Stop(Sounds.MAIN_BGM);
-			
+			SoundManager.Stop(Sounds.MAIN_BGM_1);
+			SoundManager.Stop(Sounds.MAIN_BGM_2);
+			SoundManager.Stop(Sounds.MAIN_BGM_3);
+
 			BulletManager.Clean(true);
 			BaddyManager.Clean();
 			ChainCounter.Clean();

@@ -6,7 +6,7 @@
 		constructor(spliceMax = 10)
 		{
 			this._sound = new Sound();
-			this._channel = new SoundChannel();
+			this._channel = null;
 			this._dynamicSound = [];
 
 			this._nullChannelCount = 0;
@@ -69,17 +69,28 @@
 			this._isPlaying = false;
 			this._pausePosition = 0;
 			
-			this._channel.removeEventListener("ended", this._on_sound_complete);
-			this._channel.stop();
+			if (this._channel)
+			{
+				this._channel.removeEventListener("ended", this._on_sound_complete);
+				this._channel.stop();
+			}
 		}
 		
 		Pause()
 		{
 			this._isPlaying = false;
-			this._pausePosition = this._channel.position;
+			
+			if (this._channel)
+			{
+				this._pausePosition = this._channel.position;
 
-			this._channel.removeEventListener("ended", this._on_sound_complete);
-			this._channel.stop();
+				this._channel.removeEventListener("ended", this._on_sound_complete);
+				this._channel.stop();
+			}
+			else
+			{
+				this._pausePosition = 0;
+			}
 		}
 
 		Enable()
@@ -163,8 +174,8 @@
 				this._channel.removeEventListener("ended", this._on_sound_complete);
 				this._channel.dispose();
 			}
-
-			return this._sound.play(position);
+			
+			return this._sound.play(position, 0, SoundManager.GetSoundTransform(this._isBGM));
 		}
 	}
 

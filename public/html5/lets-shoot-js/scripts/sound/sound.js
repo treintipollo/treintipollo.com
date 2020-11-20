@@ -42,8 +42,10 @@
 
 			const channel = new SoundChannel();
 
-			channel._setSource(context, this._soundBuffer)
+			channel._setSource(context, this._soundBuffer);
 			channel._start(startTime, loops);
+			
+			channel.soundTransform = soundTransform;
 
 			return channel;
 		}

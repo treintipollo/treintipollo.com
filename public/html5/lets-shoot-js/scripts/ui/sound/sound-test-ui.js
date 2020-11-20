@@ -15,12 +15,18 @@
 			this._controlText.push("PLAY");
 			this._controlText.push("STOP");
 			this._controlText.push(">>");
-			
+			   
 			this._title.push("Kalim Clunk");
 			this._link.push("http://www.newgrounds.com/audio/listen/152892");
-			
-			this._title.push("Cluster Pluck (Lite)");
-			this._link.push("http://www.newgrounds.com/audio/listen/160889");
+
+			this._title.push("Main 1");
+			this._link.push("https://nicolemakesmusic.wixsite.com/nicolemariet");
+
+			this._title.push("Main 2");
+			this._link.push("https://nicolemakesmusic.wixsite.com/nicolemariet");
+
+			this._title.push("Main 3");
+			this._link.push("https://nicolemakesmusic.wixsite.com/nicolemariet");
 			
 			this._title.push("Robots will be there. (Lite)");
 			this._link.push("http://www.newgrounds.com/audio/listen/126548");

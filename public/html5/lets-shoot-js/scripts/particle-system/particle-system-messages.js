@@ -10,8 +10,24 @@
 	let isolated = true;
 	let concurrency = navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 0;
 
-	absoluteWorkerPath = `${window.location.origin}/html5/lets-shoot-js/worker/${baseWorkerPath}`;
-	isolated = !!window.crossOriginIsolated;
+	if (window.location.origin === "http://localhost:8000")
+	{
+		// Local development
+		absoluteWorkerPath = `${window.location.origin}/${baseWorkerPath}`;
+		isolated = true;
+	}
+	else if (window.location.origin === "http://localhost:3000")
+	{
+		// Local development in Treintipollo
+		absoluteWorkerPath = `${window.location.origin}/html5/lets-shoot-js/worker/${baseWorkerPath}`;
+		isolated = true;
+	}
+	else
+	{
+		// Live
+		absoluteWorkerPath = `${window.location.origin}/html5/lets-shoot-js/worker/${baseWorkerPath}`;
+		isolated = !!window.crossOriginIsolated;
+	}
 
 	if (window.Worker && isolated && concurrency > 1)
 		worker = new Worker(absoluteWorkerPath);

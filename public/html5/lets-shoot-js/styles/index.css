@@ -66,6 +66,7 @@ body
 	border-style: solid;
 	z-index: 999;
 	transition: opacity 0.5s;
+	pointer-events: none;
 }
 
 .loader.back
@@ -79,6 +80,7 @@ body
 	top: calc(var(--canvas-height) / 2);
 
 	transform: translate(-50%, -100%);
+	pointer-events: none;
 }
 
 .loader.middle
@@ -92,6 +94,7 @@ body
 	top: calc(var(--canvas-height) / 2);
 
 	transform: translate(0%, -100%);
+	pointer-events: none;
 }
 
 .loader.front
@@ -104,6 +107,7 @@ body
 	top: calc(var(--canvas-height) / 2);
 
 	transform: translate(-50%, -100%);
+	pointer-events: none;
 }
 
 .loader.text
@@ -120,4 +124,5 @@ body
 
 	text-align: center;
 	white-space: nowrap;
+	pointer-events: none;
 }

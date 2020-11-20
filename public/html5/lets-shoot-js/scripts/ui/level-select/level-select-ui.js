@@ -377,6 +377,21 @@
 		{
 			INITPARAMS[currentBranch][currentDifficulty] = SelectRectangle.COMPLETE;
 		}
+
+		static Ready(currentDifficulty, currentBranch)
+		{
+			INITPARAMS[currentBranch][currentDifficulty] = SelectRectangle.READY;
+		}
+
+		static Secret(currentDifficulty, currentBranch)
+		{
+			INITPARAMS[currentBranch][currentDifficulty] = SelectRectangle.SECRET;
+		}
+
+		static Boss(currentDifficulty, currentBranch)
+		{
+			INITPARAMS[currentBranch][currentDifficulty] = SelectRectangle.BOSS;
+		}
 		
 		ScrollFrame()
 		{

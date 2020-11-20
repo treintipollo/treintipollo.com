@@ -211,7 +211,9 @@
 
 			"sounds": [
 				{ path: "assets/IntroBGM.mp3" },
-				{ path: "assets/MainBGM.mp3" },
+				{ path: "assets/MainBGM1.mp3" },
+				{ path: "assets/MainBGM2.mp3" },
+				{ path: "assets/MainBGM3.mp3" },
 				{ path: "assets/BossBGM.mp3" },
 				{ path: "assets/BigBossBGM.mp3" },
 				{ path: "assets/Test.mp3" },

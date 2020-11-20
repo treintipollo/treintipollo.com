@@ -28,6 +28,8 @@ class App < Sinatra::Base
 	end
 
 	get	"/" do
+		response.headers["Cross-Origin-Embedder-Policy"] = "require-corp"
+
 		erb :index
 	end
 
@@ -63,6 +65,7 @@ class App < Sinatra::Base
 
 	get	"/html5/:game/worker/*" do
 		headers["Cross-Origin-Embedder-Policy"] = "require-corp"
+		headers["Content-Type"] = "text/javascript"
 		
 		send_file("public/html5/#{params["game"]}/#{params["splat"].join("/")}.js")
 	end

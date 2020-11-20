@@ -13,7 +13,9 @@
 			SoundManager.Init();
 			
 			Sounds.INTRO_BGM 			= SoundManager.Add("assets/IntroBGM.mp3", true);
-			Sounds.MAIN_BGM 			= SoundManager.Add("assets/MainBGM.mp3", true);
+			Sounds.MAIN_BGM_1 			= SoundManager.Add("assets/MainBGM1.mp3", true);
+			Sounds.MAIN_BGM_2 			= SoundManager.Add("assets/MainBGM2.mp3", true);
+			Sounds.MAIN_BGM_3 			= SoundManager.Add("assets/MainBGM3.mp3", true);
 			Sounds.BOSS_BGM 			= SoundManager.Add("assets/BossBGM.mp3", true);
 			Sounds.BIG_BOSS_BGM 		= SoundManager.Add("assets/BigBossBGM.mp3", true);
 			Sounds.TEST_BGM 		 	= SoundManager.Add("assets/Test.mp3", true);
@@ -95,7 +97,9 @@
 	Sounds.LAUGH = -1;
 	
 	Sounds.INTRO_BGM = -1;
-	Sounds.MAIN_BGM = -1;
+	Sounds.MAIN_BGM_1 = -1;
+	Sounds.MAIN_BGM_2 = -1;
+	Sounds.MAIN_BGM_3 = -1;
 	Sounds.BOSS_BGM = -1;
 	Sounds.BIG_BOSS_BGM = -1;
 	Sounds.TEST_BGM = -1;

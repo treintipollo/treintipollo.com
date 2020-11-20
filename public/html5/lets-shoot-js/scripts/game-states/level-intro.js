@@ -21,9 +21,17 @@
 			{
 				SoundManager.Play(Sounds.BOSS_BGM);
 			}
-			else
+			else if (LevelSelect._difficulty === 2)
 			{
-				SoundManager.Play(Sounds.MAIN_BGM);
+				SoundManager.Play(Sounds.MAIN_BGM_1);
+			}
+			else if (LevelSelect._difficulty === 1)
+			{
+				SoundManager.Play(Sounds.MAIN_BGM_2);
+			}
+			else if (LevelSelect._difficulty === 0)
+			{
+				SoundManager.Play(Sounds.MAIN_BGM_3);
 			}
 		}
 		
