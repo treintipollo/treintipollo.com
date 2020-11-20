@@ -16,7 +16,7 @@
 	else
 	{
 		// Live
-		path = "https://treintipollo.com/html5/lets-shoot-js/scripts/";
+		path = "https://www.treintipollo.com/html5/lets-shoot-js/scripts/";
 	}
 
 	importScripts(`${path}particle-system/particle-system-manager.js`);

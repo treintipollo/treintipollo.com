@@ -44,8 +44,6 @@
 			sharedStop = new SharedArrayBuffer(Uint8Array.BYTES_PER_ELEMENT);
 			sharedStopView = new Uint8Array(sharedStop);
 		}
-
-		URL.revokeObjectURL(url);
 	});
 
 	let c = document.createElement("canvas");
