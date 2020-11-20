@@ -5,46 +5,38 @@
 	let sharedStop = null;
 	let sharedStopView = null;
 
-	let baseWorkerPath = "scripts/particle-system/particle-worker.js";
+	let baseWorkerPath = "particle-system/particle-worker.js";
 	let isolated = true;
 	let concurrency = navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 0;
+	let path;
 
 	if (window.location.origin === "http://localhost:8000")
 	{
 		// Local development
+		path = "http://localhost:8000/scripts/";
 		isolated = true;
 	}
 	else if (window.location.origin === "http://localhost:3000")
 	{
 		// Local development in Treintipollo
+		path = "http://localhost:3000/html5/lets-shoot-js/scripts/";
 		isolated = true;
 	}
 	else
 	{
 		// Live
+		path = "http://treintipollo.com/html5/lets-shoot-js/scripts/";
 		isolated = !!window.crossOriginIsolated;
 	}
 
-	const workerPromise = fetch(baseWorkerPath)
-	.then((response) =>
+	if (window.Worker && isolated && concurrency > 1)
+		worker = new Worker(`${path}${baseWorkerPath}`);
+
+	if (window.SharedArrayBuffer && isolated && concurrency > 1)
 	{
-		return response.text();
-	})
-	.then((script) =>
-	{
-		const blob = new Blob([script], { type: "application/javascript" });
-
-		const url = URL.createObjectURL(blob);
-
-		if (window.Worker && isolated && concurrency > 1)
-			worker = new Worker(url);
-
-		if (window.SharedArrayBuffer && isolated && concurrency > 1)
-		{
-			sharedStop = new SharedArrayBuffer(Uint8Array.BYTES_PER_ELEMENT);
-			sharedStopView = new Uint8Array(sharedStop);
-		}
-	});
+		sharedStop = new SharedArrayBuffer(Uint8Array.BYTES_PER_ELEMENT);
+		sharedStopView = new Uint8Array(sharedStop);
+	}
 
 	let c = document.createElement("canvas");
 	let hasTransferToOffscreen = typeof c.transferControlToOffscreen === "function";
@@ -57,16 +49,14 @@
 
 		}
 
-		static async _CanUse()
+		static _CanUse()
 		{
-			await workerPromise;
-
-			return worker && sharedStop && sharedStopView && hasTransferToOffscreen;
+			return (worker && sharedStop && sharedStopView && hasTransferToOffscreen);
 		}
 
-		static async Init(canvasId)
+		static Init(canvasId)
 		{
-			if (!(await this._CanUse()))
+			if (!this._CanUse())
 				return;
 
 			const canvas = document.getElementById(canvasId);
@@ -78,9 +68,9 @@
 			}, [offscreenCanvas]);
 		}
 
-		static async Start()
+		static Start()
 		{
-			if (!(await this._CanUse()))
+			if (!this._CanUse())
 				return;
 
 			worker.postMessage({
@@ -89,9 +79,9 @@
 			});
 		}
 
-		static async Pause()
+		static Pause()
 		{
-			if (!(await this._CanUse()))
+			if (!this._CanUse())
 				return;
 
 			worker.postMessage({
@@ -99,9 +89,9 @@
 			});
 		}
 
-		static async Resume()
+		static Resume()
 		{
-			if (!(await this._CanUse()))
+			if (!this._CanUse())
 				return;
 
 			worker.postMessage({
@@ -109,9 +99,9 @@
 			});
 		}
 
-		static async Send(name, args)
+		static Send(name, args)
 		{
-			if (!(await this._CanUse()))
+			if (!this._CanUse())
 				return;
 
 			worker.postMessage({
@@ -120,9 +110,9 @@
 			});
 		}
 
-		static async Update(stop)
+		static Update(stop)
 		{
-			if (!(await this._CanUse()))
+			if (!this._CanUse())
 				return;
 
 			sharedStopView[0] = Number(stop);

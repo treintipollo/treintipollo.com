@@ -1,3 +1,5 @@
+#!/bin/sh
+
 mkdir tmp
 cd tmp
 
@@ -13,3 +15,10 @@ rm -rf ./tmp
 rm index.js
 rm package.json
 rm package-lock.json
+
+# Set the random cache busting string
+command='s/@@cache-bust@@/'${RANDOM}'/g'
+fileName='index.html'
+
+# Because this script was made for a MAC, sed requires the empty second argument
+sed -i '' "$command" "$fileName"

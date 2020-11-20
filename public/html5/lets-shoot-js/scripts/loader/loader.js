@@ -390,7 +390,9 @@
 
 	async function GetScript(url, scriptReadCallback, index)
 	{
-		const response = await fetch(url, { method: "GET" });
+		const cacheBust = document.body.getAttribute("data-cache-bust");
+
+		const response = await fetch(`${url}?b=${cacheBust}`, { method: "GET" });
 		const scriptText = await response.text();
 
 		scriptReadCallback();
@@ -404,7 +406,9 @@
 
 	async function GetSound(url, soundReadCallback, index)
 	{
-		const response = await fetch(url, { method: "GET" });
+		const cacheBust = document.body.getAttribute("data-cache-bust");
+
+		const response = await fetch(`${url}?b=${cacheBust}`, { method: "GET" });
 		const buffer = await response.arrayBuffer();
 
 		soundReadCallback();
