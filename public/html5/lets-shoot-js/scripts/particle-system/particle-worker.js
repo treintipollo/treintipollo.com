@@ -11,12 +11,12 @@
 	else if (self.location.origin === "http://localhost:3000")
 	{
 		// Local development in Treintipollo
-		path = "http://localhost:3000/html5/lets-shoot-js/scripts/";
+		path = "http://localhost:3000/html5/lets-shoot-js/worker/scripts/";
 	}
 	else
 	{
 		// Live
-		path = "https://treintipollo.com/html5/lets-shoot-js/scripts/";
+		path = "https://treintipollo.com/html5/lets-shoot-js/worker/scripts/";
 	}
 
 	importScripts(`${path}particle-system/particle-system-manager.js`);
