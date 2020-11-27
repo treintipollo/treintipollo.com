@@ -19,7 +19,7 @@
 		const canvas = document.createElement("canvas");
 
 		const options = {
-			"failIfMajorPerformanceCaveat": false
+			"failIfMajorPerformanceCaveat": true
 		};
 
 		try
@@ -101,6 +101,24 @@
 	else
 	{
 		await Promise.all(Array.from(document.fonts.values()).map((ff) => ff.loaded));
+
+		let path;
+
+		if (self.location.origin === "http://localhost:8000")
+		{
+			// Local development
+			path = "";
+		}
+		else if (self.location.origin === "http://localhost:3000")
+		{
+			// Local development in Treintipollo
+			path = "http://localhost:3000/html5/lets-shoot-js/worker/";
+		}
+		else
+		{
+			// Live
+			path = "https://treintipollo.com/html5/lets-shoot-js/worker/";
+		}
 
 		const loadData = {
 			"scripts": [
@@ -204,7 +222,8 @@
 				{ path: "scripts/effects/shooting-star.js" },
 				{ path: "scripts/effects/rocket.js" },
 				{ path: "scripts/effects/rocket-launcher.js" },
-				{ path: "scripts/particle-system/particle-system-messages.js" },
+
+				{ path: `${path}scripts/particle-system/particle-system-messages.js` },
 
 				{ path: "scripts/init.js" }
 			],

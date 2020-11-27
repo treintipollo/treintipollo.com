@@ -5,7 +5,7 @@ cd tmp
 
 git init
 git remote add origin git@bitbucket.org:diegomarquez/lets-shoot-arcade.git
-git pull origin master
+git pull --rebase origin master
 
 rsync -a ./html5/* ../
 
