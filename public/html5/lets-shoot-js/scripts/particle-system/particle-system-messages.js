@@ -7,28 +7,30 @@
 
 	let isolated = true;
 	let concurrency = navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 0;
+	let path;
 	
 	if (window.location.origin === "http://localhost:8000")
 	{
 		// Local development
 		isolated = true;
+		path = "http://localhost:8000/scripts/";
 	}
 	else if (window.location.origin === "http://localhost:3000")
 	{
 		// Local development in Treintipollo
 		isolated = true;
+		path = "http://localhost:3000/html5/lets-shoot-js/worker/scripts/";
 	}
 	else
 	{
 		// Live
 		isolated = !!window.crossOriginIsolated;
+		path = "https://treintipollo.com/html5/lets-shoot-js/worker/scripts/";
 	}
 
 	if (window.Worker && isolated && concurrency > 1)
 	{
-		const workerUrl = window.BlobUrls.get("scripts/particle-system/particle-worker.js");
-
-		worker = new Worker(workerUrl);
+		worker = new Worker(`${path}particle-system/particle-worker.js`);
 	}
 
 	if (window.SharedArrayBuffer && isolated && concurrency > 1)

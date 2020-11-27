@@ -19,7 +19,7 @@
 		const canvas = document.createElement("canvas");
 
 		const options = {
-			"failIfMajorPerformanceCaveat": true
+			"failIfMajorPerformanceCaveat": false
 		};
 
 		try
