@@ -13,19 +13,19 @@
 	{
 		// Local development
 		isolated = true;
-		path = "http://localhost:8000/scripts/";
+		path = `${window.location.origin}/scripts/`;
 	}
 	else if (window.location.origin === "http://localhost:3000")
 	{
 		// Local development in Treintipollo
 		isolated = true;
-		path = "http://localhost:3000/html5/lets-shoot-js/worker/scripts/";
+		path = `${window.location.origin}/html5/lets-shoot-js/worker/scripts/`;
 	}
 	else
 	{
 		// Live
 		isolated = !!window.crossOriginIsolated;
-		path = "https://treintipollo.com/html5/lets-shoot-js/worker/scripts/";
+		path = `${window.location.origin}/html5/lets-shoot-js/worker/scripts/`;
 	}
 
 	if (window.Worker && isolated && concurrency > 1)

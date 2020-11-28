@@ -14,3 +14,7 @@ gem 'rack-ssl-enforcer'
 group :production do
 	gem 'unicorn'
 end
+
+group :development do
+	gem 'thin'
+end
