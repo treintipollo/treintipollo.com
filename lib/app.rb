@@ -25,6 +25,11 @@ class App < Sinatra::Base
 		def asset_path(source)
 			"/assets/#{settings.sprockets.find_asset(source).digest_path}"
 		end
+
+		def cross_origin_headers(headers)
+			headers["Cross-Origin-Opener-Policy"] = "same-origin"
+			headers["Cross-Origin-Embedder-Policy"] = "require-corp"
+		end
 	end
 
 	get	"/" do
@@ -38,8 +43,7 @@ class App < Sinatra::Base
 
 	get	"/html5/:game" do
 		if params["game"] == "lets-shoot-js"
-			response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
-			response.headers["Cross-Origin-Embedder-Policy"] = "require-corp"
+			cross_origin_headers(response.headers)
 		end
 
 		@game = params["game"]
@@ -56,15 +60,13 @@ class App < Sinatra::Base
 	end
 
 	get	"/html5/:game/index" do
-		response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
-		response.headers["Cross-Origin-Embedder-Policy"] = "require-corp"
+		cross_origin_headers(response.headers)
 
 		send_file("public/html5/#{params["game"]}/index.html")
 	end
 
 	get	"/html5/:game/worker/*" do
-		response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
-		response.headers["Cross-Origin-Embedder-Policy"] = "require-corp"
+		cross_origin_headers(response.headers)
 
 		send_file("public/html5/#{params["game"]}/#{params["splat"].join("/")}", :type => "application/javascript");
 	end

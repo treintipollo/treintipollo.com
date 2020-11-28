@@ -1,2 +1,0 @@
-# Just a reminder for how to start a development server with a dummy certificate
-# sudo thin start -p 443 --ssl --ssl-key-file server.key --ssl-cert-file server.crt
