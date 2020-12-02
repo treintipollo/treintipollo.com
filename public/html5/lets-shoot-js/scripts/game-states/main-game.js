@@ -47,10 +47,7 @@
 			this._loosePhrases.push("I PITY THE FOOL !");
 			this._loosePhrases.push("XD");
 			this._loosePhrases.push("FAIL");
-			this._loosePhrases.push("EPIC PHAIL XD");
-			this._loosePhrases.push("DOPE IS BAD, OK ?");
-			this._loosePhrases.push("WAKE UP BOY/GIRL !");
-			this._loosePhrases.push("DONE BITCHING ?");
+			this._loosePhrases.push("FAILURE");
 			this._loosePhrases.push("USE THE BOMB !");
 			this._loosePhrases.push("NOOBA");
 			this._loosePhrases.push("OWNED");

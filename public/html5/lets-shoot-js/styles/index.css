@@ -71,6 +71,7 @@ body
 
 .loader.back
 {
+	opacity: 1;
 	border-color: transparent;
 	background: black;
 

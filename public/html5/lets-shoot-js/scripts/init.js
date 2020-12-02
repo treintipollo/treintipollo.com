@@ -6,8 +6,6 @@
 
  		// Something to save the volume settings
 
- 		// Remove some strings I don't like anymore
- 		
  		// Enter highscore name after the game is over
  			// All Clear
 	 			// At the end go to the highscore state if the final score qualifies
@@ -159,7 +157,6 @@
 		MainBody.SetInitParams2(0, 1, 5);
 		BulletManager.Init(stage, 3000, 4);
 		Grid_Revenge.Init(new Point(10,10), 0x151EC4, 0.4, 2, stage);
-		ParticleSystemMessages.Start();
 
 		window.LetsShoot = new LetsShoot(stage);
 
@@ -206,8 +203,6 @@
 				hidden = false;
 				
 				Sound.Context.resume();
-
-				ParticleSystemMessages.Resume();
 			}
 			else
 			{
@@ -220,8 +215,6 @@
 					hidden = false;
 					
 					Sound.Context.resume();
-
-					ParticleSystemMessages.Resume();
 				}, 200);
 			}
 		}
@@ -229,8 +222,6 @@
 		{
 			SoundManager.UnBlock();
 			Sound.Context.resume();
-
-			ParticleSystemMessages.Resume();
 		}
 	}
 
@@ -252,8 +243,6 @@
 		}
 
 		Sound.Context.suspend();
-
-		ParticleSystemMessages.Pause();
 	}
 
 	window.addEventListener("contextmenu", (e) =>

@@ -22,31 +22,31 @@
 			LevelSelect.SetInitParams(3, 4);
 			ChainCounter.ResetGlobalScore();
 
-			// ChainCounter._globalScore = 10000000;
+			ChainCounter._globalScore = 10000000;
 
-			// LevelSelect.Ready(0, 0);
-			// LevelSelect.Ready(0, 1);
-			// LevelSelect.Ready(0, 2);
-			// LevelSelect.Ready(0, 3);
+			LevelSelect.Ready(0, 0);
+			LevelSelect.Ready(0, 1);
+			LevelSelect.Ready(0, 2);
+			LevelSelect.Ready(0, 3);
 
-			// LevelSelect.Ready(1, 0);
-			// LevelSelect.Ready(1, 1);
-			// LevelSelect.Ready(1, 2);
-			// LevelSelect.Ready(1, 3);
+			LevelSelect.Ready(1, 0);
+			LevelSelect.Ready(1, 1);
+			LevelSelect.Ready(1, 2);
+			LevelSelect.Ready(1, 3);
 
-			// LevelSelect.Ready(2, 0);
-			// LevelSelect.Ready(2, 1);
-			// LevelSelect.Ready(2, 2);
-			// LevelSelect.Ready(2, 3);
+			LevelSelect.Ready(2, 0);
+			LevelSelect.Ready(2, 1);
+			LevelSelect.Ready(2, 2);
+			LevelSelect.Ready(2, 3);
 
-			// LevelSelect.Boss(3, 0);
-			// LevelSelect.Boss(3, 1);
-			// LevelSelect.Boss(3, 2);
-			// LevelSelect.Boss(3, 3);
+			LevelSelect.Boss(3, 0);
+			LevelSelect.Boss(3, 1);
+			LevelSelect.Boss(3, 2);
+			LevelSelect.Boss(3, 3);
 
-			// LevelSelect.Secret(0, 4);
-			// LevelSelect.Secret(1, 4);
-			// LevelSelect.Secret(2, 4);
+			LevelSelect.Secret(0, 4);
+			LevelSelect.Secret(1, 4);
+			LevelSelect.Secret(2, 4);
 			
 			this._pointer = new CustomPointer(this._stage);
 			this._screen = new SplashManager(this._stage);

@@ -128,7 +128,7 @@
 				if (!this._menuCreated)
 				{
 					this._upgradeMenu = new MenuFrame(this._stage.stageWidth / 2, this._stage.stageHeight / 2, 0xffff0000, 0xff000000, 10, this._stage);
-					this._upgradeMenu.SetTitle("PIMP YOUR RIDE", "Digital-7", 40, 0xff00ffff);
+					this._upgradeMenu.SetTitle("BUY UPGRADES", "Digital-7", 40, 0xff00ffff);
 					
 					for (let i = 0; i < this._buttonText.length; i++)
 					{

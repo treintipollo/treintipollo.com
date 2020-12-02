@@ -121,7 +121,7 @@
 						}
 					}
 					
-					this._upgradeMenu.AddButton("EXIT", "Digital-7", 25, 0xffff0000, "WTF ?!... BADASS!", 10);
+					this._upgradeMenu.AddButton("EXIT", "Digital-7", 25, 0xffff0000, "???", 10);
 					this._upgradeMenu.Init(true, false, false);
 					
 					this._menuCreated = true;

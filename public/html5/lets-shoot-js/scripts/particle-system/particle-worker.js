@@ -61,18 +61,18 @@
 
 		const l = () =>
 		{
-			rafId = requestAnimationFrame(l);
+			rafId = self.requestAnimationFrame(l);
 
-			now = Date.now();
+			now = self.Date.now();
 			elapsed = now - then;
 
 			if (elapsed > fpsInterval)
 			{
 				then = now - (elapsed % fpsInterval);
-
-				if (!ParticleSystemManager.Update(sharedStop[0]))
+				
+				if (!ParticleSystemManager.Update())
 				{
-					cancelAnimationFrame(rafId);
+					self.cancelAnimationFrame(rafId);
 					rafId = -1;
 				}
 			}

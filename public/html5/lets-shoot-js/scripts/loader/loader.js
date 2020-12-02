@@ -204,6 +204,18 @@
 				{ path: "scripts/effects/shooting-star.js" },
 				{ path: "scripts/effects/rocket.js" },
 				{ path: "scripts/effects/rocket-launcher.js" },
+				
+				{ path: "scripts/particle-system/particle-worker-stub.js" },
+				{ path: "scripts/particle-system/particle-system-manager.js" },
+				{ path: "scripts/particle-system/particle-manager.js" },
+				{ path: "scripts/particle-system/system.js" },
+				{ path: "scripts/particle-system/circle-area-system.js" },
+				{ path: "scripts/particle-system/min-radius-system.js" },
+				{ path: "scripts/particle-system/particle.js" },
+				{ path: "scripts/particle-system/radial-particle.js" },
+				{ path: "scripts/particle-system/fireworks-particle.js" },
+				{ path: "scripts/particle-system/junction-particle.js" },
+				{ path: "scripts/particle-system/spiral-junction-particle.js" },
 				{ path: "scripts/particle-system/particle-system-messages.js" },
 
 				{ path: "scripts/init.js" }
@@ -254,7 +266,7 @@
 			],
 
 			"blobs": [
-				{ path: "scripts/particle-system/particle-worker.js" }
+				
 			]
 		}
 
@@ -293,13 +305,13 @@
 			
 			if (percent >= 1)
 				percent = 1;
-			
+
 			loadingMidground.style.width = ((rect.width / 2) * percent) + "px";
 			loadingText.textContent = "Loading " + (percent * 100) + "%";
 
 			if (percent === 1)
 			{
-				if (loadingBackground.style.opacity === 1)
+				if (getComputedStyle(loadingBackground).opacity === "1")
 				{
 					loadingBackground.addEventListener("transitionend", function()
 					{

@@ -18,6 +18,7 @@
 			this._congratulations.push("AWESOME !!!");
 			this._congratulations.push("AMAZING !!!");
 			this._congratulations.push("GREAT !!!");
+			this._congratulations.push("WELL DONE !!!");
 			this._currentCongrats = NumberUtils.randRange(0, this._congratulations.length - 1, true);
 			
 			this._levelEndSign = new LevelEndSign(this._congratulations[this._currentCongrats], "Digital-7", 100, 0xff00ff00, this._stage);

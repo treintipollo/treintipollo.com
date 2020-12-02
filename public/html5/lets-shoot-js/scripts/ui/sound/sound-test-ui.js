@@ -37,8 +37,8 @@
 			this._title.push("Drums");
 			this._link.push("null");
 			
-			this._title.push("QQ PARTY");
-			this._link.push("http://www.newgrounds.com/audio/listen/158488");
+			this._title.push("Win");
+			this._link.push("https://nicolemakesmusic.wixsite.com/nicolemariet");
 			
 			this._stage = stage;
 			this._bgmSoundTransform = bgmSoundTransform;
@@ -172,7 +172,7 @@
 		SetLink()
 		{
 			let pos = new Point(this._initPos.x, this._control[0].GetText().GetTextField().y + this._control[0].GetText()._dimentions.y * 2);
-			this._currentLink = new Button(pos, "Click here for the original track", this._font, this._linkFontSize, this._linkColor, this._stage);
+			this._currentLink = new Button(pos, "Get the song", this._font, this._linkFontSize, this._linkColor, this._stage);
 			this._currentLink.Update(0, true, false, true);
 		}
 		
