@@ -3,14 +3,17 @@
 	const supportFail = [];
 
 	if (!window.OffscreenCanvas)
-		supportFail.push("Offscreen canvas");
+	{
+		 window.OffscreenCanvas = function(width, height)
+		 {
+			const canvas = document.createElement("canvas");
+			
+			canvas.width = width;
+			canvas.height = height;
 
-	let c = document.createElement("canvas");
-
-	if (typeof c.transferControlToOffscreen !== "function")
-		supportFail.push("Transfer to offscreen canvas");
-
-	c = null;
+			return canvas;
+		};
+	}
 
 	const checkFroWebGL = () =>
 	{

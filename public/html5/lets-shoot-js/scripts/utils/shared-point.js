@@ -1,7 +1,7 @@
 "use strict";
 
 {
-	const ARRAY_BUFFER = self.SharedArrayBuffer || self.ArrayBuffer;
+	const ARRAY_BUFFER = self.ArrayBuffer;
 
 	class SharedPoint
 	{
