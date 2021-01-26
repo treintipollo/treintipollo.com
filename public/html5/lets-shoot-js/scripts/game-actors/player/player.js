@@ -11,6 +11,10 @@
 	let bulletDamage = 0;
 	let bulletConcentration = 0;
 	let freeUpgradesPassed = 0;
+	let maxChain = 0;
+	let noMiss = true;
+	let startTime = 0;
+	let endTime = NaN;
 
 	const attackBitMax = 3;
 	const rangeMax = 18;
@@ -255,6 +259,9 @@
 			//Colision with a Baddy
 			if (looseLife)
 			{
+				// For the all clear bonus
+				noMiss = false;
+
 				if (this._initDeath && this._death === null)
 				{
 					this._bodyBitmap = DynamicGraphics.GetBitmapFromDisplayObjectTransformed(
@@ -701,6 +708,14 @@
 			fireRate = _fireRate;
 			bulletDamage = _bulletDamage;
 			bulletConcentration = _bulletContration;
+
+			// Different end game bonuses state tracking variables
+			freeUpgradesPassed = 0;
+			maxChain = 0;
+			noMiss = true;
+			// For all clear bonus, this is the time when the game starts
+			startTime = Date.now();
+			endTime = NaN;
 		}
 
 		static SetAttackBit()
@@ -784,6 +799,10 @@
 	Object.defineProperty(MainBody, "_bulletDamage", { set: v => bulletDamage = v, get: () => bulletDamage });
 	Object.defineProperty(MainBody, "_bulletConcentration", { set: v => bulletConcentration = v, get: () => bulletConcentration });
 	Object.defineProperty(MainBody, "_freeUpgradesPassed", { set: v => freeUpgradesPassed = v, get: () => freeUpgradesPassed });
+	Object.defineProperty(MainBody, "_maxChain", { set: v => maxChain = v, get: () => maxChain });
+	Object.defineProperty(MainBody, "_noMiss", { set: v => noMiss = v, get: () => noMiss });
+	Object.defineProperty(MainBody, "_startTime", { set: v => startTime = v, get: () => startTime });
+	Object.defineProperty(MainBody, "_endTime", { set: v => endTime = v, get: () => endTime });
 
 	Object.defineProperty(MainBody, "_attackBitMax", { get: () => attackBitMax });
 	Object.defineProperty(MainBody, "_rangeMax", { get: () => rangeMax });

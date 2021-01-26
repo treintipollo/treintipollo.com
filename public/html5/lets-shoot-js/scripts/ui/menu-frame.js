@@ -124,13 +124,13 @@
 				this._soundGui.AddSliderTitle("BGM VOLUME", "Digital-7", 25, 0xff00ff00);
 				this._soundGui.SetSliderTrack(100, 7, 2, 0xff777777, 0xff000000);
 				this._soundGui.SetSliderKnob(10, 2, 0xff777777, 0xff000000);
-				this._soundGui.SetSliderSound(Sounds.TEST_BGM, SoundManager.GetSoundTransform(true));
+				this._soundGui.SetSliderSound(Sounds.TEST_BGM, SoundManager.GetSoundTransform(true), "bgm");
 				this._soundGui.SetSliderProperties("x", 0, 100, 100, 2);
 				
 				this._soundGui.AddSliderTitle("SFX VOLUME", "Digital-7", 25, 0xff00ff00);
 				this._soundGui.SetSliderTrack(100, 7, 2, 0xff777777, 0xff000000);
 				this._soundGui.SetSliderKnob(10, 2, 0xff777777, 0xff000000);
-				this._soundGui.SetSliderSound(Sounds.LAUGH, SoundManager.GetSoundTransform(false));
+				this._soundGui.SetSliderSound(Sounds.LAUGH, SoundManager.GetSoundTransform(false), "sfx");
 				this._soundGui.SetSliderProperties("x", 0, 100, 100, 2);
 				
 				this._soundGui.Init();

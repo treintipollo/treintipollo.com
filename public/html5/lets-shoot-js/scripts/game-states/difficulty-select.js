@@ -39,6 +39,7 @@
 			this._pointer = new CustomPointer(this._stage);
 			
 			DifficultySelect._difficulty = null;
+			DifficultySelect._difficultyIndex = -1;
 			
 			MainBody.SetInitParams(3, 10, 1, 2, 1, 4);
 			MainBody.SetInitParams2(0, 1, 5);
@@ -60,14 +61,20 @@
 					{
 						case 0:
 							DifficultySelect._difficulty = DifficultySelect.EASY;
+							DifficultySelect._difficultyIndex = 0;
+
 							this._nextState = LetsShoot.LEVEL_SELECT;
 							break;
 						case 1:
 							DifficultySelect._difficulty = DifficultySelect.NORMAL;
+							DifficultySelect._difficultyIndex = 1;
+
 							this._nextState = LetsShoot.LEVEL_SELECT;
 							break;
 						case 2:
 							DifficultySelect._difficulty = DifficultySelect.HARD;
+							DifficultySelect._difficultyIndex = 2;
+
 							this._nextState = LetsShoot.LEVEL_SELECT;
 							break;
 					}
@@ -123,6 +130,7 @@
 	}
 
 	DifficultySelect._difficulty;
+	DifficultySelect._difficultyIndex;
 
 	DifficultySelect.EASY = "Easy";
 	DifficultySelect.NORMAL = "Normal";

@@ -105,7 +105,14 @@
 								{
 									BaddyManager.SetType("SnakeBullet");
 							 		BaddyManager.SetStatsByName("BossBullet");
-							 		BaddyManager.SetSpecificParams(new Point(10, 50), new Point(6, 10), new Point(10, 15), 150, this._owner._center);
+							 		BaddyManager.SetSpecificParams(
+							 			new Point(10, 50),
+							 			new Point(6, 10),
+							 			new Point(10, 15),
+							 			150,
+							 			this._owner._center,
+							 			DifficultySelect._difficulty === DifficultySelect.HARD
+							 		);
 							 		
 									for(i = 0; i < this._owner._vertexCount; i++)
 									{
@@ -123,7 +130,14 @@
 									{
 										BaddyManager.SetType("SnakeBullet");
 								 		BaddyManager.SetStatsByName("BossBullet");
-								 		BaddyManager.SetSpecificParams(new Point(10, 50), new Point(3, 5), new Point(10, 10), 120, this._owner._center);
+								 		BaddyManager.SetSpecificParams(
+								 			new Point(10, 50),
+								 			new Point(3, 5),
+								 			new Point(10, 10),
+								 			120,
+								 			this._owner._center,
+								 			DifficultySelect._difficulty === DifficultySelect.HARD
+								 		);
 										
 					 					BaddyManager.Add(this._owner._attackPoint[this._currentShotPoint], this._owner._target);
 										BaddyManager.CleanForNextType();

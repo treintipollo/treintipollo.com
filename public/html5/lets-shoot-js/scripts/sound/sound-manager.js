@@ -22,6 +22,16 @@
 			_fxSoundTransform = new SoundTransform();
 			_loadPromises = [];
 			_blocked = false;
+
+			const bgmVolume = localStorage.getItem(`bgm-volume`);
+
+			if (parseFloat(bgmVolume))
+				_bgmSoundTransform.volume = parseFloat(bgmVolume);
+			
+			const sfxVolume = localStorage.getItem(`sfx-volume`);
+
+			if (parseFloat(sfxVolume))
+				_fxSoundTransform.volume = parseFloat(sfxVolume);
 		}
 		
 		static IsReady()
@@ -67,10 +77,10 @@
 		{
 			for (let i = 0; i < _soundArray.length; i++)
 			{
-				if (bgm && _soundArray[i].GetType())
+				if (bgm && _soundArray[i].IsBGM())
 					_soundArray[i].Stop();
 				
-				if (sfx && !_soundArray[i].GetType())
+				if (sfx && _soundArray[i].IsSFX())
 					_soundArray[i].Stop();
 			}
 		}

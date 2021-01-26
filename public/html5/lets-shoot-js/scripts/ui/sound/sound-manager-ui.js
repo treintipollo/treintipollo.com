@@ -70,9 +70,9 @@
 			this._sliderProperties.push([axis, minValue, maxValue, startValue, precision]);
 		}
 		
-		SetSliderSound(testSoundIndex, soundTransform)
+		SetSliderSound(testSoundIndex, soundTransform, localStorageId)
 		{
-			this._testSound.push([testSoundIndex, soundTransform]);
+			this._testSound.push([testSoundIndex, soundTransform, localStorageId]);
 		}
 		
 		Init()
@@ -92,7 +92,8 @@
 					let pos = new Point(this._slider[i - 1].GetPosition().x, this._slider[i - 1].GetPosition().y + this._slider[i - 1].GetDimentions().y + this._offset[i]);
 					this._slider[i] = new VolumeControl(pos, this._testSound[i][1], this._stage);
 				}
-				  
+				
+				this._slider[i].SetLocalStorageId(this._testSound[i][2]);
 				this._slider[i].SetTitle(this._sliderTitle[i][0], this._sliderTitle[i][1], this._sliderTitle[i][2], this._sliderTitle[i][3]);
 				this._slider[i].SetTrack(this._track[i][0], this._track[i][1], this._track[i][2], this._track[i][3], this._track[i][4], this._offset[i]);
 				this._slider[i].SetSlider(this._knob[i][0], this._knob[i][1], this._knob[i][2], this._knob[i][3]);
@@ -110,7 +111,8 @@
 				}
 				
 				this._slider[i].Init(this._sliderProperties[i][0], this._sliderProperties[i][1], this._sliderProperties[i][2], startValue, this._sliderProperties[i][4]);
-				
+				this._slider[i].ReSetPosition(0, 0);
+
 				this._longestWidth < this._slider[i].GetFullLenght() ? this._longestWidth = this._slider[i].GetFullLenght() : this._longestWidth = this._longestWidth;
 				this._totalHeight += this._slider[i].GetDimentions().y + this._offset[i];
 			}

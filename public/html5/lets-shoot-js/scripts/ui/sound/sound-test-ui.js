@@ -17,28 +17,35 @@
 			this._controlText.push(">>");
 			   
 			this._title.push("Kalim Clunk");
-			this._link.push("http://www.newgrounds.com/audio/listen/152892");
+			this._link.push("null");
+			// this._link.push("http://www.newgrounds.com/audio/listen/152892");
 
 			this._title.push("Main 1");
-			this._link.push("https://nicolemakesmusic.wixsite.com/nicolemariet");
+			this._link.push("null");
+			// this._link.push("https://nicolemakesmusic.wixsite.com/nicolemariet");
 
 			this._title.push("Main 2");
-			this._link.push("https://nicolemakesmusic.wixsite.com/nicolemariet");
+			this._link.push("null");
+			// this._link.push("https://nicolemakesmusic.wixsite.com/nicolemariet");
 
 			this._title.push("Main 3");
-			this._link.push("https://nicolemakesmusic.wixsite.com/nicolemariet");
+			this._link.push("null");
+			// this._link.push("https://nicolemakesmusic.wixsite.com/nicolemariet");
 			
 			this._title.push("Robots will be there. (Lite)");
-			this._link.push("http://www.newgrounds.com/audio/listen/126548");
+			this._link.push("null");
+			// this._link.push("http://www.newgrounds.com/audio/listen/126548");
 			
 			this._title.push("Dryll (Lite)");
-			this._link.push("http://www.newgrounds.com/audio/listen/103721");
+			this._link.push("null");
+			// this._link.push("http://www.newgrounds.com/audio/listen/103721");
 			
 			this._title.push("Drums");
 			this._link.push("null");
 			
 			this._title.push("Win");
-			this._link.push("https://nicolemakesmusic.wixsite.com/nicolemariet");
+			this._link.push("null");
+			// this._link.push("https://nicolemakesmusic.wixsite.com/nicolemariet");
 			
 			this._stage = stage;
 			this._bgmSoundTransform = bgmSoundTransform;
@@ -106,6 +113,7 @@
 		SetBGMVolumeSlider(title, width, height, knobRadius, thickness, lineColor, fillColor)
 		{
 			this._bgmVolumeControl = new VolumeControl(new Point(this._initPos.x, this._initPos.y + this._currentTheme._dimentions.y), this._bgmSoundTransform, this._stage, false);
+			this._bgmVolumeControl.SetLocalStorageId("bgm");
 			this._bgmVolumeControl.SetTitle(title, this._font, this._controlFontSize, this._themeColor);
 			this._bgmVolumeControl.SetTrack(width, height, thickness, lineColor, fillColor);
 			this._bgmVolumeControl.SetSlider(knobRadius, thickness, lineColor, fillColor);
@@ -121,6 +129,7 @@
 		SetSFXVolumeSlider(title, width, height, knobRadius, thickness, lineColor, fillColor)
 		{
 			this._sfxVolumeControl = new VolumeControl(new Point(this._initPos.x, this._initPos.y + this._currentTheme._dimentions.y * 2), this._sfxSoundTransform, this._stage, false);
+			this._sfxVolumeControl.SetLocalStorageId("sfx");
 			this._sfxVolumeControl.SetTitle(title, this._font, this._controlFontSize, this._themeColor);
 			this._sfxVolumeControl.SetTrack(width, height, thickness, lineColor, fillColor);
 			this._sfxVolumeControl.SetSlider(knobRadius, thickness, lineColor, fillColor);

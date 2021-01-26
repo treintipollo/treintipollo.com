@@ -1,65 +1,6 @@
 "use strict"
 
 {
-	
-	
- 	// Game Improvements
- 		// Do not give points for baddies spawned by a boss
-
- 		// Something to save the volume settings
-
- 		// Enter highscore name after the game is over
- 			// All Clear
-	 			// At the end go to the highscore state if the final score qualifies
-				// Otherwise go to the Splash Screen
-			// Main Game
-				// When loosing go to the high score table if the final score qualifies
-					// Otherwise go to the Splash Screen
- 		
- 		// Options state
- 			// highscore table
- 			// sound test
- 		
- 		// Hide big boss in easy Mode
- 		
- 		// Only use invincible bullets in the Big Boss spin attack
- 			// hard mode
- 		
- 		// Only use big boss final attack sequence
- 			// hard mode
- 		
- 		// if the level cuota is complete kill all baddies which are not visible
- 			// after the boss is dead, complete if there are no more baddies which are visible
- 		
- 		// The bomb should go where the crosshair is
- 		
- 		// Add a small woobling motion for the last phase of the big boss
- 			// it looks very stiff now
- 		
- 		// Make the center of the big boss glow when it can take damage to give a small hint
- 			// Increase the amount of damge before backing off to give time to shoot a bomb
- 		
- 		// Add a gravity effect towards the center when the big boss is summoning baddies
- 			// make the effects stronger the more of it's bits are destroyed
- 			// make the particles fly faster towards the center as the pull is stronger
-
- 		// more end game bonuses
-
- 		// rebalance difficulties
- 			// easy => easier
- 			// normal => easy
- 			// hard => normal
- 			// boss HP only
-
- 			// death attack bullets can't be destroyed
- 				// hard only
-
- 			// easy
- 				// snake boss bullets have no tail
-
- 			// Make easy mode easier
- 				// Cheaper upgrades
-
 	let _click = false;
 
 	let SPLASH_SCREEN = NaN;
@@ -75,6 +16,9 @@
 	let STAGE_COMPLETE = NaN;
 	let SOUND_TEST = NaN;
 	let QUIT = NaN;
+	let OPTIONS = NaN;
+	let HIGHSCORES_TABLE = NaN;
+	let HIGHSCORE_NAME_ENTRY = NaN;
 
 	class LetsShoot
 	{
@@ -99,6 +43,9 @@
 			STAGE_COMPLETE = this._stateMachine.Add(new StageComplete(stage));
 			SOUND_TEST = this._stateMachine.Add(new SoundTest(stage));
 			QUIT = this._stateMachine.Add(new Quit(stage));
+			OPTIONS = this._stateMachine.Add(new Options(stage));
+			HIGHSCORES_TABLE = this._stateMachine.Add(new Highscores(stage));
+			HIGHSCORE_NAME_ENTRY = this._stateMachine.Add(new NameEntry(stage));
 
 			this._stateMachine.SetFirst();
 
@@ -176,6 +123,9 @@
 		Object.defineProperty(window.LetsShoot, "STAGE_COMPLETE", { get: () => STAGE_COMPLETE });
 		Object.defineProperty(window.LetsShoot, "SOUND_TEST", { get: () => SOUND_TEST });
 		Object.defineProperty(window.LetsShoot, "QUIT", { get: () => QUIT });
+		Object.defineProperty(window.LetsShoot, "OPTIONS", { get: () => OPTIONS });
+		Object.defineProperty(window.LetsShoot, "HIGHSCORES_TABLE", { get: () => HIGHSCORES_TABLE });
+		Object.defineProperty(window.LetsShoot, "HIGHSCORE_NAME_ENTRY", { get: () => HIGHSCORE_NAME_ENTRY });
 	});
 
 	// Listen for input to be able to activate the audio context as soon as possible

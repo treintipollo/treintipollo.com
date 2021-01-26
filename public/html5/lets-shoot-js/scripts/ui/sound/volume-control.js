@@ -28,8 +28,14 @@
 			this._offSet = 0;
 			this._testButton = null;
 			this._testSound = 0;
+			this._localStorageId = "";
 		}
 		
+		SetLocalStorageId(localStorageId)
+		{
+			this._localStorageId = localStorageId;
+		}
+
 		SetTitle(string, font, size, color)
 		{
 			this._titleFont = font;
@@ -123,7 +129,18 @@
 			this._pos.x += xDelta;
 			this._pos.y += yDelta;
 			
-			this._volumeSliderObject.percent = this._maxValue;
+			const storedVolume = localStorage.getItem(`${this._localStorageId}-volume`);
+			
+			if (parseFloat(storedVolume))
+			{
+				// Restore the saved valume
+				this._volumeSliderObject.percent = parseFloat(storedVolume) * this._maxValue;
+			}
+			else
+			{
+				// Default slider value
+				this._volumeSliderObject.percent = 1 * this._maxValue;
+			}
 		}
 		
 		Update(alpha)
@@ -150,6 +167,9 @@
 		
 		Clean()
 		{
+			// Save the valume setting
+			localStorage.setItem(`${this._localStorageId}-volume`, this._soundTransform.volume);
+
 			let res = this._volumeSliderObject.currentValue;
 			
 			this._title.Clean();

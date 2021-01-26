@@ -80,6 +80,7 @@
 			this._specificParamsErrorLock = true;
 			this._isSpawning = true;
 			this._wasHit = false;
+			this._lastDamage = 0;
 			this._wasHitByBomb = false;
 			this._doDeathSound = true;
 			
@@ -439,6 +440,7 @@
 				
 				this._pulseTime = this._radiusInit;
 				this._wasHit = false;
+				this._lastDamage = 0;
 				this._wasHitByBomb = false;
 			}
 		}
@@ -553,6 +555,15 @@
 								}
 								
 								this._wasHit = true;
+								
+								if (bullet._isBomb)
+								{
+									this._lastDamage = damage * 5000;
+								}
+								else
+								{
+									this._lastDamage = damage * 10;
+								}
 							}
 						}
 					}
@@ -680,6 +691,15 @@
 											}
 											
 											this._wasHit = true;
+
+											if (bullet._isBomb)
+											{
+												this._lastDamage = damage * 5000;
+											}
+											else
+											{
+												this._lastDamage = damage * 10;
+											}
 										}
 									}
 								}

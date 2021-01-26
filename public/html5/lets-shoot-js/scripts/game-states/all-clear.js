@@ -1,6 +1,18 @@
 "use strict";
 
 {
+	const bonusValues = {
+		"bombs": [3000000, 6000000, 9000000],
+		"lives": [10000000, 20000000, 30000000],
+		"continues": [25000000, 50000000, 75000000],
+		"clear": [50000000, 100000000, 150000000],
+		"chain": [5000000, 10000000, 15000000],
+		"freebies": [10000000, 20000000, 30000000],
+		"no-miss": [100000000, 200000000, 500000000],
+		"time": [100000, 500000, 1000000],
+		"max-bonus-time": [25, 30, 35]
+	};
+
 	class AllClear extends State
 	{
 		constructor(stage)
@@ -19,6 +31,7 @@
 			this._itemAmount = null;
 			this._itemString = null;
 			this._itemValue = null;
+			this._itemOptions = null;
 			this._currentItemIndex = null;
 			this._currentItemAlpha = null;
 			this._totalBonusAlpha = null;
@@ -30,8 +43,6 @@
 			this._currentItemExplode = null;
 			this._createExplodingImage = false;
 			this._showLastMenu = false;
-			this._lastMenu = null;
-			this._currentOption = 0;
 			this._stateCompleted = false;
 		}
 		
@@ -65,7 +76,6 @@
 			this._currentItemAlpha = 0;
 			this._totalBonusAlpha = 0;
 			this._currentItemScore = 0;
-			this._currentOption = -1;
 			
 			this._bonusWait = 50;
 			this._itemWait = 50;
@@ -103,17 +113,6 @@
 						this.CountBonus();
 					}
 				}
-				else
-				{
-					if (this.LastMenuUpdate())
-					{
-						// This will make the title and score scroll out of the screen
-						// to the given positions. And when that is done, the state will be completed.
-						this._stateCompleted = true;
-						this._titleEndPos.x = -this._title._dimentions.x / 2;
-						this._scoreEndPos.x = -this._score._dimentions.x / 2;
-					}
-				}
 			}
 		}
 		
@@ -143,6 +142,7 @@
 			this._itemAmount = null;
 			this._itemString = null;
 			this._itemValue = null;
+			this._itemOptions = null;
 			
 			this._titlePos = null;
 			this._titleEndPos = null;
@@ -155,12 +155,6 @@
 				this._currentItemExplode.Clean();
 				this._currentItemExplode = null;
 			}
-			
-			if (this._lastMenu !== null)
-			{
-				this._lastMenu.Clean();
-				this._lastMenu = null;
-			}
 		}
 		
 		CleanSpecific()
@@ -170,7 +164,7 @@
 		ScrollTitle()
 		{	
 			let completed = 0;
-				
+			
 			if (this._titlePos.x > this._titleEndPos.x)
 			{
 				this._titlePos.x -= 10;
@@ -248,9 +242,27 @@
 						{
 							this._itemAmount[this._currentItemIndex]--;
 							this._currentItemScore += this._itemValue[this._currentItemIndex];
-							SoundManager.Play(Sounds.CASH);
 							
-							this._itemWait = this._itemWaitInit;
+							if (this._itemOptions[this._currentItemIndex].individual)
+							{
+								SoundManager.Play(Sounds.CASH);
+							}
+							else if (this._itemOptions[this._currentItemIndex].lastOnly)
+							{
+								if (this._itemAmount[this._currentItemIndex] <= 0)
+								{
+									SoundManager.Play(Sounds.CASH);
+								}
+							}
+							
+							if (this._itemOptions[this._currentItemIndex])
+							{
+								this._itemWait = this._itemOptions[this._currentItemIndex].time;
+							}
+							else
+							{
+								this._itemWait = this._itemWaitInit;
+							}
 						}
 					}
 				}
@@ -305,15 +317,19 @@
 					{
 						this.BonusCountReset();
 						
+						if (window.HighscoreQualify(ChainCounter._globalScore, DifficultySelect._difficultyIndex))
+						{
+							this._nextState = LetsShoot.HIGHSCORE_NAME_ENTRY;
+						}
+						else
+						{
+							this._nextState = LetsShoot.SPLASH_SCREEN;
+						}
+						
 						this._showLastMenu = true;
-
-						// By now I don't give a shit about order, and this class does't deserve it either
-						// It's just for this game.
-						this._lastMenu = new MenuFrame(this._stage.stageWidth / 2, this._stage.stageHeight / 2, 0xffff0000, 0xff000000, 10, this._stage);
-						this._lastMenu.SetTitle("OPTIONS", "Digital-7", 50, 0xffffff00);
-						this._lastMenu.AddButton("SUBMIT SCORE", "Digital-7", 30, 0xff0000ff);
-						// this._lastMenu.AddButton("EPILOGUE", "Digital-7", 30, 0xff0000ff, "COMING SOON", 10);
-						this._lastMenu.Init(true, false, false);
+						this._stateCompleted = true;
+						this._titleEndPos.x = -this._title._dimentions.x / 2;
+						this._scoreEndPos.x = -this._score._dimentions.x / 2;
 					}
 				}
 			}
@@ -336,53 +352,21 @@
 
 			return new Bitmap(canvas);
 		}
-
-		LastMenuUpdate()
-		{
-			this._currentOption = -1;
-			
-			// Update unless an option was already chosen, hence the menu is no longer in place
-			if (this._lastMenu !== null)
-			{
-				this._currentOption = this._lastMenu.Update(LetsShoot._click);
-			}
-			
-			// Switch between the different Buttons the in-game menu has.
-			// "Resume" or case 0 doesn't have any special logic attached to it.
-			switch (this._currentOption)
-			{
-				// Title Screen
-				case 0:
-					this._nextState = LetsShoot.SPLASH_SCREEN;
-					break;
-			}
-			
-			// If an option was selected start fade out.
-			if (this._currentOption !== -1)
-			{
-				this._lastMenu.StartFadeOut();
-			}
-		
-			// Once the Fade-out of the menu is complete, destroy it.
-			if (this._currentOption === -2)
-			{
-				if (this._lastMenu !== null)
-				{
-					this._lastMenu.Clean();
-					this._lastMenu = null;
-					
-					return true;
-				}
-			}
-			
-			return false;
-		}
 		
 		BonusCountReset()
 		{
 			this._currentItemIndex++;
 			this._bonusWait = this._bonusWaitInit;
-			this._itemWait = this._itemWaitInit;
+
+			if (this._itemOptions[this._currentItemIndex])
+			{
+				this._itemWait = this._itemOptions[this._currentItemIndex].time;
+			}
+			else
+			{
+				this._itemWait = this._itemWaitInit;
+			}
+
 			this._currentItemAlpha = 0;
 			this._createExplodingImage = true;
 			
@@ -392,40 +376,73 @@
 		
 		CreateArrays()
 		{
+			const difficultyIndex = DifficultySelect._difficultyIndex;
+
 			this._itemString = [];
 			this._itemAmount = [];
 			this._itemValue = [];
+			this._itemOptions = [];
 			
-			this._itemString.push("BOMBS:  ");
-			this._itemString.push("LIVES:  ");
-			this._itemString.push("CONTINUES:  ");
-			this._itemString.push(DifficultySelect._difficulty + "  CLEAR:  ");
-			this._itemString.push("NO FREEBIES:  ");
-			
+			this._itemString.push("BOMBS = ");
+			this._itemString.push("LIVES = ");
+			this._itemString.push("CONTINUES = ");
+			this._itemString.push(DifficultySelect._difficulty + " CLEAR = ");
+			this._itemString.push(`MAX CHAIN X${MainBody._maxChain} = `);
+			this._itemString.push("NO FREEBIES = ");
+			this._itemString.push("NO MISS = ");
+			this._itemString.push(`SPEED SCORE = `);
+
+			// Bombs
+			this._itemOptions.push({ individual: true, lastOnly: false, time: 50 });
+			// Lives
+			this._itemOptions.push({ individual: true, lastOnly: false, time: 50 });
+			// Continues
+			this._itemOptions.push({ individual: true, lastOnly: false, time: 50 });
+			// Clear
+			this._itemOptions.push({ individual: true, lastOnly: false, time: 50 });
+			// Chain
+			this._itemOptions.push({ individual: true, lastOnly: false, time: 50 });
+			// Freebies
+			this._itemOptions.push({ individual: true, lastOnly: false, time: 50 });
+			// No miss
+			this._itemOptions.push({ individual: true, lastOnly: false, time: 50 });
+			// Time
+			this._itemOptions.push({ individual: false, lastOnly: true, time: 1 });
+
 			this._itemAmount.push(MainBody._bombs);
 			this._itemAmount.push(MainBody._lives);
 			this._itemAmount.push(MainBody._continues);
+			// Clear
 			this._itemAmount.push(1);
+			// Chain
+			this._itemAmount.push(Math.floor(MainBody._maxChain / 50));
+			// Free upgrades
 			this._itemAmount.push(MainBody._freeUpgradesPassed);
-			
-			this._itemValue.push(3000000);
-			this._itemValue.push(10000000);
-			this._itemValue.push(25000000);
-			
-			switch (DifficultySelect._difficulty)
-			{
-				case DifficultySelect.EASY:
-					this._itemValue.push(50000000);
-					break;
-				case DifficultySelect.NORMAL:
-					this._itemValue.push(100000000);
-					break;
-				case DifficultySelect.HARD:
-					this._itemValue.push(150000000);
-					break;
-			}
+			// No Miss
+			this._itemAmount.push(MainBody._noMiss ? 1 : 0);
+			// Time
+			// Max time to complete the game and get some bonus
+			const maxTime = 1000 * 60 * bonusValues["max-bonus-time"][difficultyIndex];
+			// Time ellapsed since start
+			const gameTime = MainBody._endTime - MainBody._startTime;
 
-			this._itemValue.push(7000000);
+			// Remaining time from the maximum
+			const remainingTime = Math.floor((maxTime - gameTime) / 1000);
+
+			// Clamp if more than the maximum time has passed
+			if (remainingTime < 0)
+				remainingTime = 0;
+
+			this._itemAmount.push(remainingTime);
+
+			this._itemValue.push(bonusValues["bombs"][difficultyIndex]);
+			this._itemValue.push(bonusValues["lives"][difficultyIndex]);
+			this._itemValue.push(bonusValues["continues"][difficultyIndex]);
+			this._itemValue.push(bonusValues["clear"][difficultyIndex]);
+			this._itemValue.push(bonusValues["chain"][difficultyIndex]);
+			this._itemValue.push(bonusValues["freebies"][difficultyIndex]);
+			this._itemValue.push(bonusValues["no-miss"][difficultyIndex]);
+			this._itemValue.push(bonusValues["time"][difficultyIndex]);
 		}
 	}
 

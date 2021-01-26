@@ -54,8 +54,19 @@
 				this._smithereens = new BaddyParameters();
 				this._smithereens.SetDrawParameters(1, color, 0xff000000);
 				this._smithereens.SetSegmentParameters(new Point(1, 5), new Point(10, 15), 50);
-				this._smithereens.SetOptions(true, true);
-				this._smithereens.SetUpdateParameters(40, 2, 8, 1);
+				
+				if (DifficultySelect._difficulty === DifficultySelect.HARD)
+				{
+					this._smithereens.SetOptions(false, true);
+					this._smithereens.SetUpdateParameters(40, 2, 8, 300);
+				}
+				else
+				{
+					this._smithereens.SetOptions(true, true);
+					this._smithereens.SetUpdateParameters(40, 2, 8, 1);
+				}
+
+
 				this._smithereens.SetSound(false);
 			}
 		}
@@ -193,9 +204,18 @@
 				}
 				else
 				{
-					BaddyManager.SetType("SpiralBullet");
-					BaddyManager.SetStatsByClass(this._smithereens, "ExplodeBossSmithereen");
-					BaddyManager.SetSpecificParams(3, 2, clockwise);
+					if (DifficultySelect._difficulty === DifficultySelect.HARD)
+					{
+						BaddyManager.SetType("SpiralBullet");
+						BaddyManager.SetStatsByClass(this._smithereens, "BossBullet");
+						BaddyManager.SetSpecificParams(3, 2, clockwise);
+					}
+					else
+					{
+						BaddyManager.SetType("SpiralBullet");
+						BaddyManager.SetStatsByClass(this._smithereens, "ExplodeBossSmithereen");
+						BaddyManager.SetSpecificParams(3, 2, clockwise);
+					}
 				}
 			 	
 				for (let i = 0; i < explodeAmount; i++)

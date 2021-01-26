@@ -22,8 +22,27 @@
 			LevelSelect.SetInitParams(3, 4);
 			ChainCounter.ResetGlobalScore();
 
-			// ChainCounter._globalScore = 10000000;
+			// MainBody._maxChain = 150;
+			// MainBody._freeUpgradesPassed = 2;
 
+			// Easy, rank 100
+			// ChainCounter._globalScore = 10005001;
+			// DifficultySelect._difficultyIndex = 0;
+			// DifficultySelect._difficulty = DifficultySelect.EASY;
+			// MainBody._startTime = Date.now();
+			// MainBody._endTime = MainBody._startTime + (1000 * 60 * 17) + (1000 * 30);
+
+			// Normal, rank 100
+			// ChainCounter._globalScore = 120001;
+			// DifficultySelect._difficultyIndex = 1;
+
+			// Hard, rank 100
+			// ChainCounter._globalScore = 20001;
+			// DifficultySelect._difficultyIndex = 2;
+
+			// ChainCounter._globalScore = 10000000000;
+
+			// All open
 			// LevelSelect.Ready(0, 0);
 			// LevelSelect.Ready(0, 1);
 			// LevelSelect.Ready(0, 2);
@@ -47,6 +66,31 @@
 			// LevelSelect.Secret(0, 4);
 			// LevelSelect.Secret(1, 4);
 			// LevelSelect.Secret(2, 4);
+
+			// Last Boss
+			// LevelSelect.Cleared(0, 0);
+			// LevelSelect.Cleared(0, 1);
+			// LevelSelect.Cleared(0, 2);
+			// LevelSelect.Cleared(0, 3);
+
+			// LevelSelect.Cleared(1, 0);
+			// LevelSelect.Cleared(1, 1);
+			// LevelSelect.Cleared(1, 2);
+			// LevelSelect.Cleared(1, 3);
+
+			// LevelSelect.Cleared(2, 0);
+			// LevelSelect.Cleared(2, 1);
+			// LevelSelect.Cleared(2, 2);
+			// LevelSelect.Cleared(2, 3);
+
+			// LevelSelect.Cleared(3, 0);
+			// LevelSelect.Cleared(3, 1);
+			// LevelSelect.Cleared(3, 2);
+			// LevelSelect.Cleared(3, 3);
+
+			// LevelSelect.Secret(0, 4);
+			// LevelSelect.Secret(1, 4);
+			// LevelSelect.Secret(2, 4);
 			
 			this._pointer = new CustomPointer(this._stage);
 			this._screen = new SplashManager(this._stage);
@@ -65,7 +109,7 @@
 			this._buttonsText = [];
 			this._buttonsText.push("START");
 			this._buttonsText.push("CONTROLS");
-			this._buttonsText.push("SOUND TEST");
+			this._buttonsText.push("OPTIONS");
 			this._buttonsText.push("QUIT");
 			
 			for (let i = 0; i < this._buttonsText.length; i++)
@@ -106,7 +150,7 @@
 							break;
 						case 2:
 							this._isCompleted = true;
-							this._nextState = LetsShoot.SOUND_TEST;
+							this._nextState = LetsShoot.OPTIONS;
 							break;
 						case 3:
 							this._isCompleted = true;

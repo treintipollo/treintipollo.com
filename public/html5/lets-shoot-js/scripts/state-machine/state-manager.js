@@ -43,7 +43,9 @@
 			if (this._firstCall)
 			{
 				this._currentState.SetOwner(this._owner);
-				this._currentState.Init();
+				this._currentState.Init(this._currentState._nextStateArgs);
+				this._currentState._nextStateArgs = null;
+				
 				this._firstCall = false;
 			}
 			else
@@ -81,7 +83,13 @@
 		{
 			this._firstCall = true;
 			this._currentIndex = current;
+			
+			const lastState = this._currentState;
+
 			this._currentState = this._states[current];
+			this._currentState._nextStateArgs = lastState._nextStateArgs;
+
+			lastState._nextStateArgs = null;
 		}
 	}
 

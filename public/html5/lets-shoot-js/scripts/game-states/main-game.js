@@ -128,9 +128,8 @@
 											// Initialization of in game menu.
 											this._menu = new MenuFrame(this._stage.stageWidth / 2, this._stage.stageHeight / 2, 0xffff0000, 0xff000000, 10, this._stage);
 											this._menu.SetTitle("PAUSE", "Digital-7", 50, 0xffffff00);
-											this._menu.AddButton("RESUME", "Digital-7", 30, 0xff0000ff, "BACK TO THE GAME", 10);
-											this._menu.AddButton("LEVEL SELECTION", "Digital-7", 30, 0xff0000ff, "SPENDS A LIFE", 10);
-											this._menu.AddButton("TITLE SCREEN", "Digital-7", 30, 0xff0000ff, "UNDO ALL PROGRESS", 10);
+											this._menu.AddButton("RESUME", "Digital-7", 30, 0xff0000ff, null, 10);
+											this._menu.AddButton("QUIT", "Digital-7", 30, 0xff0000ff, null, 10);
 											this._menu.Init(true, true, true, true);
 										}
 									}
@@ -145,9 +144,8 @@
 								{
 									this._menu = new MenuFrame(this._stage.stageWidth / 2, this._stage.stageHeight / 2, 0xffff0000, 0xff000000, 10, this._stage);
 									this._menu.SetTitle("CONTINUES LEFT:  " + MainBody._continues.toString(), "Digital-7", 50, 0xffffff00);
-									this._menu.AddButton("YES", "Digital-7", 30, 0xff0000ff, "SPENDS A CONTINUE", 10);
-									this._menu.AddButton("LEVEL SELECTION", "Digital-7", 30, 0xff0000ff, "SPENDS A CONTINUE", 10);
-									this._menu.AddButton("TITLE SCREEN", "Digital-7", 30, 0xff0000ff, "UNDO ALL PROGRESS", 10);
+									this._menu.AddButton("YES", "Digital-7", 30, 0xff0000ff, null, 10);
+									this._menu.AddButton("NO", "Digital-7", 30, 0xff0000ff, null, 10);
 									this._menu.Init(true, true, false, true);
 									
 									this._createContinueFrame = false;
@@ -169,10 +167,6 @@
 										}
 										break;
 									case 1:
-										this._nextState = LetsShoot.LEVEL_SELECT;
-										this._exitOptionChose = true;
-										break;
-									case 2:
 										this._nextState = LetsShoot.SPLASH_SCREEN;
 										this._exitOptionChose = true;
 										break;
@@ -225,32 +219,8 @@
 						// "Resume" or case 0 doesn't have any special logic attached to it.
 						switch(_currOption)
 						{
-							// Back to level selection
-							case 1:
-								if (MainBody._lives > 0)
-								{
-									this._nextState = LetsShoot.LEVEL_SELECT;
-									this._exitOptionChose = true;
-									MainBody._lives--;
-								}
-								else
-								{
-									if (MainBody._continues > 0)
-									{
-										this._nextState = LetsShoot.LEVEL_SELECT;
-										this._exitOptionChose = true;
-										MainBody._continues--;
-										MainBody._lives += 3;
-									}
-									else
-									{
-										SoundManager.Play(Sounds.NEGATIVE);
-										_currOption = -1;
-									}
-								}
-								break;
 							// Back to splash screen
-							case 2:
+							case 1:
 								this._nextState = LetsShoot.SPLASH_SCREEN;
 								this._exitOptionChose = true;
 								break;

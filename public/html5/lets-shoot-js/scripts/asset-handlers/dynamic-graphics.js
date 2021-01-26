@@ -592,7 +592,7 @@ function DrawHorizontalLine(color, alpha, lineWidth, stage)
 function DrawVerticalWarning(color, width, stage)
 {
 	const shape = ShapeUtils.createRectangle(0, 0, width, stage.stageHeight, 1, color, color);
-
+	
 	shape.setBounds(0, 0, width, stage.stageHeight);
 	shape.cache(0, 0, width, stage.stageHeight);
 

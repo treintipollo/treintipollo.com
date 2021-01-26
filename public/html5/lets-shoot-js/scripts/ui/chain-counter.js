@@ -318,6 +318,11 @@
 			_totalScore += _currentScore * _currentChainCount;
 			_chainMeter.height = _chainMeterBg.height;
 			_chainMeter.y = _chainMeterBg.y;
+			
+			// For the all clear bonus
+			if (_currentChainCount > MainBody._maxChain)
+				MainBody._maxChain = _currentChainCount;
+
 			_currentChainCount = 0;
 			_currentScore = 0;
 			

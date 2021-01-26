@@ -163,6 +163,11 @@
 
 			return this._textFieldStub;
 		}
+
+		GetText()
+		{
+			return this._text;
+		}
 	}
 
 	window.Text = Text;

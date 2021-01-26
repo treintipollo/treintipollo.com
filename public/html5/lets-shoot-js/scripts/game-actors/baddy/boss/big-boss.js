@@ -96,6 +96,8 @@
 			this._moveBitsBack = true;
 			this._takeVectorToCenter = true;
 			this._chargingUp = true;
+			this._damageWhileChargingUp = 0;
+			this._maxDamageWhileChargingUp = 50000;
 			this._finalAttackA = true;
 			this._backOff = false;
 			this._killBits = true;
@@ -115,14 +117,44 @@
 			this._bombBitParameters = new BaddyParameters();
 			this._bombBitParameters.SetSegmentParameters(new Point(1, 5), new Point(10, 15), 80);
 			this._bombBitParameters.SetOptions(true, true);
-			this._bombBitParameters.SetUpdateParameters(12, 2, 20, 250000);
+
+			// Bombs are used, so it doesn't matter how much health they have
+			switch (DifficultySelect._difficulty)
+			{
+				case DifficultySelect.EASY:
+					this._bombBitParameters.SetUpdateParameters(12, 2, 20, 250000);
+					break;
+				case DifficultySelect.NORMAL:
+					this._bombBitParameters.SetUpdateParameters(12, 2, 20, 250000);
+					break;
+				case DifficultySelect.HARD:
+					this._bombBitParameters.SetUpdateParameters(12, 2, 20, 250000);
+					break;
+			}
+
 			this._bombBitParameters.SetSound(true, Sounds.EXPLOSION);
 			
 			this._attackBitParameters = new BaddyParameters();
 			this._attackBitParameters.SetDrawParameters(3, 0xffffffff, 0xff000000);
 			this._attackBitParameters.SetSegmentParameters(new Point(1, 5), new Point(10, 15), 50);
 			this._attackBitParameters.SetOptions(true, true);
-			this._attackBitParameters.SetUpdateParameters(12, 2, 20, 500000);
+			
+			switch (DifficultySelect._difficulty)
+			{
+				case DifficultySelect.EASY:
+					// This one will never be hit, because the big boss is not available in easy mode
+					this._attackBitParameters.SetUpdateParameters(12, 2, 20, 100000);
+					break;
+				case DifficultySelect.NORMAL:
+					// Lower HP to be able to destroy them while the boss is in the first phase
+					this._attackBitParameters.SetUpdateParameters(12, 2, 20, 250000);
+					break;
+				case DifficultySelect.HARD:
+					// Increased HP so they are destroyed in the last phase
+					this._attackBitParameters.SetUpdateParameters(12, 2, 20, 500000);
+					break;
+			}
+
 			this._attackBitParameters.SetSound(true, Sounds.EXPLOSION2);
 			
 			this._bigBossBullets = new BaddyParameters();
@@ -136,6 +168,9 @@
 			this.CreateSpecificProps();
 		
 			stage = null;
+
+			this._weakPoint = null;
+			this._oscilator = 0;
 		}
 		
 		Init()
@@ -209,6 +244,32 @@
 					this._smithereens.SetOptions(true, true);
 					this._smithereens.SetUpdateParameters(9, 2, 8, 200);
 					this._smithereens.SetSound(false);
+					
+					const o = this._owner;
+
+					const midPoint = new Point();
+					midPoint.x = o._center.x + (o._innerVertexes[0].x + o._innerVertexes[1].x) / 2;
+					midPoint.y = o._center.y + (o._innerVertexes[0].y + o._innerVertexes[1].y) / 2;
+					
+					const weakPointRadius = VectorUtils.calcDistance(o._center, midPoint)[2] - 5;
+
+					this._weakPoint = new Shape();
+					
+					this._weakPoint.graphics.clear()
+						.lineStyle(1, this._color)
+						.beginFill(this._color)
+						.drawCircle(weakPointRadius + 1, weakPointRadius + 1, weakPointRadius);
+					
+					this._weakPoint.regX = weakPointRadius;
+					this._weakPoint.regY = weakPointRadius;
+
+					const mainBlurFilter = new createjs.BlurFilter(7, 7, 1);
+					this._weakPoint.filters = [mainBlurFilter];
+					let bounds = mainBlurFilter.getBounds();
+					this._weakPoint.cache(bounds.x - 50, bounds.y - 50, bounds.width + 100, bounds.height + 100);
+
+					this._owner._stage.addChild(this._weakPoint);
+					this._weakPoint.visible = false;
 				}
 				
 				this._createBits = false;
@@ -344,6 +405,11 @@
 					}
 				}
 			}
+
+			if (this._weakPoint !== null)
+			{
+				this._weakPoint.stage.removeChild(this._weakPoint);
+			}
 			
 			this._smithereens = null;
 			this._powerShot = null;
@@ -355,6 +421,7 @@
 			this._attackBitParameters = null;
 			this._bitInitPos = null;
 			this._spawnSound = null;
+			this._weakPoint = null;
 		}
 		
 		DeathAttack()
@@ -445,6 +512,9 @@
 					BaddyManager.CleanForNextType();
 				}
 			}
+
+			if (this._weakPoint)
+				this._weakPoint.visible = false;
 		}
 		
 		MainFinalAttack()
@@ -479,6 +549,9 @@
 						
 						if (this._chargingUp)
 						{
+							if (this._chargeUpTime === this._chargeUpTimeInit)
+								this._oscilator = 0;
+
 							this._owner._isHitable = true;
 							this._chargeUpTime > 0 ? this._chargeUpTime-- : this._chargingUp = false;
 							
@@ -493,28 +566,39 @@
 							// This will also kill any Baddies that where spawned
 							if (this._owner._wasHit)
 							{
-								this._chargeUpTime = this._chargeUpTimeInit * 2;
-								this._finalAttackA = false;
-								this._chargingUp = false;
-								
+								this._damageWhileChargingUp += this._owner._lastDamage;
+
 								// If the Boss is hit by a regular shot it should back off a bit before attacking.
 								// Otherwise, it will wait until it can move again to start attacking.
 								if (this._owner._wasHitByBomb)
 								{
+									this._chargeUpTime = this._chargeUpTimeInit * 2;
+									this._finalAttackA = false;
+									this._chargingUp = false;
+
 									this._backOff = false;
 								}
 								else
 								{
-									this._backOff = true;
-									
-									this._backOffAngle = this._targetAngle + (180 * (Math.PI / 180));
-									this._backOffPos = new Point();
-									this._backOffPos.x = this._owner._center.x + Math.cos(this._backOffAngle) * 100;
-									this._backOffPos.y = this._owner._center.y + Math.sin(this._backOffAngle) * 100;;
-									
-									this.CalcMoveVector(this._backOffPos.clone(), this._owner._maxSpeed);
-									
-									this._backOffPos = null;
+									if (this._damageWhileChargingUp >= this._maxDamageWhileChargingUp)
+									{
+										this._chargeUpTime = this._chargeUpTimeInit * 2;
+										this._finalAttackA = false;
+										this._chargingUp = false;
+										
+										this._backOff = true;
+										
+										this._backOffAngle = this._targetAngle + (180 * (Math.PI / 180));
+										this._backOffPos = new Point();
+										this._backOffPos.x = this._owner._center.x + Math.cos(this._backOffAngle) * 100;
+										this._backOffPos.y = this._owner._center.y + Math.sin(this._backOffAngle) * 100;;
+										
+										this.CalcMoveVector(this._backOffPos.clone(), this._owner._maxSpeed);
+										
+										this._backOffPos = null;
+
+										this._damageWhileChargingUp = 0;
+									}
 								}
 							}
 						}
@@ -532,6 +616,8 @@
 								}
 								else
 								{
+									this._damageWhileChargingUp = 0;
+
 									this._chargingUp = true;
 									this._currentBaddyCount = 0;
 								}
@@ -553,6 +639,32 @@
 					}
 				}
 			}
+
+			this._weakPoint.x = this._owner._center.x;
+			this._weakPoint.y = this._owner._center.y;
+
+			this._oscilator += 2;
+
+			if (this._oscilator > 180)
+				this._oscilator = 0;
+
+			if (this._finalAttackA)
+			{
+				if (this._chargingUp)
+				{
+					this._weakPoint.visible = true;
+				}
+				else
+				{
+					this._weakPoint.visible = false;
+				}
+			}
+			else
+			{
+				this._weakPoint.visible = false;
+			}
+
+			this._weakPoint.alpha = Math.sin((this._oscilator) * (Math.PI / 180));
 		}
 		
 		FinalAttackA()
@@ -831,8 +943,8 @@
 				this._currentBombIndex++;
 			}
 			
-			// When all bombs are gone, trigger final attack.
-			if (this._bombCount <= 0)
+			// When all bombs are gone, and difficulty mode is hard, trigger final attack.
+			if (this._bombCount <= 0 && DifficultySelect._difficulty === DifficultySelect.HARD)
 			{
 				this._owner._doFinalAttack = true;
 				this._owner._currentMovement = -1;

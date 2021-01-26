@@ -9,6 +9,7 @@
 			this._isCompleted = false;
 			
 			this._nextState = -1;
+			this._nextStateArgs = null;
 			this._owner = null;
 		}
 
@@ -36,6 +37,7 @@
 		{
 			this._stage = null;
 			this._owner = null;
+			this._nextStateArgs = null;
 			
 			this.CleanSpecific();
 		}

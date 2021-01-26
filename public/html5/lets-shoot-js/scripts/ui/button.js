@@ -116,6 +116,8 @@
 			}
 			else
 			{
+				this._string = newString;
+
 				this._text.Update(newString, this._color, centralize, alwaysOnTop, visible, alpha);
 			}
 			

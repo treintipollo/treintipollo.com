@@ -42,22 +42,22 @@
 					this._upgradeCost.push(700000); //Bullet Damage-Up
 					break;
 				case DifficultySelect.NORMAL:
-					this._upgradeCost.push(4000000);
-					this._upgradeCost.push(1000000);
-					this._upgradeCost.push(1000000);
-					this._upgradeCost.push(500000);
-					this._upgradeCost.push(5500000);
-					this._upgradeCost.push(1100000);
-					this._upgradeCost.push(1100000);
+					this._upgradeCost.push(800000 * 2); //Power-Up
+					this._upgradeCost.push(400000 * 2); //Range-Up
+					this._upgradeCost.push(400000 * 2); //Speed-Up
+					this._upgradeCost.push(250000 * 2); //Bomb-Up
+					this._upgradeCost.push(1000000 * 2); //Continue
+					this._upgradeCost.push(700000 * 2); //Firerate-Up
+					this._upgradeCost.push(700000 * 2); //Bullet Damage-Up
 					break;
 				case DifficultySelect.HARD:
-					this._upgradeCost.push(5500000);
-					this._upgradeCost.push(2000000);
-					this._upgradeCost.push(2000000);
-					this._upgradeCost.push(1000000);
-					this._upgradeCost.push(6500000);
-					this._upgradeCost.push(2000000);
-					this._upgradeCost.push(2000000);
+					this._upgradeCost.push(800000 * 3); //Power-Up
+					this._upgradeCost.push(400000 * 3); //Range-Up
+					this._upgradeCost.push(400000 * 3); //Speed-Up
+					this._upgradeCost.push(250000 * 3); //Bomb-Up
+					this._upgradeCost.push(1000000 * 3); //Continue
+					this._upgradeCost.push(700000 * 3); //Firerate-Up
+					this._upgradeCost.push(700000 * 3); //Bullet Damage-Up
 					break;
 			}
 			

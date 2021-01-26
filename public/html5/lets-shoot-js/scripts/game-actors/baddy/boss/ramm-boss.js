@@ -43,8 +43,18 @@
 				this._smithereens = new BaddyParameters();
 				this._smithereens.SetDrawParameters(1, color, 0xff000000);
 				this._smithereens.SetSegmentParameters(new Point(1, 5), new Point(10, 15), 50);
-				this._smithereens.SetOptions(true, true);
-				this._smithereens.SetUpdateParameters(40, 2, 8, 1);
+				
+				if (DifficultySelect._difficulty === DifficultySelect.HARD)
+				{
+					this._smithereens.SetOptions(false, true);
+					this._smithereens.SetUpdateParameters(40, 2, 8, 300);
+				}
+				else
+				{
+					this._smithereens.SetOptions(true, true);
+					this._smithereens.SetUpdateParameters(40, 2, 8, 1);
+				}
+
 				this._smithereens.SetSound(false);
 			}
 		}
@@ -167,15 +177,25 @@
 			
 			if (this._owner._frameCounter % 5 === 0)
 			{
-				BaddyManager.SetType("StraightBullet");
-				BaddyManager.SetStatsByClass(this._smithereens, "RamBossSmithereen");
-				BaddyManager.SetSpecificParams(null, this._owner._center);
+				if (DifficultySelect._difficulty === DifficultySelect.HARD)
+				{
+					BaddyManager.SetType("StraightBullet");
+					BaddyManager.SetStatsByClass(this._smithereens, "BossBullet");
+					BaddyManager.SetSpecificParams(null, this._owner._center);
+				}
+				else
+				{
+					BaddyManager.SetType("StraightBullet");
+					BaddyManager.SetStatsByClass(this._smithereens, "RamBossSmithereen");
+					BaddyManager.SetSpecificParams(null, this._owner._center);
+					
+				}
 				
 				for (let i = 0; i < this._owner._vertexCount; i++)
 				{
 					BaddyManager.Add(this._owner._attackPoint[i], null, this._owner._center);
 				}
-				
+
 				BaddyManager.CleanForNextType();
 			}
 		}

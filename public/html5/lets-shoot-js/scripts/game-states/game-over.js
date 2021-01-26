@@ -48,7 +48,15 @@
 				else
 				{
 					this._isCompleted = true;
-					this._nextState = LetsShoot.SPLASH_SCREEN;
+
+					if (window.HighscoreQualify(ChainCounter._globalScore, DifficultySelect._difficultyIndex))
+					{
+						this._nextState = LetsShoot.HIGHSCORE_NAME_ENTRY;
+					}
+					else
+					{
+						this._nextState = LetsShoot.SPLASH_SCREEN;
+					}
 				}
 			}
 		}

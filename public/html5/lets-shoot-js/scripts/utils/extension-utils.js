@@ -194,6 +194,8 @@
 	{
 		this.setStrokeStyle(thickness, "round", "miter", 3, false);
 		this.beginStroke(createjs.Graphics.getRGBA(color));
+
+		return this;
 	}
 
 	const oldBeginFill = createjs.Graphics.prototype.beginFill;

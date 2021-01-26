@@ -25,6 +25,7 @@
 			this._stopSeekingRadius = 0;
 			this._isSeeking = false;
 			this._erraticMovement = false;
+			this._trail = false;
 
 			this._typeVertexCount = 6;
 		}
@@ -43,6 +44,7 @@
 			this._stopSeekingRadius = specificProps[3];
 			
 			this._parent = specificProps[4];
+			this._trail = specificProps[5]
 			
 			this._isSeeking = true;
 			this._erraticMovement = false;
@@ -86,7 +88,7 @@
 				{
 					if (!VectorUtils.inRange(this._center, this._target, this._stopSeekingRadius))
 					{
-						if (this._frameCounter % this._followTime == 0)
+						if (this._frameCounter % this._followTime === 0)
 						{
 							if (this._erraticMovement)
 							{
@@ -132,7 +134,7 @@
 				this._center.y = this._pos.y + Math.sin(this._perpendicularAngle) * this._currentOscilattion;
 			}
 			
-			if (this._frameCounter % this._childTime == 0)
+			if (this._trail && (this._frameCounter % this._childTime === 0))
 			{
 				BaddyManager.SetType("SnakeBaddy");
 				BaddyManager.SetStatsByClass(this._bulletStats, "SnakeBulletTrail");

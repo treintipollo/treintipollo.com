@@ -44,8 +44,19 @@
 				this._smithereens = new BaddyParameters();
 				this._smithereens.SetDrawParameters(1, color, 0xff000000);
 				this._smithereens.SetSegmentParameters(new Point(1, 5), new Point(10, 15), 50);
-				this._smithereens.SetOptions(true, true);
-				this._smithereens.SetUpdateParameters(12, 2, 8, 1);
+				
+				if (DifficultySelect._difficulty === DifficultySelect.HARD)
+				{
+					this._smithereens.SetOptions(false, true);
+					this._smithereens.SetUpdateParameters(12, 2, 8, 300);
+				}
+				else
+				{
+					this._smithereens.SetOptions(true, true);
+					this._smithereens.SetUpdateParameters(12, 2, 8, 1);
+				}
+
+
 				this._smithereens.SetSound(false);
 			}
 		}
@@ -159,9 +170,18 @@
 			
 			if (this._owner._frameCounter % 5 == 0)
 			{
-				BaddyManager.SetType("ShotgunBullet");
-				BaddyManager.SetStatsByClass(this._smithereens, "BounceBossSmithereen");
-				BaddyManager.SetSpecificParams(360, 0);
+				if (DifficultySelect._difficulty === DifficultySelect.HARD)
+				{
+					BaddyManager.SetType("ShotgunBullet");
+					BaddyManager.SetStatsByClass(this._smithereens, "BossBullet");
+					BaddyManager.SetSpecificParams(360, 0);
+				}
+				else
+				{
+					BaddyManager.SetType("ShotgunBullet");
+					BaddyManager.SetStatsByClass(this._smithereens, "BounceBossSmithereen");
+					BaddyManager.SetSpecificParams(360, 0);
+				}
 				
 				for (let i = 0; i < this._shotGunPellets; i++)
 				{

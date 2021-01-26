@@ -213,10 +213,6 @@
 			// Specific Attack pattern Update
 			this._bossStateMachine.Update();
 			
-			// Having the same IF as the one right above seems kinda stupid, well it isn't
-			// so shut the fuck up! When the timer for a given pattern runs out, and for a a single
-			// frame the currentMovement is -1, I don't want to go into the default generic or specific 
-			// cases, so I do this whole bolony after that logic to avoid weird behaiviours from the boss.
 			if (!this._doFinalAttack)
 			{
 				this.CheckPatternTimer();
@@ -414,9 +410,10 @@
 			{
 				this._slowMovementSpeed = this._slowMovementInitSpeed * 2;
 				this._cornerMovementSpeed = this._cornerMovementInitSpeed + (this._cornerMovementInitSpeed / 2);
-				
+
 				// As soon as life goes below 40% and it is the last Boss, go into true attack patterns
-				if (this._branch === 4)
+				// Ignore this logic in easy mode
+				if (this._branch === 4 && (DifficultySelect._difficulty !== DifficultySelect.EASY))
 				{
 					// This will make sure the movement timer only resets to 0, If it was the first time.
 					// After it, _bigBossCurrentState should remain at 4 till the end of the fight.
@@ -428,12 +425,27 @@
 				}
 			}
 			
-			if (this._life < this._maxLife * 0.2)
+			if (this._branch === 4 && (DifficultySelect._difficulty === DifficultySelect.HARD))
 			{
-				// Spam final attack when health is below 20%
-				this._currentMovement = -1;
-				this._doFinalAttack = true;
-				this.CheckPatternTimer();
+				// After reaching 20% health,
+				// the last Boss only goes into the final attack sequence in hard mode
+				if (this._life < this._maxLife * 0.2)
+				{
+					// Spam final attack when health is below 20%
+					this._currentMovement = -1;
+					this._doFinalAttack = true;
+					this.CheckPatternTimer();
+				}
+			}
+			else
+			{
+				// Regular bosses spam final attack when health is below 20%
+				if (this._life < this._maxLife * 0.2)
+				{
+					this._currentMovement = -1;
+					this._doFinalAttack = true;
+					this.CheckPatternTimer();
+				}
 			}
 		}
 		
@@ -478,23 +490,41 @@
 				// Ok, this kinda has to be hardcoded, excusi.
 				if (this._branch === 4)
 				{
-					if (this._life >= this._maxLife * 0.4)
+					if (DifficultySelect._difficulty === DifficultySelect.EASY)
 					{
-						if (this._bigBossCurrentState < 3)
+						// Easy mode only cycles throw the previous bosses, never going to the last state
+						if (this._life >= this._maxLife * 0.4)
 						{
-							this._bigBossCurrentState++;
-						}
-						else
-						{
-							this._bigBossCurrentState = 0;
+							if (this._bigBossCurrentState < 3)
+							{
+								this._bigBossCurrentState++;
+							}
+							else
+							{
+								this._bigBossCurrentState = 0;
+							}
 						}
 					}
 					else
 					{
-						// As soon as life drops below 40% the Big Boss assumes it's true attack pattern.
-						this._bigBossCurrentState = 4;
+						if (this._life >= this._maxLife * 0.4)
+						{
+							if (this._bigBossCurrentState < 3)
+							{
+								this._bigBossCurrentState++;
+							}
+							else
+							{
+								this._bigBossCurrentState = 0;
+							}
+						}
+						else
+						{
+							// As soon as life drops below 40% the Big Boss assumes it's true attack pattern.
+							this._bigBossCurrentState = 4;
+						}
 					}
-					
+
 					this._bossStateMachine.EndCurrent(this._bigBossCurrentState);
 				}
 				

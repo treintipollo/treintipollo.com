@@ -41,12 +41,9 @@
 			this._loosePhrases.push("I PITY THE FOOL !");
 			this._loosePhrases.push("XD");
 			this._loosePhrases.push("FAIL");
-			this._loosePhrases.push("EPIC PHAIL XD");
-			this._loosePhrases.push("DOPE IS BAD, OK ?");
-			this._loosePhrases.push("WAKE UP BOY/GIRL !");
-			this._loosePhrases.push("DONE BITCHING ?");
+			this._loosePhrases.push("FAILURE");
 			this._loosePhrases.push("USE THE BOMB !");
-			this._loosePhrases.push("NOOB");
+			this._loosePhrases.push("NOOBA");
 			this._loosePhrases.push("OWNED");
 			
 			this._createEndSign = true;
@@ -75,6 +72,10 @@
 							
 		    				if (BaddyManager.AllDead())
 		    				{
+		    					// For all clear bonus, this is the time when the game finishes
+		    					if (LevelSelect._branch === 4)
+		    						MainBody._endTime = Date.now();
+
 		    					this._nextState = LetsShoot.STAGE_COMPLETE;
 		    					this._stateFinished = true;
 		    				}
@@ -92,9 +93,8 @@
 										// Initialization of in game menu.
 										this._menu = new MenuFrame(this._stage.stageWidth / 2, this._stage.stageHeight / 2, 0xffff0000, 0xff000000, 10, this._stage);
 										this._menu.SetTitle("PAUSE", "Digital-7", 50, 0xffffff00);
-										this._menu.AddButton("RESUME", "Digital-7", 30, 0xff0000ff, "BACK TO THE GAME", 10);
-										this._menu.AddButton("LEVEL SELECTION", "Digital-7", 30, 0xff0000ff, "SPENDS A LIFE", 10);
-										this._menu.AddButton("TITLE SCREEN", "Digital-7", 30, 0xff0000ff, "UNDO ALL PROGRESS", 10);
+										this._menu.AddButton("RESUME", "Digital-7", 30, 0xff0000ff, null, 10);
+										this._menu.AddButton("QUIT", "Digital-7", 30, 0xff0000ff, null, 10);
 										this._menu.Init(true, true, true, true);
 									}
 								}
@@ -108,9 +108,8 @@
 								{
 									this._menu = new MenuFrame(this._stage.stageWidth / 2, this._stage.stageHeight / 2, 0xffff0000, 0xff000000, 10, this._stage);
 									this._menu.SetTitle("CONTINUES LEFT:  " + MainBody._continues.toString(), "Digital-7", 50, 0xffffff00);
-									this._menu.AddButton("YES", "Digital-7", 30, 0xff0000ff, "SPENDS A CONTINUE", 10);
-									this._menu.AddButton("LEVEL SELECTION", "Digital-7", 30, 0xff0000ff, "SPENDS A CONTINUE", 10);
-									this._menu.AddButton("TITLE SCREEN", "Digital-7", 30, 0xff0000ff, "UNDO ALL PROGRESS", 10);
+									this._menu.AddButton("YES", "Digital-7", 30, 0xff0000ff, null, 10);
+									this._menu.AddButton("NO", "Digital-7", 30, 0xff0000ff, null, 10);
 									this._menu.Init(true, true, false, true);
 									
 									this._createContinueFrame = false;
@@ -123,7 +122,7 @@
 									currOption = this._menu.Update(LetsShoot._click);
 								}
 								
-								switch (currOption)
+								switch(currOption)
 								{
 									case 0:
 										if (MainBody._bombs < MainBody._bombsMax)
@@ -132,10 +131,6 @@
 										}
 										break;
 									case 1:
-										this._nextState = LetsShoot.LEVEL_SELECT;
-										this._exitOptionChose = true;
-										break;
-									case 2:
 										this._nextState = LetsShoot.SPLASH_SCREEN;
 										this._exitOptionChose = true;
 										break;
@@ -206,37 +201,13 @@
 						{
 							currOption = this._menu.Update(LetsShoot._click);
 						}
-						
+
 						// Switch between the different Buttons the in-game menu has.
 						// "Resume" or case 0 doesn't have any special logic attached to it.
-						switch (currOption)
+						switch(currOption)
 						{
-							// Back to level selection
-							case 1:
-								if (MainBody._lives > 0)
-								{
-									this._nextState = LetsShoot.LEVEL_SELECT;
-									this._exitOptionChose = true;
-									MainBody._lives--;
-								}
-								else
-								{
-									if (MainBody._continues > 0)
-									{
-										this._nextState = LetsShoot.LEVEL_SELECT;
-										this._exitOptionChose = true;
-										MainBody._continues--;
-										MainBody._lives += 3;
-									}
-									else
-									{
-										SoundManager.Play(Sounds.NEGATIVE);
-										currOption = -1;
-									}
-								}
-								break;
 							// Back to splash screen
-							case 2:
+							case 1:
 								this._nextState = LetsShoot.SPLASH_SCREEN;
 								this._exitOptionChose = true;
 								break;
@@ -388,19 +359,19 @@
 			switch (DifficultySelect._difficulty)
 			{
 				case DifficultySelect.EASY:
-					this._bossHP.push(300000);
-					this._bossHP.push(700000);
-					this._bossHP.push(1000000);
+					this._bossHP.push(250000); // ramm boss, bounce boss, explode boss
+					this._bossHP.push(400000); // snake boss
+					this._bossHP.push(700000); // big boss
 					break;
 				case DifficultySelect.NORMAL:
-					this._bossHP.push(500000);
-					this._bossHP.push(1000000);
-					this._bossHP.push(1750000);
+					this._bossHP.push(300000); // ramm boss, bounce boss, explode boss
+					this._bossHP.push(500000); // snake boss
+					this._bossHP.push(1000000); // big boss
 					break;
 				case DifficultySelect.HARD:
-					this._bossHP.push(1000000);
-					this._bossHP.push(1200000);
-					this._bossHP.push(2000000);
+					this._bossHP.push(450000); // ramm boss, bounce boss, explode boss
+					this._bossHP.push(650000); // snake boss
+					this._bossHP.push(1200000); // big boss
 					break;
 			}
 		}
