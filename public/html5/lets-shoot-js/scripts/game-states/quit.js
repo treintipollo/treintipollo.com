@@ -16,7 +16,14 @@
 			}
 			else
 			{
-				window.location.href = window.location.origin;
+				if (window.self !== window.top)
+				{
+					window.top.location.href = window.top.location.origin;
+				}
+				else
+				{
+					window.location.href = window.location.origin;
+				}
 			}
 		}
 		
