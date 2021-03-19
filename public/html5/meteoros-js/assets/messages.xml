@@ -1,0 +1,63 @@
+<messageGroups>
+	<messageGroup id="Splash">
+		<message text="shoot anything;that moves" />
+		<message text="death;from above" 		  />
+		<message text="judgement;day" 			  />
+		<message text="incoming;blunt objects" 	  />
+		<message text="the movie;the game" 	  	  />
+		<message text="because...;fuck you!" 	  />
+		<message text="challenge;accepted" 	  	  />
+	</messageGroup>
+	
+	<messageGroup id="Intro">
+		<message text="go!!!" />
+		<message text="narf!!!" />
+		<message text="shoot!!!" />
+		<message text="start!!!" />
+		<message text="survive!!!" />
+	</messageGroup>
+	
+	<messageGroup id="Success">
+		<message text="success!!" />
+		<message text="win!!" />
+		<message text="great!!" />
+		<message text="complete!!" />
+		<message text="fantastic!!" />
+		<message text="flantastic!!" />
+	</messageGroup>
+	
+	<messageGroup id="Failure">
+		<message text="failure!" />
+		<message text="fail..." />
+		<message text="next!!" />
+		<message text="defeat..." />
+		<message text="successless!" />
+		<message text="ble..." />
+	</messageGroup>
+	
+	<messageGroup id="Victory">
+		<message text="cool..." />
+		<message text="good looking..." />
+		<message text="clever..." />
+		<message text="mysterious..." />
+		<message text="outstanding..." />
+		<message text="fashionable?" />
+		<message text="metal!" />
+		<message text="double awesome!" />
+		<message text="like a boss!" />
+	</messageGroup>
+	
+	<messageGroup id="GameOver">
+		<message text="thanks for failing" />
+		<message text="you can surely do better" />
+		<message text="winning is not for everyone" />
+		<message text="wasted rockets" />
+		<message text="ok now for real" />
+	</messageGroup>
+	
+	<messageGroup id="Epilogue">
+		<message text="did not gave a fuck about" />
+		<message text="merely survived" />
+		<message text="was almost wiped out by" />
+	</messageGroup>
+</messageGroups>

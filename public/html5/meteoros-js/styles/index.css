@@ -1,0 +1,131 @@
+@font-face
+{
+    font-family: "Absender";
+    src:
+    	url("../assets/absender.ttf") format("truetype"),
+    	url("../assets/absender.woff") format("woff"),
+    	url("../assets/absender.woff2") format("woff2");
+    
+    font-weight: normal;
+    font-style: normal;
+}
+
+body
+{
+	--canvas-width: 0px;
+	--canvas-height: 0px;
+
+	font-family: "Absender";
+	
+	margin: 0;
+	padding: 0;
+
+	background: black;
+	overflow: hidden;
+
+	width: 100%;
+	height: 100%;
+}
+
+#canvas-wrapper
+{
+	position: absolute;
+
+	width: 100%;
+	height: 100%;
+}
+
+#canvas
+{
+	width: 100%;
+	height: 100%;
+
+	/* Turn this back on later */
+	cursor: none;
+	pointer-events: all;
+}
+
+#particle-canvas
+{
+	position: absolute;
+    
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+    
+    /* Turn this back on later */
+    cursor: none;
+    pointer-events: none;
+}
+
+.loader
+{
+	position: absolute;
+	
+	border-width: 5px;
+	border-style: solid;
+	z-index: 999;
+	transition: opacity 0.5s;
+	pointer-events: none;
+}
+
+.loader.back
+{
+	opacity: 1;
+	border-color: transparent;
+	background: black;
+
+	width: calc(var(--canvas-width) / 2);
+	height: 50px;
+	left: calc(var(--canvas-width) / 2);
+	top: calc(var(--canvas-height) / 2);
+
+	transform: translate(-50%, -100%);
+	pointer-events: none;
+}
+
+.loader.middle
+{
+	border-color: transparent;
+	background: red;
+
+	width: 0px;
+	height: 50px;
+	left: calc((var(--canvas-width) / 2) - (var(--canvas-width) / 4) - 5px);
+	top: calc(var(--canvas-height) / 2);
+
+	transform: translate(0%, -100%);
+	pointer-events: none;
+}
+
+.loader.front
+{
+	border-color: white;
+
+	width: calc(var(--canvas-width) / 2);
+	height: 50px;
+	left: calc(var(--canvas-width) / 2);
+	top: calc(var(--canvas-height) / 2);
+
+	transform: translate(-50%, -100%);
+	pointer-events: none;
+}
+
+.loader.text
+{
+	border: 0px solid transparent;
+
+	font: 55px Absender;
+	color: red;
+
+	left: calc(var(--canvas-width) / 2);
+	top: calc(var(--canvas-height) / 2);
+	
+	transform: translate(-50%, 5%);
+
+	text-align: center;
+	white-space: nowrap;
+	pointer-events: none;
+}
