@@ -92,13 +92,6 @@
 			}
 
 			document.getElementsByTagName("body")[0].appendChild(template.content);
-
-			for (var i = 0; i < 100; i++)
-			{
-				const div = document.createElement("div");
-				div.className = "box";
-				document.body.appendChild(div);
-			}
 		});
 	}
 	else
