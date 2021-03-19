@@ -68,27 +68,27 @@
 			levelManager.addRequirementGroup("SingleLevel", PYRAMID_BOSS_LEVEL_4, "< VS.4 >", [ REQUIREMENT_DESTROY_BOSS ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor", "ROUND 4"] ], [ [ 3 ] ]);
 			
 			// Endurance Levels Regular and Boss
-			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_1, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [50, "MissileLauncher_Actor"] ] , [ [ 1 ] ]);
-			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_2, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [75, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_1, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [50, "MissileLauncher_Actor"] ] , [ [ 1 ] ]);
+			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_2, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [75, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
 			
 			// Mini break before Boss fight
-			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_5, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [30, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_5, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [30, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
 			
 			// Mid Boss
-			// levelManager.addRequirementGroup("EnduranceLevel", PYRAMID_BOSS_LEVEL_2, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_BOSS ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor", "WARNING!"] ]  , [ [ 1 ] ]);
+			levelManager.addRequirementGroup("EnduranceLevel", PYRAMID_BOSS_LEVEL_2, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_BOSS ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor", "WARNING!"] ]  , [ [ 1 ] ]);
 			
-			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_3, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [150, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_3, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [150, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
 			
 			// Mini break in between long stages
-			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_6, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [50, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_6, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [50, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
 			
-			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_4, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [200, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_4, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [200, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
 			
 			// Mini break before Boss fight
-			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_7, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [50, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_7, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [50, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
 			
 			// End Boss
-			// levelManager.addRequirementGroup("EnduranceLevel", PYRAMID_BOSS_LEVEL_4, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_BOSS ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor", "WARNING!"] ]  , [ [ 1 ] ]);
+			levelManager.addRequirementGroup("EnduranceLevel", PYRAMID_BOSS_LEVEL_4, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_BOSS ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor", "WARNING!"] ]  , [ [ 1 ] ]);
 			
 			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_1, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor"] ] , [ [ 1 ] ]);
 			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_2, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
@@ -101,14 +101,14 @@
 			// levelManager.addRequirementGroup("EnduranceLevel", PYRAMID_BOSS_LEVEL_1, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_BOSS ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor", "WARNING!"] ]  , [ [ 1 ] ]);
 
 			// Endurance Levels Test
-			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_1, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor"] ] , [ [ 1 ] ]);
-			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_2, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
-			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_3, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
-			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_4, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
-			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_1, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [2, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
-			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_2, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [2, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
-			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_3, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [2, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
-			levelManager.addRequirementGroup("EnduranceLevel", LEVEL_4, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [2, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_1, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor"] ] , [ [ 1 ] ]);
+			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_2, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_3, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_4, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [1, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_1, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [2, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_2, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [2, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_3, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [2, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
+			// levelManager.addRequirementGroup("EnduranceLevel", LEVEL_4, levelManager.CLOSED_LEVEL_NAME, [ REQUIREMENT_DESTROY_COUNT ], [ REQUIREMENT_CITIES_DESTROYED ], [ [2, "MissileLauncher_Actor"] ], [ [ 1 ] ]);
 		}
 	}
 
