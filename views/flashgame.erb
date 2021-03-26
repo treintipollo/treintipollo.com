@@ -7,6 +7,17 @@
 		<%= erb "head/#{@game}".to_sym %>
 
 		<style>
+			@font-face {
+				font-family: "Press Start 2P";
+				src:
+					url("../../assets/PressStart2P-Regular.ttf") format("truetype"),
+					url("../../assets/PressStart2P-Regular.woff2") format("woff2"),
+					url("../../assets/PressStart2P-Regular.woff") format("woff");
+
+				font-weight: normal;
+				font-style: normal;
+			}
+
 			body {
 				background: #222;
 				overflow: hidden;
@@ -20,6 +31,55 @@
 				top: 50%;
 				margin-top: -300px;
 			}
+			
+			#message {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: space-between;
+
+				padding: 10px;
+
+				font-family: "Press Start 2P";
+				
+				width: 800px;
+				height: 600px;
+
+				background: black;
+				color: white;
+				line-height: 2;
+
+				border: 2px solid white;
+			}
+
+			h1 {
+				margin: 0px;
+				text-decoration: underline;
+			}
+
+			h1.lets-shoot::before {
+				content: "Let's Shoot!";
+			}
+
+			h1.meteoros::before {
+				content: "Meteoros";
+			}
+
+			.divider {
+				margin-top: 20px;
+				margin-bottom: 20px;
+
+				width: 400px;
+				border: 1px solid white;
+			}
+
+			.warning {
+				color: red;
+			}
+
+			.notice {
+				color: yellow;
+			}
 		</style>
 
 		<%= erb "help/help-css".to_sym %>
@@ -29,11 +89,30 @@
 		
 		<div class="container">
 			<div id="game">
-				<object width="800" height="600">
+				<!-- <object width="800" height="600">
 					<param name="movie" value="<%= @game %>.swf">
 					<embed src="<%= @game %>.swf" width="800" height="600">
 					</embed>
-				</object>
+				</object> -->
+
+				<div id="message">
+					<h1 class="<%= @game %>"></h1>
+
+					<div>As of 2021 the Flash plugin is no longer available in major browsers. To keep the original version alive in some shape, this game is now available for download as a bundled AIR application for Microsoft Windows and Apple OSX.</div>
+
+					<div class="divider"></div>
+
+					<a href="../../assets/<%= @game %>_windows.zip" target="_blank">Windows Download</a>
+					<a href="../../assets/<%= @game %>_mac.zip" target="_blank">OSX Download</a>
+
+					<div class="divider"></div>
+
+					<div class="warning">NOTE: These executable files are not verified and will likely be detected as dangerous by either operating system. They are safe to execute though.</div>
+
+					<div class="divider"></div>
+
+					<div class="notice">A port that runs on the browser is available <a href="/html5/<%= @game %>-js">here</a></div>
+				</div>
 			</div>
 		</div>
 

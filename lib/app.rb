@@ -16,6 +16,7 @@ class App < Sinatra::Base
 		[root, "assets", "javascripts"],
 		[root, "assets", "stylesheets"],
 		[root, "assets", "fonts"],
+		[root, "assets", "zips"],
 		[root, "vendor", "assets", "images"],
 		[root, "vendor", "assets", "javascripts"],
 		[root, "vendor", "assets", "stylesheets"]
