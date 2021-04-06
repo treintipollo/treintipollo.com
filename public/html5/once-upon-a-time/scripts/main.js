@@ -108,6 +108,13 @@ $(function() {
 		TopLevel.starFactory.start();
 	}
 
+	SoundPlayer.addLoopBGM("intro", "assets/bgm/SplashBGM.wav");
+	SoundPlayer.addLoopBGM("baddy", "assets/bgm/BaddyBGM.wav");
+	SoundPlayer.addLoopBGM("main", "assets/bgm/MainBGM.wav");
+	SoundPlayer.addLoopBGM("boss", "assets/bgm/BossBGM.wav");
+	SoundPlayer.addLoopBGM("last-boss", "assets/bgm/LastBossBGM.wav");
+	SoundPlayer.addLoopBGM("victory", "assets/bgm/VictoryBGM.wav");
+
 	TopLevel.game = new GameSetUp(creation);
 
 	TopLevel.game.setUp();

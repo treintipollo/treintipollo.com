@@ -30,4 +30,6 @@ EndingMessage.prototype.destroy = function() {
 
 EndingMessage.prototype.enter = function() {
 	this.introEndingMessageTimeLine.restart();
+
+	this.executeCallbacks("start-ending", this);
 }

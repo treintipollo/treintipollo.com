@@ -7,7 +7,7 @@ ConfigurationCreator.prototype.create = function() {
 	TopLevel.container.createTypeConfiguration("Ship", "Ship").collisionId("Ship").saveOnReset().args({
 		gender: Ship.MALE
 	}).addCallback("shot", this, function() {
-		SoundPlayer.playSingle("Shot");
+		SoundPlayer.play("shot");
 	});
 
 	TopLevel.container.createTypeConfiguration("PartnerShip", "Ship").collisionId("Ship").args({
@@ -19,8 +19,15 @@ ConfigurationCreator.prototype.create = function() {
 	TopLevel.container.createTypeConfiguration("TestBadGuy", "BadGuy").args({
 		tProto: BadGuy.prototype
 	});
+	
 	TopLevel.container.createTypeConfiguration("IntroBadGuy", "BadGuy").collisionId("BadGuy").args({
 		tProto: IntroBadGuy.prototype
+	}).addCallback("created", this, function() {
+		SoundPlayer.play("baddy");
+	})
+	.addCallback("destroyed", this, function(inst) {
+		if (inst.y < 0)
+			SoundPlayer.play("main");
 	});
 
 	TopLevel.container.createTypeConfiguration("Middle_1_BadGuy", "BadGuy").collisionId("BadGuy").args({
@@ -35,6 +42,8 @@ ConfigurationCreator.prototype.create = function() {
 		rocketDeploySpeedMax: 1.7,
 		speed: 220,
 		blastRadius: 15
+	}).addCallback("created", this, function() {
+		SoundPlayer.play("baddy");
 	});
 
 	TopLevel.container.createTypeConfiguration("Middle_2_BadGuy", "BadGuy").collisionId("BadGuy").args({
@@ -49,6 +58,8 @@ ConfigurationCreator.prototype.create = function() {
 		rocketDeploySpeedMax: 1.7,
 		speed: 220,
 		blastRadius: 15
+	}).addCallback("created", this, function() {
+		SoundPlayer.play("baddy");
 	});
 
 	TopLevel.container.createTypeConfiguration("Middle_3_BadGuy", "BadGuy").collisionId("BadGuy").args({
@@ -63,6 +74,8 @@ ConfigurationCreator.prototype.create = function() {
 		rocketDeploySpeedMax: 1.8,
 		speed: 240,
 		blastRadius: 15
+	}).addCallback("created", this, function() {
+		SoundPlayer.play("baddy");
 	});
 
 	TopLevel.container.createTypeConfiguration("End_1_BadGuy", "BadGuy").collisionId("BadGuy").args({
@@ -77,6 +90,8 @@ ConfigurationCreator.prototype.create = function() {
 		rocketDeploySpeedMax: 1.7,
 		speed: 250,
 		blastRadius: 15
+	}).addCallback("created", this, function() {
+		SoundPlayer.play("baddy");
 	});
 
 	TopLevel.container.createTypeConfiguration("End_2_BadGuy", "BadGuy").collisionId("BadGuy").args({
@@ -91,34 +106,44 @@ ConfigurationCreator.prototype.create = function() {
 		rocketDeploySpeedMax: [1.7, 1.7, 1.8],
 		blastRadius: [15, 15, 15],
 		speed: 260
+	})
+	.addCallback("start-attack", this, function() {
+		SoundPlayer.play("last-boss");
+	})
+	.addCallback("destroyed", this, function() {
+		SoundPlayer.play("victory");
 	});
 
 	TopLevel.container.createTypeConfiguration("BadGuySmallAimedRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({
 		tProto: BadGuySmallAimedRocket.prototype
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 	TopLevel.container.createTypeConfiguration("BadGuyLargeHomingRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({
 		tProto: BadGuyLargeHomingRocket.prototype
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 	TopLevel.container.createTypeConfiguration("BadGuyClusterAimedRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({
 		tProto: BadGuyClusterAimedRocket.prototype
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 	TopLevel.container.createTypeConfiguration("LastBadGuyLargeHomingRocket", "BadGuyRocket").layer(3).collisionId("Common_Baddy").args({
 		tProto: BadGuyLargeHomingRocket.prototype
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("BadGuyArmourPiece_Right", "BadGuyArmourPieceRight").collisionId("Common_Baddy");
 	TopLevel.container.createTypeConfiguration("BadGuyArmourPiece_Left", "BadGuyArmourPieceLeft").collisionId("Common_Baddy");
 
 	TopLevel.container.createTypeConfiguration("Splash", "Splash");
-	TopLevel.container.createTypeConfiguration("EndingMessage", "EndingMessage");
+
+	TopLevel.container.createTypeConfiguration("EndingMessage", "EndingMessage")
+	.addCallback("start-ending", this, function() {
+		SoundPlayer.play("ending");
+	});
 
 	TopLevel.container.createTypeConfiguration("FadeToBlack", "FadeToBlack").layer(-2);
 
@@ -156,224 +181,224 @@ ConfigurationCreator.prototype.create = function() {
 	TopLevel.container.createTypeConfiguration("Debry", "Debry").layer(2).collisionId("Rocket");
 
 	TopLevel.container.createTypeConfiguration("ShotPowerUp", "ShotPowerUp").collisionId("PowerUp").layer(-2).addCallback("pickUp", this, function() {
-		SoundPlayer.playSingle("PowerUp");
+		SoundPlayer.play("PowerUp");
 	});
 	TopLevel.container.createTypeConfiguration("RocketPowerUp", "RocketPowerUp").collisionId("PowerUp").layer(-2).addCallback("pickUp", this, function() {
-		SoundPlayer.playSingle("PowerUp");
+		SoundPlayer.play("PowerUp");
 	});
 	TopLevel.container.createTypeConfiguration("WeaponPowerUp", "WeaponPowerUp").collisionId("PowerUp").layer(-2).addCallback("pickUp", this, function() {
-		SoundPlayer.playSingle("PowerUp");
+		SoundPlayer.play("PowerUp");
 	});
 	TopLevel.container.createTypeConfiguration("HPPowerUp", "HPPowerUp").collisionId("PowerUp").layer(-2).addCallback("pickUp", this, function() {
-		SoundPlayer.playSingle("PowerUp");
+		SoundPlayer.play("PowerUp");
 	});
 	TopLevel.container.createTypeConfiguration("SpeedPowerUp", "SpeedPowerUp").collisionId("PowerUp").layer(-2).addCallback("pickUp", this, function() {
-		SoundPlayer.playSingle("PowerUp");
+		SoundPlayer.play("PowerUp");
 	});
 	TopLevel.container.createTypeConfiguration("LivesPowerUp", "LivesPowerUp").collisionId("PowerUp").layer(-2).addCallback("pickUp", this, function() {
-		SoundPlayer.playSingle("PowerUp");
+		SoundPlayer.play("PowerUp");
 	});
 	TopLevel.container.createTypeConfiguration("MultiPowerUp", "MultiPowerUp").collisionId("PowerUp").layer(-2).addCallback("pickUp", this, function() {
-		SoundPlayer.playSingle("PowerUp");
+		SoundPlayer.play("PowerUp");
 	});
 
 	TopLevel.container.createTypeConfiguration("BuyGuyWeaponPowerUp", "WeaponPowerUp").collisionId("BadGuyPowerUp").addCallback("pickUp", this, function() {
-		SoundPlayer.playSingle("PowerUp");
+		SoundPlayer.play("PowerUp");
 	});
 	TopLevel.container.createTypeConfiguration("BuyGuyHealthPowerUp", "HPPowerUp").collisionId("BadGuyPowerUp").addCallback("pickUp", this, function() {
-		SoundPlayer.playSingle("PowerUp");
+		SoundPlayer.play("PowerUp");
 	});
 	TopLevel.container.createTypeConfiguration("BuyGuySpeedPowerUp", "SpeedPowerUp").collisionId("BadGuyPowerUp").addCallback("pickUp", this, function() {
-		SoundPlayer.playSingle("PowerUp");
+		SoundPlayer.play("PowerUp");
 	});
 
 	TopLevel.container.createTypeConfiguration("CloneShip", "CloneShip").layer(2).collisionId("Common_Baddy");
 
 	TopLevel.container.createTypeConfiguration("CargoShip", "CargoShip").layer(2).collisionId("Common_Baddy").addCallback("explosion", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("Small_EnemyRocket_1", "EnemyRocket").layer(3).collisionId("Common_Baddy").args({
 		mainDim: 7
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 	TopLevel.container.createTypeConfiguration("Small_EnemyRocket_2", "EnemyRocket").layer(3).collisionId("Common_Baddy").args({
 		mainDim: 8
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 	TopLevel.container.createTypeConfiguration("Small_EnemyRocket_3", "EnemyRocket").layer(3).collisionId("Common_Baddy").args({
 		mainDim: 9
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 	TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_1", "EnemyRocket").layer(3).collisionId("Common_Baddy").args({
 		mainDim: 11
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 	TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_2", "EnemyRocket").layer(3).collisionId("Common_Baddy").args({
 		mainDim: 11
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 	TopLevel.container.createTypeConfiguration("Mid_EnemyRocket_3", "EnemyRocket").layer(3).collisionId("Common_Baddy").args({
 		mainDim: 12
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 	TopLevel.container.createTypeConfiguration("Large_EnemyRocket_1", "EnemyRocket").layer(3).collisionId("Common_Baddy").args({
 		mainDim: 14
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 	TopLevel.container.createTypeConfiguration("Large_EnemyRocket_2", "EnemyRocket").layer(3).collisionId("Common_Baddy").args({
 		mainDim: 14
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 	TopLevel.container.createTypeConfiguration("Large_EnemyRocket_3", "EnemyRocket").layer(3).collisionId("Common_Baddy").args({
 		mainDim: 15
 	}).addCallback("destroyed", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("Fireball", "Fireball").collisionId("Bullet_Baddy");
 	TopLevel.container.createTypeConfiguration("MultiShot", "MultiShot").collisionId("Bullet_Baddy");
 
 	TopLevel.container.createTypeConfiguration("Boss_1_A", "Boss_1").layer(2).collisionId("Boss_1").addMode(ObjectsContainer.UNSHIFT).addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	}).addCallback("explosion", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("Boss_1_B", "Boss_1").layer(2).collisionId("Boss_1").addMode(ObjectsContainer.UNSHIFT).addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	}).addCallback("explosion", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("Boss_1_C", "Boss_1").layer(2).collisionId("Boss_1").addMode(ObjectsContainer.UNSHIFT).addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	}).addCallback("explosion", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("Boss_1_D", "Boss_1").layer(2).collisionId("Boss_1").addMode(ObjectsContainer.UNSHIFT).addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	}).addCallback("explosion", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("Boss_1_E", "Boss_1").layer(2).collisionId("Boss_1").addMode(ObjectsContainer.UNSHIFT).addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	}).addCallback("explosion", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("Boss_1_F", "Boss_1").layer(2).collisionId("Boss_1").addMode(ObjectsContainer.UNSHIFT).addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	}).addCallback("explosion", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("Boss_1_Helper_Beam_1", "Boss_1").collisionId("Boss_1").addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	}).addCallback("explosion", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("Boss_1_Helper_Sniper_1", "Boss_1").collisionId("Boss_1").addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	}).addCallback("explosion", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("Boss_1_Helper_Sniper_2", "Boss_1").collisionId("Boss_1").addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	});
 
 	TopLevel.container.createTypeConfiguration("Boss_1_Helper_Multi_1", "Boss_1").collisionId("Boss_1").addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	});
 
 	TopLevel.container.createTypeConfiguration("Boss_1_Helper_Multi_2", "Boss_1").collisionId("Boss_1").addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	});
 
 	TopLevel.container.createTypeConfiguration("SubBoss_1", "Boss_1").layer(1).collisionId("Boss_1").addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	}).addCallback("explosion", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("SubBoss_2", "Boss_1").layer(1).collisionId("Boss_1").addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	}).addCallback("explosion", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("SubBoss_3", "Boss_1").layer(1).collisionId("Boss_1").addCallback("hit", this, function() {
-		SoundPlayer.playSingle("BossHit");
+		SoundPlayer.play("BossHit");
 	}).addCallback("laser", this, function() {
-		SoundPlayer.playLoop("Laser");
+		SoundPlayer.play("Laser");
 	}).addCallback("stopLaser", this, function() {
 		SoundPlayer.stop("Laser");
 	}).addCallback("explosion", this, function() {
-		SoundPlayer.playSingle("SmallExplosion");
+		SoundPlayer.play("SmallExplosion");
 	});
 
 	TopLevel.container.createTypeConfiguration("BeamCollider", "BeamCollider").collisionId("BeamCollider");

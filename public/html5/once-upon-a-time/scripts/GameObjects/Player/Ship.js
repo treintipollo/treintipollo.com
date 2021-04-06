@@ -24,6 +24,8 @@ function Ship() {
   	this.mars.src = './assets/Mars.png';
   	this.venus = new Image();
   	this.venus.src = './assets/Venus.png';
+
+  	this.executeCallbacks("created", this);
 }
 
 Ship.prototype.getExhausts = function() {

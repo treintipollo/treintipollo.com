@@ -109,6 +109,8 @@ TextConfigurationCreator.prototype.create = function() {
 		lineWidth: 3,
 		align: "center",
 		baseline: "middle"
+	}).addCallback("created", this, function() {
+		SoundPlayer.play("boss");
 	});
 
 	TopLevel.container.createTypeConfiguration("watchout", "Text").layer(-1).args({
@@ -122,8 +124,9 @@ TextConfigurationCreator.prototype.create = function() {
 		lineWidth: 3,
 		align: "center",
 		baseline: "middle"
+	}).addCallback("created", this, function() {
+		SoundPlayer.play("boss");
 	});
-
 
 	TopLevel.container.createTypeConfiguration("boom", "Text").layer(-1).args({
 		introSpeed: 0.5,
@@ -136,6 +139,8 @@ TextConfigurationCreator.prototype.create = function() {
 		lineWidth: 3,
 		align: "center",
 		baseline: "middle"
+	}).addCallback("created", this, function() {
+		SoundPlayer.play("main");
 	});
 
 	TopLevel.container.createTypeConfiguration("nice", "Text").layer(-1).args({
@@ -149,6 +154,8 @@ TextConfigurationCreator.prototype.create = function() {
 		lineWidth: 3,
 		align: "center",
 		baseline: "middle"
+	}).addCallback("created", this, function() {
+		SoundPlayer.play("main");
 	});
 
 	TopLevel.container.createTypeConfiguration("ready", "Text").layer(-1).args({
@@ -162,6 +169,8 @@ TextConfigurationCreator.prototype.create = function() {
 		lineWidth: 3,
 		align: "center",
 		baseline: "middle"
+	}).addCallback("created", this, function() {
+		SoundPlayer.play("intro");
 	});
 
 	TopLevel.container.createTypeConfiguration("victory", "Text").layer(-1).args({
@@ -175,6 +184,8 @@ TextConfigurationCreator.prototype.create = function() {
 		lineWidth: 3,
 		align: "center",
 		baseline: "middle"
+	}).addCallback("created", this, function() {
+		SoundPlayer.play("victory");
 	});
 
 	TopLevel.container.createTypeConfiguration("complete", "Text").layer(-1).args({

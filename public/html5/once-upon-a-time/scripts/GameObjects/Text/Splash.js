@@ -48,6 +48,8 @@ Splash.prototype.destroy = function() {
 
 Splash.prototype.enter = function() {
 	this.introSplashTimeLine.restart();
+
+	this.executeCallbacks("start-splash", this);
 }
 
 Splash.prototype.exit = function() {

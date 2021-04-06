@@ -1,170 +1,113 @@
 $(function() {
-	var soundPlayer = {
-		audioTags: {},
+	let soundPlayer = {
+		playing: new Map(),
+		options: new Map(),
 
-		audioAssetPaths: {},
-
-		currentTime: new Date(),
-
-		pooledChannels: [],
-		activeChannels: []
+		lastBGM: ""
 	}
 
-	soundPlayer.createChannels = function(amount) {
-		for (var i = 0; i < amount; i++) {
-			var channel = new Audio();
-
-			channel.timer = TimeOutFactory.getTimeOut(-1, -1, this);
-
-			this.pooledChannels.push(channel);
-		}
-	}
-
-	soundPlayer.add = function(id, path) {
-		this.audioAssetPaths[id] = path;
-	};
-
-	soundPlayer.loadAll = function(onComplete) {
-		var soundAssetCount = Object.keys(this.audioAssetPaths).length;
-
-		for (var id in this.audioAssetPaths) {
-			var audio = document.createElement("audio");
-
-			audio.setAttribute("src", this.audioAssetPaths[id]);
-			audio.setAttribute("preload", "auto");
-
-			audio.addEventListener("canplaythrough", function() {
-				soundAssetCount--;
-				if (soundAssetCount <= 0) {
-					onComplete();
-				}
-			});
-
-			this.audioTags[id] = audio;
-
-			document.body.appendChild(audio);
-		}
-	}
-
-	var setUpChannel = function (id, onMetadata) {
-		if (this.pooledChannels.length == 0) { return; }
-
-		var audio = this.audioTags[id];
-
-		if(!audio) { return; }
-
-		var channel = this.pooledChannels.pop();
-
-		var onMD = function() {
-			this.removeEventListener('loadedmetadata', onMD);			
-			onMetadata(this);			
-		}
-
-		channel.addEventListener('loadedmetadata', onMD);
-
-		channel.id = id;
-		channel.src = audio.src;
-		channel.time = audio.duration;
-
-		channel.load();
-
-		this.activeChannels.push(channel);
-	}
-
-	soundPlayer.playSingle = function(id) {
-		setUpChannel.call(this, id, function(channel) {
-
-			channel.timer.resetNewDelayAndRepeateCount(channel.time * 1000, 1);
-
-			channel.timer.callback = function() {
-				channel.currentTime = 0;	
-				channel.pause();
-				this.pooledChannels.push(channel);
-				this.activeChannels.splice(this.activeChannels.indexOf(channel), 1);
-			}
-
-			channel.play();
+	soundPlayer.addPlaySingle = function(id, bufferId) {
+		this.options.set(id, { buffer: window.SoundBuffers.get(bufferId),
+			single: true,
+			loop: false,
+			bgm: false,
+			stopLastBGM: false
 		});
-	}
+	};
 
-	soundPlayer.playLoop = function(id) {
-		var channel = setUpChannel.call(this, id, function() {
-			channel.timer.callback = function() {
-				channel.currentTime = 0;	
-				channel.play();
-			};
-
-			channel.timer.resetNewDelayAndRepeateCount(channel.time * 1000, -1);
-			channel.play();
+	soundPlayer.addLoopSingle = function(id, bufferId) {
+		this.options.set(id, { buffer: window.SoundBuffers.get(bufferId),
+			single: true,
+			loop: true,
+			bgm: false,
+			stopLastBGM: false
 		});
-	}
-
-	var pauseChannel = function(channel) {
-		channel.timer.pause();
-		channel.pause();
-	}
-
-	soundPlayer.pause = function(id) {
-		for (var i = 0; i < this.activeChannels.length; i++) {
-			var channel = this.activeChannels[i];
-
-			if (channel.id == id) {
-				pauseChannel(channel);
-			}
-		}
+	};
+	
+	soundPlayer.addPlayMulti = function(id, bufferId) {
+		this.options.set(id, { buffer: window.SoundBuffers.get(bufferId),
+			single: false,
+			loop: false,
+			bgm: false,
+			stopLastBGM: false
+		});
 	};
 
-	soundPlayer.pauseAll = function() {
-		for (var i = 0; i < this.activeChannels.length; i++) {
-			pauseChannel(this.activeChannels[i]);
-		}
+	soundPlayer.addLoopMulti = function(id, bufferId) {
+		this.options.set(id, { buffer: window.SoundBuffers.get(bufferId),
+			single: false,
+			loop: true,
+			bgm: false,
+			stopLastBGM: false
+		});
 	};
 
-	var stopChannel = function(channel, index) {
-		channel.currentTime = 0;
-		channel.pause();
-		channel.timer.stop();
-		channel.id = 'none';
+	soundPlayer.addLoopBGM = function(id, bufferId) {
+		this.options.set(id, { buffer: window.SoundBuffers.get(bufferId),
+			single: true,
+			loop: true,
+			bgm: true,
+			stopLastBGM: true
+		});
+	};
+
+	soundPlayer.isPlaying = function(id) {
+		if (!this.playing.has(id))
+			return false;
+
+		return !!this.playing.get(id).length;
+	}
+
+	soundPlayer.play = function(id) {
+		if (!this.options.has(id))
+			return;
+
+		if (!this.playing.has(id))
+			this.playing.set(id, []);
+
+		const playing = this.playing.get(id);
+		const options = this.options.get(id);
+
+		if (options.stopLastBGM && this.lastBGM)
+			this.stop(this.lastBGM);
+
+		if (options.bgm)
+			this.lastBGM = id;
+
+		if (options.single && playing.length)
+			return;
+
+		const source = window.AContextIntance.createBufferSource();
 		
-		this.pooledChannels.push(channel);
-		this.activeChannels.splice(index, 1);
+		source.buffer = options.buffer;
+		source.loop = options.loop;
+		source.connect(window.AContextIntance.destination);
+		source.start(0);
+
+		const index = playing.push(source) - 1;
+
+		if (!source.loop)
+			source.onended = () => playing.splice(index, 1);
 	}
 
 	soundPlayer.stop = function(id) {
-		for (var i = this.activeChannels.length - 1; i >= 0; i--) {
-			var channel = this.activeChannels[i];
+		if (!this.playing.has(id))
+			return;
 
-			if (channel.id == id) {
-				stopChannel.call(this, channel, i);
-			}
-		}
+		const playing = this.playing.get(id);
+
+		for (const source of playing)
+			source.stop();
+
+		playing.length = 0;
 	};
 
-	soundPlayer.stopAll = function() {
-		for (var i = this.activeChannels.length - 1; i >= 0; i--) {
-			stopChannel.call(this, this.activeChannels[i], i);
-		}
-	};
-
-	var resumeChannel = function(channel) {
-		channel.play();
-		channel.timer.resume();
-	}
-
-	soundPlayer.resume = function(id) {
-		for (var i = 0; i < this.activeChannels.length; i++) {
-			var channel = this.activeChannels[i];
-
-			if (channel.id == id) {
-				resumeChannel(channel);
-			}
-		}
+	soundPlayer.pauseAll = function() {
+		window.AContextIntance.suspend();
 	};
 
 	soundPlayer.resumeAll = function() {
-		for (var i = 0; i < this.activeChannels.length; i++) {
-			resumeChannel(this.activeChannels[i]);
-		}
+		window.AContextIntance.resume();
 	};
 
 	window.SoundPlayer = soundPlayer;

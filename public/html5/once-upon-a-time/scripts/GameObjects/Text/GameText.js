@@ -66,6 +66,8 @@ WarningText.inheritsFrom( GameText );
 WarningText.prototype.init = function(x, y) {
 	GameText.prototype.init.call(this, x, y);
 	
+	this.executeCallbacks("created", this);
+	
 	TweenMax.to(this, this.introSpeed, {x:TopLevel.canvas.width/2, ease:Back.easeOut, onCompleteScope:this, onComplete:function(){
 		TweenMax.to(this, this.introSpeed, {delay:1, x:TopLevel.canvas.width*2, ease:Back.easeIn, onCompleteScope:this, onComplete:function(){
 			this.alive = false;

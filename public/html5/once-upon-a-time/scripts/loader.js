@@ -76,8 +76,15 @@
 			{ path: "scripts/Effects/WhiteFlash.js" },
 			{ path: "scripts/Effects/MultiGun.js" },
 			{ path: "scripts/Effects/TractorBeam.js" },
-			{ path: "scripts/Effects/BezierParticleBeam.js" },
-			{ path: "scripts/main.js" }
+			{ path: "scripts/Effects/BezierParticleBeam.js" }
+		],
+		"sound": [
+			{ path: "assets/bgm/SplashBGM.wav" },
+			{ path: "assets/bgm/BaddyBGM.wav" },
+			{ path: "assets/bgm/MainBGM.wav" },
+			{ path: "assets/bgm/BossBGM.wav" },
+			{ path: "assets/bgm/LastBossBGM.wav" },
+			{ path: "assets/bgm/VictoryBGM.wav" }
 		]
 	}
 
@@ -97,11 +104,12 @@
 	var chunck = 100 / totalDownloads;
 	var downloadAmount = 0;
 	
-	var files = loadData["scripts"];
 	var body = document.getElementsByTagName("body")[0];
 
-	for (var i = 0; i < files.length; i++) {
-		var file = files[i];
+	var scripFiles = loadData["scripts"];
+
+	for (var i = 0; i < scripFiles.length; i++) {
+		var file = scripFiles[i];
 		
 		var s = document.createElement("script");
 
@@ -115,10 +123,56 @@
 
 			totalDownloads--;
 
-			if (totalDownloads == 0) {
-				var element = document.querySelector(".loader");
-				element.remove();
-			}
+			if (totalDownloads == 0)
+				init();
+		}
+
+		body.appendChild(s);
+	}
+
+	window.AudioContext = window.AudioContext || window.webkitAudioContext;
+	window.AContextIntance = new window.AudioContext;
+	window.SoundBuffers = new Map();
+
+	var soundFiles = loadData["sound"];
+
+	for (var i = 0; i < soundFiles.length; i++) {
+		var file = soundFiles[i];
+		
+		const f = (path) => {
+			fetch(new Request(path))
+			.then((response) => {
+				return response.arrayBuffer();
+			})
+			.then((responseBuffer) =>
+			{
+				window.AContextIntance.decodeAudioData(responseBuffer, function(buffer)
+				{
+					window.SoundBuffers.set(path, buffer);
+
+					updateLoadingStatus();
+
+					totalDownloads--;
+
+					if (totalDownloads == 0)
+						init();
+				});
+			});
+		}
+
+		f(file.path);
+	}
+
+	var init = function()
+	{
+		var s = document.createElement("script");
+
+		s.type = "text/javascript"
+		s.src = "scripts/main.js";
+
+		s.onload = function()
+		{
+			document.querySelector(".loader").remove();
 		}
 
 		body.appendChild(s);

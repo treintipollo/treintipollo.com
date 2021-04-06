@@ -169,7 +169,7 @@ function HudController() {
 			$("#lives").text("Lives x 1");
 			$("#speed").text("Speed lv. 1");
 			$("#level").text((" - " + 1 + " - ").toString());
-			$("#secondaryWeapon").text("Rockets lv. 1");
+			$("#secondaryWeapon").text("Rocket lv. 1");
 			$("#rockets").text("🚀 x 20");
 		
 			TweenMax.to($(".hp>span"), 0.1, { css: { width: $(".hp").width() } });

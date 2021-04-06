@@ -100,7 +100,20 @@ GameSetUp.prototype.setUp = function() {
 
 			ArrowKeyHandler.pause();
 
-			SoundPlayer.pauseAll();
+			var detail = event.detail;
+
+			if (!detail && event.originalEvent)
+				detail = event.originalEvent.detail;
+
+			if (!detail)
+			{
+				SoundPlayer.pauseAll();
+			}
+			else
+			{
+				if (!detail.soft)
+					SoundPlayer.pauseAll();
+			}
 
 			if (!self.manualSoftPause) {
 				window.cancelAnimationFrame(frameRequest);
@@ -128,7 +141,20 @@ GameSetUp.prototype.setUp = function() {
 
 				ArrowKeyHandler.resume();
 
-				SoundPlayer.resumeAll();
+				var detail = event.detail;
+
+				if (!detail && event.originalEvent)
+					detail = event.originalEvent.detail;
+
+				if (!detail)
+				{
+					SoundPlayer.resumeAll();
+				}
+				else
+				{
+					if (!detail.soft)
+						SoundPlayer.resumeAll();
+				}
 
 				if (!self.wasInSoftPause) {
 					lastTime = NaN;
@@ -137,7 +163,7 @@ GameSetUp.prototype.setUp = function() {
 
 					frameRequest = window.requestAnimationFrame(mainLoop);
 				} else {
-					self.wasInSoftPause = true;
+					self.wasInSoftPause = false;
 				}
 
 			}
@@ -213,26 +239,24 @@ GameSetUp.prototype.setUp = function() {
 GameSetUp.prototype.softPause = function() {
 	this.manualSoftPause = true;
 	this.wasInSoftPause = true;
-	this.dispatchUIEvent("blur");
+	this.dispatchUIEvent("blur", { soft: true });
 }
 
 GameSetUp.prototype.softResume = function() {
 	this.manualSoftPause = false;
-	this.dispatchUIEvent("focus");
+	this.dispatchUIEvent("focus", { soft: true });
 }
 
 GameSetUp.prototype.hardPause = function() {
 	this.manualHardPause = true;
-	this.dispatchUIEvent("blur");
+	this.dispatchUIEvent("blur", { soft: false });
 }
 
 GameSetUp.prototype.hardResume = function() {
 	this.manualHardPause = false;
-	this.dispatchUIEvent("focus");
+	this.dispatchUIEvent("focus", { soft: false });
 }
 
-GameSetUp.prototype.dispatchUIEvent = function(event) {
-	var evt = document.createEvent("UIEvents");
-	evt.initUIEvent(event, true, true, window, 1);
-	window.dispatchEvent(evt);
+GameSetUp.prototype.dispatchUIEvent = function(event, d) {
+	window.dispatchEvent(new CustomEvent(event, { detail: d }));
 }

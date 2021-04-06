@@ -28,9 +28,12 @@ function PlayerShipFactory() {
 		this.firstPosX = x;
 		this.firstPosY = y;
 
-		this.setStandardShip(); 
+		this.setStandardShip();
 		var ship = this.createPlayerShip(x, y);
 		TopLevel.animationActors.getIntroPartner();
+
+		if (!SoundPlayer.isPlaying("intro"))
+			SoundPlayer.play("intro");
 
 		return ship;
 	};
