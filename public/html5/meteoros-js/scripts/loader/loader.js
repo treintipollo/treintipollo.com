@@ -63,6 +63,8 @@
 	if (!window.es6_js_support)
 		supportFail.push("ES6 Syntax");
 
+	console.log(supportFail);
+
 	if (supportFail.length > 0)
 	{
 		Promise.resolve()
@@ -96,7 +98,7 @@
 	}
 	else
 	{
-		await Promise.all(Array.from(document.fonts.values()).map((ff) => ff.loaded));
+		await document.fonts.ready;
 
 		const loadData = {
 			"scripts": [
