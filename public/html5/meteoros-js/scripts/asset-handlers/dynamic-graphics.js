@@ -137,7 +137,7 @@
 
 		IsReady()
 		{
-			return Promise.all(Array.from(document.fonts.values()).map((ff) => ff.loaded));
+			return document.fonts.ready;
 		}
 
 		GetSpriteSheet()
