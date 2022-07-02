@@ -2,7 +2,6 @@
 {
     font-family: "Absender";
     src:
-    	url("../assets/absender.ttf") format("truetype"),
     	url("../assets/absender.woff") format("woff"),
     	url("../assets/absender.woff2") format("woff2");
     
@@ -14,7 +13,6 @@
 {
 	font-family: "Designosaur";
 	src:
-		url("../assets/designosaur.ttf") format("truetype"),
 		url("../assets/designosaur.woff") format("woff"),
 		url("../assets/designosaur.woff2") format("woff2");
 
